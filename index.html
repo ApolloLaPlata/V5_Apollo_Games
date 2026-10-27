@@ -383,6 +383,148 @@
       font-size: 11px;
       text-decoration: underline;
     }
+
+    /* Estilos do Injetor de Eventos (Etapa 002) */
+    .injector-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .injector-subhead {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #94a3b8;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .btn-cmd {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #f1f5f9;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 8px 4px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+
+    .btn-cmd:hover {
+      filter: brightness(1.2);
+      transform: translateY(-1px);
+    }
+
+    .btn-cmd.blue {
+      border-color: rgba(56, 189, 248, 0.5);
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+    }
+
+    .btn-cmd.gold {
+      border-color: rgba(251, 191, 36, 0.5);
+      color: #fbbf24;
+      background: rgba(251, 191, 36, 0.1);
+    }
+
+    .btn-cmd.red {
+      border-color: rgba(248, 113, 113, 0.5);
+      color: #f87171;
+      background: rgba(248, 113, 113, 0.1);
+    }
+
+    .input-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .text-input {
+      flex: 1;
+      background: #020617;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: #ffffff;
+      padding: 6px 10px;
+      font-size: 11px;
+      outline: none;
+    }
+
+    .text-input:focus {
+      border-color: #38bdf8;
+    }
+
+    .btn-send {
+      background: #38bdf8;
+      color: #020617;
+      font-weight: 800;
+      font-size: 11px;
+      border: none;
+      border-radius: 8px;
+      padding: 0 12px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-send:hover {
+      opacity: 0.9;
+    }
+
+    .gift-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+
+    .gift-btn {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 8px 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .gift-btn:hover {
+      background: rgba(30, 41, 59, 1);
+      border-color: #fbbf24;
+      transform: translateY(-1px);
+    }
+
+    .gift-icon {
+      font-size: 18px;
+    }
+
+    .gift-info {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .gift-name {
+      font-size: 11px;
+      font-weight: 800;
+      color: #f1f5f9;
+    }
+
+    .gift-weight {
+      font-size: 9px;
+      color: #fbbf24;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
@@ -447,6 +589,87 @@
         <div class="toggle-row">
           <span>Simulação de Resolução</span>
           <span style="font-family: monospace; color: #38bdf8; font-weight: 700;">1080 x 1920 px</span>
+        </div>
+      </div>
+
+      <!-- Injetor de Eventos de Live (Simulador Etapa 002) -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <span class="panel-title">⚡ Injetor de Eventos de Live</span>
+          <span class="status-pill" style="color:#fbbf24; border-color:rgba(251,191,36,0.4); background:rgba(251,191,36,0.15)">SIMULADOR ATIVO</span>
+        </div>
+
+        <!-- Comentários de Votação Rápida -->
+        <div class="injector-section">
+          <div class="injector-subhead">
+            <span>Comentários Rápidos (Votação)</span>
+            <span style="color:#64748b;">Comandos de Chat</span>
+          </div>
+          <div class="btn-grid-3">
+            <button class="btn-cmd blue" onclick="sendQuickVote('1', 'A')">🔵 Voto 1 (Azul)</button>
+            <button class="btn-cmd gold" onclick="sendQuickVote('3', 'C')">👑 Voto 3 (Ouro)</button>
+            <button class="btn-cmd red" onclick="sendQuickVote('2', 'B')">🔴 Voto 2 (Red)</button>
+          </div>
+
+          <div class="input-row">
+            <input type="text" id="custom-user" class="text-input" style="max-width: 100px;" value="@espectador" placeholder="@user">
+            <input type="text" id="custom-comment" class="text-input" placeholder="Comentário customizado..." onkeydown="if(event.key==='Enter') sendCustomComment()">
+            <button class="btn-send" onclick="sendCustomComment()">Enviar</button>
+          </div>
+        </div>
+
+        <!-- Curtidas & Pressão Contínua -->
+        <div class="injector-section">
+          <div class="injector-subhead">
+            <span>Curtidas & Pressão Contínua</span>
+            <span id="likes-counter" style="color:#f43f5e; font-weight:700;">0 likes</span>
+          </div>
+          <div class="btn-grid-3">
+            <button class="btn-cmd" style="border-color: rgba(244,63,94,0.4); color:#f43f5e;" onclick="sendLikes(10)">❤️ +10 Likes</button>
+            <button class="btn-cmd" style="border-color: rgba(244,63,94,0.4); color:#f43f5e;" onclick="sendLikes(50)">🔥 +50 Likes</button>
+            <button class="btn-cmd" id="btn-autolike" style="border-color: #64748b;" onclick="toggleAutoLikes()">⚡ Auto-Likes (Off)</button>
+          </div>
+        </div>
+
+        <!-- Presentes / Gifts Calibrados -->
+        <div class="injector-section">
+          <div class="injector-subhead">
+            <span>Presentes / Gifts (Monetização)</span>
+            <span style="color:#fbbf24;">Pesos Calibrados</span>
+          </div>
+          <div class="gift-grid">
+            <button class="gift-btn" onclick="sendGift('Rosa', 1, 5, 'A')">
+              <span class="gift-icon">🌸</span>
+              <div class="gift-info">
+                <span class="gift-name">Rosa (1 Moeda)</span>
+                <span class="gift-weight">Peso 5x • Chuva Leve</span>
+              </div>
+            </button>
+
+            <button class="gift-btn" onclick="sendGift('Moeda V5', 5, 15, 'B')">
+              <span class="gift-icon">🪙</span>
+              <div class="gift-info">
+                <span class="gift-name">Moeda V5 (5c)</span>
+                <span class="gift-weight">Peso 15x • Tração Turbo</span>
+              </div>
+            </button>
+
+            <button class="gift-btn" onclick="sendGift('Diamante', 20, 35, 'C')">
+              <span class="gift-icon">💎</span>
+              <div class="gift-info">
+                <span class="gift-name">Diamante (20c)</span>
+                <span class="gift-weight">Peso 35x • Super Boost</span>
+              </div>
+            </button>
+
+            <button class="gift-btn" onclick="sendGift('Leão Dourado', 100, 100, 'C')">
+              <span class="gift-icon">🦁</span>
+              <div class="gift-info">
+                <span class="gift-name">Leão Dourado (100c)</span>
+                <span class="gift-weight">Peso 100x • MEGA METEORO</span>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -515,6 +738,115 @@
       terminal.innerHTML = '';
       eventCount = 0;
       eventCounterEl.innerText = `0 eventos registrados`;
+    }
+
+    /* INJETOR DE EVENTOS EM TEMPO REAL (Etapa 002) */
+    let liveBroadcastChannel = null;
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        liveBroadcastChannel = new BroadcastChannel('v5_broadcaster_games');
+      }
+    } catch (e) {}
+
+    function dispatchLiveEvent(payload) {
+      // 1. BroadcastChannel global
+      if (liveBroadcastChannel) {
+        liveBroadcastChannel.postMessage(payload);
+      }
+      // 2. Iframe postMessage
+      if (frame && frame.contentWindow) {
+        frame.contentWindow.postMessage(payload, '*');
+        // 3. Iframe CustomEvent (se mesmo origin)
+        try {
+          frame.contentWindow.dispatchEvent(new CustomEvent('v5_event', { detail: payload }));
+        } catch (err) {}
+      }
+      // 4. Log local no monitor
+      const preview = payload.type === 'gift' 
+        ? `🎁 [GIFT] <span class="highlight">${payload.user}</span> enviou <b>${payload.giftName}</b> (+${payload.weight}x peso)`
+        : (payload.type === 'like'
+            ? `❤️ [LIKE] <span class="highlight">${payload.user}</span> enviou +${payload.count} curtidas`
+            : `💬 [CHAT] <span class="highlight">${payload.user}</span>: "${payload.comment || payload.action}"`);
+      logEvent('INJETOR', preview);
+    }
+
+    function sendQuickVote(comment, team) {
+      const user = document.getElementById('custom-user').value || '@espectador';
+      dispatchLiveEvent({
+        type: 'comment',
+        action: 'vote',
+        team: team,
+        comment: comment,
+        user: user,
+        weight: 1
+      });
+    }
+
+    function sendCustomComment() {
+      const input = document.getElementById('custom-comment');
+      const val = input.value.trim();
+      if (!val) return;
+      const user = document.getElementById('custom-user').value || '@espectador';
+      
+      let team = 'C';
+      if (val === '1' || val.toLowerCase().includes('azul')) team = 'A';
+      if (val === '2' || val.toLowerCase().includes('vermelho') || val.toLowerCase().includes('laranja')) team = 'B';
+
+      dispatchLiveEvent({
+        type: 'comment',
+        action: val,
+        comment: val,
+        team: team,
+        user: user,
+        weight: 1
+      });
+      input.value = '';
+    }
+
+    let totalLikes = 0;
+    let autoLikeTimer = null;
+
+    function sendLikes(amount = 10) {
+      totalLikes += amount;
+      document.getElementById('likes-counter').innerText = `${totalLikes} likes`;
+      const user = document.getElementById('custom-user').value || '@espectador';
+      dispatchLiveEvent({
+        type: 'like',
+        action: 'tap',
+        count: amount,
+        user: user
+      });
+    }
+
+    function toggleAutoLikes() {
+      const btn = document.getElementById('btn-autolike');
+      if (autoLikeTimer) {
+        clearInterval(autoLikeTimer);
+        autoLikeTimer = null;
+        btn.innerText = '⚡ Auto-Likes (Off)';
+        btn.style.borderColor = '#64748b';
+        btn.style.color = '#cbd5e1';
+      } else {
+        btn.innerText = '⚡ Auto-Likes (ON)';
+        btn.style.borderColor = '#f43f5e';
+        btn.style.color = '#f43f5e';
+        autoLikeTimer = setInterval(() => {
+          sendLikes(15);
+        }, 300);
+      }
+    }
+
+    function sendGift(giftName, coins, weight, team = 'A') {
+      const user = document.getElementById('custom-user').value || '@vip_live';
+      dispatchLiveEvent({
+        type: 'gift',
+        action: 'boost',
+        giftName: giftName,
+        coins: coins,
+        weight: weight,
+        team: team,
+        user: user
+      });
     }
 
     // Escuta de Eventos via BroadcastChannel para telemetria no console de testes
