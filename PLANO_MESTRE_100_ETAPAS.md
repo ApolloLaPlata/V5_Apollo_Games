@@ -57,7 +57,7 @@
 - [x] **Etapa 011:** Arquitetura e template base para jogos de polarização e torcida (Mecânica de Cabo de Guerra, Pressão e Queda de Braço).
 - [x] **Etapa 012:** Forjamento do Cartucho #01B: Cabo de Guerra dos Elementos (Fogo Vermelho vs Gelo Azul) com efeitos dinâmicos de temperatura no Canvas.
 - [x] **Etapa 013:** Homologação e teste de colisão visual do Cabo de Guerra dos Elementos no Test Lab 9:16.
-- [ ] **Etapa 014:** Forjamento do Cartucho #06: Batalha dos Balões Gigantes (Dois lados inflando balões colossais via chat até o estouro com física de pressão elástica).
+- [x] **Etapa 014:** Forjamento do Cartucho #06: Batalha dos Balões Gigantes (Dois lados inflando balões colossais via chat até o estouro com física de pressão elástica).
 - [ ] **Etapa 015:** Implementação de áudio procedural de enchimento e estouro hiper-realista para a Batalha dos Balões.
 - [ ] **Etapa 016:** Homologação da Batalha dos Balões no Test Lab com simulação de 500 comentários/minuto.
 - [ ] **Etapa 017:** Forjamento do Cartucho #09: Tsunami de Curtidas (Pressômetro vertical onde o time com mais likes eleva sua maré neon e afunda o rival).

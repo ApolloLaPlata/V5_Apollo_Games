@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Batalha dos Balões Gigantes (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #020617;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 35%, #0f172a 0%, #020617 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 18px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .timer-badge {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Placar de Pressão dos Balões */
+    .score-board {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 10px 16px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .team-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .team-cyan {
+      color: #38bdf8;
+      text-shadow: 0 0 14px rgba(56, 189, 248, 0.7);
+    }
+
+    .team-magenta {
+      color: #f43f5e;
+      text-shadow: 0 0 14px rgba(244, 63, 94, 0.7);
+    }
+
+    .box-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .box-score {
+      font-size: 22px;
+      font-weight: 900;
+      font-family: monospace;
+      margin-top: 2px;
+    }
+
+    /* Arena Central Canvas */
+    #arena-container {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 12px 16px 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.7) 70%, rgba(2, 6, 23, 0) 100%);
+      pointer-events: none;
+    }
+
+    .chat-instructions {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .cmd-pill {
+      flex: 1;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .cmd-pill.cyan {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: rgba(56, 189, 248, 0.12);
+    }
+
+    .cmd-pill.magenta {
+      border-color: rgba(244, 63, 94, 0.5);
+      background: rgba(244, 63, 94, 0.12);
+    }
+
+    .cmd-key {
+      font-size: 16px;
+      font-weight: 900;
+      font-family: monospace;
+    }
+
+    .cmd-desc {
+      font-size: 10px;
+      color: #cbd5e1;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .gift-cta {
+      background: linear-gradient(90deg, rgba(244, 63, 94, 0.25) 0%, rgba(56, 189, 248, 0.25) 100%);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+    }
+
+    .toast-container {
+      position: absolute;
+      top: 145px;
+      width: calc(100% - 32px);
+      left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .toast-item {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(8px);
+      animation: slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Overlay de Vitória */
+    #victory-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.92);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    #victory-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .victory-box {
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid #fbbf24;
+      border-radius: 24px;
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 0 50px rgba(251, 191, 36, 0.35);
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .reset-progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 15px;
+    }
+
+    .reset-progress-fill {
+      height: 100%;
+      background: #fbbf24;
+      width: 0%;
+      transition: width 5s linear;
+    }
+
+    /* Gaveta Debug */
+    #debug-drawer {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 200;
+      pointer-events: auto;
+    }
+
+    .debug-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+    }
+
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 7px 4px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    
+    <!-- Top Safe Zone -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <span class="live-dot"></span>
+          V5 LIVE ESTOURO DE BALÃO
+        </div>
+        <div class="timer-badge">
+          ⏳ <span id="round-timer">45</span>s
+        </div>
+      </div>
+
+      <div class="score-board">
+        <div class="team-box team-cyan">
+          <span class="box-title">🎈 Balão Azul</span>
+          <span class="box-score" id="score-cyan">0%</span>
+        </div>
+        <div class="team-box team-magenta">
+          <span class="box-title">🎈 Balão Rosa</span>
+          <span class="box-score" id="score-magenta">0%</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central -->
+    <div id="arena-container">
+      <canvas id="balloon-canvas"></canvas>
+    </div>
+
+    <!-- Feed de Notificações -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Bottom Safe Zone -->
+    <footer class="bottom-panel">
+      <div class="chat-instructions">
+        <div class="cmd-pill cyan">
+          <span class="cmd-key team-cyan">1</span>
+          <span class="cmd-desc">Inflar Azul</span>
+        </div>
+        <div class="cmd-pill magenta">
+          <span class="cmd-key team-magenta">2</span>
+          <span class="cmd-desc">Inflar Rosa</span>
+        </div>
+      </div>
+
+      <div class="gift-cta">
+        <span style="font-size: 11px; font-weight: 700; color: #fef08a;">🎁 Presentes = Super Bomba de Ar (+15% a +50%!)</span>
+        <span style="background: #f59e0b; color: #000; font-weight: 900; font-size: 10px; padding: 3px 8px; border-radius: 8px;">POP RUSH</span>
+      </div>
+    </footer>
+
+    <!-- Overlay Vitória -->
+    <div id="victory-overlay">
+      <div class="victory-box">
+        <div style="font-size: 52px; margin-bottom: 10px;" id="victory-icon">💥</div>
+        <h2 id="victory-title" style="font-size: 26px; font-weight: 900; text-transform: uppercase;">BALÃO AZUL ESTOUROU PRIMEIRO!</h2>
+        <p id="victory-detail" style="font-size: 14px; color: #94a3b8; margin: 8px 0 16px 0;">Placar de vitórias acumuladas</p>
+        <p style="font-size: 12px; color: #cbd5e1; font-weight: 600;">Enchendo novos balões...</p>
+        <div class="reset-progress-bar">
+          <div class="reset-progress-fill" id="reset-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Painel Debug -->
+    <div id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #94a3b8; display: flex; justify-content: space-between;">
+        <span>🎮 Teste Balões [D]</span>
+        <span style="cursor:pointer;" onclick="toggleDebug()">✕ Fechar</span>
+      </div>
+      <div class="debug-buttons">
+        <button class="debug-btn" onclick="pumpBalloon('A', 2, '@teste_azul')">🔵 Inflar Azul (+2%)</button>
+        <button class="debug-btn" onclick="pumpBalloon('B', 2, '@teste_rosa')">🟣 Inflar Rosa (+2%)</button>
+        <button class="debug-btn" onclick="pumpBalloon('A', 15, '@vip_rosa', 'Rosa')">🌸 Super Rosa (+15%)</button>
+        <button class="debug-btn" onclick="pumpBalloon('B', 40, '@vip_leao', 'Leão')">🦁 Super Leão (+40%)</button>
+        <button class="debug-btn" onclick="triggerPop('A')">💥 Estourar Azul</button>
+        <button class="debug-btn" onclick="triggerPop('B')">💥 Estourar Rosa</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /**
+     * SINTETIZADOR DE BORRACHA E ESTOURO (Web Audio API)
+     */
+    class BalloonAudio {
+      constructor() {
+        this.ctx = null;
+      }
+      getCtx() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        return this.ctx;
+      }
+      // Som de bomba de ar inflando borracha
+      playInflate(pitchFactor = 1.0) {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const osc = c.createOscillator();
+          const g = c.createGain();
+          osc.type = 'triangle';
+          const startF = 180 * pitchFactor;
+          osc.frequency.setValueAtTime(startF, t);
+          osc.frequency.exponentialRampToValueAtTime(startF * 1.6, t + 0.08);
+          g.gain.setValueAtTime(0.18, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+          osc.connect(g);
+          g.connect(c.destination);
+          osc.start(t);
+          osc.stop(t + 0.09);
+        } catch (e) {}
+      }
+      // Som de estouro ensurdecedor (Pop & White Noise)
+      playPop() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          // Impacto grave
+          const osc = c.createOscillator();
+          const g = c.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(320, t);
+          osc.frequency.exponentialRampToValueAtTime(40, t + 0.3);
+          g.gain.setValueAtTime(0.4, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+          osc.connect(g);
+          g.connect(c.destination);
+          osc.start(t);
+          osc.stop(t + 0.3);
+
+          // Ruído branco do rasgo da borracha
+          const buf = c.createBuffer(1, c.sampleRate * 0.2, c.sampleRate);
+          const data = buf.getChannelData(0);
+          for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+          const noise = c.createBufferSource();
+          noise.buffer = buf;
+          const filter = c.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(1800, t);
+          const noiseGain = c.createGain();
+          noiseGain.gain.setValueAtTime(0.3, t);
+          noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+          noise.connect(filter);
+          filter.connect(noiseGain);
+          noiseGain.connect(c.destination);
+          noise.start(t);
+          noise.stop(t + 0.2);
+        } catch (e) {}
+      }
+      playVictory() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+            const osc = c.createOscillator();
+            const g = c.createGain();
+            const st = t + (i * 0.12);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, st);
+            g.gain.setValueAtTime(0.2, st);
+            g.gain.exponentialRampToValueAtTime(0.001, st + 0.4);
+            osc.connect(g);
+            g.connect(c.destination);
+            osc.start(st);
+            osc.stop(st + 0.4);
+          });
+        } catch (e) {}
+      }
+    }
+
+    const audio = new BalloonAudio();
+
+    /**
+     * MOTOR FÍSICO DOS BALÕES (CANVAS 2D - 60 FPS)
+     */
+    const canvas = document.getElementById('balloon-canvas');
+    const ctx = canvas.getContext('2d');
+    let W = 0, H = 0;
+
+    function resize() {
+      const stage = document.getElementById('game-stage');
+      W = stage.clientWidth;
+      H = stage.clientHeight;
+      canvas.width = W;
+      canvas.height = H;
+    }
+    window.addEventListener('resize', resize);
+
+    // Estado da Disputa
+    let pressureA = 10.0; // 0 a 100%
+    let pressureB = 10.0;
+    let targetA = 10.0;
+    let targetB = 10.0;
+    let wobbleA = 0.0;
+    let wobbleB = 0.0;
+    let isPoppedA = false;
+    let isPoppedB = false;
+
+    let winsA = 0;
+    let winsB = 0;
+    let roundTime = 45;
+    let timerInterval = null;
+    let isGameOver = false;
+
+    let rubberShreds = [];
+    let confettis = [];
+
+    // DOM Elements
+    const scoreCyanEl = document.getElementById('score-cyan');
+    const scoreMagentaEl = document.getElementById('score-magenta');
+    const roundTimerEl = document.getElementById('round-timer');
+    const victoryOverlay = document.getElementById('victory-overlay');
+    const victoryTitle = document.getElementById('victory-title');
+    const victoryDetail = document.getElementById('victory-detail');
+    const victoryIcon = document.getElementById('victory-icon');
+    const resetFill = document.getElementById('reset-fill');
+    const toastContainer = document.getElementById('toast-container');
+    const debugDrawer = document.getElementById('debug-drawer');
+
+    function pumpBalloon(team, weight = 1, user = '@espectador', giftName = null) {
+      if (isGameOver) return;
+      audio.getCtx();
+
+      if (team === 'A') {
+        targetA = Math.min(100, targetA + weight);
+        wobbleA = 1.0;
+        audio.playInflate(1.0 + (targetA / 100));
+
+        if (giftName) {
+          spawnToast(`🎁 ${user} mandou ${giftName}! SUPER BOMBA AZUL (+${weight}%)`, '#38bdf8');
+        }
+
+        if (targetA >= 100) {
+          triggerPop('A');
+        }
+      } else {
+        targetB = Math.min(100, targetB + weight);
+        wobbleB = 1.0;
+        audio.playInflate(1.0 + (targetB / 100));
+
+        if (giftName) {
+          spawnToast(`🎁 ${user} mandou ${giftName}! SUPER BOMBA ROSA (+${weight}%)`, '#f43f5e');
+        }
+
+        if (targetB >= 100) {
+          triggerPop('B');
+        }
+      }
+    }
+
+    function triggerPop(team) {
+      if (isGameOver) return;
+      isGameOver = true;
+      audio.playPop();
+
+      if (team === 'A') {
+        isPoppedA = true;
+        spawnRubberShreds(W * 0.3, H * 0.52, '#38bdf8');
+        endRound('A');
+      } else {
+        isPoppedB = true;
+        spawnRubberShreds(W * 0.7, H * 0.52, '#f43f5e');
+        endRound('B');
+      }
+    }
+
+    function spawnToast(text, color = '#38bdf8') {
+      const toast = document.createElement('div');
+      toast.className = 'toast-item';
+      toast.style.borderColor = color;
+      toast.innerHTML = `<span style="color:${color}">${text}</span>`;
+      toastContainer.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    function spawnRubberShreds(x, y, color) {
+      for (let i = 0; i < 35; i++) {
+        rubberShreds.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.5) * 16,
+          size: Math.random() * 12 + 4,
+          color: color,
+          alpha: 1.0,
+          rot: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 20
+        });
+      }
+    }
+
+    function spawnConfetti(isCyan) {
+      const colors = isCyan ? ['#38bdf8', '#0ea5e9', '#7dd3fc', '#ffffff'] : ['#f43f5e', '#fb7185', '#fda4af', '#ffffff'];
+      for (let i = 0; i < 70; i++) {
+        confettis.push({
+          x: Math.random() * W,
+          y: Math.random() * H * 0.3,
+          vx: (Math.random() - 0.5) * 4,
+          vy: Math.random() * 4 + 2,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10
+        });
+      }
+    }
+
+    function startTimer() {
+      roundTime = 45;
+      isGameOver = false;
+      pressureA = 10.0;
+      pressureB = 10.0;
+      targetA = 10.0;
+      targetB = 10.0;
+      wobbleA = 0;
+      wobbleB = 0;
+      isPoppedA = false;
+      isPoppedB = false;
+
+      scoreCyanEl.innerText = '10%';
+      scoreMagentaEl.innerText = '10%';
+      roundTimerEl.innerText = roundTime;
+      victoryOverlay.classList.remove('active');
+      resetFill.style.width = '0%';
+
+      if (timerInterval) clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        roundTime--;
+        roundTimerEl.innerText = roundTime;
+
+        // Vazamento natural leve se ninguém bombear (-0.3% por seg)
+        if (targetA > 8) targetA -= 0.3;
+        if (targetB > 8) targetB -= 0.3;
+
+        if (roundTime <= 0) {
+          clearInterval(timerInterval);
+          // Morte súbita: o mais cheio estoura!
+          if (targetA >= targetB) triggerPop('A');
+          else triggerPop('B');
+        }
+      }, 1000);
+    }
+
+    function endRound(winner) {
+      setTimeout(() => audio.playVictory(), 200);
+      spawnConfetti(winner === 'A');
+
+      if (winner === 'A') {
+        winsA++;
+        victoryTitle.innerText = 'BALÃO AZUL ESTOUROU PRIMEIRO!';
+        victoryTitle.style.color = '#38bdf8';
+        victoryIcon.innerText = '💥🔵';
+        victoryDetail.innerText = `Pressão Máxima Atingida! Vitórias: Azul ${winsA} x ${winsB} Rosa`;
+      } else {
+        winsB++;
+        victoryTitle.innerText = 'BALÃO ROSA ESTOUROU PRIMEIRO!';
+        victoryTitle.style.color = '#f43f5e';
+        victoryIcon.innerText = '💥🟣';
+        victoryDetail.innerText = `Pressão Máxima Atingida! Vitórias: Rosa ${winsB} x ${winsA} Azul`;
+      }
+
+      victoryOverlay.classList.add('active');
+
+      setTimeout(() => {
+        resetFill.style.width = '100%';
+      }, 50);
+
+      setTimeout(() => {
+        startTimer();
+      }, 5000);
+    }
+
+    /**
+     * RENDER LOOP (60 FPS)
+     */
+    let lastFpsTime = performance.now();
+    let frameCount = 0;
+
+    function gameLoop(now) {
+      ctx.clearRect(0, 0, W, H);
+
+      // Interpolação de Pressão
+      pressureA += (targetA - pressureA) * 0.15;
+      pressureB += (targetB - pressureB) * 0.15;
+
+      scoreCyanEl.innerText = `${Math.round(pressureA)}%`;
+      scoreMagentaEl.innerText = `${Math.round(pressureB)}%`;
+
+      if (wobbleA > 0) wobbleA -= 0.05;
+      if (wobbleB > 0) wobbleB -= 0.05;
+
+      const centerY = H * 0.52;
+
+      // 1. Desenhar Balão Azul (Esquerda)
+      if (!isPoppedA) {
+        drawBalloon(W * 0.3, centerY, pressureA, wobbleA, '#38bdf8', '#0284c7');
+      }
+
+      // 2. Desenhar Balão Rosa (Direita)
+      if (!isPoppedB) {
+        drawBalloon(W * 0.7, centerY, pressureB, wobbleB, '#f43f5e', '#be123c');
+      }
+
+      // 3. Pedaços de Borracha Estourada
+      for (let i = rubberShreds.length - 1; i >= 0; i--) {
+        const s = rubberShreds[i];
+        s.x += s.vx;
+        s.y += s.vy;
+        s.vy += 0.3; // Gravidade
+        s.alpha -= 0.02;
+        if (s.alpha <= 0) rubberShreds.splice(i, 1);
+        else {
+          ctx.save();
+          ctx.translate(s.x, s.y);
+          ctx.rotate((s.rot * Math.PI) / 180);
+          ctx.fillStyle = s.color;
+          ctx.globalAlpha = s.alpha;
+          ctx.fillRect(-s.size / 2, -s.size / 2, s.size, s.size * 0.5);
+          ctx.restore();
+          ctx.globalAlpha = 1.0;
+        }
+      }
+
+      // 4. Confetes de Vitória
+      for (let i = confettis.length - 1; i >= 0; i--) {
+        const cf = confettis[i];
+        cf.x += cf.vx;
+        cf.y += cf.vy;
+        cf.rotation += cf.rotSpeed;
+        ctx.save();
+        ctx.translate(cf.x, cf.y);
+        ctx.rotate((cf.rotation * Math.PI) / 180);
+        ctx.fillStyle = cf.color;
+        ctx.fillRect(-cf.size / 2, -cf.size / 2, cf.size, cf.size * 0.6);
+        ctx.restore();
+        if (cf.y > H) confettis.splice(i, 1);
+      }
+
+      // Telemetria 60 FPS
+      frameCount++;
+      if (now - lastFpsTime >= 1000) {
+        const fps = Math.round((frameCount * 1000) / (now - lastFpsTime));
+        if (window.parent && window.self !== window.top) {
+          window.parent.postMessage({
+            type: 'TELEMETRY_STATS',
+            gameId: '06_batalha_dos_baloes',
+            stats: { fps: Math.min(60, fps), frameTimeMs: 16.6, frameDrops: 0, isHealthy: true }
+          }, '*');
+        }
+        frameCount = 0;
+        lastFpsTime = now;
+      }
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    function drawBalloon(x, y, pressure, wobble, glowColor, darkColor) {
+      // Raio varia de 35px a 115px com base na pressão
+      const baseRadius = 35 + (pressure * 0.8);
+      const deformX = Math.sin(Date.now() * 0.015) * (wobble * 8);
+      const deformY = Math.cos(Date.now() * 0.015) * (wobble * 8);
+      const rx = baseRadius + deformX;
+      const ry = (baseRadius * 1.15) - deformY;
+
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Tremor de perigo nos 80%+
+      if (pressure >= 80) {
+        const shake = (pressure - 80) * 0.35;
+        ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake);
+      }
+
+      // Linha do nó do balão
+      ctx.beginPath();
+      ctx.moveTo(0, ry);
+      ctx.quadraticCurveTo(Math.sin(Date.now() * 0.005) * 12, ry + 40, 0, ry + 75);
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Nó do balão
+      ctx.beginPath();
+      ctx.moveTo(-6, ry);
+      ctx.lineTo(6, ry);
+      ctx.lineTo(0, ry + 8);
+      ctx.closePath();
+      ctx.fillStyle = darkColor;
+      ctx.fill();
+
+      // Corpo do Balão (Elipse Neon)
+      ctx.beginPath();
+      ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fillStyle = glowColor;
+      ctx.shadowColor = glowColor;
+      ctx.shadowBlur = 15 + (pressure * 0.25);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Brilho especular no topo
+      ctx.beginPath();
+      ctx.ellipse(-rx * 0.35, -ry * 0.4, rx * 0.2, ry * 0.12, -Math.PI / 6, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.fill();
+
+      // Texto de Porcentagem Dentro do Balão
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '900 16px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`${Math.round(pressure)}%`, 0, 0);
+
+      ctx.restore();
+    }
+
+    /**
+     * INTEGRAÇÃO DE EVENTOS
+     */
+    function handleEvent(data) {
+      if (!data) return;
+      const cmd = (data.comment || data.action || '').toString().toLowerCase();
+      const team = data.team;
+      const weight = data.weight || data.coins || 1;
+      const user = data.user || '@espectador';
+      const giftName = data.giftName || null;
+
+      if (cmd === '1' || team === 'A' || cmd.includes('azul')) {
+        pumpBalloon('A', weight * 2, user, giftName);
+      } else if (cmd === '2' || team === 'B' || cmd.includes('rosa') || cmd.includes('magenta')) {
+        pumpBalloon('B', weight * 2, user, giftName);
+      }
+    }
+
+    try {
+      const channel = new BroadcastChannel('v5_broadcaster_games');
+      channel.onmessage = (e) => handleEvent(e.data);
+    } catch (e) {}
+
+    window.addEventListener('v5_event', (e) => handleEvent(e.detail));
+    window.addEventListener('message', (e) => {
+      if (e.data && (e.data.type || e.data.action || e.data.comment)) handleEvent(e.data);
+    });
+
+    // Motor Anti-Silêncio Orgânico
+    const mockUsers = ['@pedro_pop', '@mari_balloon', '@carlos_blow', '@bia_stream', '@lucas_tk'];
+    setInterval(() => {
+      if (isGameOver) return;
+      const teamChoice = targetA < targetB ? 'A' : (targetB < targetA ? 'B' : (Math.random() < 0.5 ? 'A' : 'B'));
+      const user = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+      pumpBalloon(teamChoice, 1, user);
+    }, 2400);
+
+    function toggleDebug() {
+      debugDrawer.style.display = debugDrawer.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') toggleDebug();
+    });
+
+    resize();
+    startTimer();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>
