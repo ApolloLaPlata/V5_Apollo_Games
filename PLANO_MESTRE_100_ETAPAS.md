@@ -161,7 +161,7 @@
 - [x] **Etapa 087:** Forjamento do Cartucho #32: Corte de Frutas Neon (Objetos voando na tela sendo fatiados por raios disparados conforme o volume do chat).
 - [x] **Etapa 088:** Forjamento do Cartucho #33: Corrida de Cavalos Retrô (Apostas em 4 cavalos com narrador sonoro e arrancadas espetaculares por presentes).
 - [x] **Etapa 089:** Forjamento do Cartucho #34: Pinball Galáctico (Mesa vertical completa com bumpers luminosos e buracos de bônus cósmicos).
-- [ ] **Etapa 090:** Forjamento do Cartucho #35: Quiz Frenético da Holding (Perguntas rápidas com 4 opções e votação em barra percentual ao vivo).
+- [x] **Etapa 090:** Forjamento do Cartucho #35: Quiz Frenético da Holding (Perguntas rápidas com 4 opções e votação em barra percentual ao vivo).
 
 ---
 

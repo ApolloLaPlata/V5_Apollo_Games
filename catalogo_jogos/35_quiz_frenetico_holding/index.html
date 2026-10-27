@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Quiz Frenético da Holding (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container Vertical 9:16 Estrito */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 20%, #0f172a 0%, #030712 90%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+    }
+
+    /* Safe Zone Topo (140px) */
+    .top-safe-zone {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 140px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 16px 8px 16px;
+      background: linear-gradient(180deg, rgba(3, 7, 18, 0.98) 0%, rgba(3, 7, 18, 0.85) 75%, rgba(3, 7, 18, 0) 100%);
+      pointer-events: none;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-pill {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #38bdf8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+      animation: pulseDot 1.5s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .round-timer-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-weight: 800;
+      font-size: 13px;
+      color: #f8fafc;
+    }
+
+    .timer-val {
+      color: #38bdf8;
+    }
+
+    /* Placar de Progresso da Bateria */
+    .quiz-hud-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 10px;
+      padding: 6px 12px;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+
+    .quiz-progress-text {
+      font-size: 11px;
+      font-weight: 800;
+      font-family: monospace;
+      color: #38bdf8;
+    }
+
+    .score-total-val {
+      font-size: 14px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #ffd700;
+    }
+
+    .multiplier-tag {
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    /* Canvas Central para Efeitos de Fundo & Confetes */
+    #fx-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    /* Área Central do Quiz */
+    .quiz-stage-body {
+      position: absolute;
+      top: 145px;
+      bottom: 185px;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px 20px;
+    }
+
+    /* Card da Pergunta */
+    .question-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 2px solid rgba(56, 189, 248, 0.5);
+      border-radius: 16px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .question-category {
+      font-size: 10px;
+      font-weight: 900;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    .question-title {
+      font-size: 19px;
+      font-weight: 900;
+      line-height: 1.35;
+      color: #ffffff;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Barra de Tempo da Pergunta Atual */
+    .question-timer-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .question-timer-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #38bdf8, #ef4444);
+      transition: width 0.1s linear;
+      box-shadow: 0 0 10px #38bdf8;
+    }
+
+    /* Grid das 4 Opções com Barras Percentuais */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .option-card {
+      position: relative;
+      height: 72px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .option-card.eliminated {
+      opacity: 0.3;
+      filter: grayscale(1);
+      border-color: #ef4444 !important;
+      text-decoration: line-through;
+    }
+
+    .option-card.correct-highlight {
+      border-color: #ffd700 !important;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.8) !important;
+      animation: pulseCorrect 0.8s infinite alternate;
+    }
+
+    @keyframes pulseCorrect {
+      from { transform: scale(1); }
+      to { transform: scale(1.02); }
+    }
+
+    .option-card.o1 { border-color: rgba(0, 240, 255, 0.4); }
+    .option-card.o2 { border-color: rgba(255, 0, 85, 0.4); }
+    .option-card.o3 { border-color: rgba(255, 215, 0, 0.4); }
+    .option-card.o4 { border-color: rgba(0, 255, 136, 0.4); }
+
+    /* Barra de Preenchimento Percentual */
+    .option-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      opacity: 0.25;
+      transition: width 0.3s ease-out;
+      z-index: 1;
+    }
+
+    .o1 .option-fill { background: #00f0ff; }
+    .o2 .option-fill { background: #ff0055; }
+    .o3 .option-fill { background: #ffd700; }
+    .o4 .option-fill { background: #00ff88; }
+
+    .option-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .option-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .option-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #030712;
+      flex-shrink: 0;
+    }
+
+    .o1 .option-badge { background: #00f0ff; box-shadow: 0 0 10px #00f0ff; }
+    .o2 .option-badge { background: #ff0055; box-shadow: 0 0 10px #ff0055; }
+    .o3 .option-badge { background: #ffd700; box-shadow: 0 0 10px #ffd700; }
+    .o4 .option-badge { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
+
+    .option-text {
+      font-size: 14px;
+      font-weight: 800;
+      color: #f8fafc;
+      text-align: left;
+    }
+
+    .option-stats {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      font-family: monospace;
+    }
+
+    .option-pct {
+      font-size: 18px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .option-votes-count {
+      font-size: 9px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    /* Safe Zone Base (180px) */
+    .bottom-safe-zone {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 180px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 10px 14px;
+      background: linear-gradient(0deg, rgba(3, 7, 18, 0.98) 0%, rgba(3, 7, 18, 0.85) 65%, rgba(3, 7, 18, 0) 100%);
+      pointer-events: none;
+      gap: 8px;
+    }
+
+    /* Comandos do Chat */
+    .chat-commands-box {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      pointer-events: auto;
+    }
+
+    .cmd-btn {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 6px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .cmd-btn:active {
+      transform: scale(0.95);
+    }
+
+    .cmd-btn.c1 { border-color: #00f0ff; color: #00f0ff; }
+    .cmd-btn.c2 { border-color: #ff0055; color: #ff0055; }
+    .cmd-btn.c3 { border-color: #ffd700; color: #ffd700; }
+    .cmd-btn.c4 { border-color: #00ff88; color: #00ff88; }
+
+    .cmd-key {
+      font-size: 13px;
+      font-weight: 900;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    .cmd-label {
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+      white-space: nowrap;
+    }
+
+    /* Barra de Gifts */
+    .gifts-reward-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px dashed rgba(56, 189, 248, 0.4);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 9px;
+      color: #f1f5f9;
+      pointer-events: auto;
+    }
+
+    .gift-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+    }
+
+    .gift-icon {
+      font-size: 13px;
+    }
+
+    .gift-effect {
+      color: #38bdf8;
+      font-weight: 800;
+    }
+
+    /* Modal de Vitória / Conclusão da Bateria */
+    #victory-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 50;
+      background: rgba(3, 7, 18, 0.94);
+      backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .podium-box {
+      width: 100%;
+      max-width: 340px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid #38bdf8;
+      border-radius: 16px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 0 40px rgba(56, 189, 248, 0.35);
+      animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .trophy-badge {
+      font-size: 52px;
+      filter: drop-shadow(0 0 16px #ffd700);
+      animation: floatTrophy 2s infinite ease-in-out;
+    }
+
+    @keyframes floatTrophy {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .winner-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .iq-score-badge {
+      font-size: 13px;
+      font-family: monospace;
+      color: #00ff88;
+      font-weight: 800;
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      padding: 4px 12px;
+      border-radius: 999px;
+    }
+
+    .final-score-val {
+      font-size: 26px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #ffd700;
+    }
+
+    .mvp-donor-card {
+      width: 100%;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .reset-countdown {
+      font-size: 12px;
+      color: #94a3b8;
+      font-family: monospace;
+    }
+
+    /* Painel de Depuração Local do Streamer (Tecla D) */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(3, 7, 18, 0.98);
+      border-top: 2px solid #38bdf8;
+      padding: 12px;
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.8);
+    }
+
+    .debug-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #38bdf8;
+      font-family: monospace;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .dbg-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-radius: 4px;
+      padding: 6px 2px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Safe Zone Topo (140px) -->
+    <header class="top-safe-zone">
+      <div class="header-row">
+        <div class="brand-pill">
+          <span class="live-dot"></span>
+          <span>V5 QUIZ FRENÉTICO 9:16</span>
+        </div>
+        <div class="round-timer-badge">
+          <span>TEMPO TOTAL:</span>
+          <span class="timer-val" id="time-display">00:45</span>
+        </div>
+      </div>
+
+      <!-- Placar de Progresso da Bateria -->
+      <div class="quiz-hud-strip">
+        <span class="quiz-progress-text" id="quiz-round-indicator">PERGUNTA 1/4</span>
+        <div class="multiplier-tag" id="multiplier-tag">1x COMBO</div>
+        <span class="score-total-val" id="score-total-display">000.000 PTS</span>
+      </div>
+    </header>
+
+    <!-- Canvas de Efeitos (Faíscas & Confetes) -->
+    <canvas id="fx-canvas" width="1080" height="1920"></canvas>
+
+    <!-- Palco Central da Pergunta e Respostas -->
+    <main class="quiz-stage-body">
+      <!-- Card da Pergunta -->
+      <section class="question-card">
+        <div class="question-category" id="q-category">TECNOLOGIA & GAMES</div>
+        <div class="question-title" id="q-title">Qual é o protocolo de transmissão padrão usado pelo ecossistema V5 Broadcaster?</div>
+        
+        <!-- Barra de Contagem da Pergunta Atual -->
+        <div class="question-timer-bar-wrap">
+          <div class="question-timer-bar-fill" id="q-timer-fill"></div>
+        </div>
+      </section>
+
+      <!-- Grid das 4 Opções -->
+      <section class="options-grid">
+        <!-- Opção 1 / A -->
+        <div class="option-card o1" id="card-0" onclick="handleVote(0, '@teste')">
+          <div class="option-fill" id="fill-0"></div>
+          <div class="option-content">
+            <div class="option-left">
+              <div class="option-badge">1</div>
+              <div class="option-text" id="text-0">RTMP & SRT Ultra-Low Latency</div>
+            </div>
+            <div class="option-stats">
+              <span class="option-pct" id="pct-0">0%</span>
+              <span class="option-votes-count" id="votes-0">0 votos</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Opção 2 / B -->
+        <div class="option-card o2" id="card-1" onclick="handleVote(1, '@teste')">
+          <div class="option-fill" id="fill-1"></div>
+          <div class="option-content">
+            <div class="option-left">
+              <div class="option-badge">2</div>
+              <div class="option-text" id="text-1">Dial-Up Modem 56kbps</div>
+            </div>
+            <div class="option-stats">
+              <span class="option-pct" id="pct-1">0%</span>
+              <span class="option-votes-count" id="votes-1">0 votos</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Opção 3 / C -->
+        <div class="option-card o3" id="card-2" onclick="handleVote(2, '@teste')">
+          <div class="option-fill" id="fill-2"></div>
+          <div class="option-content">
+            <div class="option-left">
+              <div class="option-badge">3</div>
+              <div class="option-text" id="text-2">Pombo Correio Digital</div>
+            </div>
+            <div class="option-stats">
+              <span class="option-pct" id="pct-2">0%</span>
+              <span class="option-votes-count" id="votes-2">0 votos</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Opção 4 / D -->
+        <div class="option-card o4" id="card-3" onclick="handleVote(3, '@teste')">
+          <div class="option-fill" id="fill-3"></div>
+          <div class="option-content">
+            <div class="option-left">
+              <div class="option-badge">4</div>
+              <div class="option-text" id="text-3">Disquete de 3.5 polegadas</div>
+            </div>
+            <div class="option-stats">
+              <span class="option-pct" id="pct-3">0%</span>
+              <span class="option-votes-count" id="votes-3">0 votos</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Safe Zone Base (180px) -->
+    <footer class="bottom-safe-zone">
+      <!-- Comandos do Chat -->
+      <div class="chat-commands-box">
+        <button class="cmd-btn c1" onclick="handleVote(0, '@teste')">
+          <span class="cmd-key">1</span>
+          <span class="cmd-label">Opção A</span>
+        </button>
+        <button class="cmd-btn c2" onclick="handleVote(1, '@teste')">
+          <span class="cmd-key">2</span>
+          <span class="cmd-label">Opção B</span>
+        </button>
+        <button class="cmd-btn c3" onclick="handleVote(2, '@teste')">
+          <span class="cmd-key">3</span>
+          <span class="cmd-label">Opção C</span>
+        </button>
+        <button class="cmd-btn c4" onclick="handleVote(3, '@teste')">
+          <span class="cmd-key">4</span>
+          <span class="cmd-label">Opção D</span>
+        </button>
+      </div>
+
+      <!-- Gifts de Impacto -->
+      <div class="gifts-reward-bar">
+        <div class="gift-item">
+          <span class="gift-icon">🌹</span>
+          <span>Rosa (Rose): <span class="gift-effect">Super Dica 50/50 (Elimina 2)</span></span>
+        </div>
+        <div class="gift-item">
+          <span class="gift-icon">🦁</span>
+          <span>Leão (Lion): <span class="gift-effect">Oráculo Dourado + Combo 5x</span></span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Modal de Vitória e Fim de Rodada -->
+    <div id="victory-modal">
+      <div class="podium-box">
+        <div class="trophy-badge">🧠</div>
+        <div class="winner-title">QUIZ CONCLUÍDO!</div>
+        <div class="iq-score-badge" id="podium-iq-score">QI COLETIVO DA LIVE: 146</div>
+        <div class="final-score-val" id="podium-final-score">125.000 PTS</div>
+
+        <div class="mvp-donor-card">
+          <span style="color:#ffd700; font-weight:800;">👑 GÊNIO DA LIVE:</span>
+          <span id="podium-mvp-user" style="font-weight:900; color:#fff;">@NerdSupremo (480 pts)</span>
+        </div>
+
+        <div class="reset-countdown" id="podium-countdown">NOVO QUIZ EM 5S...</div>
+      </div>
+    </div>
+
+    <!-- Painel de Depuração Local do Streamer (Tecla D) -->
+    <div id="debug-drawer">
+      <div class="debug-header">
+        <span>GAVETA DE DEPURAÇÃO DO STREAMER (TECLA D)</span>
+        <button onclick="toggleDebugDrawer()" style="background:none; border:none; color:#f43f5e; font-size:12px; cursor:pointer;">FECHAR [X]</button>
+      </div>
+      <div class="debug-grid">
+        <button class="dbg-btn" onclick="handleVote(0, '@streamer')">Voto Opção 1</button>
+        <button class="dbg-btn" onclick="handleVote(1, '@streamer')">Voto Opção 2</button>
+        <button class="dbg-btn" onclick="handleVote(2, '@streamer')">Voto Opção 3</button>
+        <button class="dbg-btn" onclick="handleVote(3, '@streamer')">Voto Opção 4</button>
+      </div>
+      <div class="debug-grid" style="margin-top:4px;">
+        <button class="dbg-btn" style="background:#0284c7;" onclick="triggerFiftyFifty('@streamer')">Dica 50/50 (Rosa)</button>
+        <button class="dbg-btn" style="background:#d97706;" onclick="triggerGoldenOracle('@streamer')">Oráculo 5x (Leão)</button>
+        <button class="dbg-btn" style="background:#e11d48;" onclick="resolveQuestion()">Revelar Certa</button>
+        <button class="dbg-btn" style="background:#16a34a;" onclick="finalizeQuiz()">Finalizar Bateria</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE: QUIZ FRENÉTICO DA HOLDING (9:16 VERTICAL ENGINE)
+       Holding V5 Apollo — Capitania V5 Games
+       Conformidade Estrita com as 5 Leis Absolutas do Cartucho V5
+       ========================================================================== */
+
+    // --- LEI 4: SINTETIZADOR DE ÁUDIO PROCEDURAL (WEB AUDIO API PURA) ---
+    class ProceduralAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.init();
+      }
+
+      init() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
+      }
+
+      ensureContext() {
+        if (!this.ctx) this.init();
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Tique-taque tenso de contagem regressiva
+      playClockTick(isUrgent = false) {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = isUrgent ? 'sawtooth' : 'sine';
+        osc.frequency.setValueAtTime(isUrgent ? 880 : 540, now);
+
+        gain.gain.setValueAtTime(isUrgent ? 0.22 : 0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + (isUrgent ? 0.08 : 0.04));
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.09);
+      }
+
+      // Som de voto registrado
+      playVoteBlip() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(420 + Math.random() * 200, now);
+        osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.07);
+      }
+
+      // Fanfarra de Resposta Correta (Acorde Maior)
+      playCorrectAnswer() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const notes = [
+          { f: 523.25, d: 0.12 }, // C5
+          { f: 659.25, d: 0.12 }, // E5
+          { f: 783.99, d: 0.15 }, // G5
+          { f: 1046.50, d: 0.4 }  // C6
+        ];
+
+        let currTime = this.ctx.currentTime + 0.02;
+        notes.forEach(n => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(n.f, currTime);
+
+          gain.gain.setValueAtTime(0, currTime);
+          gain.gain.linearRampToValueAtTime(0.28, currTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, currTime + n.d);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(currTime);
+          osc.stop(currTime + n.d + 0.03);
+          currTime += n.d + 0.02;
+        });
+      }
+
+      // Tom de Resposta Errada (Tom Menor Descendente)
+      playWrongAnswer() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(280, now);
+        osc.frequency.exponentialRampToValueAtTime(110, now + 0.35);
+
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.42);
+      }
+
+      // Super Dica 50/50 (Laser Desintegrador de Erradas)
+      playFiftyFiftySound() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(950, now);
+        osc.frequency.exponentialRampToValueAtTime(220, now + 0.25);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+
+      // Oráculo Dourado / Leão 5x
+      playGoldenOracleSound() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const notes = [
+          { f: 440.00, d: 0.1 },
+          { f: 554.37, d: 0.1 },
+          { f: 659.25, d: 0.1 },
+          { f: 880.00, d: 0.35 }
+        ];
+
+        let currTime = this.ctx.currentTime + 0.02;
+        notes.forEach(n => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(n.f, currTime);
+
+          gain.gain.setValueAtTime(0, currTime);
+          gain.gain.linearRampToValueAtTime(0.3, currTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, currTime + n.d);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(currTime);
+          osc.stop(currTime + n.d + 0.03);
+          currTime += n.d + 0.02;
+        });
+      }
+
+      // Fanfarra Final da Bateria
+      playVictoryFanfare() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const notes = [
+          { f: 523.25, d: 0.15 },
+          { f: 659.25, d: 0.15 },
+          { f: 783.99, d: 0.15 },
+          { f: 1046.50, d: 0.55 }
+        ];
+
+        let currTime = this.ctx.currentTime + 0.05;
+        notes.forEach(n => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(n.f, currTime);
+
+          gain.gain.setValueAtTime(0, currTime);
+          gain.gain.linearRampToValueAtTime(0.3, currTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, currTime + n.d);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(currTime);
+          osc.stop(currTime + n.d + 0.05);
+          currTime += n.d + 0.04;
+        });
+      }
+    }
+
+    const audio = new ProceduralAudioEngine();
+
+    // --- BANCO DE PERGUNTAS DO QUIZ (TECNOLOGIA, GAMES & HOLDING) ---
+    const QUESTION_BANK = [
+      {
+        category: "TECNOLOGIA & GAMES",
+        question: "Qual protocolo nativo de baixa latência conecta os jogos V5 ao OBS Broadcaster?",
+        options: ["BroadcastChannel & CustomEvents", "FTP com disquete", "Sinal de Fumaça Wi-Fi", "Fax Modem 28k"],
+        correct: 0
+      },
+      {
+        category: "CULTURA POP & INTERNET",
+        question: "Em qual proporção vertical estrita todo cartucho da Capitania V5 deve ser forjado?",
+        options: ["16:9 Cinema Wide", "4:3 Tubo Retrô", "9:16 Vertical Live", "1:1 Instagram Post"],
+        correct: 2
+      },
+      {
+        category: "GAME DESIGN RETRÔ",
+        question: "Qual API do navegador permite sintetizar áudio 100% puro sem usar arquivos .mp3?",
+        options: ["Flash Player 8", "Web Audio API", "QuickTime Plugin", "DirectX 9c"],
+        correct: 1
+      },
+      {
+        category: "HOLDING V5 APOLLO",
+        question: "Qual o limite máximo de inatividade antes do Motor Anti-Silêncio injetar interações?",
+        options: ["10 minutos", "Menos de 3 segundos", "30 segundos", "1 hora"],
+        correct: 1
+      },
+      {
+        category: "CURIOSIDADES GAMER",
+        question: "No clássico Pacman de 1980, qual era o nome do fantasma vermelho?",
+        options: ["Blinky", "Pinky", "Inky", "Clyde"],
+        correct: 0
+      },
+      {
+        category: "ENGENHARIA DE TRANSMISSÃO",
+        question: "Qual das seguintes áreas deve ser preservada livre de elementos críticos no TikTok?",
+        options: ["Apenas o centro", "Safe Zone Topo (140px) & Base (180px)", "Toda a lateral direita", "Apenas 10px da margem"],
+        correct: 1
+      }
+    ];
+
+    // --- ESTADO GERAL DO QUIZ ---
+    const TOTAL_QUIZ_TIME = 45;
+    const SECONDS_PER_QUESTION = 10;
+    const QUESTIONS_PER_ROUND = 4;
+
+    const state = {
+      roundActive: true,
+      timeRemaining: TOTAL_QUIZ_TIME,
+      questionTimer: SECONDS_PER_QUESTION,
+      questionIndex: 0,
+      currentQuestion: null,
+      score: 0,
+      comboMultiplier: 1,
+      votes: [0, 0, 0, 0],
+      eliminatedOptions: [],
+      revealed: false,
+      resetCountdown: 5,
+      lastInteractionTime: performance.now(),
+      donors: {},
+      confetti: [],
+      particles: [],
+      roundQuestions: []
+    };
+
+    const canvas = document.getElementById('fx-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function initQuiz() {
+      state.roundActive = true;
+      state.timeRemaining = TOTAL_QUIZ_TIME;
+      state.score = 0;
+      state.comboMultiplier = 1;
+      state.questionIndex = 0;
+      state.resetCountdown = 5;
+      state.donors = {};
+      state.confetti = [];
+      state.particles = [];
+      document.getElementById('victory-modal').style.display = 'none';
+
+      // Embaralha e seleciona 4 perguntas
+      const shuffled = [...QUESTION_BANK].sort(() => 0.5 - Math.random());
+      state.roundQuestions = shuffled.slice(0, QUESTIONS_PER_ROUND);
+
+      loadQuestion(0);
+    }
+
+    function loadQuestion(index) {
+      if (index >= state.roundQuestions.length) {
+        finalizeQuiz();
+        return;
+      }
+
+      state.questionIndex = index;
+      state.currentQuestion = state.roundQuestions[index];
+      state.questionTimer = SECONDS_PER_QUESTION;
+      state.votes = [0, 0, 0, 0];
+      state.eliminatedOptions = [];
+      state.revealed = false;
+
+      // Atualiza DOM
+      document.getElementById('quiz-round-indicator').innerText = 
+        `PERGUNTA ${index + 1}/${state.roundQuestions.length}`;
+      document.getElementById('q-category').innerText = state.currentQuestion.category;
+      document.getElementById('q-title').innerText = state.currentQuestion.question;
+
+      for (let i = 0; i < 4; i++) {
+        document.getElementById(`text-${i}`).innerText = state.currentQuestion.options[i];
+        const card = document.getElementById(`card-${i}`);
+        card.classList.remove('eliminated', 'correct-highlight');
+        updateOptionHUD(i, 0, 0);
+      }
+    }
+
+    // --- PROCESSAMENTO DE VOTOS & COMANDOS DO CHAT ---
+    function handleVote(optionIndex, user) {
+      if (!state.roundActive || state.revealed || optionIndex < 0 || optionIndex > 3) return;
+      if (state.eliminatedOptions.includes(optionIndex)) return; // Opção eliminada
+
+      state.lastInteractionTime = performance.now();
+      state.votes[optionIndex]++;
+
+      const userKey = user || "@espectador";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 10;
+
+      audio.playVoteBlip();
+      recalculatePercentages();
+    }
+
+    function recalculatePercentages() {
+      const total = state.votes.reduce((a, b) => a + b, 0);
+      for (let i = 0; i < 4; i++) {
+        const count = state.votes[i];
+        const pct = (total === 0) ? 0 : Math.round((count / total) * 100);
+        updateOptionHUD(i, pct, count);
+      }
+    }
+
+    function updateOptionHUD(index, pct, count) {
+      document.getElementById(`pct-${index}`).innerText = `${pct}%`;
+      document.getElementById(`votes-${index}`).innerText = `${count} votos`;
+      document.getElementById(`fill-${index}`).style.width = `${pct}%`;
+    }
+
+    // --- SUPER GIFTS: 50/50 & ORÁCULO DOURADO ---
+    function triggerFiftyFifty(user) {
+      if (!state.roundActive || state.revealed) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@super_donor";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 200;
+
+      audio.playFiftyFiftySound();
+
+      // Elimina 2 opções incorretas aleatórias
+      const wrongIndices = [0, 1, 2, 3].filter(i => i !== state.currentQuestion.correct && !state.eliminatedOptions.includes(i));
+      const toEliminate = wrongIndices.sort(() => 0.5 - Math.random()).slice(0, 2);
+
+      toEliminate.forEach(idx => {
+        state.eliminatedOptions.push(idx);
+        document.getElementById(`card-${idx}`).classList.add('eliminated');
+      });
+
+      recalculatePercentages();
+    }
+
+    function triggerGoldenOracle(user) {
+      if (!state.roundActive || state.revealed) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@oraculo_vip";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 1000;
+
+      // Multiplicador 5x imediato e destaque na opção correta
+      state.comboMultiplier = 5;
+      document.getElementById('multiplier-tag').innerText = `5x LEÃO DOURADO`;
+      document.getElementById('multiplier-tag').style.background = 'linear-gradient(135deg, #ffd700, #f59e0b)';
+
+      audio.playGoldenOracleSound();
+
+      // Acende a resposta certa com aura dourada
+      const correctIdx = state.currentQuestion.correct;
+      document.getElementById(`card-${correctIdx}`).classList.add('correct-highlight');
+
+      // Votos bônus do oráculo
+      state.votes[correctIdx] += 15;
+      recalculatePercentages();
+    }
+
+    // --- LEI 3: MOTOR ANTI-SILÊNCIO (< 3s) ---
+    const MOCK_USERS = [
+      "@nerd_live", "@sabichao99", "@prof_quiz", 
+      "@palpiteiro_br", "@holding_fan", "@astro_nerd"
+    ];
+
+    function runAntiSilence() {
+      const now = performance.now();
+      if (now - state.lastInteractionTime > 2200 && state.roundActive && !state.revealed) {
+        state.lastInteractionTime = now;
+        const randomUser = MOCK_USERS[Math.floor(Math.random() * MOCK_USERS.length)];
+
+        // 70% de chance de votar na correta, 30% em alternativas para dinamismo
+        const targetOption = (Math.random() < 0.7) 
+          ? state.currentQuestion.correct 
+          : Math.floor(Math.random() * 4);
+
+        if (!state.eliminatedOptions.includes(targetOption)) {
+          handleVote(targetOption, randomUser);
+        }
+
+        // 12% de chance de acionar a Super Dica 50/50
+        if (Math.random() < 0.12 && state.eliminatedOptions.length === 0) {
+          triggerFiftyFifty(randomUser);
+        }
+      }
+    }
+
+    // --- RESOLUÇÃO DA PERGUNTA & TRANSIÇÃO ---
+    function resolveQuestion() {
+      if (state.revealed) return;
+      state.revealed = true;
+
+      const correctIdx = state.currentQuestion.correct;
+      const card = document.getElementById(`card-${correctIdx}`);
+      card.classList.add('correct-highlight');
+
+      // Verifica se a maioria acertou
+      let maxVotes = -1;
+      let winningOption = 0;
+      state.votes.forEach((v, idx) => {
+        if (v > maxVotes) {
+          maxVotes = v;
+          winningOption = idx;
+        }
+      });
+
+      if (winningOption === correctIdx) {
+        audio.playCorrectAnswer();
+        const pts = 25000 * state.comboMultiplier;
+        state.score += pts;
+        spawnConfetti();
+      } else {
+        audio.playWrongAnswer();
+      }
+
+      document.getElementById('score-total-display').innerText = 
+        `${Math.floor(state.score).toLocaleString('pt-BR')} PTS`;
+
+      // Pausa de 3.5 segundos para leitura antes da próxima pergunta
+      setTimeout(() => {
+        if (state.roundActive) {
+          loadQuestion(state.questionIndex + 1);
+        }
+      }, 3500);
+    }
+
+    function finalizeQuiz() {
+      if (!state.roundActive) return;
+      state.roundActive = false;
+
+      audio.playVictoryFanfare();
+      spawnConfetti();
+
+      // Determina MVP do chat
+      let topUser = "@GênioDoQuiz";
+      let topPts = 180;
+      for (const [u, pts] of Object.entries(state.donors)) {
+        if (pts > topPts) {
+          topPts = pts;
+          topUser = u;
+        }
+      }
+
+      const collectiveIQ = 120 + Math.floor(Math.min(state.score / 2000, 40));
+      document.getElementById('podium-iq-score').innerText = `QI COLETIVO DA LIVE: ${collectiveIQ}`;
+      document.getElementById('podium-final-score').innerText = 
+        `${Math.floor(state.score).toLocaleString('pt-BR')} PTS`;
+      document.getElementById('podium-mvp-user').innerText = `${topUser} (${topPts} pts)`;
+      document.getElementById('victory-modal').style.display = 'flex';
+    }
+
+    // --- LOOP PRINCIPAL & ATUALIZAÇÃO ---
+    let lastTimestamp = performance.now();
+
+    function updateGame(dt) {
+      runAntiSilence();
+
+      if (state.roundActive) {
+        // Redução do timer total do parêo
+        state.timeRemaining -= dt;
+        if (state.timeRemaining <= 0) {
+          state.timeRemaining = 0;
+          finalizeQuiz();
+        }
+
+        // Redução do timer da pergunta atual
+        if (!state.revealed) {
+          state.questionTimer -= dt;
+          const pct = Math.max(0, (state.questionTimer / SECONDS_PER_QUESTION) * 100);
+          document.getElementById('q-timer-fill').style.width = `${pct}%`;
+
+          // Tique-taque sonoro
+          if (state.questionTimer <= 3.5 && state.questionTimer > 0) {
+            if (Math.random() < 0.15) {
+              audio.playClockTick(true);
+            }
+          }
+
+          if (state.questionTimer <= 0) {
+            resolveQuestion();
+          }
+        }
+
+        // Timer HUD
+        const min = Math.floor(state.timeRemaining / 60);
+        const sec = Math.floor(state.timeRemaining % 60);
+        document.getElementById('time-display').innerText = 
+          `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+      } else {
+        // Reset pós-bateria
+        state.resetCountdown -= dt;
+        const countdownEl = document.getElementById('podium-countdown');
+        if (countdownEl) {
+          countdownEl.innerText = `NOVO QUIZ EM ${Math.ceil(state.resetCountdown)}S...`;
+        }
+        if (state.resetCountdown <= 0) {
+          initQuiz();
+        }
+      }
+
+      // Atualiza Confetes
+      for (let i = state.confetti.length - 1; i >= 0; i--) {
+        const c = state.confetti[i];
+        c.y += c.vy;
+        c.x += c.vx;
+        c.rot += c.rotSpeed;
+        if (c.y > 1920) c.y = -20;
+      }
+    }
+
+    function spawnConfetti() {
+      const colors = ['#00f0ff', '#ff0055', '#ffd700', '#00ff88', '#a855f7', '#ffffff'];
+      for (let i = 0; i < 80; i++) {
+        state.confetti.push({
+          x: Math.random() * 1080,
+          y: Math.random() * 600,
+          vx: (Math.random() - 0.5) * 6,
+          vy: Math.random() * 5 + 3,
+          rot: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 12,
+          w: Math.random() * 12 + 8,
+          h: Math.random() * 6 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1.0
+        });
+      }
+    }
+
+    function renderFX() {
+      ctx.clearRect(0, 0, 1080, 1920);
+
+      // Renderiza Confetes
+      state.confetti.forEach(c => {
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate((c.rot * Math.PI) / 180);
+        ctx.fillStyle = c.color;
+        ctx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+        ctx.restore();
+      });
+    }
+
+    function gameLoop(timestamp) {
+      const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.1);
+      lastTimestamp = timestamp;
+
+      updateGame(dt);
+      renderFX();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // --- PROTOCOLO DE EVENTOS DO BROADCASTER & SDK ---
+    function initEventBus() {
+      try {
+        const channel = new BroadcastChannel('v5_broadcaster_games');
+        channel.onmessage = (event) => {
+          handleIncomingEvent(event.data);
+        };
+      } catch (e) {
+        console.warn("BroadcastChannel não suportado");
+      }
+
+      window.addEventListener('v5_event', (e) => {
+        if (e.detail) handleIncomingEvent(e.detail);
+      });
+    }
+
+    function handleIncomingEvent(payload) {
+      if (!payload) return;
+
+      const type = payload.type;
+      const comment = (payload.comment || "").toString().toLowerCase().trim();
+      const user = payload.user || "@espectador";
+      const giftName = payload.giftName || null;
+
+      // Parsing de Comentários / Votos (1, 2, 3, 4 / A, B, C, D)
+      if (type === 'comment' || comment) {
+        if (comment === '1' || comment === 'a' || comment.includes('opcao 1') || comment.includes('opcao a')) {
+          handleVote(0, user);
+        } else if (comment === '2' || comment === 'b' || comment.includes('opcao 2') || comment.includes('opcao b')) {
+          handleVote(1, user);
+        } else if (comment === '3' || comment === 'c' || comment.includes('opcao 3') || comment.includes('opcao c')) {
+          handleVote(2, user);
+        } else if (comment === '4' || comment === 'd' || comment.includes('opcao 4') || comment.includes('opcao d')) {
+          handleVote(3, user);
+        }
+      }
+
+      // Parsing de Gifts
+      if (type === 'gift' || giftName) {
+        if (giftName === 'Lion' || giftName === 'Foguete') {
+          triggerGoldenOracle(user);
+        } else {
+          triggerFiftyFifty(user);
+        }
+      }
+    }
+
+    // --- GAVETA DE DEPURAÇÃO DO STREAMER ---
+    function toggleDebugDrawer() {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.style.display = (drawer.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        toggleDebugDrawer();
+      }
+    });
+
+    document.querySelector('.bottom-safe-zone').addEventListener('dblclick', () => {
+      toggleDebugDrawer();
+    });
+
+    // Início automático ao carregar
+    window.addEventListener('load', () => {
+      initQuiz();
+      initEventBus();
+      requestAnimationFrame(gameLoop);
+    });
+  </script>
+</body>
+</html>

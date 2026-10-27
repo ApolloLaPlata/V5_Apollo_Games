@@ -287,6 +287,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "4", "esq", "dir", "ambos", "nudge", "tilt"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "35_quiz_frenetico_holding": {
+        "name": "Quiz Frenético da Holding",
+        "category": "quiz_trivia",
+        "description": "Perguntas dinâmicas de tecnologia e games com votação de opções (1 a 4 / A a D), barras percentuais em tempo real, dica 50/50 e Oráculo 5x",
+        "commands": ["1", "2", "3", "4", "a", "b", "c", "d"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 

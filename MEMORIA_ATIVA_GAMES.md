@@ -59,6 +59,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | **32** | `32_corte_de_frutas_neon` | Corte de Frutas Neon | Frutas e bombas em arcos balísticos fatiadas por lâminas laser (setores 1-3), câmera lenta frenesi e Katana Cósmica | **HOMOLOGADO** |
 | **33** | `33_corrida_de_cavalos_retro` | Corrida de Cavalos Retrô | Disputa de turfe com 4 raias numeradas, narração dinâmica de rádio, galope procedural, minimapa e pódio | **HOMOLOGADO** |
 | **34** | `34_pinball_galactico` | Pinball Galáctico | Mesa completa 9:16 com flippers duplos de plasma, 3 bumpers estelares harmônicos, buraco negro e multi-ball | **HOMOLOGADO** |
+| **35** | `35_quiz_frenetico_holding` | Quiz Frenético da Holding | Perguntas rápidas com votação (1 a 4 / A a D), barras percentuais em tempo real, dica 50/50 e Oráculo 5x | **HOMOLOGADO** |
 
 ---
 
@@ -118,4 +119,5 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/test_cartridge_32.py`: Validação automatizada do Cartucho #32 (11/11 checks aprovados, arcos balísticos, lâminas laser por setores, câmera lenta e Katana Cósmica).
 - `scripts/test_cartridge_33.py`: Validação automatizada do Cartucho #33 (11/11 checks aprovados, hipódromo 4 raias, narração dinâmica, galope procedural, telemetria e pódio).
 - `scripts/test_cartridge_34.py`: Validação automatizada do Cartucho #34 (11/11 checks aprovados, flippers de plasma, 3 bumpers harmônicos, buraco negro e multi-ball cósmico).
-- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 35 cartuchos ativos).
+- `scripts/test_cartridge_35.py`: Validação automatizada do Cartucho #35 (11/11 checks aprovados, banco de perguntas, barras percentuais, 50/50, Oráculo 5x e QI coletivo).
+- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 36 cartuchos ativos).
