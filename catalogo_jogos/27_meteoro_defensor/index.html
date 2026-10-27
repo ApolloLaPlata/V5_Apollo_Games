@@ -601,7 +601,7 @@
 
         } catch (e) {}}
 
-      playNoise(duration, volume) {
+      playNoise(duration = 0.3, volume = 0.5) {
 
         try {
         if (!this.ctx || this.isMuted) return;
@@ -622,7 +622,7 @@
         filter.Q.setValueAtTime(1.2, this.ctx.currentTime);
 
         const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(volume, this.ctx.currentTime);
+        gain.gain.setValueAtTime(Math.min(1.0, Math.max(0.01, volume || 0.5)), this.ctx.currentTime);
         gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + duration);
 
         noise.connect(filter);

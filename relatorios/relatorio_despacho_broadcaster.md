@@ -1,6 +1,6 @@
 # RELATÓRIO DE DESPACHO E SINCRONIZAÇÃO INDUSTRIAL
 **Holding V5 Apollo — Capitania V5 Games -> V5 Broadcaster**  
-*Data de Execução:* 27/10/2026 08:39:32  
+*Data de Execução:* 27/10/2026 08:45:27  
 *Destino de Produção:* `E:\MEUS PROGRAMAS\V5_APOLLO_SITES\V5_Apollo_Broadcaster\frontend\public\games`
 
 ---
@@ -10,10 +10,10 @@
 | :--- | :--- |
 | **Total de Cartuchos Despachados** | **41 cartuchos** |
 | **Arquivos Verificados com Hash MD5** | **84 arquivos** |
-| **Volume de Dados Transferido** | **1.76 MB (1,850,232 bytes)** |
+| **Volume de Dados Transferido** | **1.76 MB (1,850,366 bytes)** |
 | **Taxa de Integridade Criptográfica (MD5 Match)** | **100.0%** |
 | **Erros / Mismatches Detectados** | **0** |
-| **Tempo Total de Processamento** | **1.78 segundos** |
+| **Tempo Total de Processamento** | **1.89 segundos** |
 | **Status da Homologação** | **HOMOLOGADO_DESPACHADO** |
 
 ---
@@ -47,8 +47,8 @@
 | 24 | `23_sobrevivencia_na_lava` | Sobrevivência na Lava | `tensao_eliminacao` | `899d79e8...` | `68896bf3...` | **VERIFIED** |
 | 25 | `24_campo_minado_neon` | Campo Minado Neon | `tabuleiro_coordenadas` | `8ee4367f...` | `a47b7420...` | **VERIFIED** |
 | 26 | `25_batalha_naval_live` | Batalha Naval da Live | `tabuleiro_coordenadas` | `eb16bc6c...` | `c3f899e6...` | **VERIFIED** |
-| 27 | `26_guerra_dos_tanques_neon` | Guerra dos Tanques Neon | `artilharia_cinematica` | `740951d1...` | `324faeb4...` | **VERIFIED** |
-| 28 | `27_meteoro_defensor` | Meteoro Defensor | `defesa_planetaria` | `074de9c4...` | `e7b4b023...` | **VERIFIED** |
+| 27 | `26_guerra_dos_tanques_neon` | Guerra dos Tanques Neon | `artilharia_cinematica` | `918e42e6...` | `324faeb4...` | **VERIFIED** |
+| 28 | `27_meteoro_defensor` | Meteoro Defensor | `defesa_planetaria` | `1c69288f...` | `e7b4b023...` | **VERIFIED** |
 | 29 | `28_labirinto_pacman_neon` | Labirinto do Pacman Neon | `arcade_navegacao` | `89631db7...` | `c7c634d0...` | **VERIFIED** |
 | 30 | `29_basquete_street_neon` | Basquete Street Neon | `esportes_fisica` | `904c6f7f...` | `2d2fff89...` | **VERIFIED** |
 | 31 | `30_gol_de_penalti_live` | Gol de Pênalti da Live | `esportes_penaltis` | `dfd26b82...` | `129e91d1...` | **VERIFIED** |

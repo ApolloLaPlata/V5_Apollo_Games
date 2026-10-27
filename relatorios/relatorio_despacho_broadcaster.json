@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-10-27T08:39:32.378876",
+  "timestamp": "2026-10-27T08:45:27.668529",
   "holding": "Holding V5 Apollo",
   "captaincy": "Capitania V5 Games",
   "destination": "E:\\MEUS PROGRAMAS\\V5_APOLLO_SITES\\V5_Apollo_Broadcaster\\frontend\\public\\games",
   "total_cartridges": 41,
   "total_files_verified": 84,
-  "total_bytes_transferred": 1850232,
+  "total_bytes_transferred": 1850366,
   "total_megabytes": 1.76,
-  "duration_seconds": 1.78,
+  "duration_seconds": 1.89,
   "md5_match_rate_percent": 100.0,
   "md5_mismatches": 0,
   "status": "HOMOLOGADO_DESPACHADO",
@@ -486,8 +486,8 @@
       "category": "artilharia_cinematica",
       "files": {
         "index.html": {
-          "md5": "740951d1109537ddc41f6d412e6cae52",
-          "size_bytes": 54911,
+          "md5": "918e42e6352d98899b8b083fc244f64f",
+          "size_bytes": 54995,
           "verified": true
         },
         "thumbnail.svg": {
@@ -504,8 +504,8 @@
       "category": "defesa_planetaria",
       "files": {
         "index.html": {
-          "md5": "074de9c449f16f45827047d4491ffbff",
-          "size_bytes": 49152,
+          "md5": "1c69288fe73e5f590c237dbad02d2a27",
+          "size_bytes": 49202,
           "verified": true
         },
         "thumbnail.svg": {

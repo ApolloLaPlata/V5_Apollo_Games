@@ -664,7 +664,7 @@
 
         } catch (e) {}}
 
-      playPowderNoise(duration, volume) {
+      playPowderNoise(duration = 0.25, volume = 0.4) {
 
         try {
         if (!this.ctx || this.isMuted) return;
@@ -685,7 +685,7 @@
         filter.frequency.exponentialRampToValueAtTime(120, this.ctx.currentTime + duration);
 
         const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(volume, this.ctx.currentTime);
+        gain.gain.setValueAtTime(Math.min(1.0, Math.max(0.01, volume || 0.4)), this.ctx.currentTime);
         gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + duration);
 
         noise.connect(filter);
@@ -1504,6 +1504,7 @@
       state.projectiles = [];
       state.particles = [];
       state.shockwaves = [];
+      floatingTexts.length = 0;
 
       updateHpUI('alpha');
       updateHpUI('omega');
