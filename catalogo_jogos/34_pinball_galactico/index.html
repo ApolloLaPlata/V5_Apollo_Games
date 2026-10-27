@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Pinball Galáctico (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container Vertical 9:16 Estrito */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 30%, #0b0f29 0%, #030712 85%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Nudge / Tilt Shake Effect */
+    .nudge-shake {
+      animation: tiltShake 0.25s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes tiltShake {
+      10%, 90% { transform: translate3d(-4px, 0, 0); }
+      20%, 80% { transform: translate3d(5px, -2px, 0); }
+      30%, 50%, 70% { transform: translate3d(-5px, 2px, 0); }
+      40%, 60% { transform: translate3d(4px, -1px, 0); }
+    }
+
+    /* Safe Zone Topo (140px) */
+    .top-safe-zone {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 140px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 16px 8px 16px;
+      background: linear-gradient(180deg, rgba(3, 7, 18, 0.96) 0%, rgba(3, 7, 18, 0.8) 75%, rgba(3, 7, 18, 0) 100%);
+      pointer-events: none;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-pill {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #38bdf8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+      animation: pulseDot 1.5s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .round-timer-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-weight: 800;
+      font-size: 13px;
+      color: #f8fafc;
+    }
+
+    .timer-val {
+      color: #38bdf8;
+    }
+
+    /* Placar Galáctico */
+    .cosmic-score-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 10px;
+      padding: 6px 12px;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
+    }
+
+    .score-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .score-title {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+    }
+
+    .score-number {
+      font-size: 20px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #38bdf8;
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+    }
+
+    .multiplier-badge {
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 900;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-family: monospace;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+      animation: pulseMulti 1.8s infinite;
+    }
+
+    @keyframes pulseMulti {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    .balls-count {
+      font-size: 11px;
+      font-family: monospace;
+      color: #a855f7;
+      font-weight: 800;
+    }
+
+    /* Canvas Central de Física do Pinball */
+    #game-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+    }
+
+    /* Safe Zone Base (180px) */
+    .bottom-safe-zone {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 180px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 10px 14px;
+      background: linear-gradient(0deg, rgba(3, 7, 18, 0.98) 0%, rgba(3, 7, 18, 0.85) 65%, rgba(3, 7, 18, 0) 100%);
+      pointer-events: none;
+      gap: 8px;
+    }
+
+    /* Botões de Comando do Chat */
+    .chat-commands-box {
+      display: grid;
+      grid-template-columns: 1.2fr 1.2fr 1fr 1fr;
+      gap: 6px;
+      pointer-events: auto;
+    }
+
+    .cmd-btn {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 8px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .cmd-btn:active {
+      transform: scale(0.95);
+    }
+
+    .cmd-btn.c1 { border-color: #00f0ff; color: #00f0ff; box-shadow: 0 0 8px rgba(0, 240, 255, 0.25); }
+    .cmd-btn.c2 { border-color: #ff0055; color: #ff0055; box-shadow: 0 0 8px rgba(255, 0, 85, 0.25); }
+    .cmd-btn.c3 { border-color: #ffd700; color: #ffd700; box-shadow: 0 0 8px rgba(255, 215, 0, 0.25); }
+    .cmd-btn.c4 { border-color: #a855f7; color: #a855f7; box-shadow: 0 0 8px rgba(168, 85, 247, 0.25); }
+
+    .cmd-key {
+      font-size: 13px;
+      font-weight: 900;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    .cmd-label {
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+      white-space: nowrap;
+    }
+
+    /* Barra de Gifts */
+    .gifts-reward-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px dashed rgba(56, 189, 248, 0.4);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 9px;
+      color: #f1f5f9;
+      pointer-events: auto;
+    }
+
+    .gift-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+    }
+
+    .gift-icon {
+      font-size: 13px;
+    }
+
+    .gift-effect {
+      color: #38bdf8;
+      font-weight: 800;
+    }
+
+    /* Modal de Vitória e Fim de Rodada */
+    #victory-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 50;
+      background: rgba(3, 7, 18, 0.92);
+      backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .podium-box {
+      width: 100%;
+      max-width: 340px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid #38bdf8;
+      border-radius: 16px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 0 40px rgba(56, 189, 248, 0.35);
+      animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .trophy-badge {
+      font-size: 52px;
+      filter: drop-shadow(0 0 16px #38bdf8);
+      animation: floatTrophy 2s infinite ease-in-out;
+    }
+
+    @keyframes floatTrophy {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .winner-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .final-score-val {
+      font-size: 28px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #ffd700;
+      text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+    }
+
+    .mvp-donor-card {
+      width: 100%;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .reset-countdown {
+      font-size: 12px;
+      color: #94a3b8;
+      font-family: monospace;
+    }
+
+    /* Painel de Depuração Local do Streamer (Tecla D) */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(3, 7, 18, 0.98);
+      border-top: 2px solid #38bdf8;
+      padding: 12px;
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.8);
+    }
+
+    .debug-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #38bdf8;
+      font-family: monospace;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .dbg-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-radius: 4px;
+      padding: 6px 2px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Safe Zone Topo (140px) -->
+    <header class="top-safe-zone">
+      <div class="header-row">
+        <div class="brand-pill">
+          <span class="live-dot"></span>
+          <span>V5 PINBALL GALÁCTICO 9:16</span>
+        </div>
+        <div class="round-timer-badge">
+          <span>MISSÃO:</span>
+          <span class="timer-val" id="time-display">00:45</span>
+        </div>
+      </div>
+
+      <!-- Placar Cósmico -->
+      <div class="cosmic-score-strip">
+        <div class="score-block">
+          <span class="score-title">PONTUAÇÃO ESTELAR</span>
+          <span class="score-number" id="score-display">000.000</span>
+        </div>
+
+        <div class="multiplier-badge" id="multiplier-badge">x1 MULTI</div>
+
+        <div class="score-block" style="align-items: flex-end;">
+          <span class="score-title">ESFERAS</span>
+          <span class="balls-count" id="balls-display">🔵 1 EM ÓRBITA</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Principal da Mesa de Pinball -->
+    <canvas id="game-canvas" width="1080" height="1920"></canvas>
+
+    <!-- Safe Zone Base (180px) -->
+    <footer class="bottom-safe-zone">
+      <!-- Comandos do Chat -->
+      <div class="chat-commands-box">
+        <button class="cmd-btn c1" onclick="activateFlipper('left', '@teste')">
+          <span class="cmd-key">1</span>
+          <span class="cmd-label">Flipper Esq</span>
+        </button>
+        <button class="cmd-btn c2" onclick="activateFlipper('right', '@teste')">
+          <span class="cmd-key">2</span>
+          <span class="cmd-label">Flipper Dir</span>
+        </button>
+        <button class="cmd-btn c3" onclick="activateFlipper('both', '@teste')">
+          <span class="cmd-key">3</span>
+          <span class="cmd-label">Ambos</span>
+        </button>
+        <button class="cmd-btn c4" onclick="triggerNudge('@teste')">
+          <span class="cmd-key">4</span>
+          <span class="cmd-label">Nudge / Tilt</span>
+        </button>
+      </div>
+
+      <!-- Gifts de Impacto -->
+      <div class="gifts-reward-bar">
+        <div class="gift-item">
+          <span class="gift-icon">🌹</span>
+          <span>Rosa (Rose): <span class="gift-effect">Multi-Ball Cósmico (+2 Esferas)</span></span>
+        </div>
+        <div class="gift-item">
+          <span class="gift-icon">🦁</span>
+          <span>Leão (Lion): <span class="gift-effect">Supernova Jackpot (500k + Vórtice)</span></span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Modal de Vitória e Pódio -->
+    <div id="victory-modal">
+      <div class="podium-box">
+        <div class="trophy-badge">🌌</div>
+        <div class="winner-title">SUPERNOVA CONCLUÍDA!</div>
+        <div class="final-score-val" id="podium-final-score">1.450.000 PTS</div>
+
+        <div class="mvp-donor-card">
+          <span style="color:#ffd700; font-weight:800;">👑 MAGO DO PINBALL:</span>
+          <span id="podium-mvp-user" style="font-weight:900; color:#fff;">@AstroPlayer (840 pts)</span>
+        </div>
+
+        <div class="reset-countdown" id="podium-countdown">NOVA MISSÃO EM 5S...</div>
+      </div>
+    </div>
+
+    <!-- Painel de Depuração Local do Streamer (Tecla D) -->
+    <div id="debug-drawer">
+      <div class="debug-header">
+        <span>GAVETA DE DEPURAÇÃO DO STREAMER (TECLA D)</span>
+        <button onclick="toggleDebugDrawer()" style="background:none; border:none; color:#f43f5e; font-size:12px; cursor:pointer;">FECHAR [X]</button>
+      </div>
+      <div class="debug-grid">
+        <button class="dbg-btn" onclick="activateFlipper('left', '@streamer')">Flipper Esquerdo</button>
+        <button class="dbg-btn" onclick="activateFlipper('right', '@streamer')">Flipper Direito</button>
+        <button class="dbg-btn" onclick="activateFlipper('both', '@streamer')">Ambos Flippers</button>
+        <button class="dbg-btn" onclick="triggerNudge('@streamer')">Nudge / Tilt</button>
+      </div>
+      <div class="debug-grid" style="margin-top:4px;">
+        <button class="dbg-btn" style="background:#0284c7;" onclick="spawnBall()">+1 Esfera</button>
+        <button class="dbg-btn" style="background:#e11d48;" onclick="triggerMultiBall('@streamer')">Multi-Ball (Gift)</button>
+        <button class="dbg-btn" style="background:#d97706;" onclick="triggerSupernovaJackpot('@streamer')">Supernova (Leão)</button>
+        <button class="dbg-btn" style="background:#16a34a;" onclick="finalizeRound()">Forçar Fim</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE: PINBALL GALÁCTICO (9:16 VERTICAL PHYSICS ENGINE)
+       Holding V5 Apollo — Capitania V5 Games
+       Conformidade Estrita com as 5 Leis Absolutas do Cartucho V5
+       ========================================================================== */
+
+    // --- LEI 4: SINTETIZADOR DE ÁUDIO PROCEDURAL (WEB AUDIO API PURA) ---
+    class ProceduralAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.init();
+      }
+
+      init() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
+      }
+
+      ensureContext() {
+        if (!this.ctx) this.init();
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Solenoide Mecânico dos Flippers com Descarga de Plasma
+      playFlipperSolenoid() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        // Impacto mecânico (onda quadrada filtrada)
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 0.05);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(450, now);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.07);
+
+        // Estalo elétrico de alta frequência
+        const snap = this.ctx.createOscillator();
+        const snapGain = this.ctx.createGain();
+        snap.type = 'sine';
+        snap.frequency.setValueAtTime(980, now);
+        snap.frequency.exponentialRampToValueAtTime(120, now + 0.04);
+        snapGain.gain.setValueAtTime(0.18, now);
+        snapGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        snap.connect(snapGain);
+        snapGain.connect(this.ctx.destination);
+        snap.start(now);
+        snap.stop(now + 0.05);
+      }
+
+      // Bumper Estelar com Harmônicos Ricos (Plink / Campainha Cósmica)
+      playBumperHit(freq = 523.25) {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.8, now + 0.03);
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.7, now + 0.22);
+
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.26);
+      }
+
+      // Slingshot / Rebote Elástico
+      playSlingshot() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.exponentialRampToValueAtTime(95, now + 0.09);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.11);
+      }
+
+      // Sucção e Teletransporte do Buraco Negro (Black Hole Gravity Well)
+      playBlackHoleSuck() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(700, now);
+        osc.frequency.exponentialRampToValueAtTime(60, now + 0.45);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1200, now);
+        filter.frequency.exponentialRampToValueAtTime(200, now + 0.45);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.52);
+      }
+
+      // Disparo de Supernova / Jackpot Cósmico
+      playSupernovaJackpot() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const notes = [
+          { f: 523.25, d: 0.1 },  // C5
+          { f: 659.25, d: 0.1 },  // E5
+          { f: 783.99, d: 0.1 },  // G5
+          { f: 1046.50, d: 0.12 },// C6
+          { f: 1318.51, d: 0.35 } // E6
+        ];
+
+        let currTime = this.ctx.currentTime + 0.05;
+        notes.forEach(n => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(n.f, currTime);
+
+          gain.gain.setValueAtTime(0, currTime);
+          gain.gain.linearRampToValueAtTime(0.28, currTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, currTime + n.d);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(currTime);
+          osc.stop(currTime + n.d + 0.05);
+          currTime += n.d + 0.03;
+        });
+      }
+
+      // Nudge / Tilt Warning Buzz
+      playNudgeBuzz() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(65, now);
+
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.13);
+      }
+    }
+
+    const audio = new ProceduralAudioEngine();
+
+    // --- CONFIGURAÇÃO DA MESA DE PINBALL (1080 x 1920) ---
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+
+    const ROUND_DURATION_SEC = 45;
+    const GRAVITY = 950; // px/s^2 orientado para baixo
+
+    const state = {
+      roundActive: true,
+      timeRemaining: ROUND_DURATION_SEC,
+      score: 0,
+      multiplier: 1,
+      balls: [],
+      particles: [],
+      sparks: [],
+      confetti: [],
+      lastInteractionTime: performance.now(),
+      resetCountdown: 5,
+      donors: {},
+      // Flippers
+      leftFlipper: {
+        pivotX: 370,
+        pivotY: 1560,
+        length: 150,
+        width: 22,
+        restAngle: Math.PI * 0.18,      // ~32 graus descendente
+        upAngle: -Math.PI * 0.16,       // ~-28 graus ascendente
+        angle: Math.PI * 0.18,
+        active: false,
+        timer: 0
+      },
+      rightFlipper: {
+        pivotX: 710,
+        pivotY: 1560,
+        length: 150,
+        width: 22,
+        restAngle: Math.PI - Math.PI * 0.18, // ~148 graus descendente
+        upAngle: Math.PI + Math.PI * 0.16,   // ~208 graus ascendente
+        angle: Math.PI - Math.PI * 0.18,
+        active: false,
+        timer: 0
+      },
+      // Bumpers Cósmicos
+      bumpers: [
+        { x: 380, y: 560, radius: 55, color: '#00f0ff', glow: 'rgba(0, 240, 255, 0.7)', freq: 523.25, hitTimer: 0 },
+        { x: 700, y: 560, radius: 55, color: '#ff0055', glow: 'rgba(255, 0, 85, 0.7)', freq: 659.25, hitTimer: 0 },
+        { x: 540, y: 760, radius: 65, color: '#ffd700', glow: 'rgba(255, 215, 0, 0.7)', freq: 783.99, hitTimer: 0 }
+      ],
+      // Buraco Negro Cósmico
+      blackHole: {
+        x: 540,
+        y: 1040,
+        radius: 48,
+        eventHorizon: 130,
+        angle: 0,
+        active: true,
+        suctionForce: 450
+      },
+      // Slingshots
+      slingshots: [
+        { p1: { x: 260, y: 1320 }, p2: { x: 320, y: 1480 }, p3: { x: 260, y: 1480 }, color: '#00f0ff', hitTimer: 0 },
+        { p1: { x: 820, y: 1320 }, p2: { x: 760, y: 1480 }, p3: { x: 820, y: 1480 }, color: '#ff0055', hitTimer: 0 }
+      ],
+      // Paredes / Guias de Inlanes e Outlanes
+      walls: [
+        // Borda Superior Arqueada
+        { x1: 140, y1: 260, x2: 940, y2: 260 },
+        // Paredes Laterais Superiores
+        { x1: 140, y1: 260, x2: 140, y2: 1250 },
+        { x1: 940, y1: 260, x2: 940, y2: 1250 },
+        // Rampas Guias Inferiores para os Flippers
+        { x1: 140, y1: 1250, x2: 370, y2: 1560 },
+        { x1: 940, y1: 1250, x2: 710, y2: 1560 },
+        // Dreno Central
+        { x1: 490, y1: 1720, x2: 590, y2: 1720 }
+      ]
+    };
+
+    function initPinball() {
+      state.roundActive = true;
+      state.timeRemaining = ROUND_DURATION_SEC;
+      state.score = 0;
+      state.multiplier = 1;
+      state.balls = [];
+      state.particles = [];
+      state.sparks = [];
+      state.confetti = [];
+      state.resetCountdown = 5;
+      document.getElementById('victory-modal').style.display = 'none';
+
+      // Lança a primeira esfera em órbita
+      spawnBall();
+    }
+
+    function spawnBall(isSuper = false) {
+      state.balls.push({
+        x: 540 + (Math.random() - 0.5) * 80,
+        y: 320,
+        vx: (Math.random() - 0.5) * 350,
+        vy: 200 + Math.random() * 150,
+        radius: isSuper ? 24 : 18,
+        color: isSuper ? '#ffd700' : '#38bdf8',
+        glow: isSuper ? 'rgba(255, 215, 0, 0.9)' : 'rgba(56, 189, 248, 0.8)',
+        isSuper: isSuper,
+        trail: []
+      });
+      updateBallsHUD();
+    }
+
+    // --- CONTROLE DOS FLIPPERS & NUDGE ---
+    function activateFlipper(side, user) {
+      if (!state.roundActive) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@flipper_hero";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 15;
+
+      audio.playFlipperSolenoid();
+
+      if (side === 'left' || side === 'both') {
+        state.leftFlipper.active = true;
+        state.leftFlipper.timer = 0.28; // 280ms de curso
+      }
+      if (side === 'right' || side === 'both') {
+        state.rightFlipper.active = true;
+        state.rightFlipper.timer = 0.28;
+      }
+    }
+
+    function triggerNudge(user) {
+      if (!state.roundActive) return;
+      state.lastInteractionTime = performance.now();
+
+      audio.playNudgeBuzz();
+
+      // Aplica impulso vetorial horizontal em todas as esferas
+      const nudgeDir = (Math.random() > 0.5 ? 1 : -1) * (260 + Math.random() * 120);
+      state.balls.forEach(b => {
+        b.vx += nudgeDir;
+        b.vy -= 140; // Leve impulso para cima
+      });
+
+      // Efeito de tela trepidando
+      const stage = document.getElementById('game-stage');
+      stage.classList.remove('nudge-shake');
+      void stage.offsetWidth; // Força reflow
+      stage.classList.add('nudge-shake');
+    }
+
+    // --- GIFTS DE IMPACTO: MULTI-BALL & SUPERNOVA ---
+    function triggerMultiBall(user) {
+      if (!state.roundActive) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@super_donor";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 200;
+
+      // Dispara 2 novas esferas de energia
+      spawnBall(true);
+      spawnBall(false);
+
+      addScore(35000);
+      audio.playSupernovaJackpot();
+      spawnExplosionParticles(540, 500, '#38bdf8', 40);
+    }
+
+    function triggerSupernovaJackpot(user) {
+      if (!state.roundActive) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@baleia_cosmica";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 1000;
+
+      state.multiplier = Math.min(state.multiplier + 2, 10);
+      addScore(250000);
+
+      audio.playSupernovaJackpot();
+      spawnExplosionParticles(540, 1040, '#ffd700', 70);
+
+      // Efeito de gravidade invertida imediato em todas as bolas
+      state.balls.forEach(b => {
+        b.vy = -600;
+        b.vx = (Math.random() - 0.5) * 500;
+      });
+
+      // Ativa ambos os flippers simultaneamente
+      activateFlipper('both', userKey);
+    }
+
+    function addScore(pts) {
+      state.score += pts * state.multiplier;
+      document.getElementById('score-display').innerText = 
+        Math.floor(state.score).toLocaleString('pt-BR').padStart(7, '0');
+      document.getElementById('multiplier-badge').innerText = `x${state.multiplier} MULTI`;
+    }
+
+    function updateBallsHUD() {
+      const count = state.balls.length;
+      document.getElementById('balls-display').innerText = `🔵 ${count} EM ÓRBITA`;
+    }
+
+    // --- LEI 3: MOTOR ANTI-SILÊNCIO (< 3s) ---
+    const MOCK_USERS = [
+      "@flipper_br", "@astro_player", "@pinball_king", 
+      "@galaxia_gamer", "@starlight_99", "@pulsar_neon"
+    ];
+
+    function runAntiSilence() {
+      const now = performance.now();
+      if (now - state.lastInteractionTime > 2300 && state.roundActive) {
+        state.lastInteractionTime = now;
+        const randomUser = MOCK_USERS[Math.floor(Math.random() * MOCK_USERS.length)];
+
+        // Decide ação de flipper baseada na posição da esfera mais baixa
+        let lowestBall = null;
+        let maxY = -1;
+        state.balls.forEach(b => {
+          if (b.y > maxY) {
+            maxY = b.y;
+            lowestBall = b;
+          }
+        });
+
+        if (lowestBall && lowestBall.y > 1350) {
+          if (lowestBall.x < 540) {
+            activateFlipper('left', randomUser);
+          } else {
+            activateFlipper('right', randomUser);
+          }
+        } else {
+          // Ação aleatória alternada
+          const actions = ['left', 'right', 'both'];
+          activateFlipper(actions[Math.floor(Math.random() * actions.length)], randomUser);
+        }
+
+        // 10% de chance de micro-gift espontâneo
+        if (Math.random() < 0.1) {
+          triggerMultiBall(randomUser);
+        }
+      }
+    }
+
+    // --- PARTÍCULAS & EFEITOS VISUAIS ---
+    function spawnExplosionParticles(x, y, color, count = 20) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 9 + 3;
+        state.particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * spd,
+          vy: Math.sin(angle) * spd,
+          size: Math.random() * 5 + 2,
+          color: color,
+          alpha: 1.0,
+          decay: Math.random() * 0.03 + 0.02
+        });
+      }
+    }
+
+    function spawnConfetti() {
+      const colors = ['#00f0ff', '#ff0055', '#ffd700', '#00ff88', '#a855f7', '#ffffff'];
+      for (let i = 0; i < 90; i++) {
+        state.confetti.push({
+          x: Math.random() * 1080,
+          y: Math.random() * 600,
+          vx: (Math.random() - 0.5) * 6,
+          vy: Math.random() * 5 + 3,
+          rot: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 12,
+          w: Math.random() * 12 + 8,
+          h: Math.random() * 6 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1.0
+        });
+      }
+    }
+
+    // --- FÍSICA DO PINBALL & COLISÕES 2D ---
+    let lastTimestamp = performance.now();
+
+    function updateGame(dt) {
+      runAntiSilence();
+
+      if (state.roundActive) {
+        state.timeRemaining -= dt;
+        if (state.timeRemaining <= 0) {
+          state.timeRemaining = 0;
+          finalizeRound();
+        }
+
+        // Timer HUD
+        const min = Math.floor(state.timeRemaining / 60);
+        const sec = Math.floor(state.timeRemaining % 60);
+        document.getElementById('time-display').innerText = 
+          `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+
+        // Atualiza Flippers
+        updateFlippers(dt);
+
+        // Atualiza Rotação do Buraco Negro
+        state.blackHole.angle += dt * 3.5;
+
+        // Atualiza Esferas
+        updateBalls(dt);
+
+        // Se todas as esferas caíram, auto-lançador repõe uma esfera
+        if (state.balls.length === 0) {
+          spawnBall();
+        }
+      } else {
+        // Pós-rodada / Reset
+        state.resetCountdown -= dt;
+        const countdownEl = document.getElementById('podium-countdown');
+        if (countdownEl) {
+          countdownEl.innerText = `NOVA MISSÃO EM ${Math.ceil(state.resetCountdown)}S...`;
+        }
+        if (state.resetCountdown <= 0) {
+          initPinball();
+        }
+      }
+
+      // Atualiza Partículas
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const p = state.particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+        if (p.alpha <= 0) {
+          state.particles.splice(i, 1);
+        }
+      }
+
+      // Atualiza Confetes
+      for (let i = state.confetti.length - 1; i >= 0; i--) {
+        const c = state.confetti[i];
+        c.y += c.vy;
+        c.x += c.vx;
+        c.rot += c.rotSpeed;
+        if (c.y > 1920) c.y = -20;
+      }
+    }
+
+    function updateFlippers(dt) {
+      // Flipper Esquerdo
+      if (state.leftFlipper.active) {
+        state.leftFlipper.timer -= dt;
+        state.leftFlipper.angle = state.leftFlipper.upAngle;
+        if (state.leftFlipper.timer <= 0) {
+          state.leftFlipper.active = false;
+        }
+      } else {
+        // Retorno elástico suave ao repouso
+        state.leftFlipper.angle += (state.leftFlipper.restAngle - state.leftFlipper.angle) * dt * 18;
+      }
+
+      // Flipper Direito
+      if (state.rightFlipper.active) {
+        state.rightFlipper.timer -= dt;
+        state.rightFlipper.angle = state.rightFlipper.upAngle;
+        if (state.rightFlipper.timer <= 0) {
+          state.rightFlipper.active = false;
+        }
+      } else {
+        state.rightFlipper.angle += (state.rightFlipper.restAngle - state.rightFlipper.angle) * dt * 18;
+      }
+    }
+
+    function updateBalls(dt) {
+      for (let i = state.balls.length - 1; i >= 0; i--) {
+        const b = state.balls[i];
+
+        // Gravidade e atrito
+        b.vy += GRAVITY * dt;
+        b.vx *= 0.998;
+        b.vy *= 0.998;
+
+        // Efeito de sucção gravitacional do Buraco Negro
+        const dx = state.blackHole.x - b.x;
+        const dy = state.blackHole.y - b.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < state.blackHole.eventHorizon) {
+          const force = (1 - dist / state.blackHole.eventHorizon) * state.blackHole.suctionForce;
+          b.vx += (dx / dist) * force * dt;
+          b.vy += (dy / dist) * force * dt;
+
+          // Se cair no centro do buraco negro
+          if (dist < state.blackHole.radius) {
+            audio.playBlackHoleSuck();
+            addScore(50000);
+            spawnExplosionParticles(b.x, b.y, '#a855f7', 35);
+            // Teletransporte para o topo com alta velocidade
+            b.x = 540 + (Math.random() - 0.5) * 100;
+            b.y = 330;
+            b.vx = (Math.random() - 0.5) * 450;
+            b.vy = 280;
+            continue;
+          }
+        }
+
+        // Posição
+        b.x += b.vx * dt;
+        b.y += b.vy * dt;
+
+        // Rastro de luz
+        b.trail.push({ x: b.x, y: b.y });
+        if (b.trail.length > 8) b.trail.shift();
+
+        // Colisão com Bumpers
+        state.bumpers.forEach(bump => {
+          const bdx = b.x - bump.x;
+          const bdy = b.y - bump.y;
+          const bdist = Math.sqrt(bdx * bdx + bdy * bdy);
+          const minDist = b.radius + bump.radius;
+
+          if (bdist < minDist) {
+            // Normal de colisão
+            const nx = bdx / bdist;
+            const ny = bdy / bdist;
+
+            // Separação
+            b.x = bump.x + nx * minDist;
+            b.y = bump.y + ny * minDist;
+
+            // Reflexão e impulso de bumper
+            const dot = b.vx * nx + b.vy * ny;
+            b.vx = (b.vx - 2 * dot * nx) + nx * 500;
+            b.vy = (b.vy - 2 * dot * ny) + ny * 500;
+
+            bump.hitTimer = 0.2;
+            audio.playBumperHit(bump.freq);
+            addScore(10000);
+            spawnExplosionParticles(b.x, b.y, bump.color, 14);
+          }
+        });
+
+        // Colisão com Flippers
+        checkFlipperCollision(b, state.leftFlipper, true);
+        checkFlipperCollision(b, state.rightFlipper, false);
+
+        // Colisão com Paredes
+        state.walls.forEach(w => {
+          checkLineCollision(b, w.x1, w.y1, w.x2, w.y2);
+        });
+
+        // Slingshots
+        state.slingshots.forEach(s => {
+          checkSlingshotCollision(b, s);
+        });
+
+        // Dreno Inferior (Fora da mesa em Y > 1750)
+        if (b.y > 1750) {
+          state.balls.splice(i, 1);
+          updateBallsHUD();
+        }
+      }
+    }
+
+    // Colisão com Segmento de Linha (Paredes)
+    function checkLineCollision(b, x1, y1, x2, y2) {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const lenSq = dx * dx + dy * dy;
+      if (lenSq === 0) return;
+
+      const t = Math.max(0, Math.min(1, ((b.x - x1) * dx + (b.y - y1) * dy) / lenSq));
+      const projX = x1 + t * dx;
+      const projY = y1 + t * dy;
+
+      const distSq = (b.x - projX) * (b.x - projX) + (b.y - projY) * (b.y - projY);
+      if (distSq < b.radius * b.radius) {
+        const dist = Math.sqrt(distSq) || 0.001;
+        const nx = (b.x - projX) / dist;
+        const ny = (b.y - projY) / dist;
+
+        b.x = projX + nx * b.radius;
+        b.y = projY + ny * b.radius;
+
+        const dot = b.vx * nx + b.vy * ny;
+        if (dot < 0) {
+          b.vx = (b.vx - 1.65 * dot * nx);
+          b.vy = (b.vy - 1.65 * dot * ny);
+        }
+      }
+    }
+
+    // Colisão Dinâmica com Flipper
+    function checkFlipperCollision(b, flipper, isLeft) {
+      const tipX = flipper.pivotX + Math.cos(flipper.angle) * flipper.length;
+      const tipY = flipper.pivotY + Math.sin(flipper.angle) * flipper.length;
+
+      const dx = tipX - flipper.pivotX;
+      const dy = tipY - flipper.pivotY;
+      const lenSq = dx * dx + dy * dy;
+      if (lenSq === 0) return;
+
+      const t = Math.max(0, Math.min(1, ((b.x - flipper.pivotX) * dx + (b.y - flipper.pivotY) * dy) / lenSq));
+      const projX = flipper.pivotX + t * dx;
+      const projY = flipper.pivotY + t * dy;
+
+      const distSq = (b.x - projX) * (b.x - projX) + (b.y - projY) * (b.y - projY);
+      const combinedRadius = b.radius + flipper.width * 0.5;
+
+      if (distSq < combinedRadius * combinedRadius) {
+        const dist = Math.sqrt(distSq) || 0.001;
+        const nx = (b.x - projX) / dist;
+        const ny = (b.y - projY) / dist;
+
+        b.x = projX + nx * combinedRadius;
+        b.y = projY + ny * combinedRadius;
+
+        // Impulso extra caso o flipper esteja ativamente subindo
+        const flipperKick = flipper.active ? 850 : 0;
+        const dot = b.vx * nx + b.vy * ny;
+        b.vx = (b.vx - 1.7 * dot * nx);
+        b.vy = (b.vy - 1.7 * dot * ny) - flipperKick;
+
+        audio.playSlingshot();
+        addScore(5000);
+        spawnExplosionParticles(b.x, b.y, isLeft ? '#00f0ff' : '#ff0055', 8);
+      }
+    }
+
+    function checkSlingshotCollision(b, s) {
+      checkLineCollision(b, s.p1.x, s.p1.y, s.p2.x, s.p2.y);
+    }
+
+    function finalizeRound() {
+      if (!state.roundActive) return;
+      state.roundActive = false;
+
+      audio.playSupernovaJackpot();
+      spawnConfetti();
+
+      // Determina MVP do chat
+      let topUser = "@MagoDoPinball";
+      let topPts = 150;
+      for (const [u, pts] of Object.entries(state.donors)) {
+        if (pts > topPts) {
+          topPts = pts;
+          topUser = u;
+        }
+      }
+
+      document.getElementById('podium-final-score').innerText = 
+        `${Math.floor(state.score).toLocaleString('pt-BR')} PTS`;
+      document.getElementById('podium-mvp-user').innerText = `${topUser} (${topPts} pts)`;
+      document.getElementById('victory-modal').style.display = 'flex';
+    }
+
+    // --- RENDERIZAÇÃO DA MESA (1080 x 1920) ---
+    function render() {
+      ctx.clearRect(0, 0, 1080, 1920);
+
+      // 1. Grade Galáctica de Fundo
+      drawGalacticGrid();
+
+      // 2. Paredes e Trilhos Neon
+      drawTableWalls();
+
+      // 3. Buraco Negro Cósmico
+      drawBlackHole();
+
+      // 4. Bumpers Estelares
+      drawBumpers();
+
+      // 5. Slingshots de Plasma
+      drawSlingshots();
+
+      // 6. Flippers
+      drawFlipper(state.leftFlipper, '#00f0ff');
+      drawFlipper(state.rightFlipper, '#ff0055');
+
+      // 7. Esferas Cósmicas
+      drawBalls();
+
+      // 8. Partículas
+      drawParticles();
+
+      // 9. Confetes de Vitória
+      if (!state.roundActive) {
+        drawConfetti();
+      }
+    }
+
+    function drawGalacticGrid() {
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.05)";
+      ctx.lineWidth = 1.5;
+      const step = 80;
+      for (let x = 0; x < 1080; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, 1920);
+        ctx.stroke();
+      }
+      for (let y = 0; y < 1920; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(1080, y);
+        ctx.stroke();
+      }
+
+      // Estrelas de fundo
+      ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
+      for (let i = 0; i < 40; i++) {
+        const sx = (i * 137) % 1080;
+        const sy = (i * 269) % 1920;
+        ctx.fillRect(sx, sy, 2, 2);
+      }
+    }
+
+    function drawTableWalls() {
+      ctx.save();
+      ctx.strokeStyle = "#38bdf8";
+      ctx.lineWidth = 8;
+      ctx.shadowColor = "#38bdf8";
+      ctx.shadowBlur = 18;
+      ctx.lineCap = "round";
+
+      state.walls.forEach(w => {
+        ctx.beginPath();
+        ctx.moveTo(w.x1, w.y1);
+        ctx.lineTo(w.x2, w.y2);
+        ctx.stroke();
+      });
+
+      // Indicadores de Rollover Lanes A-B-C no Topo
+      const lanes = [
+        { x: 380, label: "S" },
+        { x: 540, label: "T" },
+        { x: 700, label: "A" }
+      ];
+      ctx.font = "900 24px monospace";
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#ffd700";
+      lanes.forEach(l => {
+        ctx.fillText(`★ ${l.label} ★`, l.x, 360);
+      });
+
+      ctx.restore();
+    }
+
+    function drawBlackHole() {
+      const bh = state.blackHole;
+      ctx.save();
+      ctx.translate(bh.x, bh.y);
+
+      // Disco de Acreção Giratório
+      ctx.rotate(bh.angle);
+      const grad = ctx.createRadialGradient(0, 0, bh.radius * 0.6, 0, 0, bh.eventHorizon);
+      grad.addColorStop(0, '#000000');
+      grad.addColorStop(0.4, 'rgba(168, 85, 247, 0.8)');
+      grad.addColorStop(0.8, 'rgba(56, 189, 248, 0.3)');
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(0, 0, bh.eventHorizon, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Centro Escuro Total
+      ctx.fillStyle = "#030712";
+      ctx.beginPath();
+      ctx.arc(0, 0, bh.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Borda luminosa de quasar
+      ctx.strokeStyle = "#a855f7";
+      ctx.lineWidth = 4;
+      ctx.shadowColor = "#a855f7";
+      ctx.shadowBlur = 20;
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawBumpers() {
+      state.bumpers.forEach(b => {
+        ctx.save();
+        ctx.translate(b.x, b.y);
+
+        // Brilho exterior
+        ctx.shadowColor = b.color;
+        ctx.shadowBlur = b.hitTimer > 0 ? 35 : 18;
+
+        // Corpo do bumper
+        ctx.fillStyle = b.hitTimer > 0 ? '#ffffff' : 'rgba(15, 23, 42, 0.9)';
+        ctx.strokeStyle = b.color;
+        ctx.lineWidth = 6;
+
+        ctx.beginPath();
+        ctx.arc(0, 0, b.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Anel interno de energia
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(0, 0, b.radius * 0.5, 0, Math.PI * 2);
+        ctx.stroke();
+
+        if (b.hitTimer > 0) b.hitTimer -= 0.016;
+
+        ctx.restore();
+      });
+    }
+
+    function drawSlingshots() {
+      state.slingshots.forEach(s => {
+        ctx.save();
+        ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
+        ctx.strokeStyle = s.color;
+        ctx.lineWidth = 5;
+        ctx.shadowColor = s.color;
+        ctx.shadowBlur = 12;
+
+        ctx.beginPath();
+        ctx.moveTo(s.p1.x, s.p1.y);
+        ctx.lineTo(s.p2.x, s.p2.y);
+        ctx.lineTo(s.p3.x, s.p3.y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.restore();
+      });
+    }
+
+    function drawFlipper(flipper, color) {
+      ctx.save();
+      ctx.translate(flipper.pivotX, flipper.pivotY);
+      ctx.rotate(flipper.angle);
+
+      // Sombra e Neon do Flipper
+      ctx.shadowColor = color;
+      ctx.shadowBlur = flipper.active ? 25 : 12;
+
+      // Forma em cápsula afunilada
+      ctx.fillStyle = flipper.active ? '#ffffff' : color;
+      ctx.beginPath();
+      ctx.roundRect(0, -flipper.width / 2, flipper.length, flipper.width, flipper.width / 2);
+      ctx.fill();
+
+      // Pivô mecânico circular
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.arc(0, 0, flipper.width * 0.65, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawBalls() {
+      state.balls.forEach(b => {
+        // Rastro de plasma
+        ctx.strokeStyle = b.glow;
+        ctx.lineWidth = b.radius * 0.8;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        b.trail.forEach((t, idx) => {
+          if (idx === 0) ctx.moveTo(t.x, t.y);
+          else ctx.lineTo(t.x, t.y);
+        });
+        ctx.stroke();
+
+        // Esfera Metálica com Brilho Cósmico
+        ctx.save();
+        ctx.shadowColor = b.color;
+        ctx.shadowBlur = 18;
+
+        const grad = ctx.createRadialGradient(b.x - 5, b.y - 5, 2, b.x, b.y, b.radius);
+        grad.addColorStop(0, '#ffffff');
+        grad.addColorStop(0.6, b.color);
+        grad.addColorStop(1, '#020617');
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      });
+    }
+
+    function drawParticles() {
+      state.particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1.0;
+      ctx.shadowBlur = 0;
+    }
+
+    function drawConfetti() {
+      state.confetti.forEach(c => {
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate((c.rot * Math.PI) / 180);
+        ctx.fillStyle = c.color;
+        ctx.globalAlpha = c.alpha;
+        ctx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+        ctx.restore();
+      });
+      ctx.globalAlpha = 1.0;
+    }
+
+    // --- LOOP PRINCIPAL DE ANIMAÇÃO ---
+    function gameLoop(timestamp) {
+      const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.1);
+      lastTimestamp = timestamp;
+
+      updateGame(dt);
+      render();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // --- PROTOCOLO DE EVENTOS DO BROADCASTER & SDK ---
+    function initEventBus() {
+      try {
+        const channel = new BroadcastChannel('v5_broadcaster_games');
+        channel.onmessage = (event) => {
+          handleIncomingEvent(event.data);
+        };
+      } catch (e) {
+        console.warn("BroadcastChannel não suportado");
+      }
+
+      window.addEventListener('v5_event', (e) => {
+        if (e.detail) handleIncomingEvent(e.detail);
+      });
+    }
+
+    function handleIncomingEvent(payload) {
+      if (!payload) return;
+
+      const type = payload.type;
+      const comment = (payload.comment || "").toString().toLowerCase().trim();
+      const user = payload.user || "@espectador";
+      const giftName = payload.giftName || null;
+
+      // Parsing de Comentários / Votos
+      if (type === 'comment' || comment) {
+        if (comment === '1' || comment.includes('esq') || comment.includes('esquerda')) {
+          activateFlipper('left', user);
+        } else if (comment === '2' || comment.includes('dir') || comment.includes('direita')) {
+          activateFlipper('right', user);
+        } else if (comment === '3' || comment.includes('ambos') || comment.includes('flipper') || comment.includes('salva')) {
+          activateFlipper('both', user);
+        } else if (comment === '4' || comment.includes('nudge') || comment.includes('tilt') || comment.includes('empurrao')) {
+          triggerNudge(user);
+        }
+      }
+
+      // Parsing de Gifts
+      if (type === 'gift' || giftName) {
+        if (giftName === 'Lion' || giftName === 'Foguete') {
+          triggerSupernovaJackpot(user);
+        } else {
+          triggerMultiBall(user);
+        }
+      }
+    }
+
+    // --- GAVETA DE DEPURAÇÃO DO STREAMER ---
+    function toggleDebugDrawer() {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.style.display = (drawer.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        toggleDebugDrawer();
+      }
+    });
+
+    document.querySelector('.bottom-safe-zone').addEventListener('dblclick', () => {
+      toggleDebugDrawer();
+    });
+
+    // Início automático ao carregar
+    window.addEventListener('load', () => {
+      initPinball();
+      initEventBus();
+      requestAnimationFrame(gameLoop);
+    });
+  </script>
+</body>
+</html>

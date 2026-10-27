@@ -58,6 +58,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | **31** | `31_guitar_hero_neon` | Guitar Hero da Live | Notas descendo em 4 pistas (1 a 4 / Cores) no ritmo de riffs com Rockmeter e Star Power 4x | **HOMOLOGADO** |
 | **32** | `32_corte_de_frutas_neon` | Corte de Frutas Neon | Frutas e bombas em arcos balísticos fatiadas por lâminas laser (setores 1-3), câmera lenta frenesi e Katana Cósmica | **HOMOLOGADO** |
 | **33** | `33_corrida_de_cavalos_retro` | Corrida de Cavalos Retrô | Disputa de turfe com 4 raias numeradas, narração dinâmica de rádio, galope procedural, minimapa e pódio | **HOMOLOGADO** |
+| **34** | `34_pinball_galactico` | Pinball Galáctico | Mesa completa 9:16 com flippers duplos de plasma, 3 bumpers estelares harmônicos, buraco negro e multi-ball | **HOMOLOGADO** |
 
 ---
 
@@ -116,4 +117,5 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/test_cartridge_31.py`: Validação automatizada do Cartucho #31 (11/11 checks aprovados, braço 3D, 4 pistas, Rockmeter e Star Power).
 - `scripts/test_cartridge_32.py`: Validação automatizada do Cartucho #32 (11/11 checks aprovados, arcos balísticos, lâminas laser por setores, câmera lenta e Katana Cósmica).
 - `scripts/test_cartridge_33.py`: Validação automatizada do Cartucho #33 (11/11 checks aprovados, hipódromo 4 raias, narração dinâmica, galope procedural, telemetria e pódio).
-- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 34 cartuchos ativos).
+- `scripts/test_cartridge_34.py`: Validação automatizada do Cartucho #34 (11/11 checks aprovados, flippers de plasma, 3 bumpers harmônicos, buraco negro e multi-ball cósmico).
+- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 35 cartuchos ativos).

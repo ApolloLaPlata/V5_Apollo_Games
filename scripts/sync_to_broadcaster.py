@@ -279,6 +279,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "4", "relampago", "furia", "cometa", "esmeralda"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "34_pinball_galactico": {
+        "name": "Pinball Galáctico",
+        "category": "arcade_pinball",
+        "description": "Mesa vertical de pinball completa 9:16 com flippers duplos de plasma, 3 bumpers estelares harmônicos, buraco negro gravitacional e multi-ball",
+        "commands": ["1", "2", "3", "4", "esq", "dir", "ambos", "nudge", "tilt"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 
