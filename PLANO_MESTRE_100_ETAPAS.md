@@ -110,7 +110,7 @@
 ---
 
 ### FASE 6: CARTUCHOS COOPERATIVOS & BOSS RAIDS ÉPICOS (ETAPAS 051 A 060)
-- [ ] **Etapa 051:** Arquitetura de partidas colaborativas com barra de vida coletiva (Boss Raid System).
+- [x] **Etapa 051:** Arquitetura de partidas colaborativas com barra de vida coletiva (Boss Raid System).
 - [ ] **Etapa 052:** Forjamento do Cartucho #04: Boss Raid do Chat (Titã Neon com 1.000.000 HP enfrentando o chat inteiro em 45 segundos).
 - [ ] **Etapa 053:** Mecânica de ataques por chat: Comentários = ataques normais (100 HP); Presentes = Ataques Críticos / Meteoros (10.000 a 50.000 HP).
 - [ ] **Etapa 054:** Animações vetoriais procedurais do Boss: estados Idle, Ataque, Dano Crítico e Morte Épica com dissolução em partículas.
