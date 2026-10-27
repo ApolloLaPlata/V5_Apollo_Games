@@ -56,6 +56,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | **29** | `29_basquete_street_neon` | Basquete Street Neon | Desafio de arremessos livres com tabela móvel oscilante, rede elástica ondulante e bolas de fogo de gifts | **HOMOLOGADO** |
 | **30** | `30_gol_de_penalti_live` | Gol de Pênalti da Live | Série de pênaltis do chat contra Goleiro Mecha, votação de 5 cantos, curva balística e bomba atômica | **HOMOLOGADO** |
 | **31** | `31_guitar_hero_neon` | Guitar Hero da Live | Notas descendo em 4 pistas (1 a 4 / Cores) no ritmo de riffs com Rockmeter e Star Power 4x | **HOMOLOGADO** |
+| **32** | `32_corte_de_frutas_neon` | Corte de Frutas Neon | Frutas e bombas em arcos balísticos fatiadas por lâminas laser (setores 1-3), câmera lenta frenesi e Katana Cósmica | **HOMOLOGADO** |
 
 ---
 
@@ -112,4 +113,5 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/test_cartridge_29.py`: Validação automatizada do Cartucho #29 (11/11 checks aprovados, tabela móvel oscilante, rede ondulante e física 2D).
 - `scripts/test_cartridge_30.py`: Validação automatizada do Cartucho #30 (11/11 checks aprovados, série de pênaltis, Goleiro Mecha e 5 cantos).
 - `scripts/test_cartridge_31.py`: Validação automatizada do Cartucho #31 (11/11 checks aprovados, braço 3D, 4 pistas, Rockmeter e Star Power).
-- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 32 cartuchos ativos).
+- `scripts/test_cartridge_32.py`: Validação automatizada do Cartucho #32 (11/11 checks aprovados, arcos balísticos, lâminas laser por setores, câmera lenta e Katana Cósmica).
+- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 33 cartuchos ativos).

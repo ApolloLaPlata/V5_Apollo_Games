@@ -263,6 +263,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "4", "verde", "vermelho", "amarelo", "azul"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "32_corte_de_frutas_neon": {
+        "name": "Corte de Frutas Neon",
+        "category": "habilidade_reflexo",
+        "description": "Frutas e bombas voando em arcos parabólicos fatiadas por lâminas laser disparadas por setores (1, 2, 3), com câmera lenta frenesi e Katana Cósmica",
+        "commands": ["1", "2", "3", "esq", "meio", "dir", "corta", "golpe"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 
