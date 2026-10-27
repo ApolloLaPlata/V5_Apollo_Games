@@ -126,4 +126,5 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/test_cartridge_36.py`: Validação automatizada do Cartucho #36 (11/11 checks aprovados, corda 3D Bézier, RPM progressivo, saltos mortais, Slow-Mo e Jetpack).
 - `scripts/test_cartridge_37.py`: Validação automatizada do Cartucho #37 (11/11 checks aprovados, Jenga vertical, física pendular, blocos de aço e Stasis Shield).
 - `scripts/test_cartridge_38.py`: Validação automatizada do Cartucho #38 (11/11 checks aprovados, subida vertical 1.000m, 3 corredores, lasers, escudo e hiper-dobra).
-- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 39 cartuchos ativos).
+- `scripts/test_cartridge_39.py`: Validação automatizada do Cartucho #39 (11/11 checks aprovados, alvos concêntricos oscilantes, balística de flechas, mira Lock-On e Chuva Nuclear).
+- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 40 cartuchos ativos).

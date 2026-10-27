@@ -319,6 +319,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "esq", "meio", "dir", "boost", "turbo"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "39_alvo_movel_snipers": {
+        "name": "Alvo Móvel dos Snipers",
+        "category": "pontaria_precisao",
+        "description": "Alvos concêntricos em movimento oscilatório (Bullseye 1000 pts) com balística de flechas pelo chat, mira Lock-On guiada e Chuva Nuclear",
+        "commands": ["fogo", "1", "2", "3", "esq", "meio", "dir"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 

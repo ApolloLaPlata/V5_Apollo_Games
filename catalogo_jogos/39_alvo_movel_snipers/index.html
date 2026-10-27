@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Alvo Móvel dos Snipers (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container Vertical 9:16 Estrito */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 25%, #0f172a 0%, #030712 90%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+    }
+
+    /* Safe Zone Topo (140px) */
+    .top-safe-zone {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 140px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 16px 8px 16px;
+      background: linear-gradient(180deg, rgba(3, 7, 18, 0.98) 0%, rgba(3, 7, 18, 0.85) 75%, rgba(3, 7, 18, 0) 100%);
+      pointer-events: none;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-pill {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #38bdf8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+      animation: pulseDot 1.5s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .round-timer-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-weight: 800;
+      font-size: 13px;
+      color: #f8fafc;
+    }
+
+    .timer-val {
+      color: #38bdf8;
+    }
+
+    /* Placar de Pontos e Bullseye */
+    .sniper-hud-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 10px;
+      padding: 6px 12px;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
+    }
+
+    .score-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .score-title {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+    }
+
+    .score-number {
+      font-size: 20px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #ffd700;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    }
+
+    .bullseye-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #ef4444;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: monospace;
+      animation: pulseBullseye 1.5s infinite;
+    }
+
+    @keyframes pulseBullseye {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .accuracy-rate {
+      font-size: 11px;
+      font-weight: 800;
+      color: #00ff88;
+      font-family: monospace;
+    }
+
+    /* Canvas Central do Estande de Tiro 9:16 */
+    #game-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+    }
+
+    /* Safe Zone Base (180px) */
+    .bottom-safe-zone {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 180px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 10px 14px;
+      background: linear-gradient(0deg, rgba(3, 7, 18, 0.98) 0%, rgba(3, 7, 18, 0.85) 65%, rgba(3, 7, 18, 0) 100%);
+      pointer-events: none;
+      gap: 8px;
+    }
+
+    /* Comandos do Chat */
+    .chat-commands-box {
+      display: grid;
+      grid-template-columns: 1.4fr 1.2fr 1.2fr 1.2fr;
+      gap: 6px;
+      pointer-events: auto;
+    }
+
+    .cmd-btn {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 8px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .cmd-btn:active {
+      transform: scale(0.95);
+    }
+
+    .cmd-btn.c1 { border-color: #ffd700; color: #ffd700; }
+    .cmd-btn.c2 { border-color: #00f0ff; color: #00f0ff; }
+    .cmd-btn.c3 { border-color: #38bdf8; color: #38bdf8; }
+    .cmd-btn.c4 { border-color: #ff0055; color: #ff0055; }
+
+    .cmd-key {
+      font-size: 13px;
+      font-weight: 900;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    .cmd-label {
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+      white-space: nowrap;
+    }
+
+    /* Barra de Gifts */
+    .gifts-reward-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px dashed rgba(56, 189, 248, 0.4);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 9px;
+      color: #f1f5f9;
+      pointer-events: auto;
+    }
+
+    .gift-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+    }
+
+    .gift-icon {
+      font-size: 13px;
+    }
+
+    .gift-effect {
+      color: #38bdf8;
+      font-weight: 800;
+    }
+
+    /* Modal de Vitória e Fim de Rodada */
+    #victory-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 50;
+      background: rgba(3, 7, 18, 0.94);
+      backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .podium-box {
+      width: 100%;
+      max-width: 340px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid #ffd700;
+      border-radius: 16px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.35);
+      animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .trophy-badge {
+      font-size: 52px;
+      filter: drop-shadow(0 0 16px #ffd700);
+      animation: floatTrophy 2s infinite ease-in-out;
+    }
+
+    @keyframes floatTrophy {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .winner-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffd700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .final-score-val {
+      font-size: 28px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #38bdf8;
+    }
+
+    .mvp-donor-card {
+      width: 100%;
+      background: rgba(255, 215, 0, 0.08);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .reset-countdown {
+      font-size: 12px;
+      color: #94a3b8;
+      font-family: monospace;
+    }
+
+    /* Painel de Depuração Local do Streamer (Tecla D) */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(3, 7, 18, 0.98);
+      border-top: 2px solid #38bdf8;
+      padding: 12px;
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.8);
+    }
+
+    .debug-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #38bdf8;
+      font-family: monospace;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .dbg-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-radius: 4px;
+      padding: 6px 2px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Safe Zone Topo (140px) -->
+    <header class="top-safe-zone">
+      <div class="header-row">
+        <div class="brand-pill">
+          <span class="live-dot"></span>
+          <span>V5 SNIPER TARGET 9:16</span>
+        </div>
+        <div class="round-timer-badge">
+          <span>PARÊO:</span>
+          <span class="timer-val" id="time-display">00:45</span>
+        </div>
+      </div>
+
+      <!-- Placar de Pontos e Bullseyes -->
+      <div class="sniper-hud-strip">
+        <div class="score-block">
+          <span class="score-title">PONTUAÇÃO TOTAL</span>
+          <span class="score-number" id="score-display">000.000</span>
+        </div>
+
+        <div class="bullseye-badge" id="bullseye-display">🎯 0 NA MOSCA</div>
+
+        <div class="score-block" style="align-items: flex-end;">
+          <span class="score-title">PRECISÃO DA LIVE</span>
+          <span class="accuracy-rate" id="accuracy-display">100%</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central do Estande de Tiro -->
+    <canvas id="game-canvas" width="1080" height="1920"></canvas>
+
+    <!-- Safe Zone Base (180px) -->
+    <footer class="bottom-safe-zone">
+      <!-- Comandos do Chat -->
+      <div class="chat-commands-box">
+        <button class="cmd-btn c1" onclick="fireArrow('center', '@teste')">
+          <span class="cmd-key">FOGO</span>
+          <span class="cmd-label">Disparo Direto</span>
+        </button>
+        <button class="cmd-btn c2" onclick="fireArrow('left', '@teste')">
+          <span class="cmd-key">1</span>
+          <span class="cmd-label">Ângulo Esq</span>
+        </button>
+        <button class="cmd-btn c3" onclick="fireArrow('center', '@teste')">
+          <span class="cmd-key">2</span>
+          <span class="cmd-label">Centro</span>
+        </button>
+        <button class="cmd-btn c4" onclick="fireArrow('right', '@teste')">
+          <span class="cmd-key">3</span>
+          <span class="cmd-label">Ângulo Dir</span>
+        </button>
+      </div>
+
+      <!-- Barra de Gifts -->
+      <div class="gifts-reward-bar">
+        <div class="gift-item">
+          <span class="gift-icon">🌹</span>
+          <span>Rosa (Rose): <span class="gift-effect">Mira Lock-On (Bullseye Automático)</span></span>
+        </div>
+        <div class="gift-item">
+          <span class="gift-icon">🦁</span>
+          <span>Leão (Lion): <span class="gift-effect">Chuva Nuclear (30 Flechas + 5x)</span></span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Modal de Vitória e Fim de Rodada -->
+    <div id="victory-modal">
+      <div class="podium-box">
+        <div class="trophy-badge">🎯</div>
+        <div class="winner-title">TORNEIO CONCLUÍDO!</div>
+        <div class="final-score-val" id="podium-score-val">125.000 PTS</div>
+
+        <div class="mvp-donor-card">
+          <span style="color:#ffd700; font-weight:800;">👑 SNIPER SUPREMO:</span>
+          <span id="podium-mvp-user" style="font-weight:900; color:#fff;">@OlhoDeAguia (680 pts)</span>
+        </div>
+
+        <div class="reset-countdown" id="podium-countdown">NOVO TORNEIO EM 5S...</div>
+      </div>
+    </div>
+
+    <!-- Painel de Depuração Local do Streamer (Tecla D) -->
+    <div id="debug-drawer">
+      <div class="debug-header">
+        <span>GAVETA DE DEPURAÇÃO DO STREAMER (TECLA D)</span>
+        <button onclick="toggleDebugDrawer()" style="background:none; border:none; color:#f43f5e; font-size:12px; cursor:pointer;">FECHAR [X]</button>
+      </div>
+      <div class="debug-grid">
+        <button class="dbg-btn" onclick="fireArrow('center', '@streamer')">Disparar Centro</button>
+        <button class="dbg-btn" onclick="fireArrow('left', '@streamer')">Disparar Esq</button>
+        <button class="dbg-btn" onclick="fireArrow('right', '@streamer')">Disparar Dir</button>
+        <button class="dbg-btn" onclick="triggerNuclearBarrage('@streamer')">Chuva Nuclear</button>
+      </div>
+      <div class="debug-grid" style="margin-top:4px;">
+        <button class="dbg-btn" style="background:#0284c7;" onclick="triggerLockOn('@streamer')">Mira Lock-On (Rosa)</button>
+        <button class="dbg-btn" style="background:#d97706;" onclick="triggerNuclearBarrage('@streamer')">Super Gift (Leão)</button>
+        <button class="dbg-btn" style="background:#e11d48;" onclick="spawnTarget()">Criar Alvo Extra</button>
+        <button class="dbg-btn" style="background:#16a34a;" onclick="finalizeRound()">Finalizar Rodada</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE: ALVO MÓVEL DOS SNIPERS (9:16 VERTICAL PHYSICS ENGINE)
+       Holding V5 Apollo — Capitania V5 Games
+       Conformidade Estrita com as 5 Leis Absolutas do Cartucho V5
+       ========================================================================== */
+
+    // --- LEI 4: SINTETIZADOR DE ÁUDIO PROCEDURAL (WEB AUDIO API PURA) ---
+    class ProceduralAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.init();
+      }
+
+      init() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
+      }
+
+      ensureContext() {
+        if (!this.ctx) this.init();
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Disparo de flecha / corda de arco tensionada
+      playBowRelease() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(480, now);
+        osc.frequency.exponentialRampToValueAtTime(110, now + 0.12);
+
+        gain.gain.setValueAtTime(0.28, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.15);
+      }
+
+      // Impacto normal no alvo (anel externo / médio)
+      playTargetHit() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(60, now + 0.1);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.13);
+      }
+
+      // Bullseye / Na Mosca (Sineta cristalina e fanfarra aguda)
+      playBullseyeDing() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1318.51, now); // E6
+        osc.frequency.exponentialRampToValueAtTime(1760.00, now + 0.08); // A6
+
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.45);
+      }
+
+      // Mira Laser Lock-On (Bipes eletrônicos de travamento)
+      playLockOnSound() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        for (let i = 0; i < 3; i++) {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const t = now + i * 0.08;
+
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(880 + i * 220, t);
+
+          gain.gain.setValueAtTime(0.15, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.07);
+        }
+      }
+
+      // Chuva Nuclear / Super Gift (Leão)
+      playNuclearExplosionSound() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.exponentialRampToValueAtTime(30, now + 0.5);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(900, now);
+        filter.frequency.exponentialRampToValueAtTime(100, now + 0.5);
+
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.6);
+      }
+
+      // Fanfarra triunfal final
+      playVictoryFanfare() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const notes = [
+          { f: 523.25, d: 0.15 },
+          { f: 659.25, d: 0.15 },
+          { f: 783.99, d: 0.15 },
+          { f: 1046.50, d: 0.55 }
+        ];
+
+        let currTime = this.ctx.currentTime + 0.05;
+        notes.forEach(n => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(n.f, currTime);
+
+          gain.gain.setValueAtTime(0, currTime);
+          gain.gain.linearRampToValueAtTime(0.3, currTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, currTime + n.d);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(currTime);
+          osc.stop(currTime + n.d + 0.05);
+          currTime += n.d + 0.04;
+        });
+      }
+    }
+
+    const audio = new ProceduralAudioEngine();
+
+    // --- CONFIGURAÇÃO DA FÍSICA DOS ALVOS E PROJÉTEIS (1080 x 1920) ---
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+
+    const ROUND_DURATION_SEC = 45;
+    const LAUNCHER_Y = 1600;
+
+    const state = {
+      roundActive: true,
+      timeRemaining: ROUND_DURATION_SEC,
+      score: 0,
+      bullseyes: 0,
+      totalShots: 0,
+      hits: 0,
+      lockOnTimer: 0,
+      aimOscillatorAngle: 0, // Ângulo oscilante da mira na base
+      arrows: [],            // Flechas em voo ou cravadas
+      particles: [],
+      confetti: [],
+      targets: [
+        { x: 540, y: 550, radius: 110, vx: 240, minX: 200, maxX: 880, color: '#ef4444', isMain: true },
+        { x: 300, y: 850, radius: 85, vx: -320, minX: 180, maxX: 900, color: '#f59e0b', isMain: false }
+      ],
+      lastInteractionTime: performance.now(),
+      resetCountdown: 5,
+      donors: {}
+    };
+
+    function initSniperGame() {
+      state.roundActive = true;
+      state.timeRemaining = ROUND_DURATION_SEC;
+      state.score = 0;
+      state.bullseyes = 0;
+      state.totalShots = 0;
+      state.hits = 0;
+      state.lockOnTimer = 0;
+      state.arrows = [];
+      state.particles = [];
+      state.confetti = [];
+      state.resetCountdown = 5;
+      state.donors = {};
+      document.getElementById('victory-modal').style.display = 'none';
+
+      updateHUD();
+    }
+
+    // --- DISPARO DE FLECHAS PELO CHAT ---
+    function fireArrow(direction, user) {
+      if (!state.roundActive) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@atirador";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 10;
+      state.totalShots++;
+
+      let angle = -Math.PI / 2; // Reto para cima
+      if (direction === 'left') angle = -Math.PI / 2 - 0.22;
+      if (direction === 'right') angle = -Math.PI / 2 + 0.22;
+
+      // Se Lock-On estiver ativo, mira diretamente no alvo principal
+      if (state.lockOnTimer > 0) {
+        const mainTarget = state.targets[0];
+        const dx = mainTarget.x - 540;
+        const dy = mainTarget.y - LAUNCHER_Y;
+        angle = Math.atan2(dy, dx);
+      }
+
+      const speed = 1950; // Alta velocidade balística
+      state.arrows.push({
+        x: 540,
+        y: LAUNCHER_Y - 40,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        angle: angle,
+        stuck: false,
+        stuckTarget: null,
+        targetOffsetX: 0,
+        targetOffsetY: 0,
+        user: userKey
+      });
+
+      audio.playBowRelease();
+      spawnSparks(540, LAUNCHER_Y - 40, '#38bdf8', 10);
+      updateHUD();
+    }
+
+    // --- SUPER GIFTS: LOCK-ON & CHUVA NUCLEAR ---
+    function triggerLockOn(user) {
+      if (!state.roundActive) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@super_donor";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 200;
+
+      state.lockOnTimer = 6.0; // 6 segundos de mira perfeita travada
+      audio.playLockOnSound();
+      spawnSparks(540, LAUNCHER_Y, '#38bdf8', 35);
+      updateHUD();
+    }
+
+    function triggerNuclearBarrage(user) {
+      if (!state.roundActive) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@leao_vip";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 1000;
+
+      audio.playNuclearExplosionSound();
+      spawnSparks(540, 600, '#ffd700', 80);
+
+      // Dispara 30 flechas em leque
+      for (let i = 0; i < 30; i++) {
+        const spread = -Math.PI / 2 + (i - 15) * 0.06;
+        const speed = 2100;
+        state.arrows.push({
+          x: 540,
+          y: LAUNCHER_Y - 40,
+          vx: Math.cos(spread) * speed,
+          vy: Math.sin(spread) * speed,
+          angle: spread,
+          stuck: false,
+          stuckTarget: null,
+          targetOffsetX: 0,
+          targetOffsetY: 0,
+          user: userKey
+        });
+      }
+
+      state.score += 25000;
+      updateHUD();
+    }
+
+    function spawnTarget() {
+      state.targets.push({
+        x: 540,
+        y: 1050,
+        radius: 75,
+        vx: 380,
+        minX: 220,
+        maxX: 860,
+        color: '#00ff88',
+        isMain: false
+      });
+    }
+
+    // --- LEI 3: MOTOR ANTI-SILÊNCIO (< 3s) ---
+    const MOCK_USERS = [
+      "@sniper_pro", "@olho_de_aguia", "@mira_laser", 
+      "@arqueiro_neon", "@holding_vip", "@flecha_veloz"
+    ];
+
+    function runAntiSilence() {
+      const now = performance.now();
+      if (now - state.lastInteractionTime > 2200 && state.roundActive) {
+        state.lastInteractionTime = now;
+        const randomUser = MOCK_USERS[Math.floor(Math.random() * MOCK_USERS.length)];
+
+        // Dispara no momento em que o alvo principal passa próximo do centro
+        const mainTarget = state.targets[0];
+        if (Math.abs(mainTarget.x - 540) < 160) {
+          fireArrow('center', randomUser);
+        } else if (mainTarget.x < 540) {
+          fireArrow('left', randomUser);
+        } else {
+          fireArrow('right', randomUser);
+        }
+
+        // 10% de chance de micro-gift espontâneo
+        if (Math.random() < 0.1) {
+          triggerLockOn(randomUser);
+        }
+      }
+    }
+
+    // --- PARTÍCULAS & CONFETES ---
+    function spawnSparks(x, y, color, count = 15) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 8 + 3;
+        state.particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * spd,
+          vy: Math.sin(angle) * spd,
+          size: Math.random() * 5 + 2,
+          color: color,
+          alpha: 1.0,
+          decay: Math.random() * 0.04 + 0.03
+        });
+      }
+    }
+
+    function spawnConfetti() {
+      const colors = ['#00f0ff', '#ff0055', '#ffd700', '#00ff88', '#a855f7', '#ffffff'];
+      for (let i = 0; i < 90; i++) {
+        state.confetti.push({
+          x: Math.random() * 1080,
+          y: Math.random() * 600,
+          vx: (Math.random() - 0.5) * 6,
+          vy: Math.random() * 5 + 3,
+          rot: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 12,
+          w: Math.random() * 12 + 8,
+          h: Math.random() * 6 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1.0
+        });
+      }
+    }
+
+    // --- FÍSICA DOS ALVOS E FLECHAS ---
+    let lastTimestamp = performance.now();
+
+    function updateGame(dt) {
+      runAntiSilence();
+
+      if (state.roundActive) {
+        state.timeRemaining -= dt;
+        if (state.timeRemaining <= 0) {
+          state.timeRemaining = 0;
+          finalizeRound();
+        }
+
+        if (state.lockOnTimer > 0) {
+          state.lockOnTimer -= dt;
+        }
+
+        // Oscilação do ponteiro da mira
+        state.aimOscillatorAngle = Math.sin(performance.now() * 0.003) * 0.35;
+
+        // Movimentação dos Alvos Móveis
+        state.targets.forEach(t => {
+          t.x += t.vx * dt;
+          if (t.x < t.minX) {
+            t.x = t.minX;
+            t.vx = -t.vx;
+          } else if (t.x > t.maxX) {
+            t.x = t.maxX;
+            t.vx = -t.vx;
+          }
+        });
+
+        // Atualização das Flechas
+        for (let i = state.arrows.length - 1; i >= 0; i--) {
+          const a = state.arrows[i];
+
+          if (a.stuck) {
+            // Segue o alvo onde cravou
+            a.x = a.stuckTarget.x + a.targetOffsetX;
+            a.y = a.stuckTarget.y + a.targetOffsetY;
+            continue;
+          }
+
+          // Voo balístico
+          a.x += a.vx * dt;
+          a.y += a.vy * dt;
+
+          // Checa colisão com os alvos
+          for (let t of state.targets) {
+            const dx = a.x - t.x;
+            const dy = a.y - t.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < t.radius) {
+              // Acertou o alvo!
+              a.stuck = true;
+              a.stuckTarget = t;
+              a.targetOffsetX = dx;
+              a.targetOffsetY = dy;
+              state.hits++;
+
+              // Pontuação concêntrica
+              if (dist < t.radius * 0.22) {
+                // Bullseye / Na Mosca!
+                state.score += 1000;
+                state.bullseyes++;
+                audio.playBullseyeDing();
+                spawnSparks(a.x, a.y, '#ffd700', 30);
+              } else if (dist < t.radius * 0.55) {
+                // Anel Interno
+                state.score += 300;
+                audio.playTargetHit();
+                spawnSparks(a.x, a.y, '#ff0055', 15);
+              } else {
+                // Anel Externo
+                state.score += 100;
+                audio.playTargetHit();
+                spawnSparks(a.x, a.y, '#00f0ff', 10);
+              }
+              break;
+            }
+          }
+
+          // Remove flechas que saíram do topo da tela
+          if (a.y < 120 && !a.stuck) {
+            state.arrows.splice(i, 1);
+          }
+        }
+
+        // Limita quantidade de flechas cravadas para manter 60 FPS limpos
+        if (state.arrows.length > 45) {
+          state.arrows.shift();
+        }
+
+        updateHUD();
+      } else {
+        // Pós-rodada / Reset
+        state.resetCountdown -= dt;
+        const countdownEl = document.getElementById('podium-countdown');
+        if (countdownEl) {
+          countdownEl.innerText = `NOVO TORNEIO EM ${Math.ceil(state.resetCountdown)}S...`;
+        }
+        if (state.resetCountdown <= 0) {
+          initSniperGame();
+        }
+      }
+
+      // Atualiza Partículas
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const p = state.particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+        if (p.alpha <= 0) {
+          state.particles.splice(i, 1);
+        }
+      }
+
+      // Atualiza Confetes
+      for (let i = state.confetti.length - 1; i >= 0; i--) {
+        const c = state.confetti[i];
+        c.y += c.vy;
+        c.x += c.vx;
+        c.rot += c.rotSpeed;
+        if (c.y > 1920) c.y = -20;
+      }
+    }
+
+    function updateHUD() {
+      // Timer
+      const min = Math.floor(state.timeRemaining / 60);
+      const sec = Math.floor(state.timeRemaining % 60);
+      document.getElementById('time-display').innerText = 
+        `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+
+      // Score e Bullseye
+      document.getElementById('score-display').innerText = 
+        Math.floor(state.score).toLocaleString('pt-BR').padStart(7, '0');
+      document.getElementById('bullseye-display').innerText = `🎯 ${state.bullseyes} NA MOSCA`;
+
+      // Precisão
+      const acc = (state.totalShots === 0) ? 100 : Math.round((state.hits / state.totalShots) * 100);
+      document.getElementById('accuracy-display').innerText = `${acc}% PRECISÃO`;
+    }
+
+    function finalizeRound() {
+      if (!state.roundActive) return;
+      state.roundActive = false;
+
+      audio.playVictoryFanfare();
+      spawnConfetti();
+
+      // Determina MVP do chat
+      let topUser = "@SniperSupremo";
+      let topPts = 150;
+      for (const [u, pts] of Object.entries(state.donors)) {
+        if (pts > topPts) {
+          topPts = pts;
+          topUser = u;
+        }
+      }
+
+      document.getElementById('podium-score-val').innerText = `${Math.floor(state.score).toLocaleString('pt-BR')} PTS`;
+      document.getElementById('podium-mvp-user').innerText = `${topUser} (${topPts} pts)`;
+      document.getElementById('victory-modal').style.display = 'flex';
+    }
+
+    // --- RENDERIZAÇÃO CANVAS 2D DO ESTANDE DE TIRO ---
+    function render() {
+      ctx.clearRect(0, 0, 1080, 1920);
+
+      // 1. Grade Holográfica de Fundo
+      drawShootingRangeBackground();
+
+      // 2. Alvos Móveis Concêntricos
+      drawTargets();
+
+      // 3. Flechas e Dardos (em voo e cravados)
+      drawArrows();
+
+      // 4. Lançador / Besta Sniper na Base
+      drawCrossbowLauncher();
+
+      // 5. Linha de Mira Laser / Lock-On
+      drawLaserSight();
+
+      // 6. Partículas e Faíscas
+      drawParticles();
+
+      // 7. Confetes de Vitória
+      if (!state.roundActive) {
+        drawConfetti();
+      }
+    }
+
+    function drawShootingRangeBackground() {
+      // Trilhos horizontais onde os alvos deslizam
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.2)";
+      ctx.lineWidth = 4;
+      state.targets.forEach(t => {
+        ctx.beginPath();
+        ctx.moveTo(t.minX - 40, t.y);
+        ctx.lineTo(t.maxX + 40, t.y);
+        ctx.stroke();
+      });
+
+      // Iluminação estroboscópica de fundo
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
+      ctx.lineWidth = 2;
+      for (let y = 300; y < 1500; y += 120) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(1080, y);
+        ctx.stroke();
+      }
+    }
+
+    function drawTargets() {
+      state.targets.forEach(t => {
+        ctx.save();
+        ctx.translate(t.x, t.y);
+
+        // Suporte / Gancho deslizante no trilho
+        ctx.fillStyle = "#334155";
+        ctx.fillRect(-12, -t.radius - 20, 24, 20);
+
+        // Anel Externo (50 pts - Azul)
+        ctx.fillStyle = "rgba(14, 165, 233, 0.85)";
+        ctx.strokeStyle = "#38bdf8";
+        ctx.lineWidth = 4;
+        ctx.shadowColor = "#38bdf8";
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(0, 0, t.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Anel Médio (150 pts - Vermelho/Rosa)
+        ctx.fillStyle = "rgba(239, 68, 68, 0.9)";
+        ctx.strokeStyle = "#ff0055";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(0, 0, t.radius * 0.65, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Anel Interno (300 pts - Ouro)
+        ctx.fillStyle = "rgba(255, 215, 0, 0.95)";
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(0, 0, t.radius * 0.38, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Mosca Central / Bullseye (1000 pts - Centro Neon)
+        ctx.fillStyle = "#ffffff";
+        ctx.shadowColor = "#ffffff";
+        ctx.shadowBlur = 25;
+        ctx.beginPath();
+        ctx.arc(0, 0, t.radius * 0.16, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      });
+    }
+
+    function drawArrows() {
+      state.arrows.forEach(a => {
+        ctx.save();
+        ctx.translate(a.x, a.y);
+        ctx.rotate(a.angle + Math.PI / 2);
+
+        // Haste da Flecha de Plasma
+        ctx.strokeStyle = "#38bdf8";
+        ctx.lineWidth = 4;
+        ctx.shadowColor = "#38bdf8";
+        ctx.shadowBlur = a.stuck ? 6 : 14;
+        ctx.beginPath();
+        ctx.moveTo(0, 25);
+        ctx.lineTo(0, -25);
+        ctx.stroke();
+
+        // Ponta Perfurante Incandescente
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.moveTo(0, -32);
+        ctx.lineTo(-7, -22);
+        ctx.lineTo(7, -22);
+        ctx.closePath();
+        ctx.fill();
+
+        // Penas / Estabilizadores de Cauda
+        ctx.fillStyle = "#ffd700";
+        ctx.beginPath();
+        ctx.moveTo(0, 25);
+        ctx.lineTo(-8, 35);
+        ctx.lineTo(0, 30);
+        ctx.lineTo(8, 35);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
+      });
+    }
+
+    function drawCrossbowLauncher() {
+      ctx.save();
+      ctx.translate(540, LAUNCHER_Y);
+
+      // Base Estelar do Canhão
+      ctx.fillStyle = "#1e293b";
+      ctx.strokeStyle = "#38bdf8";
+      ctx.lineWidth = 4;
+      ctx.shadowColor = "#38bdf8";
+      ctx.shadowBlur = 12;
+
+      ctx.beginPath();
+      ctx.arc(0, 20, 48, Math.PI, 0);
+      ctx.fill();
+      ctx.stroke();
+
+      // Braço Giratório de Disparo
+      const aimAngle = (state.lockOnTimer > 0) ? 0 : state.aimOscillatorAngle;
+      ctx.rotate(aimAngle);
+
+      ctx.strokeStyle = "#f8fafc";
+      ctx.lineWidth = 8;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, -65);
+      ctx.stroke();
+
+      // Ponta Laser
+      ctx.fillStyle = "#ef4444";
+      ctx.beginPath();
+      ctx.arc(0, -65, 8, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawLaserSight() {
+      ctx.save();
+      const aimAngle = (state.lockOnTimer > 0) ? 0 : state.aimOscillatorAngle;
+      const targetMain = state.targets[0];
+
+      let targetX = 540 + Math.sin(aimAngle) * 1100;
+      let targetY = LAUNCHER_Y - Math.cos(aimAngle) * 1100;
+
+      if (state.lockOnTimer > 0) {
+        targetX = targetMain.x;
+        targetY = targetMain.y;
+      }
+
+      // Linha de Mira Laser Holográfica
+      ctx.strokeStyle = (state.lockOnTimer > 0) ? "rgba(0, 240, 255, 0.75)" : "rgba(239, 68, 68, 0.45)";
+      ctx.lineWidth = (state.lockOnTimer > 0) ? 3 : 1.5;
+      ctx.setLineDash([12, 8]);
+      ctx.shadowColor = (state.lockOnTimer > 0) ? "#00f0ff" : "#ef4444";
+      ctx.shadowBlur = 10;
+
+      ctx.beginPath();
+      ctx.moveTo(540, LAUNCHER_Y - 65);
+      ctx.lineTo(targetX, targetY);
+      ctx.stroke();
+
+      // Retículo de Mira no Alvo
+      ctx.strokeStyle = (state.lockOnTimer > 0) ? "#00f0ff" : "#ef4444";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.arc(targetX, targetY, 24, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawParticles() {
+      state.particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1.0;
+      ctx.shadowBlur = 0;
+    }
+
+    function drawConfetti() {
+      state.confetti.forEach(c => {
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate((c.rot * Math.PI) / 180);
+        ctx.fillStyle = c.color;
+        ctx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+        ctx.restore();
+      });
+    }
+
+    // --- LOOP PRINCIPAL DE ANIMAÇÃO ---
+    function gameLoop(timestamp) {
+      const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.1);
+      lastTimestamp = timestamp;
+
+      updateGame(dt);
+      render();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // --- PROTOCOLO DE EVENTOS DO BROADCASTER & SDK ---
+    function initEventBus() {
+      try {
+        const channel = new BroadcastChannel('v5_broadcaster_games');
+        channel.onmessage = (event) => {
+          handleIncomingEvent(event.data);
+        };
+      } catch (e) {
+        console.warn("BroadcastChannel não suportado");
+      }
+
+      window.addEventListener('v5_event', (e) => {
+        if (e.detail) handleIncomingEvent(e.detail);
+      });
+    }
+
+    function handleIncomingEvent(payload) {
+      if (!payload) return;
+
+      const type = payload.type;
+      const comment = (payload.comment || "").toString().toLowerCase().trim();
+      const user = payload.user || "@espectador";
+      const giftName = payload.giftName || null;
+
+      // Parsing de Comentários / Votos
+      if (type === 'comment' || comment) {
+        if (comment === 'fogo' || comment === 'tiro' || comment.includes('disparo')) {
+          fireArrow('center', user);
+        } else if (comment === '1' || comment.includes('esq')) {
+          fireArrow('left', user);
+        } else if (comment === '2' || comment.includes('meio')) {
+          fireArrow('center', user);
+        } else if (comment === '3' || comment.includes('dir')) {
+          fireArrow('right', user);
+        }
+      }
+
+      // Parsing de Gifts
+      if (type === 'gift' || giftName) {
+        if (giftName === 'Lion' || giftName === 'Foguete') {
+          triggerNuclearBarrage(user);
+        } else {
+          triggerLockOn(user);
+        }
+      }
+    }
+
+    // --- GAVETA DE DEPURAÇÃO DO STREAMER ---
+    function toggleDebugDrawer() {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.style.display = (drawer.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        toggleDebugDrawer();
+      }
+    });
+
+    document.querySelector('.bottom-safe-zone').addEventListener('dblclick', () => {
+      toggleDebugDrawer();
+    });
+
+    // Início automático ao carregar
+    window.addEventListener('load', () => {
+      initSniperGame();
+      initEventBus();
+      requestAnimationFrame(gameLoop);
+    });
+  </script>
+</body>
+</html>
