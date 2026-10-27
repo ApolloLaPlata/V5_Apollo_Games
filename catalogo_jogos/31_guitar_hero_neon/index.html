@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Guitar Hero Neon (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #020208;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 25%, #18092e 0%, #080314 60%, #020005 100%);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(168, 85, 247, 0.2);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Vinheta e Atmosfera de Show de Rock */
+    #ambient-vignette {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.85);
+      z-index: 2;
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 12px 16px 6px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 10;
+      min-height: 140px;
+      background: linear-gradient(180deg, rgba(2, 2, 8, 0.95) 0%, rgba(2, 2, 8, 0.75) 75%, transparent 100%);
+    }
+
+    .badge-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .live-pill {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+
+    .game-title {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #c084fc;
+      text-shadow: 0 0 12px rgba(192, 132, 252, 0.6);
+      text-transform: uppercase;
+    }
+
+    .round-indicator {
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 700;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Placar de Rockmeter e Combo */
+    .rock-hud-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(192, 132, 252, 0.35);
+      border-radius: 10px;
+      padding: 6px 12px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hud-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .score-label {
+      color: #c084fc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .combo-badge {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid #f59e0b;
+      color: #fbbf24;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 1px 6px;
+      border-radius: 6px;
+    }
+
+    .rockmeter-bg {
+      width: 100%;
+      height: 10px;
+      background: rgba(2, 6, 23, 0.9);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      position: relative;
+    }
+
+    .rockmeter-fill {
+      height: 100%;
+      width: 75%;
+      background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981, #06b6d4);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+      transition: width 0.15s ease-out;
+    }
+
+    .hud-subtext {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    /* Canvas Central do Braço da Guitarra */
+    #fretboard-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+    }
+
+    /* Toast de Notificação de Riffs e Star Power */
+    #action-toast {
+      position: absolute;
+      top: 148px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid #f59e0b;
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.6);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    #action-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Safe Zone Inferior (180px) */
+    .bottom-safe-zone {
+      padding: 10px 14px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      min-height: 180px;
+      background: linear-gradient(0deg, rgba(2, 2, 8, 0.98) 0%, rgba(2, 2, 8, 0.8) 75%, transparent 100%);
+    }
+
+    .command-guide-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      backdrop-filter: blur(8px);
+    }
+
+    .guide-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 900;
+      color: #f1f5f9;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .fret-buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .fret-tag {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 6px 2px;
+      border-radius: 6px;
+      text-align: center;
+      transition: all 0.12s;
+    }
+
+    .fret-tag.green {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10b981;
+      color: #10b981;
+    }
+
+    .fret-tag.red {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
+      color: #ef4444;
+    }
+
+    .fret-tag.yellow {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid #f59e0b;
+      color: #f59e0b;
+    }
+
+    .fret-tag.blue {
+      background: rgba(6, 182, 212, 0.15);
+      border: 1px solid #06b6d4;
+      color: #06b6d4;
+    }
+
+    .fret-tag.active {
+      filter: brightness(1.5);
+      transform: scale(1.05);
+      box-shadow: 0 0 14px currentColor;
+    }
+
+    .gift-benefit-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #fbbf24;
+    }
+
+    .recent-feed {
+      height: 24px;
+      overflow: hidden;
+      font-size: 10px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feed-avatar {
+      font-weight: 800;
+      color: #f8fafc;
+    }
+
+    /* Overlay de Vitória & Auto-Reset */
+    #victory-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(2, 2, 8, 0.94);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    #victory-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .trophy-glow {
+      font-size: 56px;
+      filter: drop-shadow(0 0 30px #c084fc);
+      animation: floatTrophy 2s infinite ease-in-out;
+    }
+
+    @keyframes floatTrophy {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.05); }
+    }
+
+    .victory-title {
+      font-size: 24px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      text-align: center;
+      color: #c084fc;
+      text-shadow: 0 0 20px rgba(192, 132, 252, 0.8);
+    }
+
+    .victory-subtitle {
+      font-size: 12px;
+      color: #cbd5e1;
+      font-weight: 600;
+      text-align: center;
+      max-width: 80%;
+    }
+
+    .mvp-card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mvp-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #fbbf24;
+      letter-spacing: 1px;
+    }
+
+    .mvp-name {
+      font-size: 15px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .auto-reset-meter {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    /* Gaveta de Depuração Local */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(15, 23, 42, 0.98);
+      border-top: 2px solid #c084fc;
+      padding: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    #debug-drawer.open {
+      display: flex;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 6px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .debug-btn:hover {
+      background: #334155;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Vinheta de ambientação de palco -->
+    <div id="ambient-vignette"></div>
+
+    <!-- Safe Zone Superior (140px) -->
+    <header class="top-header">
+      <div class="badge-bar">
+        <div class="live-pill">
+          <div class="live-dot"></div>
+          AO VIVO
+        </div>
+        <div class="game-title">GUITAR HERO DA LIVE</div>
+        <div class="round-indicator" id="round-number">FAIXA #1</div>
+      </div>
+
+      <div class="rock-hud-box">
+        <div class="hud-info-row">
+          <span class="score-label">
+            <span>🎸</span>
+            <span id="score-text">0 / 25.000 PONTOS</span>
+          </span>
+          <span class="combo-badge" id="combo-text">COMBO 0x</span>
+          <span id="star-power-text">STAR POWER: OFF</span>
+        </div>
+        <div class="rockmeter-bg">
+          <div class="rockmeter-fill" id="rockmeter-bar" style="width: 75%;"></div>
+        </div>
+        <div class="hud-subtext">
+          <span id="audience-cheer-text">Público: Empolgado! 🔥</span>
+          <span id="streak-text">Sequência: 0 notas</span>
+          <span id="time-left-text">Tempo: 45s</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central: Braço da Guitarra em Perspectiva 3D e Notas Descendo -->
+    <canvas id="fretboard-canvas" width="1080" height="1920"></canvas>
+
+    <!-- Toast de Notificação de Combos & Star Power -->
+    <div id="action-toast">
+      <span id="toast-icon">⚡</span>
+      <span id="toast-text">STAR POWER 4X ATIVADO! SOLO LENDÁRIO!</span>
+    </div>
+
+    <!-- Safe Zone Inferior (180px) -->
+    <footer class="bottom-safe-zone">
+      <div class="command-guide-card">
+        <div class="guide-title">
+          <span>COMO TOCAR (CHAT DIGITA O NÚMERO OU COR DA NOTA)</span>
+          <span style="color: #c084fc;">PÚBLICO É A BANDA</span>
+        </div>
+        <div class="fret-buttons-grid">
+          <div class="fret-tag green" id="tag-1">1: VERDE 🟢</div>
+          <div class="fret-tag red" id="tag-2">2: VERMELHO 🔴</div>
+          <div class="fret-tag yellow" id="tag-3">3: AMARELO 🟡</div>
+          <div class="fret-tag blue" id="tag-4">4: AZUL 🔵</div>
+        </div>
+      </div>
+
+      <div class="gift-benefit-bar">
+        <span>🎁 PRESENTES / GIFTS:</span>
+        <span>STAR POWER 4x OVERDRIVE OU SOLO LENDÁRIO AUTOMÁTICO!</span>
+      </div>
+
+      <div class="recent-feed" id="recent-feed">
+        <span>🎸 Show da Live:</span>
+        <span class="feed-avatar" id="feed-msg">Palhetada afinada! Digitem 1, 2, 3 ou 4 na linha de alvo!</span>
+      </div>
+    </footer>
+
+    <!-- Overlay de Vitória & Auto-Reset -->
+    <div id="victory-overlay">
+      <div class="trophy-glow">🤘</div>
+      <div class="victory-title" id="winner-title">ROCK GODS DA LIVE!</div>
+      <div class="victory-subtitle" id="winner-summary">O chat tocou no ritmo perfeito, levou o público ao delírio e quebrou o recorde de pontuação!</div>
+      <div class="mvp-card">
+        <div class="mvp-label">GUITAR HERO SUPREMO (MVP)</div>
+        <div class="mvp-name" id="mvp-user-name">@guitarrista_live</div>
+      </div>
+      <div class="auto-reset-meter" id="auto-reset-countdown">Próxima faixa musical em 5s...</div>
+    </div>
+
+    <!-- Gaveta de Depuração Local -->
+    <div id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #c084fc; display: flex; justify-content: space-between;">
+        <span>PAINEL DE DEPURAÇÃO DO STREAMER (TECLA D)</span>
+        <button onclick="toggleDebugDrawer()" style="background:none; border:none; color:#fca5a5; cursor:pointer;">✕ Fechar</button>
+      </div>
+      <div class="debug-grid">
+        <button class="debug-btn" onclick="testHitLane(1)">Nota 1 (Verde)</button>
+        <button class="debug-btn" onclick="testHitLane(2)">Nota 2 (Vermelho)</button>
+        <button class="debug-btn" onclick="testHitLane(3)">Nota 3 (Amarelo)</button>
+        <button class="debug-btn" onclick="testHitLane(4)">Nota 4 (Azul)</button>
+      </div>
+      <div style="display: flex; gap: 6px; margin-top: 4px;">
+        <button class="debug-btn" style="flex:1" onclick="testGift('Rose')">Rosa (Star Power 4x)</button>
+        <button class="debug-btn" style="flex:1" onclick="testGift('Lion')">Leão (Solo Automático)</button>
+        <button class="debug-btn" style="flex:1" onclick="resetMatch()">Auto-Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SDK V5 Live Event Bus -->
+  <script src="../../sdk/v5_live_game_sdk.js"></script>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE GAMES: GUITAR HERO NEON (CARTUCHO #31)
+       Proporção: 9:16 Vertical Estrito (1080 x 1920 px)
+       Braço de Guitarra 3D, Notas Musicais em Ritmo, Riffs Procedurais e Star Power
+       ========================================================================== */
+
+    // 1. SINTETIZADOR PROCEDURAL DE ÁUDIO (WEB AUDIO API PURA - ZERO .MP3/.WAV)
+    class NeonGuitarAudioSynth {
+      constructor() {
+        this.ctx = null;
+        this.isMuted = false;
+        // Escala pentatônica de Mi menor: Mi, Sol, Lá, Si, Ré (distorcida)
+        this.notes = [164.81, 196.00, 220.00, 246.94, 293.66, 329.63, 392.00];
+      }
+
+      initContext() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playNoteHit(lane = 1, isStarPower = false) {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const osc2 = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        const baseFreq = this.notes[(lane - 1) % this.notes.length] * (isStarPower ? 2 : 1);
+
+        // Guitarra com overdrive analógico (onda dente-de-serra rica em harmônicos)
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(baseFreq, now);
+
+        osc2.type = 'sawtooth';
+        osc2.frequency.setValueAtTime(baseFreq * 1.5, now); // Quinta justa (power chord)
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(isStarPower ? 3500 : 2200, now);
+        filter.frequency.exponentialRampToValueAtTime(800, now + 0.35);
+
+        gain.gain.setValueAtTime(isStarPower ? 0.6 : 0.45, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc2.start(now);
+        osc.stop(now + 0.35);
+        osc2.stop(now + 0.35);
+      }
+
+      playNoteMiss() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        // Som de palhetada arranhada e corda desafinada
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(110, now);
+        osc.frequency.linearRampToValueAtTime(75, now + 0.2);
+
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.2);
+      }
+
+      playStarPowerRiff() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const chords = [329.63, 392.00, 493.88, 659.25];
+
+        chords.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const start = now + idx * 0.08;
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(freq, start);
+
+          gain.gain.setValueAtTime(0.35, start);
+          gain.gain.exponentialRampToValueAtTime(0.001, start + 0.4);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(start);
+          osc.stop(start + 0.4);
+        });
+      }
+
+      playCrowdCheer() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const duration = 1.0;
+        const bufferSize = Math.floor(this.ctx.sampleRate * duration);
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.sin((i / bufferSize) * Math.PI);
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1200, now);
+        filter.Q.setValueAtTime(1.5, now);
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.65, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        noise.start(now);
+      }
+
+      playVictoryFanfare() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const notes = [220.00, 277.18, 329.63, 440.00, 554.37, 659.25, 880.00];
+        const now = this.ctx.currentTime;
+
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const startTime = now + idx * 0.1;
+          const dur = 0.5;
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(freq, startTime);
+
+          gain.gain.setValueAtTime(0.35, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + dur);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(startTime);
+          osc.stop(startTime + dur);
+        });
+      }
+    }
+
+    const sound = new NeonGuitarAudioSynth();
+
+    // 2. CONSTANTES E GEOMETRIA DO BRAÇO DA GUITARRA (FRETBOARD)
+    const STAGE_WIDTH = 1080;
+    const STAGE_HEIGHT = 1920;
+
+    const canvas = document.getElementById('fretboard-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Linha de Alvo Inferior (Hit Window)
+    const TARGET_LINE_Y = 1620;
+    const HIT_TOLERANCE = 75; // px de tolerância
+
+    // Configuração das 4 Pistas (Lanes)
+    const LANES = {
+      1: { name: 'Verde',    color: '#10b981', topX: 430, bottomX: 240 },
+      2: { name: 'Vermelho', color: '#ef4444', topX: 500, bottomX: 440 },
+      3: { name: 'Amarelo',  color: '#f59e0b', topX: 580, bottomX: 640 },
+      4: { name: 'Azul',     color: '#06b6d4', topX: 650, bottomX: 840 }
+    };
+
+    const state = {
+      round: 1,
+      score: 0,
+      targetScore: 25000,
+      combo: 0,
+      streak: 0,
+      rockmeter: 75, // 0 a 100%
+      timeRemaining: 45.0,
+      isGameOver: false,
+      autoResetTimer: 5,
+      starPowerTime: 0,
+      soloLegendTime: 0,
+      lastFrameTime: performance.now(),
+      spawnTimer: 0,
+      bpm: 135,
+
+      notes: [],
+      particles: [],
+      floatingTexts: [],
+      mvpUser: '@guitarrista_live'
+    };
+
+    // 3. CLASSE DE NOTA MUSICAL DESCENTE
+    class FallingNote {
+      constructor(lane = 1, isStar = false) {
+        this.lane = lane;
+        this.isStar = isStar;
+        this.progress = 0; // 0 (topo) a 1.0 (linha de alvo)
+        this.speed = 0.55; // percorrida em ~1.8s
+        this.alive = true;
+        this.hit = false;
+        this.color = LANES[lane].color;
+      }
+
+      update(dt) {
+        if (!this.alive) return;
+        this.progress += this.speed * dt;
+
+        // Posição interpolada em perspectiva 3D
+        const l = LANES[this.lane];
+        this.x = l.topX + (l.bottomX - l.topX) * this.progress;
+        this.y = 200 + (TARGET_LINE_Y - 200) * this.progress;
+        this.scale = 0.35 + (this.progress * 0.75); // Aumenta conforme se aproxima
+
+        // Se passar da linha de alvo sem ser acertada
+        if (this.progress > 1.15 && !this.hit) {
+          this.alive = false;
+          handleNoteMiss();
+        }
+      }
+
+      draw(c) {
+        if (!this.alive) return;
+
+        c.save();
+        c.translate(this.x, this.y);
+
+        const currentRadius = 32 * this.scale;
+        const noteColor = (state.starPowerTime > 0 ? '#fbbf24' : this.color);
+
+        // Brilho exterior da gema
+        c.beginPath();
+        c.arc(0, 0, currentRadius, 0, Math.PI * 2);
+        c.fillStyle = noteColor;
+        c.shadowColor = noteColor;
+        c.shadowBlur = 20;
+        c.fill();
+
+        // Anel interno de vidro fluorescente
+        c.beginPath();
+        c.arc(0, 0, currentRadius * 0.65, 0, Math.PI * 2);
+        c.fillStyle = '#ffffff';
+        c.fill();
+
+        // Número da Pista no centro
+        c.font = `900 ${Math.round(18 * this.scale)}px -apple-system, sans-serif`;
+        c.fillStyle = '#020617';
+        c.textAlign = 'center';
+        c.textBaseline = 'middle';
+        c.fillText(this.lane, 0, 0);
+
+        c.restore();
+      }
+    }
+
+    // 4. MECÂNICA DE ACERTO DE NOTAS PELO CHAT
+    function hitLane(laneId, user = '@guitarrista_live') {
+      if (state.isGameOver) return;
+
+      highlightFretTag(laneId);
+
+      // Encontra a nota mais próxima da linha de alvo na pista especificada
+      let bestNote = null;
+      let minDistance = Infinity;
+
+      state.notes.forEach(n => {
+        if (n.alive && n.lane === laneId && !n.hit) {
+          const dist = Math.abs(n.y - TARGET_LINE_Y);
+          if (dist < minDistance && dist < HIT_TOLERANCE) {
+            minDistance = dist;
+            bestNote = n;
+          }
+        }
+      });
+
+      if (bestNote) {
+        bestNote.hit = true;
+        bestNote.alive = false;
+
+        const isPerfect = minDistance < 35;
+        let pts = isPerfect ? 150 : 80;
+        if (state.starPowerTime > 0) pts *= 4; // 4x multiplicador de Star Power
+
+        state.combo++;
+        state.streak++;
+        state.score += pts;
+        state.rockmeter = Math.min(100, state.rockmeter + 4);
+        state.mvpUser = user;
+
+        sound.playNoteHit(laneId, state.starPowerTime > 0);
+
+        if (isPerfect) {
+          showToast(`🌟 PERFECT! +${pts} PONTOS!`);
+          createFloatingText(bestNote.x, bestNote.y - 40, `PERFECT! +${pts}`, '#fbbf24');
+          createNoteParticles(bestNote.x, bestNote.y, '#fbbf24', 25);
+        } else {
+          showToast(`🎵 GOOD! +${pts} PONTOS!`);
+          createFloatingText(bestNote.x, bestNote.y - 40, `GOOD! +${pts}`, bestNote.color);
+          createNoteParticles(bestNote.x, bestNote.y, bestNote.color, 15);
+        }
+
+        updateHudUI();
+
+        if (state.score >= state.targetScore && !state.isGameOver) {
+          triggerGameOver(true);
+        }
+      } else {
+        // Palhetada no vazio
+        sound.playNoteMiss();
+      }
+    }
+
+    function handleNoteMiss() {
+      state.combo = 0;
+      state.rockmeter = Math.max(0, state.rockmeter - 8);
+      sound.playNoteMiss();
+      updateHudUI();
+
+      if (state.rockmeter <= 0 && !state.isGameOver) {
+        triggerGameOver(false);
+      }
+    }
+
+    // 5. RENDERIZAÇÃO DO BRAÇO DA GUITARRA (FRETBOARD EM PERSPECTIVA)
+    function drawFretboard(c) {
+      c.save();
+
+      // Corpo cônico do braço da guitarra (topo estreito, base larga)
+      c.beginPath();
+      c.moveTo(390, 200);
+      c.lineTo(690, 200);
+      c.lineTo(890, TARGET_LINE_Y + 80);
+      c.lineTo(190, TARGET_LINE_Y + 80);
+      c.closePath();
+
+      const neckGrad = c.createLinearGradient(0, 200, 0, TARGET_LINE_Y);
+      neckGrad.addColorStop(0, '#0f051d');
+      neckGrad.addColorStop(1, '#05010b');
+      c.fillStyle = neckGrad;
+      c.fill();
+
+      // Bordas luminescentes do braço
+      c.strokeStyle = state.starPowerTime > 0 ? '#fbbf24' : '#a855f7';
+      c.lineWidth = 6;
+      c.shadowColor = state.starPowerTime > 0 ? '#fbbf24' : '#a855f7';
+      c.shadowBlur = 15;
+      c.stroke();
+
+      // Trastes horizontais cromados
+      c.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      c.lineWidth = 2;
+      c.shadowBlur = 0;
+
+      for (let y = 300; y <= TARGET_LINE_Y; y += 110) {
+        const p = (y - 200) / (TARGET_LINE_Y - 200);
+        const leftX = 390 + (190 - 390) * p;
+        const rightX = 690 + (890 - 690) * p;
+
+        c.beginPath();
+        c.moveTo(leftX, y);
+        c.lineTo(rightX, y);
+        c.stroke();
+      }
+
+      // Linhas divisórias das 4 Pistas
+      [1, 2, 3, 4].forEach(id => {
+        const l = LANES[id];
+        c.strokeStyle = l.color;
+        c.lineWidth = 2;
+        c.globalAlpha = 0.35;
+        c.beginPath();
+        c.moveTo(l.topX, 200);
+        c.lineTo(l.bottomX, TARGET_LINE_Y + 80);
+        c.stroke();
+      });
+
+      // Linha de Alvo Inferior (Target Line)
+      c.globalAlpha = 1.0;
+      c.beginPath();
+      c.moveTo(190, TARGET_LINE_Y);
+      c.lineTo(890, TARGET_LINE_Y);
+      c.strokeStyle = '#ffffff';
+      c.lineWidth = 5;
+      c.shadowColor = '#ffffff';
+      c.shadowBlur = 15;
+      c.stroke();
+
+      // Receptores / Círculos de Alvo das 4 pistas
+      [1, 2, 3, 4].forEach(id => {
+        const l = LANES[id];
+        c.beginPath();
+        c.arc(l.bottomX, TARGET_LINE_Y, 34, 0, Math.PI * 2);
+        c.strokeStyle = l.color;
+        c.lineWidth = 4;
+        c.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        c.shadowColor = l.color;
+        c.shadowBlur = 12;
+        c.fill();
+        c.stroke();
+      });
+
+      c.restore();
+    }
+
+    // Partículas e Efeitos Visuais
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() * 2 - 1) * 220;
+        this.vy = (Math.random() * 2 - 1) * 220;
+        this.color = color;
+        this.radius = Math.random() * 5 + 2;
+        this.life = 1.0;
+        this.decay = Math.random() * 2.2 + 1.2;
+      }
+
+      update(dt) {
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        this.life -= this.decay * dt;
+      }
+
+      draw(c) {
+        if (this.life <= 0) return;
+        c.save();
+        c.beginPath();
+        c.arc(this.x, this.y, this.radius * this.life, 0, Math.PI * 2);
+        c.fillStyle = this.color;
+        c.globalAlpha = this.life;
+        c.shadowColor = this.color;
+        c.shadowBlur = 10;
+        c.fill();
+        c.restore();
+      }
+    }
+
+    function createNoteParticles(x, y, color, count) {
+      for (let i = 0; i < count; i++) {
+        state.particles.push(new Particle(x, y, color));
+      }
+    }
+
+    function createFloatingText(x, y, text, color) {
+      state.floatingTexts.push({
+        x: x,
+        y: y,
+        text: text,
+        color: color,
+        alpha: 1.0,
+        vy: -70
+      });
+    }
+
+    function updateFloatingTexts(dt) {
+      for (let i = state.floatingTexts.length - 1; i >= 0; i--) {
+        const ft = state.floatingTexts[i];
+        ft.y += ft.vy * dt;
+        ft.alpha -= 1.4 * dt;
+        if (ft.alpha <= 0) {
+          state.floatingTexts.splice(i, 1);
+        }
+      }
+    }
+
+    function drawFloatingTexts(c) {
+      state.floatingTexts.forEach(ft => {
+        c.save();
+        c.font = '900 32px -apple-system, sans-serif';
+        c.fillStyle = ft.color;
+        c.globalAlpha = Math.max(0, ft.alpha);
+        c.textAlign = 'center';
+        c.shadowColor = ft.color;
+        c.shadowBlur = 14;
+        c.fillText(ft.text, ft.x, ft.y);
+        c.restore();
+      });
+    }
+
+    function updateHudUI() {
+      document.getElementById('score-text').innerText = `${state.score.toLocaleString()} / 25.000 PONTOS`;
+      document.getElementById('combo-text').innerText = `COMBO ${state.combo}x`;
+      document.getElementById('rockmeter-bar').style.width = state.rockmeter + '%';
+
+      document.getElementById('star-power-text').innerText = state.starPowerTime > 0 ? `STAR POWER: ${Math.ceil(state.starPowerTime)}s (4x)` : 'STAR POWER: OFF';
+      document.getElementById('star-power-text').style.color = state.starPowerTime > 0 ? '#fbbf24' : '#94a3b8';
+
+      document.getElementById('streak-text').innerText = `Sequência: ${state.streak} notas`;
+    }
+
+    function highlightFretTag(laneId) {
+      for (let i = 1; i <= 4; i++) {
+        const el = document.getElementById(`tag-${i}`);
+        if (el) el.classList.remove('active');
+      }
+      const target = document.getElementById(`tag-${laneId}`);
+      if (target) {
+        target.classList.add('active');
+        setTimeout(() => target.classList.remove('active'), 150);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('action-toast');
+      const txt = document.getElementById('toast-text');
+      txt.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    function showFeed(msg, user = '') {
+      const feed = document.getElementById('feed-msg');
+      if (feed) {
+        feed.innerHTML = user ? `<strong>${user}</strong>: ${msg}` : msg;
+      }
+    }
+
+    // 6. CICLO FECHADO & AUTO-RESET (LEI 5)
+    function triggerGameOver(isVictory) {
+      state.isGameOver = true;
+      if (isVictory) {
+        sound.playVictoryFanfare();
+        sound.playCrowdCheer();
+      }
+
+      const overlay = document.getElementById('victory-overlay');
+      const title = document.getElementById('winner-title');
+      const summary = document.getElementById('winner-summary');
+      const mvp = document.getElementById('mvp-user-name');
+      const countdown = document.getElementById('auto-reset-countdown');
+
+      if (isVictory) {
+        title.innerText = 'ROCK GODS DA LIVE!';
+        title.style.color = '#c084fc';
+        summary.innerText = `O chat manteve o ritmo em 100%, acumulou ${state.score.toLocaleString()} pontos e fez a plateia vibrar!`;
+      } else {
+        title.innerText = 'A MÚSICA PAROU!';
+        title.style.color = '#ef4444';
+        summary.innerText = `O Rockmeter esvaziou! A plateia vaiou e precisamos afinar os dedos para a próxima faixa!`;
+      }
+
+      mvp.innerText = state.mvpUser || '@guitarrista_live';
+      overlay.classList.add('active');
+
+      state.autoResetTimer = 5;
+      const interval = setInterval(() => {
+        state.autoResetTimer--;
+        if (countdown) {
+          countdown.innerText = `Próxima faixa musical em ${state.autoResetTimer}s...`;
+        }
+        if (state.autoResetTimer <= 0) {
+          clearInterval(interval);
+          resetMatch();
+        }
+      }, 1000);
+    }
+
+    function resetMatch() {
+      state.round++;
+      document.getElementById('round-number').innerText = `FAIXA #${state.round}`;
+
+      state.isGameOver = false;
+      state.score = 0;
+      state.combo = 0;
+      state.streak = 0;
+      state.rockmeter = 75;
+      state.timeRemaining = 45.0;
+      state.starPowerTime = 0;
+      state.soloLegendTime = 0;
+      state.notes = [];
+      state.particles = [];
+      state.floatingTexts = [];
+      state.spawnTimer = 0;
+
+      updateHudUI();
+      document.getElementById('victory-overlay').classList.remove('active');
+      showFeed('Novo solo iniciado! Mantenham as palhetadas no ritmo!');
+    }
+
+    // 7. LOOP PRINCIPAL DE RENDERIZAÇÃO 60 FPS
+    function gameLoop(now) {
+      const dt = Math.min(0.06, (now - state.lastFrameTime) / 1000);
+      state.lastFrameTime = now;
+
+      // Cronômetro e Timers
+      if (!state.isGameOver) {
+        state.timeRemaining -= dt;
+        const timeEl = document.getElementById('time-left-text');
+        if (timeEl) {
+          timeEl.innerText = `Tempo: ${Math.max(0, Math.ceil(state.timeRemaining))}s`;
+        }
+
+        if (state.timeRemaining <= 0) {
+          triggerGameOver(state.score >= 12000);
+        }
+
+        if (state.starPowerTime > 0) state.starPowerTime -= dt;
+        if (state.soloLegendTime > 0) {
+          state.soloLegendTime -= dt;
+          // Solo Automático acerta qualquer nota que chegue no alvo
+          state.notes.forEach(n => {
+            if (n.alive && Math.abs(n.y - TARGET_LINE_Y) < 30) {
+              hitLane(n.lane, '@solo_lendario');
+            }
+          });
+        }
+
+        // Spawn contínuo de notas musicais em sincronia com o BPM
+        state.spawnTimer += dt;
+        const spawnInterval = (60 / state.bpm) * 0.9;
+        if (state.spawnTimer >= spawnInterval) {
+          state.spawnTimer = 0;
+          const randomLane = Math.floor(Math.random() * 4) + 1;
+          state.notes.push(new FallingNote(randomLane, state.starPowerTime > 0));
+        }
+
+        // Atualização das notas
+        for (let i = state.notes.length - 1; i >= 0; i--) {
+          const n = state.notes[i];
+          n.update(dt);
+          if (!n.alive) state.notes.splice(i, 1);
+        }
+      }
+
+      ctx.clearRect(0, 0, STAGE_WIDTH, STAGE_HEIGHT);
+
+      // Desenho do Braço da Guitarra
+      drawFretboard(ctx);
+
+      // Desenho das Notas Musicais
+      state.notes.forEach(n => n.draw(ctx));
+
+      // Partículas e Textos
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const pt = state.particles[i];
+        pt.update(dt);
+        pt.draw(ctx);
+        if (pt.life <= 0) state.particles.splice(i, 1);
+      }
+
+      updateFloatingTexts(dt);
+      drawFloatingTexts(ctx);
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // 8. INTEGRAÇÃO COM SDK V5 LIVE & PARSER DE CHAT
+    function handleLiveCommand(payload) {
+      if (!payload) return;
+      const user = payload.user || '@espectador';
+      const comment = (payload.comment || '').toString().toLowerCase().trim();
+      const giftName = payload.giftName || null;
+
+      // 1. Processamento de Presentes / Gifts
+      if (payload.type === 'gift' || giftName) {
+        if (giftName === 'Lion' || giftName === 'Cap' || comment.includes('solo')) {
+          state.soloLegendTime = 6.0;
+          sound.playStarPowerRiff();
+          showToast(`⚡ SOLO LENDÁRIO AUTOMÁTICO ATIVADO POR ${user.toUpperCase()}!`);
+        } else {
+          state.starPowerTime = 8.0;
+          sound.playStarPowerRiff();
+          showToast(`🔥 STAR POWER 4X ATIVADO POR ${user.toUpperCase()}!`);
+        }
+        state.mvpUser = user;
+        showFeed(`Ativou poder musical para o show!`, user);
+        return;
+      }
+
+      // 2. Comentários de Palhetada nas 4 Pistas (1 a 4 / Cores)
+      let targetLane = null;
+      if (comment.includes('1') || comment.includes('verde') || comment.includes('green')) {
+        targetLane = 1;
+      } else if (comment.includes('2') || comment.includes('vermelho') || comment.includes('red')) {
+        targetLane = 2;
+      } else if (comment.includes('3') || comment.includes('amarelo') || comment.includes('yellow')) {
+        targetLane = 3;
+      } else if (comment.includes('4') || comment.includes('azul') || comment.includes('blue')) {
+        targetLane = 4;
+      }
+
+      if (targetLane) {
+        hitLane(targetLane, user);
+      }
+    }
+
+    // Inicialização do SDK V5
+    const sdk = new V5LiveSDK({
+      gameId: '31_guitar_hero_neon',
+      autoBotEnabled: true,
+      autoBotInterval: 2500,
+      autoBotSilenceThreshold: 3000
+    });
+
+    sdk.on('comment', (data) => handleLiveCommand(data));
+    sdk.on('gift', (data) => handleLiveCommand(data));
+    sdk.on('like', (data) => {
+      // Likes aumentam o Rockmeter
+      if (Math.random() < 0.25) {
+        state.rockmeter = Math.min(100, state.rockmeter + 2);
+        updateHudUI();
+      }
+    });
+
+    // 9. MOTOR ANTI-SILÊNCIO ORGÂNICO (LEI 3)
+    const mockUsers = ['@slash_neon', '@hendrix_live', '@rocker_v5', '@solo_queen', '@metal_fan', '@riff_master'];
+    setInterval(() => {
+      if (state.isGameOver) return;
+      const now = Date.now();
+      if (now - sdk.lastEventTime > 2800) {
+        const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+
+        // Tenta acertar a nota mais próxima para não deixar o Rockmeter zerar
+        let autoLane = Math.floor(Math.random() * 4) + 1;
+        state.notes.forEach(n => {
+          if (n.alive && Math.abs(n.y - TARGET_LINE_Y) < 60) {
+            autoLane = n.lane;
+          }
+        });
+
+        handleLiveCommand({
+          type: 'comment',
+          user: randomUser,
+          comment: `${autoLane}`
+        });
+      }
+    }, 2500);
+
+    // 10. GAVETA DE DEPURAÇÃO LOCAL (TECLA D OU DUPLO CLIQUE)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        toggleDebugDrawer();
+      }
+    });
+
+    document.getElementById('game-stage').addEventListener('dblclick', () => {
+      toggleDebugDrawer();
+    });
+
+    function toggleDebugDrawer() {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.classList.toggle('open');
+    }
+
+    function testHitLane(lane) {
+      sound.initContext();
+      handleLiveCommand({
+        type: 'comment',
+        user: '@streamer_dev',
+        comment: `${lane}`
+      });
+    }
+
+    function testGift(giftName) {
+      sound.initContext();
+      handleLiveCommand({
+        type: 'gift',
+        user: '@patrocinador_live',
+        giftName: giftName,
+        value: 10
+      });
+    }
+
+    // Inicialização da Partida
+    window.addEventListener('DOMContentLoaded', () => {
+      resetMatch();
+      requestAnimationFrame(gameLoop);
+    });
+
+  </script>
+</body>
+</html>

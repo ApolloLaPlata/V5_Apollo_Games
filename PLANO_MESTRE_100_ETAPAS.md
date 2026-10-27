@@ -157,7 +157,7 @@
 - [x] **Etapa 083:** Forjamento do Cartucho #28: Labirinto do Pacman Neon (Chat decide direções Cima/Baixo/Esquerda/Direita para coletar moedas antes dos fantasmas).
 - [x] **Etapa 084:** Forjamento do Cartucho #29: Basquete Street 9:16 (Desafio de arremessos livres com tabela móvel e física de cesta com rede elástica).
 - [x] **Etapa 085:** Forjamento do Cartucho #30: Gol de Pênalti da Live (Disputa entre batedor e goleiro com o chat decidindo o canto do chute e presentes ativando bola de fogo).
-- [ ] **Etapa 086:** Forjamento do Cartucho #31: Guitar Hero da Live (Notas descendo no ritmo com chat digitando as cores 1-Verde, 2-Vermelho, 3-Amarelo).
+- [x] **Etapa 086:** Forjamento do Cartucho #31: Guitar Hero da Live (Notas descendo no ritmo com chat digitando as cores 1-Verde, 2-Vermelho, 3-Amarelo).
 - [ ] **Etapa 087:** Forjamento do Cartucho #32: Corte de Frutas Neon (Objetos voando na tela sendo fatiados por raios disparados conforme o volume do chat).
 - [ ] **Etapa 088:** Forjamento do Cartucho #33: Corrida de Cavalos Retrô (Apostas em 4 cavalos com narrador sonoro e arrancadas espetaculares por presentes).
 - [ ] **Etapa 089:** Forjamento do Cartucho #34: Pinball Galáctico (Mesa vertical completa com bumpers luminosos e buracos de bônus cósmicos).

@@ -255,6 +255,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "4", "5", "gaveta", "meio", "gol"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "31_guitar_hero_neon": {
+        "name": "Guitar Hero da Live",
+        "category": "ritmo_musical",
+        "description": "Notas descendo em 4 pistas (1-Verde, 2-Vermelho, 3-Amarelo, 4-Azul) com riffs de guitarra procedural, Rockmeter e Star Power 4x",
+        "commands": ["1", "2", "3", "4", "verde", "vermelho", "amarelo", "azul"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 
