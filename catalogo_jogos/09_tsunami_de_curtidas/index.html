@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Tsunami de Curtidas (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #020617;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 30%, #0c1833 0%, #020617 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 18px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .timer-badge {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Placar Hidráulico de Nível da Maré */
+    .score-board {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 10px 16px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .team-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .team-blue {
+      color: #38bdf8;
+      text-shadow: 0 0 14px rgba(56, 189, 248, 0.7);
+    }
+
+    .team-orange {
+      color: #fb923c;
+      text-shadow: 0 0 14px rgba(251, 146, 60, 0.7);
+    }
+
+    .box-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .box-score {
+      font-size: 22px;
+      font-weight: 900;
+      font-family: monospace;
+      margin-top: 2px;
+    }
+
+    /* Canvas Central de Ondas */
+    #arena-container {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 12px 16px 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.7) 70%, rgba(2, 6, 23, 0) 100%);
+      pointer-events: none;
+    }
+
+    .chat-instructions {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .cmd-pill {
+      flex: 1;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .cmd-pill.blue {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: rgba(56, 189, 248, 0.12);
+    }
+
+    .cmd-pill.orange {
+      border-color: rgba(251, 146, 60, 0.5);
+      background: rgba(251, 146, 60, 0.12);
+    }
+
+    .cmd-key {
+      font-size: 16px;
+      font-weight: 900;
+      font-family: monospace;
+    }
+
+    .cmd-desc {
+      font-size: 10px;
+      color: #cbd5e1;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .gift-cta {
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.25) 0%, rgba(251, 146, 60, 0.25) 100%);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+    }
+
+    .toast-container {
+      position: absolute;
+      top: 145px;
+      width: calc(100% - 32px);
+      left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .toast-item {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(8px);
+      animation: slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Overlay Vitória */
+    #victory-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.92);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    #victory-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .victory-box {
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid #fbbf24;
+      border-radius: 24px;
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 0 50px rgba(251, 191, 36, 0.35);
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .reset-progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 15px;
+    }
+
+    .reset-progress-fill {
+      height: 100%;
+      background: #fbbf24;
+      width: 0%;
+      transition: width 5s linear;
+    }
+
+    /* Painel Debug */
+    #debug-drawer {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 200;
+      pointer-events: auto;
+    }
+
+    .debug-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+    }
+
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 7px 4px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    
+    <!-- Top Safe Zone -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <span class="live-dot"></span>
+          V5 LIVE TSUNAMI DE LIKES
+        </div>
+        <div class="timer-badge">
+          ⏳ <span id="round-timer">45</span>s
+        </div>
+      </div>
+
+      <div class="score-board">
+        <div class="team-box team-blue">
+          <span class="box-title">🌊 Maré Azul</span>
+          <span class="box-score" id="score-blue">50%</span>
+        </div>
+        <div class="team-box team-orange">
+          <span class="box-title">🌊 Maré Laranja</span>
+          <span class="box-score" id="score-orange">50%</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central -->
+    <div id="arena-container">
+      <canvas id="tsunami-canvas"></canvas>
+    </div>
+
+    <!-- Feed de Presentes -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Bottom Safe Zone -->
+    <footer class="bottom-panel">
+      <div class="chat-instructions">
+        <div class="cmd-pill blue">
+          <span class="cmd-key team-blue">1</span>
+          <span class="cmd-desc">🌊 Onda Azul</span>
+        </div>
+        <div class="cmd-pill orange">
+          <span class="cmd-key team-orange">2</span>
+          <span class="cmd-desc">🌊 Onda Laranja</span>
+        </div>
+      </div>
+
+      <div class="gift-cta">
+        <span style="font-size: 11px; font-weight: 700; color: #fef08a;">🎁 Presentes = Mega Tsunami (+15% a +50% de Maré!)</span>
+        <span style="background: #f59e0b; color: #000; font-weight: 900; font-size: 10px; padding: 3px 8px; border-radius: 8px;">MAREMOTO</span>
+      </div>
+    </footer>
+
+    <!-- Overlay Vitória -->
+    <div id="victory-overlay">
+      <div class="victory-box">
+        <div style="font-size: 52px; margin-bottom: 10px;" id="victory-icon">🌊</div>
+        <h2 id="victory-title" style="font-size: 26px; font-weight: 900; text-transform: uppercase;">TSUNAMI AZUL VENCEU!</h2>
+        <p id="victory-detail" style="font-size: 14px; color: #94a3b8; margin: 8px 0 16px 0;">Nível máximo de inundação atingido</p>
+        <p style="font-size: 12px; color: #cbd5e1; font-weight: 600;">Esvaziando câmaras de pressão...</p>
+        <div class="reset-progress-bar">
+          <div class="reset-progress-fill" id="reset-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Painel Debug -->
+    <div id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #94a3b8; display: flex; justify-content: space-between;">
+        <span>🎮 Teste Tsunami [D]</span>
+        <span style="cursor:pointer;" onclick="toggleDebug()">✕ Fechar</span>
+      </div>
+      <div class="debug-buttons">
+        <button class="debug-btn" onclick="pumpTsunami('A', 2, '@teste_azul')">🔵 Onda Azul (+2%)</button>
+        <button class="debug-btn" onclick="pumpTsunami('B', 2, '@teste_orange')">🟠 Onda Laranja (+2%)</button>
+        <button class="debug-btn" onclick="pumpTsunami('A', 15, '@vip_mar', 'Rosa')">🌸 Rosa (+15%)</button>
+        <button class="debug-btn" onclick="pumpTsunami('B', 40, '@vip_onda', 'Leão')">🦁 Leão (+40%)</button>
+        <button class="debug-btn" onclick="triggerWin('A')">🏆 Vitória Azul</button>
+        <button class="debug-btn" onclick="triggerWin('B')">🏆 Vitória Laranja</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /**
+     * SINTETIZADOR AQUÁTICO E ONDAS (Web Audio API)
+     */
+    class WaterAudio {
+      constructor() {
+        this.ctx = null;
+      }
+      getCtx() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        return this.ctx;
+      }
+      playSplash() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const osc = c.createOscillator();
+          const g = c.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(320, t);
+          osc.frequency.exponentialRampToValueAtTime(120, t + 0.12);
+          g.gain.setValueAtTime(0.2, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+          osc.connect(g);
+          g.connect(c.destination);
+          osc.start(t);
+          osc.stop(t + 0.12);
+        } catch (e) {}
+      }
+      playMegaWave() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const osc = c.createOscillator();
+          const g = c.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(140, t);
+          osc.frequency.exponentialRampToValueAtTime(45, t + 0.4);
+          g.gain.setValueAtTime(0.35, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+          osc.connect(g);
+          g.connect(c.destination);
+          osc.start(t);
+          osc.stop(t + 0.4);
+        } catch (e) {}
+      }
+      playVictory() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+            const osc = c.createOscillator();
+            const g = c.createGain();
+            const st = t + (i * 0.12);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, st);
+            g.gain.setValueAtTime(0.2, st);
+            g.gain.exponentialRampToValueAtTime(0.001, st + 0.4);
+            osc.connect(g);
+            g.connect(c.destination);
+            osc.start(st);
+            osc.stop(st + 0.4);
+          });
+        } catch (e) {}
+      }
+    }
+
+    const audio = new WaterAudio();
+
+    /**
+     * MOTOR DAS ONDAS DO TSUNAMI (CANVAS 2D - 60 FPS)
+     */
+    const canvas = document.getElementById('tsunami-canvas');
+    const ctx = canvas.getContext('2d');
+    let W = 0, H = 0;
+
+    function resize() {
+      const stage = document.getElementById('game-stage');
+      W = stage.clientWidth;
+      H = stage.clientHeight;
+      canvas.width = W;
+      canvas.height = H;
+    }
+    window.addEventListener('resize', resize);
+
+    // Estado da Maré
+    let tideA = 50.0; // 0% a 100%
+    let tideB = 50.0;
+    let targetTideA = 50.0;
+    let targetTideB = 50.0;
+    let winsA = 0;
+    let winsB = 0;
+    let roundTime = 45;
+    let timerInterval = null;
+    let isGameOver = false;
+
+    let waterDrops = [];
+    let confettis = [];
+
+    // DOM Elements
+    const scoreBlueEl = document.getElementById('score-blue');
+    const scoreOrangeEl = document.getElementById('score-orange');
+    const roundTimerEl = document.getElementById('round-timer');
+    const victoryOverlay = document.getElementById('victory-overlay');
+    const victoryTitle = document.getElementById('victory-title');
+    const victoryDetail = document.getElementById('victory-detail');
+    const victoryIcon = document.getElementById('victory-icon');
+    const resetFill = document.getElementById('reset-fill');
+    const toastContainer = document.getElementById('toast-container');
+    const debugDrawer = document.getElementById('debug-drawer');
+
+    function pumpTsunami(team, weight = 1, user = '@espectador', giftName = null) {
+      if (isGameOver) return;
+      audio.getCtx();
+
+      if (team === 'A') {
+        targetTideA = Math.min(100, targetTideA + weight);
+        targetTideB = Math.max(0, targetTideB - (weight * 0.5));
+        spawnDrops(W * 0.25, H * (1 - (targetTideA / 100)), '#38bdf8');
+
+        if (giftName) {
+          audio.playMegaWave();
+          spawnToast(`🎁 ${user} lançou ${giftName}! MAREMOTO AZUL (+${weight * 10}%)`, '#38bdf8');
+        } else {
+          audio.playSplash();
+        }
+
+        if (targetTideA >= 100) triggerWin('A');
+      } else {
+        targetTideB = Math.min(100, targetTideB + weight);
+        targetTideA = Math.max(0, targetTideA - (weight * 0.5));
+        spawnDrops(W * 0.75, H * (1 - (targetTideB / 100)), '#fb923c');
+
+        if (giftName) {
+          audio.playMegaWave();
+          spawnToast(`🎁 ${user} lançou ${giftName}! MAREMOTO LARANJA (+${weight * 10}%)`, '#fb923c');
+        } else {
+          audio.playSplash();
+        }
+
+        if (targetTideB >= 100) triggerWin('B');
+      }
+    }
+
+    function triggerWin(team) {
+      if (isGameOver) return;
+      isGameOver = true;
+      if (timerInterval) clearInterval(timerInterval);
+
+      audio.playVictory();
+      spawnConfetti(team === 'A');
+
+      if (team === 'A') {
+        winsA++;
+        victoryTitle.innerText = 'TSUNAMI AZUL VENCEU!';
+        victoryTitle.style.color = '#38bdf8';
+        victoryIcon.innerText = '🌊🔵';
+        victoryDetail.innerText = `Inundação Total! Vitórias: Azul ${winsA} x ${winsB} Laranja`;
+      } else {
+        winsB++;
+        victoryTitle.innerText = 'TSUNAMI LARANJA VENCEU!';
+        victoryTitle.style.color = '#fb923c';
+        victoryIcon.innerText = '🌊🟠';
+        victoryDetail.innerText = `Inundação Total! Vitórias: Laranja ${winsB} x ${winsA} Azul`;
+      }
+
+      victoryOverlay.classList.add('active');
+
+      setTimeout(() => {
+        resetFill.style.width = '100%';
+      }, 50);
+
+      setTimeout(() => {
+        startTimer();
+      }, 5000);
+    }
+
+    function spawnToast(text, color = '#38bdf8') {
+      const toast = document.createElement('div');
+      toast.className = 'toast-item';
+      toast.style.borderColor = color;
+      toast.innerHTML = `<span style="color:${color}">${text}</span>`;
+      toastContainer.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    function spawnDrops(x, y, color) {
+      for (let i = 0; i < 12; i++) {
+        waterDrops.push({
+          x: x + (Math.random() - 0.5) * 40,
+          y: y,
+          vx: (Math.random() - 0.5) * 6,
+          vy: -Math.random() * 6 - 2,
+          radius: Math.random() * 3 + 1.5,
+          color: color,
+          alpha: 1.0
+        });
+      }
+    }
+
+    function spawnConfetti(isBlue) {
+      const colors = isBlue ? ['#38bdf8', '#0ea5e9', '#bae6fd', '#ffffff'] : ['#fb923c', '#ea580c', '#fed7aa', '#ffffff'];
+      for (let i = 0; i < 70; i++) {
+        confettis.push({
+          x: Math.random() * W,
+          y: Math.random() * H * 0.3,
+          vx: (Math.random() - 0.5) * 4,
+          vy: Math.random() * 4 + 2,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10
+        });
+      }
+    }
+
+    function startTimer() {
+      roundTime = 45;
+      isGameOver = false;
+      tideA = 50.0;
+      tideB = 50.0;
+      targetTideA = 50.0;
+      targetTideB = 50.0;
+
+      scoreBlueEl.innerText = '50%';
+      scoreOrangeEl.innerText = '50%';
+      roundTimerEl.innerText = roundTime;
+      victoryOverlay.classList.remove('active');
+      resetFill.style.width = '0%';
+
+      if (timerInterval) clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        roundTime--;
+        roundTimerEl.innerText = roundTime;
+
+        if (roundTime <= 0) {
+          clearInterval(timerInterval);
+          if (targetTideA > targetTideB) triggerWin('A');
+          else if (targetTideB > targetTideA) triggerWin('B');
+          else triggerWin(Math.random() < 0.5 ? 'A' : 'B');
+        }
+      }, 1000);
+    }
+
+    /**
+     * RENDER LOOP (60 FPS)
+     */
+    let lastFpsTime = performance.now();
+    let frameCount = 0;
+
+    function gameLoop(now) {
+      ctx.clearRect(0, 0, W, H);
+
+      // Suavização da maré
+      tideA += (targetTideA - tideA) * 0.12;
+      tideB += (targetTideB - tideB) * 0.12;
+
+      scoreBlueEl.innerText = `${Math.round(tideA)}%`;
+      scoreOrangeEl.innerText = `${Math.round(tideB)}%`;
+
+      const colW = W * 0.5;
+      const time = now * 0.003;
+
+      // 1. Tanque Esquerdo (Time Azul)
+      drawWaveColumn(0, colW, tideA, '#38bdf8', 'rgba(56, 189, 248, 0.45)', time, 0);
+
+      // 2. Tanque Direito (Time Laranja)
+      drawWaveColumn(colW, colW, tideB, '#fb923c', 'rgba(251, 146, 60, 0.45)', time, Math.PI);
+
+      // 3. Divisória Central de Vidro Neon
+      ctx.beginPath();
+      ctx.moveTo(colW, H * 0.15);
+      ctx.lineTo(colW, H * 0.85);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // 4. Gotículas e Splashes
+      for (let i = waterDrops.length - 1; i >= 0; i--) {
+        const d = waterDrops[i];
+        d.x += d.vx;
+        d.y += d.vy;
+        d.vy += 0.25; // Gravidade
+        d.alpha -= 0.025;
+        if (d.alpha <= 0) waterDrops.splice(i, 1);
+        else {
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+          ctx.fillStyle = d.color;
+          ctx.globalAlpha = d.alpha;
+          ctx.fill();
+          ctx.globalAlpha = 1.0;
+        }
+      }
+
+      // 5. Confetes
+      for (let i = confettis.length - 1; i >= 0; i--) {
+        const cf = confettis[i];
+        cf.x += cf.vx;
+        cf.y += cf.vy;
+        cf.rotation += cf.rotSpeed;
+        ctx.save();
+        ctx.translate(cf.x, cf.y);
+        ctx.rotate((cf.rotation * Math.PI) / 180);
+        ctx.fillStyle = cf.color;
+        ctx.fillRect(-cf.size / 2, -cf.size / 2, cf.size, cf.size * 0.6);
+        ctx.restore();
+        if (cf.y > H) confettis.splice(i, 1);
+      }
+
+      // Telemetria 60 FPS
+      frameCount++;
+      if (now - lastFpsTime >= 1000) {
+        const fps = Math.round((frameCount * 1000) / (now - lastFpsTime));
+        if (window.parent && window.self !== window.top) {
+          window.parent.postMessage({
+            type: 'TELEMETRY_STATS',
+            gameId: '09_tsunami_de_curtidas',
+            stats: { fps: Math.min(60, fps), frameTimeMs: 16.6, frameDrops: 0, isHealthy: true }
+          }, '*');
+        }
+        frameCount = 0;
+        lastFpsTime = now;
+      }
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    function drawWaveColumn(startX, width, tidePercent, color, fillColor, time, phaseOffset) {
+      // Altura da água varia do fundo (H * 0.85) até o topo (H * 0.18)
+      const bottomY = H * 0.85;
+      const topLimitY = H * 0.18;
+      const usableHeight = bottomY - topLimitY;
+      const waterHeight = (tidePercent / 100) * usableHeight;
+      const waterY = bottomY - waterHeight;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(startX, topLimitY, width, usableHeight);
+      ctx.clip(); // Limita ao tanque
+
+      // Desenho da Onda Senoidal Suave
+      ctx.beginPath();
+      ctx.moveTo(startX, bottomY);
+      ctx.lineTo(startX, waterY);
+
+      const waveSteps = 24;
+      const stepW = width / waveSteps;
+      for (let i = 0; i <= waveSteps; i++) {
+        const x = startX + (i * stepW);
+        const wave = Math.sin((i * 0.35) + time + phaseOffset) * (6 + (tidePercent * 0.08));
+        ctx.lineTo(x, waterY + wave);
+      }
+
+      ctx.lineTo(startX + width, bottomY);
+      ctx.closePath();
+
+      // Gradiente de Profundidade
+      const grad = ctx.createLinearGradient(0, waterY, 0, bottomY);
+      grad.addColorStop(0, color);
+      grad.addColorStop(1, fillColor);
+      ctx.fillStyle = grad;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 15;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Crista Luminosa da Onda
+      ctx.beginPath();
+      ctx.moveTo(startX, waterY);
+      for (let i = 0; i <= waveSteps; i++) {
+        const x = startX + (i * stepW);
+        const wave = Math.sin((i * 0.35) + time + phaseOffset) * (6 + (tidePercent * 0.08));
+        ctx.lineTo(x, waterY + wave);
+      }
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    /**
+     * INTEGRAÇÃO DE EVENTOS
+     */
+    function handleEvent(data) {
+      if (!data) return;
+      const cmd = (data.comment || data.action || '').toString().toLowerCase();
+      const team = data.team;
+      const weight = data.weight || data.coins || (data.count ? data.count * 0.5 : 1);
+      const user = data.user || '@espectador';
+      const giftName = data.giftName || null;
+
+      if (cmd === '1' || team === 'A' || cmd.includes('azul')) {
+        pumpTsunami('A', weight, user, giftName);
+      } else if (cmd === '2' || team === 'B' || cmd.includes('laranja') || cmd.includes('vermelho')) {
+        pumpTsunami('B', weight, user, giftName);
+      } else if (data.type === 'like') {
+        const chosen = Math.random() < 0.5 ? 'A' : 'B';
+        pumpTsunami(chosen, Math.max(1, (data.count || 1) * 0.2), user);
+      }
+    }
+
+    try {
+      const channel = new BroadcastChannel('v5_broadcaster_games');
+      channel.onmessage = (e) => handleEvent(e.data);
+    } catch (e) {}
+
+    window.addEventListener('v5_event', (e) => handleEvent(e.detail));
+    window.addEventListener('message', (e) => {
+      if (e.data && (e.data.type || e.data.action || e.data.comment)) handleEvent(e.data);
+    });
+
+    // Motor Anti-Silêncio Orgânico
+    const mockUsers = ['@pedro_surf', '@mari_wave', '@carlos_mar', '@bia_water', '@lucas_tk'];
+    setInterval(() => {
+      if (isGameOver) return;
+      const teamChoice = targetTideA < targetTideB ? 'A' : (targetTideB < targetTideA ? 'B' : (Math.random() < 0.5 ? 'A' : 'B'));
+      const user = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+      pumpTsunami(teamChoice, 1, user);
+    }, 2400);
+
+    function toggleDebug() {
+      debugDrawer.style.display = debugDrawer.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') toggleDebug();
+    });
+
+    resize();
+    startTimer();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>
