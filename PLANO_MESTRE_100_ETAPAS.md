@@ -102,8 +102,8 @@
 - [x] **Etapa 044:** Customizador de fatias da roleta (permitindo streamers editarem os textos dos desafios facilmente via query string ou JSON local).
 - [x] **Etapa 045:** Forjamento do Cartucho #17: Caça-Níquel Neon 777 (Slot machine de 3 rolos acionada por comandos do chat com modos Frenesi).
 - [x] **Etapa 046:** Síntese de sinos de jackpot, rotação mecânica e tilintar de moedas para o Caça-Níquel 777.
-- [ ] **Etapa 047:** Forjamento do Cartucho #18: Roleta Russa de Balões (Ponteiro sorteia participantes e agulha aproxima do balão até o estouro fatídico).
-- [ ] **Etapa 048:** Sistema de destaque visual para o usuário sorteado com avatar animado e fanfarra personalizada.
+- [x] **Etapa 047:** Forjamento do Cartucho #18: Roleta Russa de Balões (Ponteiro sorteia participantes e agulha aproxima do balão até o estouro fatídico).
+- [x] **Etapa 048:** Sistema de destaque visual para o usuário sorteado com avatar animado e fanfarra personalizada.
 - [ ] **Etapa 049:** Validação estatística das chances de premiação e calibração de recompensas de presentes.
 - [ ] **Etapa 050:** Homologação e sincronização dos cartuchos de sorteio no Broadcaster.
 

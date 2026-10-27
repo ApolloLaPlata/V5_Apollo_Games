@@ -119,6 +119,14 @@ GAME_METADATA = {
         "commands": ["777", "girar", "1", "spin"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "18_roleta_russa_baloes": {
+        "name": "Roleta Russa de Balões",
+        "category": "sorteios_roletas",
+        "description": "Roleta russa com balão sob tensão crescente, aproximação milimétrica da agulha em 6 câmaras, estouro explosivo e spotlight de espectador",
+        "commands": ["1", "2", "balao", "agulha", "sorteio"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 

@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Roleta Russa de Balões (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 45%, #220818 0%, #0c0209 60%, #030104 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Screen Shake no Estouro */
+    .shake-active {
+      animation: popShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes popShake {
+      10%, 90% { transform: translate3d(-5px, -3px, 0); }
+      20%, 80% { transform: translate3d(6px, 4px, 0); }
+      30%, 50%, 70% { transform: translate3d(-6px, -4px, 0); }
+      40%, 60% { transform: translate3d(5px, 3px, 0); }
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 16px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(12, 2, 9, 0.98) 0%, rgba(12, 2, 9, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #f43f5e;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .chambers-badge {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.5);
+      color: #fda4af;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Placar de Tensão & Câmaras do Tambor */
+    .tension-card {
+      width: 100%;
+      background: rgba(26, 8, 20, 0.85);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      border-radius: 12px;
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .tension-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .tension-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: #94a3b8;
+      text-transform: uppercase;
+    }
+
+    .tension-value {
+      font-size: 15px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .tension-value.danger {
+      color: #f43f5e;
+      text-shadow: 0 0 10px rgba(244, 63, 94, 0.8);
+    }
+
+    /* 6 Indicadores de Câmaras de Tambor */
+    .chamber-bullets {
+      display: flex;
+      gap: 6px;
+    }
+
+    .chamber-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #334155;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .chamber-dot.empty {
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+    }
+
+    .chamber-dot.fatal {
+      background: #ef4444;
+      box-shadow: 0 0 12px #ef4444;
+      animation: pulse 1s infinite;
+    }
+
+    /* Canvas Central do Balão e Agulha */
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Feed de Notificações / Toasts */
+    .toast-feed {
+      position: absolute;
+      top: 145px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+      z-index: 8;
+    }
+
+    .toast-item {
+      background: rgba(26, 8, 20, 0.92);
+      border-left: 4px solid #f43f5e;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      animation: slideInToast 0.25s ease-out forwards;
+    }
+
+    @keyframes slideInToast {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Destaque Visual do Usuário Sorteado (Etapa 048) */
+    .spotlight-card {
+      position: absolute;
+      top: 200px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.92);
+      border: 2px solid #38bdf8;
+      border-radius: 16px;
+      padding: 10px 18px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      z-index: 20;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.5);
+      backdrop-filter: blur(12px);
+      animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translate(-50%, -10px) scale(0.9); }
+      to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    }
+
+    .spotlight-card.active {
+      display: flex;
+    }
+
+    .spotlight-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f43f5e, #fbbf24);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+      box-shadow: 0 0 14px rgba(244, 63, 94, 0.6);
+    }
+
+    .spotlight-name {
+      font-size: 13px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .spotlight-status {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .spotlight-status.survived {
+      background: rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+      border: 1px solid #22c55e;
+    }
+
+    .spotlight-status.eliminated {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid #ef4444;
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 12px 16px 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(12, 2, 9, 0.98) 0%, rgba(12, 2, 9, 0.7) 70%, rgba(12, 2, 9, 0) 100%);
+    }
+
+    .instructions-card {
+      background: rgba(26, 8, 20, 0.9);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .inst-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .trigger-btn-action {
+      background: linear-gradient(135deg, #f43f5e, #dc2626);
+      color: #ffffff;
+      padding: 4px 14px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 0 14px rgba(244, 63, 94, 0.6);
+    }
+
+    .gift-info {
+      font-size: 11px;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Gaveta de Depuração Local */
+    .debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(12, 2, 9, 0.98);
+      border-top: 2px solid #f43f5e;
+      padding: 12px 16px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 100;
+    }
+
+    .debug-drawer.open {
+      display: flex;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: #ffffff;
+      padding: 8px 4px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .debug-btn:active {
+      transform: scale(0.96);
+      background: #334155;
+    }
+
+    /* Overlay de Estouro e Vitória dos Sobreviventes */
+    .pop-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(12, 2, 9, 0.94);
+      backdrop-filter: blur(14px);
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .pop-overlay.active {
+      display: flex;
+      animation: popInAnim 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes popInAnim {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .pop-icon {
+      font-size: 76px;
+      filter: drop-shadow(0 0 28px rgba(244, 63, 94, 0.9));
+      animation: bounce 1s infinite alternate;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-12px); }
+    }
+
+    .pop-title {
+      font-size: 32px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #f43f5e;
+      text-shadow: 0 0 20px rgba(244, 63, 94, 0.8);
+    }
+
+    .pop-victim {
+      font-size: 16px;
+      color: #fda4af;
+      font-weight: 800;
+    }
+
+    .survivors-box {
+      width: 100%;
+      max-width: 320px;
+      background: rgba(26, 8, 20, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .survivor-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .auto-reset-bar {
+      width: 100%;
+      max-width: 280px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .auto-reset-fill {
+      width: 100%;
+      height: 100%;
+      background: #f43f5e;
+      border-radius: 6px;
+      transition: width 5s linear;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Top Safe Zone (140px) -->
+    <div class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <span class="live-dot"></span>
+          V5 RUSSIAN ROULETTE 9:16
+        </div>
+        <div class="chambers-badge">
+          🎯 <span id="chamber-counter">CÂMARA 1 DE 6</span>
+        </div>
+      </div>
+
+      <!-- Placar e Status de Tensão -->
+      <div class="tension-card">
+        <div class="tension-item">
+          <span class="tension-label">CÂMARAS DO TAMBOR</span>
+          <div class="chamber-bullets" id="chamber-bullets">
+            <div class="chamber-dot" id="c0"></div>
+            <div class="chamber-dot" id="c1"></div>
+            <div class="chamber-dot" id="c2"></div>
+            <div class="chamber-dot" id="c3"></div>
+            <div class="chamber-dot" id="c4"></div>
+            <div class="chamber-dot" id="c5"></div>
+          </div>
+        </div>
+        <div class="tension-item">
+          <span class="tension-label">SOBREVIVENTES</span>
+          <span id="survivor-count" class="tension-value" style="color: #22c55e;">0</span>
+        </div>
+        <div class="tension-item">
+          <span class="tension-label">ESTÁGIO AGULHA</span>
+          <span id="needle-stage" class="tension-value danger">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feed de Notificações / Toasts -->
+    <div id="toast-feed" class="toast-feed"></div>
+
+    <!-- Spotlight do Usuário Sorteado (Etapa 048) -->
+    <div class="spotlight-card" id="spotlight-card">
+      <div class="spotlight-avatar" id="spotlight-avatar">👤</div>
+      <div class="spotlight-name" id="spotlight-name">@lucas_v5</div>
+      <div class="spotlight-status survived" id="spotlight-status">SOBREVIVEU! (+100 PTS)</div>
+    </div>
+
+    <!-- Canvas Central do Balão e Agulha Mecânica -->
+    <div id="canvas-container">
+      <canvas id="roulette-canvas"></canvas>
+    </div>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <div class="bottom-panel" id="bottom-panel">
+      <div class="instructions-card">
+        <div class="inst-row">
+          <span>🎯 DIGITE <b>1</b> OU <b>ENTRAR</b> NO CHAT:</span>
+          <div class="trigger-btn-action" onclick="pullTrigger('@streamer')">PUXAR GATILHO</div>
+        </div>
+        <div class="gift-info">
+          <span>🎁 Presente/Gift = 💣 <b>ROLETA RÁPIDA / AGULHA DUPLA (+RISCO)</b></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gaveta de Depuração Local -->
+    <div class="debug-drawer" id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #94a3b8; display: flex; justify-content: space-between;">
+        <span>PAINEL DE DEPURAÇÃO (TECLA 'D')</span>
+        <span style="cursor: pointer;" onclick="toggleDebug()">[FECHAR]</span>
+      </div>
+      <div class="debug-grid">
+        <button class="debug-btn" onclick="pullTrigger('@teste')">🔫 Puxar Gatilho (1)</button>
+        <button class="debug-btn" onclick="triggerGiftShot('Rose')">🌹 Presente Rosa</button>
+        <button class="debug-btn" onclick="triggerGiftShot('Lion')">🦁 Presente Leão</button>
+        <button class="debug-btn" onclick="forcePop()">💥 Forçar Estouro</button>
+        <button class="debug-btn" onclick="resetChamber()">🔄 Reiniciar Tambor</button>
+      </div>
+    </div>
+
+    <!-- Overlay de Estouro de Balão e Eliminação -->
+    <div class="pop-overlay" id="pop-overlay">
+      <div class="pop-icon">💥</div>
+      <div class="pop-title">O BALÃO ESTOUROU!</div>
+      <div class="pop-victim" id="pop-victim">@espectador encontrou a câmara fatal!</div>
+
+      <div class="survivors-box" id="survivors-box">
+        <span style="font-size: 11px; font-weight: 800; color: #22c55e;">HERÓIS QUE SOBREVIVERAM:</span>
+        <div id="survivor-list"></div>
+      </div>
+
+      <div class="auto-reset-bar">
+        <div class="auto-reset-fill" id="reset-fill"></div>
+      </div>
+      <span style="font-size: 11px; color: #94a3b8;">Inflando novo balão de teste...</span>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * V5 BALLOON ROULETTE PROCEDURAL AUDIO SYNTHESIZER (Web Audio API)
+     * Giro de tambor metálico, estalido seco de câmara vazia (Dry Fire), tensão de borracha e estouro
+     */
+    class BalloonRouletteAudio {
+      constructor() {
+        this.ctx = null;
+      }
+
+      getCtx() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        return this.ctx;
+      }
+
+      playCylinderSpin() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          for (let i = 0; i < 6; i++) {
+            const osc = c.createOscillator();
+            const gain = c.createGain();
+            const st = t + (i * 0.05);
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(800 + (i * 40), st);
+            gain.gain.setValueAtTime(0.12, st);
+            gain.gain.exponentialRampToValueAtTime(0.001, st + 0.03);
+
+            osc.connect(gain);
+            gain.connect(c.destination);
+
+            osc.start(st);
+            osc.stop(st + 0.03);
+          }
+        } catch (e) {}
+      }
+
+      playDryFireClick() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1400, t);
+          osc.frequency.exponentialRampToValueAtTime(300, t + 0.04);
+
+          gain.gain.setValueAtTime(0.3, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+
+          osc.connect(gain);
+          gain.connect(c.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.04);
+        } catch (e) {}
+      }
+
+      playRubberTension() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(120, t);
+          osc.frequency.linearRampToValueAtTime(240, t + 0.18);
+
+          const flt = c.createBiquadFilter();
+          flt.type = 'lowpass';
+          flt.frequency.setValueAtTime(350, t);
+
+          gain.gain.setValueAtTime(0.15, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+
+          osc.connect(flt);
+          flt.connect(gain);
+          gain.connect(c.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.18);
+        } catch (e) {}
+      }
+
+      playBalloonPopExplosion() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+
+          // Ruído de estouro
+          const bufferSize = Math.floor(c.sampleRate * 0.45);
+          const noiseBuffer = c.createBuffer(1, bufferSize, c.sampleRate);
+          const data = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+          const noise = c.createBufferSource();
+          noise.buffer = noiseBuffer;
+
+          const flt = c.createBiquadFilter();
+          flt.type = 'lowpass';
+          flt.frequency.setValueAtTime(1800, t);
+          flt.frequency.exponentialRampToValueAtTime(60, t + 0.4);
+
+          const gain = c.createGain();
+          gain.gain.setValueAtTime(0.5, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+
+          noise.connect(flt);
+          flt.connect(gain);
+          gain.connect(c.destination);
+
+          noise.start(t);
+          noise.stop(t + 0.45);
+
+          // Sub-onda de impacto
+          const sub = c.createOscillator();
+          const subGain = c.createGain();
+          sub.type = 'sine';
+          sub.frequency.setValueAtTime(120, t);
+          sub.frequency.exponentialRampToValueAtTime(30, t + 0.35);
+
+          subGain.gain.setValueAtTime(0.4, t);
+          subGain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+
+          sub.connect(subGain);
+          subGain.connect(c.destination);
+
+          sub.start(t);
+          sub.stop(t + 0.35);
+        } catch (e) {}
+      }
+    }
+
+    // =========================================================================
+    // ESTÁGIO, TAMBOR DE 6 CÂMARAS & BALÃO
+    // =========================================================================
+    const stageEl = document.getElementById('game-stage');
+    const canvas = document.getElementById('roulette-canvas');
+    const ctx = canvas.getContext('2d');
+    const audio = new BalloonRouletteAudio();
+
+    let W = 0, H = 0;
+    function resize() {
+      W = stageEl.clientWidth;
+      H = stageEl.clientHeight;
+      canvas.width = W;
+      canvas.height = H;
+    }
+    window.addEventListener('resize', resize);
+
+    // Estado do Tambor (6 câmaras, 1 fatal aleatória)
+    let currentChamber = 0;
+    let fatalChamber = Math.floor(Math.random() * 6);
+    let survivors = [];
+    let isGameOver = false;
+
+    // DOM Elements
+    const chamberCounterEl = document.getElementById('chamber-counter');
+    const survivorCountEl = document.getElementById('survivor-count');
+    const needleStageEl = document.getElementById('needle-stage');
+    const toastFeedEl = document.getElementById('toast-feed');
+    const debugDrawer = document.getElementById('debug-drawer');
+    const spotlightCard = document.getElementById('spotlight-card');
+    const spotlightAvatar = document.getElementById('spotlight-avatar');
+    const spotlightName = document.getElementById('spotlight-name');
+    const spotlightStatus = document.getElementById('spotlight-status');
+    const popOverlay = document.getElementById('pop-overlay');
+    const popVictim = document.getElementById('pop-victim');
+    const survivorList = document.getElementById('survivor-list');
+    const resetFill = document.getElementById('reset-fill');
+
+    let needleDistanceNorm = 0; // 0 = longe, 1 = tocando
+    let balloonPulse = 0;
+    let balloonRubberTension = 1.0;
+    let confettis = [];
+
+    // =========================================================================
+    // VOTOS, TIROS & PROTOCOLO DE EVENTOS
+    // =========================================================================
+    function triggerScreenShake() {
+      stageEl.classList.remove('shake-active');
+      void stageEl.offsetWidth;
+      stageEl.classList.add('shake-active');
+      setTimeout(() => stageEl.classList.remove('shake-active'), 450);
+    }
+
+    function addToast(text, color = '#f43f5e') {
+      const toast = document.createElement('div');
+      toast.className = 'toast-item';
+      toast.style.borderLeftColor = color;
+      toast.innerHTML = text;
+      toastFeedEl.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    function showSpotlight(user, survived) {
+      spotlightName.textContent = user;
+      spotlightAvatar.textContent = survived ? '😎' : '💥';
+      if (survived) {
+        spotlightStatus.className = 'spotlight-status survived';
+        spotlightStatus.textContent = 'SOBREVIVEU! (+100 PTS)';
+      } else {
+        spotlightStatus.className = 'spotlight-status eliminated';
+        spotlightStatus.textContent = 'ELIMINADO PELO ESTOURO!';
+      }
+      spotlightCard.classList.add('active');
+      setTimeout(() => spotlightCard.classList.remove('active'), 2500);
+    }
+
+    function pullTrigger(user = '@espectador') {
+      if (isGameOver) return;
+      audio.getCtx();
+      audio.playCylinderSpin();
+
+      setTimeout(() => {
+        if (isGameOver) return;
+
+        const isFatal = (currentChamber === fatalChamber);
+        // Atualizar indicador da câmara
+        const dot = document.getElementById(`c${currentChamber}`);
+
+        if (isFatal) {
+          // ESTOURO FATAL!
+          if (dot) dot.className = 'chamber-dot fatal';
+          needleDistanceNorm = 1.0;
+          audio.playBalloonPopExplosion();
+          triggerScreenShake();
+          showSpotlight(user, false);
+          addToast(`💥 <b>${user}</b> acertou a câmara fatal #${currentChamber + 1}! O BALÃO ESTOUROU!`, '#ef4444');
+          gameOver(user);
+        } else {
+          // SOBREVIVEU!
+          if (dot) dot.className = 'chamber-dot empty';
+          audio.playDryFireClick();
+          audio.playRubberTension();
+
+          survivors.push(user);
+          survivorCountEl.textContent = survivors.length;
+
+          currentChamber++;
+          needleDistanceNorm = currentChamber / 6;
+          needleStageEl.textContent = `${Math.round(needleDistanceNorm * 100)}%`;
+          chamberCounterEl.textContent = `CÂMARA ${currentChamber + 1} DE 6`;
+
+          showSpotlight(user, true);
+          addToast(`😅 <b>${user}</b> puxou o gatilho... CÂMARA VAZIA! Ufa!`, '#22c55e');
+
+          // Se passar de 6 câmaras sem estourar por segurança
+          if (currentChamber >= 6) {
+            gameOver(user);
+          }
+        }
+      }, 350);
+    }
+
+    function triggerGiftShot(giftName = 'Rose', user = '@espectador') {
+      audio.getCtx();
+      triggerScreenShake();
+      addToast(`🎁 <b>${user}</b> enviou <b>${giftName}</b>! GIRO DUPLO DO TAMBOR!`, '#fbbf24');
+      pullTrigger(user);
+    }
+
+    function forcePop() {
+      fatalChamber = currentChamber;
+      pullTrigger('@streamer');
+    }
+
+    // Listener do Broadcaster
+    const broadcasterChannel = new BroadcastChannel('v5_broadcaster_games');
+    broadcasterChannel.onmessage = (event) => handleLivePayload(event.data);
+    window.addEventListener('v5_event', (e) => handleLivePayload(e.detail));
+
+    function handleLivePayload(payload) {
+      if (!payload) return;
+      const user = payload.user || '@espectador';
+
+      if (payload.type === 'gift') {
+        const gift = payload.giftName || 'Gift';
+        triggerGiftShot(gift, user);
+      } else if (payload.type === 'comment' || payload.type === 'vote') {
+        const text = String(payload.comment || payload.action || '').trim().toLowerCase();
+        if (text === '1' || text === 'entrar' || text === 'roleta' || text.includes('tiro') || text.includes('gatilho')) {
+          pullTrigger(user);
+        }
+      }
+    }
+
+    // Toggle Debug Drawer
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') toggleDebug();
+    });
+    function toggleDebug() {
+      debugDrawer.classList.toggle('open');
+    }
+
+    // =========================================================================
+    // MOTOR ANTI-SILÊNCIO (Simulação Autônoma)
+    // =========================================================================
+    const mockUsers = [
+      '@felipe_danger', '@bia_coragem', '@marcos_sorte', '@camila_live',
+      '@thiago_risk', '@amanda_balao', '@rafael_pop', '@juliana_safe'
+    ];
+
+    setInterval(() => {
+      if (isGameOver) return;
+      const rndUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+      if (Math.random() < 0.20) {
+        triggerGiftShot('Rose', rndUser);
+      } else {
+        pullTrigger(rndUser);
+      }
+    }, 3200);
+
+    // =========================================================================
+    // CICLO DE ESTOURO & AUTO-RESET
+    // =========================================================================
+    function gameOver(victim) {
+      isGameOver = true;
+      popVictim.textContent = `${victim} encontrou a câmara fatal #${currentChamber + 1}!`;
+
+      // Montar lista de sobreviventes
+      survivorList.innerHTML = '';
+      if (survivors.length === 0) {
+        survivorList.innerHTML = '<span style="color: #94a3b8;">Nenhum sobrevivente nesta rodada!</span>';
+      } else {
+        survivors.slice(-4).forEach(s => {
+          const row = document.createElement('div');
+          row.className = 'survivor-row';
+          row.innerHTML = `<span>🛡️ ${s}</span><span style="color: #4ade80;">SOBREVIVEU</span>`;
+          survivorList.appendChild(row);
+        });
+      }
+
+      // Confetes de borracha estourada
+      confettis = [];
+      for (let i = 0; i < 90; i++) {
+        confettis.push({
+          x: W / 2,
+          y: H * 0.45,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.5) * 14,
+          color: ['#f43f5e', '#ec4899', '#fbbf24', '#ffffff'][Math.floor(Math.random() * 4)],
+          size: 6 + Math.random() * 8
+        });
+      }
+
+      popOverlay.classList.add('active');
+      resetFill.style.transition = 'none';
+      resetFill.style.width = '100%';
+      void resetFill.offsetWidth;
+      resetFill.style.transition = 'width 5s linear';
+      resetFill.style.width = '0%';
+
+      setTimeout(() => {
+        resetChamber();
+      }, 5000);
+    }
+
+    function resetChamber() {
+      popOverlay.classList.remove('active');
+      confettis = [];
+      survivors = [];
+      currentChamber = 0;
+      fatalChamber = Math.floor(Math.random() * 6);
+      needleDistanceNorm = 0;
+      isGameOver = false;
+
+      survivorCountEl.textContent = '0';
+      needleStageEl.textContent = '0%';
+      chamberCounterEl.textContent = 'CÂMARA 1 DE 6';
+
+      for (let i = 0; i < 6; i++) {
+        const dot = document.getElementById(`c${i}`);
+        if (dot) dot.className = 'chamber-dot';
+      }
+
+      addToast('🎈 NOVO BALÃO INFLADO! Tambor recarregado!', '#38bdf8');
+    }
+
+    // =========================================================================
+    // LOOP PRINCIPAL DE SIMULAÇÃO E RENDERIZAÇÃO
+    // =========================================================================
+    let lastTime = performance.now();
+
+    function gameLoop(now) {
+      const dt = Math.min(0.08, (now - lastTime) / 1000);
+      lastTime = now;
+
+      update(dt);
+      render();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    function update(dt) {
+      balloonPulse += dt * 3.5;
+
+      // Atualizar confetes
+      for (let i = confettis.length - 1; i >= 0; i--) {
+        const c = confettis[i];
+        c.x += c.vx;
+        c.y += c.vy;
+        c.vy += 0.25; // Gravidade
+        if (c.y > H + 20) confettis.splice(i, 1);
+      }
+    }
+
+    // =========================================================================
+    // RENDERIZADOR CANVAS DO BALÃO E DA AGULHA
+    // =========================================================================
+    function render() {
+      ctx.clearRect(0, 0, W, H);
+
+      const bx = W / 2;
+      const by = H * 0.46;
+      const baseRadius = Math.min(W * 0.34, 150);
+
+      // 1. Balão Gigante Central (se não estiver estourado)
+      if (!isGameOver) {
+        renderBalloon(bx, by, baseRadius);
+      }
+
+      // 2. Agulha Mecânica de Precisão (Aproximação milimétrica)
+      renderNeedle(bx, by, baseRadius);
+
+      // 3. Confetes do Estouro
+      renderConfetti();
+    }
+
+    function renderBalloon(bx, by, r) {
+      ctx.save();
+      ctx.translate(bx, by);
+
+      // Pulsação elástica de tensão
+      const pulseFactor = Math.sin(balloonPulse) * (4 + needleDistanceNorm * 8);
+      const rad = r + pulseFactor;
+
+      // Sombra
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+      ctx.beginPath();
+      ctx.ellipse(0, rad * 0.75, rad * 0.8, rad * 0.25, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Corpo do Balão (Borracha Vermelha / Rosa Neon)
+      const grad = ctx.createRadialGradient(-rad * 0.3, -rad * 0.3, rad * 0.1, 0, 0, rad);
+      grad.addColorStop(0, '#fda4af');
+      grad.addColorStop(0.5, '#f43f5e');
+      grad.addColorStop(1, '#881337');
+      ctx.fillStyle = grad;
+
+      ctx.shadowColor = '#f43f5e';
+      ctx.shadowBlur = 18 + (needleDistanceNorm * 22);
+
+      ctx.beginPath();
+      ctx.arc(0, 0, rad, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Brilho de Reflexo Superior
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.beginPath();
+      ctx.ellipse(-rad * 0.35, -rad * 0.35, rad * 0.22, rad * 0.12, -Math.PI / 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Bico do Balão na Base
+      ctx.fillStyle = '#be123c';
+      ctx.beginPath();
+      ctx.moveTo(-10, rad - 2);
+      ctx.lineTo(10, rad - 2);
+      ctx.lineTo(0, rad + 14);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function renderNeedle(bx, by, r) {
+      ctx.save();
+      // A agulha vem do topo descendo em direção ao balão
+      // Distância da agulha diminui conforme needleDistanceNorm aumenta
+      const minGap = 2; // Quando atinge 100%, fica a 2px da borracha
+      const maxGap = 110;
+      const currentGap = maxGap - (needleDistanceNorm * (maxGap - minGap));
+
+      const needleTipY = by - r - currentGap;
+      const needleBaseY = needleTipY - 80;
+
+      // Haste da Agulha
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 3.5;
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.moveTo(bx, needleBaseY);
+      ctx.lineTo(bx, needleTipY);
+      ctx.stroke();
+
+      // Ponta Ultra Afiada
+      ctx.fillStyle = '#f43f5e';
+      ctx.shadowColor = '#f43f5e';
+      ctx.shadowBlur = 14;
+      ctx.beginPath();
+      ctx.moveTo(bx - 6, needleTipY - 14);
+      ctx.lineTo(bx + 6, needleTipY - 14);
+      ctx.lineTo(bx, needleTipY);
+      ctx.closePath();
+      ctx.fill();
+
+      // Base do Cilindro / Suporte Mecânico
+      ctx.fillStyle = '#1e293b';
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 2;
+      ctx.shadowBlur = 0;
+      ctx.fillRect(bx - 20, needleBaseY - 24, 40, 24);
+      ctx.strokeRect(bx - 20, needleBaseY - 24, 40, 24);
+
+      ctx.restore();
+    }
+
+    function renderConfetti() {
+      if (confettis.length === 0) return;
+      confettis.forEach(c => {
+        ctx.fillStyle = c.color;
+        ctx.fillRect(c.x, c.y, c.size, c.size * 0.6);
+      });
+    }
+
+    // Inicialização da Página
+    resize();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>
