@@ -1,0 +1,430 @@
+{
+  "timestamp": "2026-10-27T07:35:14.858799",
+  "holding": "Holding V5 Apollo",
+  "captaincy": "Capitania V5 Games",
+  "total_cartridges_audited": 41,
+  "total_isolated_compliant": 41,
+  "isolation_rate_percent": 100.0,
+  "criteria": {
+    "zero_external_scripts": true,
+    "zero_external_stylesheets": true,
+    "zero_google_fonts": true,
+    "zero_external_cdn": true,
+    "zero_external_media_files": true,
+    "pure_procedural_web_audio": true,
+    "pure_system_fonts": true
+  },
+  "status": "HOMOLOGADO_ISOLAMENTO_TOTAL",
+  "cartridges": [
+    {
+      "slug": "01_cabo_de_guerra_neon",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "01b_cabo_de_guerra_elementos",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "02_plinko_pachinko_fortuna",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "03_corrida_avatares_holding",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "04_boss_raid_cooperativo",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "05_roleta_desafios_live",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "06_batalha_dos_baloes",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "07_pendulo_destruidor",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "08_caca_tesouro_coordenadas",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "09_tsunami_de_curtidas",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "10_queda_dos_blocos",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "11_queda_de_braco_titas",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "12_pachinko_pinball_neon",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "13_cascata_de_moedas",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "14_vortex_gravitacional",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "15_corrida_maluca_espacial",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "16_arrancada_noturna_neon",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "17_caca_niquel_neon_777",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "18_roleta_russa_baloes",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "19_defesa_da_torre_chat",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "20_subida_da_montanha_sagrada",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "21_batata_quente_explosiva",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "22_ponte_de_vidro_quebradico",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "23_sobrevivencia_na_lava",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "24_campo_minado_neon",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "25_batalha_naval_live",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "26_guerra_dos_tanques_neon",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "27_meteoro_defensor",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "28_labirinto_pacman_neon",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "29_basquete_street_neon",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "30_gol_de_penalti_live",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "31_guitar_hero_neon",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "32_corte_de_frutas_neon",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "33_corrida_de_cavalos_retro",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "34_pinball_galactico",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "35_quiz_frenetico_holding",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "36_pula_corda_extremo",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "37_torre_de_blocos_equilibrada",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "38_fuga_da_prisao_espacial",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "39_alvo_movel_snipers",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    },
+    {
+      "slug": "40_duelo_de_magicos_neon",
+      "isolated": true,
+      "violations": [],
+      "external_scripts": 0,
+      "external_styles": 0,
+      "external_fonts": 0,
+      "external_media": 0,
+      "status": "ISOLAMENTO_TOTAL_100%"
+    }
+  ]
+}
