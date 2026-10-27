@@ -150,4 +150,6 @@ O objetivo financeiro e técnico foi alcançado com um acervo proprietário de a
 - `scripts/audit_debug_drawer_106.py`: Auditoria cirúrgica da Gaveta de Depuração pré-live em todos os 41 cartuchos (display: none por padrão, tecla 'D', toggle e >=4 botões).
 - `scripts/upgrade_debug_drawers_106.py`: Padronizador de atalho de teclado e gaveta oculta para os 6 cartuchos restantes.
 - `scripts/test_debug_drawer_106.py`: Suíte de homologação da Gaveta de Depuração com simulação headless do ciclo de alternância da tecla 'D' (6/6 checks aprovados).
+- `scripts/audit_gift_economy_107.py`: Auditoria cirúrgica da economia de monetização e presentes nos 41 cartuchos (pesos >= 5x, alertas visuais, áudio procedural e resiliência a burst).
+- `scripts/test_gift_economy_107.py`: Suíte de estresse de 10.000 presentes em alta frequência (2M gifts/s simulados) sem engasgos ou memory leaks (6/6 checks aprovados).
 - `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo industrial com verificação MD5 bit-a-bit, gerador de manifestos espelhados e gerador de `games_registry.json` para o V5 Broadcaster.
