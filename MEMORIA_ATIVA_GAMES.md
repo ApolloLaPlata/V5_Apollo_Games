@@ -1,7 +1,7 @@
 # MEMÓRIA ATIVA — CAPITANIA V5 GAMES (CATÁLOGO DE JOGOS DE LIVE)
 
 **Última Atualização:** 27 de Outubro de 2026  
-**Status do Projeto:** Fase 11 em Conclusão (Etapa 109 Homologada) — 40 Jogos Próprios (41 Cartuchos Físicos) Forjados, Blindados e Homologados com 100% de Integridade MD5 e Barramento Central Atualizado  
+**Status do Projeto:** Fase 11 Concluída (Etapa 110 Homologada) — 110/110 Etapas Concluídas (100% Homologado), 40 Jogos Próprios (41 Cartuchos Físicos) Forjados, Blindados e Homologados com 100% de Integridade MD5 e Tag de Lançamento v1.0.0-soberano  
 **Destino de Hospedagem:** `E:\MEUS PROGRAMAS\V5_APOLLO_SITES\V5_Apollo_Broadcaster\frontend\public\games\`  
 **Resolução Padrão:** 1080 x 1920 (Vertical 9:16)
 
@@ -157,3 +157,4 @@ O objetivo financeiro e técnico foi alcançado com um acervo proprietário de a
 - `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo industrial com verificação MD5 bit-a-bit, gerador de manifestos espelhados e gerador de `games_registry.json` para o V5 Broadcaster.
 - `scripts/update_hive_bus_109.py`: Registrador de conclusão e homologação oficial da Capitania V5 Games no barramento central `antigravity_hive_bus.md`.
 - `scripts/test_round_8_hardening.py`: Suíte de hardening cirúrgico (7/7 checks) validando beforeunload sem vazamento em 21 jogos, try/catch em BroadcastChannel nos jogos 26-32, radix 10 em parseInt, resets de entidades nos jogos 28 e 39 e desduplicação LRU no V5LiveGameSDK.
+- `scripts/test_etapa_110.py`: Suíte de homologação mestre da Etapa 110 certificando 110/110 etapas concluídas (100% de sucesso) e consagração da tag v1.0.0-soberano.

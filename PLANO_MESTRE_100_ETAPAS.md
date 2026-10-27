@@ -189,4 +189,4 @@
 - [x] **Etapa 107:** Simulação de fluxo intenso de presentes pagos com cálculo correto de multiplicadores e alertas na tela.
 - [x] **Etapa 108:** Teste de carregamento instantâneo como Browser Source no OBS Studio (tempo de abertura < 200ms).
 - [x] **Etapa 109:** Atualização final do `antigravity_hive_bus.md` com anúncio de conclusão da forja dos 40 cartuchos da Capitania V5 Games.
-- [ ] **Etapa 110:** Commit Git mestre com tag de versão final assinada por `Apollo La Plata <v5estudio@hotmail.com>` e homologação concluída.
+- [x] **Etapa 110:** Commit Git mestre com tag de versão final assinada por `Apollo La Plata <v5estudio@hotmail.com>` e homologação concluída.
