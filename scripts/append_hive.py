@@ -3,16 +3,15 @@ import os
 bus_path = r"C:\Users\v5est\.gemini\antigravity\brain\9270dd65-160e-47e8-aea2-6a92fd50cfc6\antigravity_hive_bus.md"
 
 entry = """
-### [27/10/2026 - 09:10] CAPITANIA V5 GAMES - ETAPAS 041 A 044 CONCLUÍDAS: ROLETA DETERMINÍSTICA & CARTUCHO #05 ROLETA DOS DESAFIOS
-- **Motor Implementado:** `src/core/v5_roulette_engine.js` (Motor Matemático Determinístico de Desaceleração Angular com precisão 100% comprovada a 0.00029 ms/frame).
-- **Cartucho Homologado:** `05_roleta_desafios_live` (Roleta dos Desafios da Live 9:16).
+### [27/10/2026 - 09:35] CAPITANIA V5 GAMES - ETAPAS 045 E 046 CONCLUÍDAS: CARTUCHO #17 CAÇA-NÍQUEL NEON 777
+- **Cartucho Homologado:** `17_caca_niquel_neon_777` (Caça-Níquel Neon 777 - Vegas Slots 9:16).
 - **Inovações de Engenharia:**
-  1. Desaceleração angular determinística cúbica (Quintic Ease-Out) para suspense máximo na parada.
-  2. Palheta mecânica (flapper) com deflexão elástica contra pinos divisores e estalido de catraca sintetizado proceduralmente via Web Audio API (`playRatchetClick`).
-  3. Customizador de fatias da roleta (Etapa 044) permitindo ao streamer editar desafios em tempo real.
-  4. Modo Super Giro Frenesi ativado por presentes com efeito estroboscópico neon e confetes.
-- **Sincronização:** Total de 13 cartuchos ativos no Broadcaster (`v5_games_manifest.json`).
-- **Próxima Etapa:** Etapa 045 — Forjamento do Cartucho #17: Caça-Níquel Neon 777 (Slot machine de 3 rolos acionada pelo chat com modos Frenesi).
+  1. Gabinete tridimensional neon com 3 rolos mecânicos cilíndricos e blur dinâmico de rotação.
+  2. Paradas escalonadas (staggered stopping) com efeito de quase-acerto (near-miss) e suspense antes do 3º rolo.
+  3. Síntese procedural completa (Web Audio API): rotação contínua dos cilindros (`startReelSpinSound`), travamento com impacto grave (`playReelLockThud`), sinos de cassino polifônicos e cascata metálica de moedas.
+  4. Modo Frenesi ativado por presentes: força alinhamento de 777 ou Diamantes Cósmicos com chuvas de confetes e auto-reset em 5s.
+- **Sincronização:** Total de 14 cartuchos ativos no Broadcaster (`v5_games_manifest.json`).
+- **Próxima Etapa:** Etapa 047 — Forjamento do Cartucho #18: Roleta Russa de Balões (Ponteiro sorteia participantes e agulha aproxima do balão até o estouro fatídico).
 """
 
 if os.path.exists(bus_path):

@@ -111,6 +111,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "cyber", "viper"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "17_caca_niquel_neon_777": {
+        "name": "Caça-Níquel Neon 777",
+        "category": "sorteios_roletas",
+        "description": "Slot machine clássica de 3 rolos com símbolos neon, paradas escalonadas, modo Frenesi e cascata de moedas",
+        "commands": ["777", "girar", "1", "spin"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 
