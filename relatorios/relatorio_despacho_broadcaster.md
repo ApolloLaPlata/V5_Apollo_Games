@@ -1,6 +1,6 @@
 # RELATÓRIO DE DESPACHO E SINCRONIZAÇÃO INDUSTRIAL
 **Holding V5 Apollo — Capitania V5 Games -> V5 Broadcaster**  
-*Data de Execução:* 27/10/2026 07:44:53  
+*Data de Execução:* 27/10/2026 07:52:05  
 *Destino de Produção:* `E:\MEUS PROGRAMAS\V5_APOLLO_SITES\V5_Apollo_Broadcaster\frontend\public\games`
 
 ---
@@ -10,10 +10,10 @@
 | :--- | :--- |
 | **Total de Cartuchos Despachados** | **41 cartuchos** |
 | **Arquivos Verificados com Hash MD5** | **82 arquivos** |
-| **Volume de Dados Transferido** | **1.71 MB (1,789,090 bytes)** |
+| **Volume de Dados Transferido** | **1.71 MB (1,790,212 bytes)** |
 | **Taxa de Integridade Criptográfica (MD5 Match)** | **100.0%** |
 | **Erros / Mismatches Detectados** | **0** |
-| **Tempo Total de Processamento** | **1.93 segundos** |
+| **Tempo Total de Processamento** | **1.92 segundos** |
 | **Status da Homologação** | **HOMOLOGADO_DESPACHADO** |
 
 ---
@@ -26,7 +26,7 @@
 | 03 | `02_plinko_pachinko_fortuna` | Plinko da Fortuna | `fisica_pachinko` | `9c09cc90...` | `af5e0c03...` | **VERIFIED** |
 | 04 | `03_corrida_avatares_holding` | Corrida dos Avatares da Holding | `corrida_velocidade` | `326e167d...` | `a5681dc1...` | **VERIFIED** |
 | 05 | `04_boss_raid_cooperativo` | Boss Raid do Chat | `cooperativo_boss` | `18f53ab4...` | `eeb65857...` | **VERIFIED** |
-| 06 | `05_roleta_desafios_live` | Roleta dos Desafios da Live | `sorteios_roletas` | `864a1450...` | `672939a8...` | **VERIFIED** |
+| 06 | `05_roleta_desafios_live` | Roleta dos Desafios da Live | `sorteios_roletas` | `c90f6743...` | `672939a8...` | **VERIFIED** |
 | 07 | `06_batalha_dos_baloes` | Batalha dos Balões Gigantes | `polarizacao` | `f077dd20...` | `353d0b73...` | **VERIFIED** |
 | 08 | `07_pendulo_destruidor` | Pêndulo Demolidor | `tensao_eliminacao` | `d6839b25...` | `4803cfcc...` | **VERIFIED** |
 | 09 | `08_caca_tesouro_coordenadas` | Caça ao Baú do Tesouro | `tabuleiro_coordenadas` | `240dfd08...` | `c085f5cb...` | **VERIFIED** |
@@ -38,8 +38,8 @@
 | 15 | `14_vortex_gravitacional` | Vortex Gravitacional | `fisica_pachinko` | `8d37e354...` | `61be92ff...` | **VERIFIED** |
 | 16 | `15_corrida_maluca_espacial` | Corrida Maluca Espacial | `corrida_velocidade` | `aad96190...` | `a008df03...` | **VERIFIED** |
 | 17 | `16_arrancada_noturna_neon` | Arrancada Noturna Neon | `corrida_velocidade` | `84e96936...` | `50bfdffe...` | **VERIFIED** |
-| 18 | `17_caca_niquel_neon_777` | Caça-Níquel Neon 777 | `sorteios_roletas` | `18e8452a...` | `d80796ed...` | **VERIFIED** |
-| 19 | `18_roleta_russa_baloes` | Roleta Russa de Balões | `sorteios_roletas` | `dcc8c2f6...` | `1c364b73...` | **VERIFIED** |
+| 18 | `17_caca_niquel_neon_777` | Caça-Níquel Neon 777 | `sorteios_roletas` | `d9c72192...` | `d80796ed...` | **VERIFIED** |
+| 19 | `18_roleta_russa_baloes` | Roleta Russa de Balões | `sorteios_roletas` | `f6a93f6b...` | `1c364b73...` | **VERIFIED** |
 | 20 | `19_defesa_da_torre_chat` | Defesa da Torre do Chat | `cooperativo_boss` | `edec4caf...` | `029f9b72...` | **VERIFIED** |
 | 21 | `20_subida_da_montanha_sagrada` | Subida da Montanha Sagrada | `cooperativo_boss` | `913c75a4...` | `9b240751...` | **VERIFIED** |
 | 22 | `21_batata_quente_explosiva` | Batata Quente Explosiva | `tensao_eliminacao` | `4fbf3511...` | `b4645736...` | **VERIFIED** |
