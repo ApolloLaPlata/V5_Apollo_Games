@@ -1,0 +1,42 @@
+# MEMÓRIA ATIVA — CAPITANIA V5 GAMES (CATÁLOGO DE JOGOS DE LIVE)
+
+**Última Atualização:** 27 de Outubro de 2026  
+**Status do Projeto:** Fase 1 — Fundação da Infraestrutura & Catálogo Inicial (10 a 40 Jogos)  
+**Destino de Hospedagem:** `E:\MEUS PROGRAMAS\V5_APOLLO_SITES\V5_Apollo_Broadcaster\frontend\public\games\`  
+**Resolução Padrão:** 1080 x 1920 (Vertical 9:16)
+
+---
+
+## 1. Visão do Catálogo Exclusivo (10 a 40 Jogos Próprios)
+O objetivo financeiro e técnico é possuir um acervo proprietário de alta qualidade que transforma transmissões de streamers e as nossas próprias lives em pólos de alta retenção e receita com presentes (TikTok Gifts / YouTube SuperChats).
+
+### Tabela Mestra do Catálogo de Cartuchos:
+
+| # | Slug do Jogo | Nome Comercial | Mecânica Principal | Status |
+|---|---|---|---|---|
+| **01** | `01_cabo_de_guerra_neon` | Cabo de Guerra Neon | Chat vota 1 ou 2 para puxar a corda; Presentes dão super-tração | **HOMOLOGADO** |
+| **02** | `02_plinko_pachinko_fortuna` | Plinko da Fortuna | Comentários e gifts soltam bolinhas físicas que caem em multiplicadores | **PROTÓTIPO** |
+| **03** | `03_corrida_avatares_holding` | Corrida dos Avatares | Roxingo, Baiano e Macaco Driver disputam pista acelerando com votos | Planejado |
+| **04** | `04_boss_raid_cooperativo` | Boss Raid do Chat | Chat inteiro ataca monstro gigante com barra de HP em 45 segundos | Planejado |
+| **05** | `05_roleta_desafios_live` | Roleta dos Desafios | Presentes giram a roleta de desafios cômicos para o streamer ou avatar | Planejado |
+| **06** | `06_batalha_dos_baloes` | Estouro de Balão | Dois lados enchendo balões colossais; o primeiro a estourar vence | Planejado |
+| **07** | `07_pendulo_destruidor` | Pêndulo da Demolição | Chat ajusta o ângulo do pêndulo para derrubar a torre adversária | Planejado |
+| **08** | `08_caca_tesouro_coordenadas` | Caça ao Baú de Ouro | Chat escolhe quadrantes (A1 a D4) para desarmar bombas e achar o baú | Planejado |
+| **09** | `09_tsunami_de_curtidas` | Tsunami de Likes | Disputa frenética de pressão de tela por curtidas contínuas | Planejado |
+| **10** | `10_queda_dos_blocos` | Tetris da Discórdia | Chat decide onde soltar blocos pesados para esmagar os inimigos | Planejado |
+
+---
+
+## 2. Contrato de Integração com o V5 Broadcaster
+- O Broadcaster lê os eventos da live do TikTok e do YouTube e emite mensagens via:
+  1. `BroadcastChannel('v5_broadcaster_games')`
+  2. `window.dispatchEvent(new CustomEvent('v5_event', { detail: payload }))`
+- O jogo roda dentro do OBS Studio como fonte de navegador (**Browser Source**) apontando para:
+  `http://localhost:3000/games/<slug_do_jogo>/index.html` ou pela CDN do Broadcaster.
+
+---
+
+## 3. Diretrizes de Engenharia dos Cartuchos
+1. **Zero Dependência de CDN Externa:** Tudo (HTML, CSS, JS, sintetizador de som) deve rodar localmente sem travar se a internet oscilar no OBS.
+2. **60 FPS Estáveis em GPU/Canvas:** Renderização ultra otimizada com `requestAnimationFrame` que não consuma mais que 3% a 5% da CPU da máquina de transmissão.
+3. **Painel de Depuração Embutido:** Toda tela tem uma gaveta oculta na base que permite testar votos e presentes manualmente antes de ligar a live (escondida com tecla `D` ou clique duplo no rodapé).

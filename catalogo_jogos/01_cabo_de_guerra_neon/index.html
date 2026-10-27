@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Cabo de Guerra Neon (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Responsivo para OBS */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    /* Header Safe Zone (140px) */
+    .top-header {
+      padding: 24px 20px 10px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      z-index: 10;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #9ca3af;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-tag span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .score-board {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(17, 24, 39, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 12px 18px;
+      backdrop-filter: blur(8px);
+    }
+
+    .team-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .team-blue {
+      color: #38bdf8;
+      text-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+    }
+
+    .team-orange {
+      color: #fb923c;
+      text-shadow: 0 0 12px rgba(251, 146, 60, 0.5);
+    }
+
+    .team-name {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .team-vote-hint {
+      font-size: 11px;
+      font-family: monospace;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-top: 4px;
+    }
+
+    .vs-badge {
+      font-size: 14px;
+      font-weight: 900;
+      color: #9ca3af;
+      font-style: italic;
+    }
+
+    /* Arena Central da Corda */
+    .arena-container {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .status-banner {
+      font-size: 13px;
+      font-weight: 700;
+      color: #facc15;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px rgba(250, 204, 21, 0.4);
+    }
+
+    /* Corda e Marcador */
+    .rope-track {
+      position: relative;
+      width: 86%;
+      height: 14px;
+      background: #1f2937;
+      border-radius: 10px;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+    }
+
+    .center-line {
+      position: absolute;
+      left: 50%;
+      top: -15px;
+      bottom: -15px;
+      width: 2px;
+      background: #ef4444;
+      box-shadow: 0 0 8px #ef4444;
+    }
+
+    .rope-marker {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #f59e0b 0%, #b45309 100%);
+      box-shadow: 0 0 20px #f59e0b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 900;
+      transition: left 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Bonecos / Personagens */
+    .characters-row {
+      position: relative;
+      width: 86%;
+      height: 120px;
+      margin-top: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .puller {
+      font-size: 60px;
+      transition: transform 0.2s ease;
+    }
+
+    .puller-blue {
+      filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.6));
+    }
+
+    .puller-orange {
+      filter: drop-shadow(0 0 16px rgba(251, 146, 60, 0.6));
+      transform: scaleX(-1);
+    }
+
+    /* Feed de Eventos Flutuantes */
+    .events-feed {
+      position: absolute;
+      top: 190px;
+      width: 100%;
+      height: 120px;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    .event-toast {
+      background: rgba(17, 24, 39, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      backdrop-filter: blur(6px);
+      animation: toastPop 2.2s forwards;
+    }
+
+    @keyframes toastPop {
+      0% { opacity: 0; transform: translateY(12px) scale(0.9); }
+      15% { opacity: 1; transform: translateY(0) scale(1); }
+      80% { opacity: 1; transform: translateY(-8px); }
+      100% { opacity: 0; transform: translateY(-24px); }
+    }
+
+    /* Modal de Vitoria */
+    .victory-modal {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .victory-title {
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .victory-timer {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-top: 16px;
+      font-family: monospace;
+    }
+
+    /* Painel de Depuracao Ocultavel no Rodape */
+    .debug-drawer {
+      background: rgba(17, 24, 39, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 20;
+    }
+
+    .debug-toggle-hint {
+      font-size: 10px;
+      text-align: center;
+      color: #6b7280;
+      text-transform: uppercase;
+      font-family: monospace;
+    }
+
+    .debug-buttons {
+      display: grid;
+      grid-template-cols: 1fr 1fr;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .btn-test {
+      padding: 8px 4px;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: #1f2937;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .btn-test:hover {
+      background: #374151;
+    }
+    .btn-blue { border-color: #38bdf8; color: #38bdf8; }
+    .btn-orange { border-color: #fb923c; color: #fb923c; }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Header Safe Zone -->
+    <div class="top-header">
+      <div class="brand-tag">
+        <span></span>
+        <span>V5 BROADCASTER LIVE • CABO DE GUERRA</span>
+      </div>
+
+      <div class="score-board">
+        <div class="team-card team-blue">
+          <span class="team-name">TIME AZUL</span>
+          <span class="team-vote-hint">Digite [ 1 ]</span>
+        </div>
+        <div class="vs-badge">VS</div>
+        <div class="team-card team-orange">
+          <span class="team-name">TIME LARANJA</span>
+          <span class="team-vote-hint">Digite [ 2 ]</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feed de Notificações da Live -->
+    <div class="events-feed" id="events-feed"></div>
+
+    <!-- Arena Central -->
+    <div class="arena-container">
+      <div class="status-banner" id="status-banner">DIGITE NO CHAT PARA PUXAR!</div>
+
+      <div class="rope-track">
+        <div class="center-line"></div>
+        <div class="rope-marker" id="rope-marker">⚡</div>
+      </div>
+
+      <div class="characters-row">
+        <div class="puller puller-blue" id="puller-blue">🤖</div>
+        <div class="puller puller-orange" id="puller-orange">🦁</div>
+      </div>
+    </div>
+
+    <!-- Modal de Vitoria e Auto-Reset -->
+    <div class="victory-modal" id="victory-modal">
+      <div class="victory-title" id="victory-title">TIME AZUL VENCEU!</div>
+      <p style="color: #facc15; font-size: 15px; font-weight: bold;">RODADA FINALIZADA COM SUCESSO</p>
+      <div class="victory-timer" id="victory-timer">Reiniciando em 5 segundos...</div>
+    </div>
+
+    <!-- Painel de Teste Manual (Streamer Debug) -->
+    <div class="debug-drawer" id="debug-drawer">
+      <div class="debug-toggle-hint">Painel de Teste Streamer (Pressione 'D' para ocultar)</div>
+      <div class="debug-buttons">
+        <button class="btn-test btn-blue" onclick="handleSimVote('A', 1)">+1 Voto Azul</button>
+        <button class="btn-test btn-blue" onclick="handleSimGift('A', 'Rosa', 5)">🎁 Gift Azul</button>
+        <button class="btn-test btn-orange" onclick="handleSimVote('B', 1)">+1 Voto Laranja</button>
+        <button class="btn-test btn-orange" onclick="handleSimGift('B', 'Rosa', 5)">🎁 Gift Laranja</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sintetizador Web Audio API Embutido
+    class SynthAudio {
+      constructor() {
+        this.ctx = null;
+      }
+      getCtx() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        return this.ctx;
+      }
+      playTug() {
+        const c = this.getCtx();
+        const t = c.currentTime;
+        const osc = c.createOscillator();
+        const g = c.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(140, t);
+        osc.frequency.exponentialRampToValueAtTime(60, t + 0.1);
+        g.gain.setValueAtTime(0.2, t);
+        g.gain.exponentialRampToValueAtTime(0.01, t + 0.12);
+        osc.connect(g);
+        g.connect(c.destination);
+        osc.start(t);
+        osc.stop(t + 0.12);
+      }
+      playCoin() {
+        const c = this.getCtx();
+        const t = c.currentTime;
+        const osc = c.createOscillator();
+        const g = c.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(980, t);
+        osc.frequency.setValueAtTime(1320, t + 0.08);
+        g.gain.setValueAtTime(0.25, t);
+        g.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
+        osc.connect(g);
+        g.connect(c.destination);
+        osc.start(t);
+        osc.stop(t + 0.3);
+      }
+      playVictory() {
+        const c = this.getCtx();
+        const t = c.currentTime;
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+          const osc = c.createOscillator();
+          const g = c.createGain();
+          const st = t + (idx * 0.1);
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, st);
+          g.gain.setValueAtTime(0.2, st);
+          g.gain.exponentialRampToValueAtTime(0.01, st + 0.35);
+          osc.connect(g);
+          g.connect(c.destination);
+          osc.start(st);
+          osc.stop(st + 0.35);
+        });
+      }
+    }
+
+    const audio = new SynthAudio();
+
+    // Estado do Jogo
+    let ropePosition = 50; // 50% = centro
+    let isFinished = false;
+    const ropeMarker = document.getElementById('rope-marker');
+    const pullerBlue = document.getElementById('puller-blue');
+    const pullerOrange = document.getElementById('puller-orange');
+    const victoryModal = document.getElementById('victory-modal');
+    const victoryTitle = document.getElementById('victory-title');
+    const victoryTimer = document.getElementById('victory-timer');
+    const eventsFeed = document.getElementById('events-feed');
+    const debugDrawer = document.getElementById('debug-drawer');
+
+    function updateRopeUI() {
+      ropeMarker.style.left = `${ropePosition}%`;
+    }
+
+    function spawnToast(text, color) {
+      const toast = document.createElement('div');
+      toast.className = 'event-toast';
+      toast.style.borderColor = color;
+      toast.style.color = color;
+      toast.innerText = text;
+      eventsFeed.prepend(toast);
+      setTimeout(() => toast.remove(), 2200);
+    }
+
+    function checkWinCondition() {
+      if (isFinished) return;
+
+      if (ropePosition <= 12) {
+        triggerVictory('TIME AZUL', '#38bdf8');
+      } else if (ropePosition >= 88) {
+        triggerVictory('TIME LARANJA', '#fb923c');
+      }
+    }
+
+    function triggerVictory(winnerName, color) {
+      isFinished = true;
+      audio.playVictory();
+      victoryTitle.innerText = `${winnerName} VENCEU!`;
+      victoryTitle.style.color = color;
+      victoryModal.style.display = 'flex';
+
+      let countdown = 5;
+      const interval = setInterval(() => {
+        countdown--;
+        victoryTimer.innerText = `Reiniciando em ${countdown} segundos...`;
+        if (countdown <= 0) {
+          clearInterval(interval);
+          resetGame();
+        }
+      }, 1000);
+    }
+
+    function resetGame() {
+      ropePosition = 50;
+      isFinished = false;
+      updateRopeUI();
+      victoryModal.style.display = 'none';
+      spawnToast('🚀 NOVA RODADA INICIADA! DIGITE 1 OU 2!', '#facc15');
+    }
+
+    function pull(team, weight, user = '', giftName = '') {
+      if (isFinished) return;
+
+      if (team === 'A') {
+        ropePosition = Math.max(10, ropePosition - (weight * 0.9));
+        pullerBlue.style.transform = 'scale(1.15) rotate(-6deg)';
+        setTimeout(() => pullerBlue.style.transform = 'scale(1) rotate(0deg)', 150);
+        if (giftName) {
+          audio.playCoin();
+          spawnToast(`🎁 ${user} enviou ${giftName} (+${weight * 10}pts Azul!)`, '#38bdf8');
+        } else {
+          audio.playTug();
+        }
+      } else {
+        ropePosition = Math.min(90, ropePosition + (weight * 0.9));
+        pullerOrange.style.transform = 'scaleX(-1) scale(1.15) rotate(-6deg)';
+        setTimeout(() => pullerOrange.style.transform = 'scaleX(-1) scale(1) rotate(0deg)', 150);
+        if (giftName) {
+          audio.playCoin();
+          spawnToast(`🎁 ${user} enviou ${giftName} (+${weight * 10}pts Laranja!)`, '#fb923c');
+        } else {
+          audio.playTug();
+        }
+      }
+
+      updateRopeUI();
+      checkWinCondition();
+    }
+
+    // Handlers Manuais de Teste
+    function handleSimVote(team, weight) {
+      pull(team, weight, '@streamer');
+    }
+
+    function handleSimGift(team, giftName, weight) {
+      pull(team, weight, '@doador_vip', giftName);
+    }
+
+    // Tecla 'D' para ocultar/exibir painel de teste no OBS
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        debugDrawer.style.display = debugDrawer.style.display === 'none' ? 'flex' : 'none';
+      }
+    });
+
+    // Escuta de Eventos Reais do Broadcaster
+    try {
+      const channel = new BroadcastChannel('v5_broadcaster_games');
+      channel.onmessage = (event) => {
+        const d = event.data;
+        if (!d) return;
+        if (d.comment === '1' || d.team === 'A') pull('A', d.weight || 1, d.user, d.giftName);
+        if (d.comment === '2' || d.team === 'B') pull('B', d.weight || 1, d.user, d.giftName);
+      };
+    } catch (e) {
+      console.warn('BroadcastChannel nao suportado nesta versao.');
+    }
+
+    window.addEventListener('v5_event', (e) => {
+      const d = e.detail;
+      if (!d) return;
+      if (d.comment === '1' || d.team === 'A') pull('A', d.weight || 1, d.user, d.giftName);
+      if (d.comment === '2' || d.team === 'B') pull('B', d.weight || 1, d.user, d.giftName);
+    });
+
+    // Motor Anti-Silêncio (Simulação Autônoma)
+    const mockUsers = ['@pedro_live', '@mari_99', '@rodrigo_br', '@ana_stream', '@lucas_tk'];
+    setInterval(() => {
+      if (isFinished) return;
+      const team = Math.random() < 0.5 ? 'A' : 'B';
+      const user = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+      pull(team, 1, user);
+    }, 2800);
+  </script>
+</body>
+</html>
