@@ -1,0 +1,754 @@
+{
+  "timestamp": "2026-10-27T07:14:53.900974",
+  "holding": "Holding V5 Apollo",
+  "captaincy": "Capitania V5 Games",
+  "destination": "E:\\MEUS PROGRAMAS\\V5_APOLLO_SITES\\V5_Apollo_Broadcaster\\frontend\\public\\games",
+  "total_cartridges": 41,
+  "total_files_verified": 82,
+  "total_bytes_transferred": 1739026,
+  "total_megabytes": 1.66,
+  "duration_seconds": 2.34,
+  "md5_match_rate_percent": 100.0,
+  "md5_mismatches": 0,
+  "status": "HOMOLOGADO_DESPACHADO",
+  "cartridges": [
+    {
+      "slug": "01_cabo_de_guerra_neon",
+      "name": "Cabo de Guerra Neon",
+      "category": "polarizacao",
+      "files": {
+        "index.html": {
+          "md5": "27f32d9cb878ff2a8a90ae41ab98be06",
+          "size_bytes": 29105,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "4055fe8783d01e5da4017f9a1204ce4f",
+          "size_bytes": 3383,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "01b_cabo_de_guerra_elementos",
+      "name": "Cabo de Guerra dos Elementos",
+      "category": "polarizacao",
+      "files": {
+        "index.html": {
+          "md5": "b9070b095b5bfaf862d19517b2038d68",
+          "size_bytes": 29336,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "ca2b02b5b3025184c26b2a252b6bad98",
+          "size_bytes": 3349,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "02_plinko_pachinko_fortuna",
+      "name": "Plinko da Fortuna",
+      "category": "fisica_pachinko",
+      "files": {
+        "index.html": {
+          "md5": "9c09cc9053b4d0beba968ab0d9d5d5a9",
+          "size_bytes": 42265,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "af5e0c0356de2587a03a2d3db933ffd2",
+          "size_bytes": 3591,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "03_corrida_avatares_holding",
+      "name": "Corrida dos Avatares da Holding",
+      "category": "corrida_velocidade",
+      "files": {
+        "index.html": {
+          "md5": "326e167de1f3a32bc5b93bc5a1cd24bc",
+          "size_bytes": 40856,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "a5681dc1ca7cd5c00a7f48808b259ac4",
+          "size_bytes": 3294,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "04_boss_raid_cooperativo",
+      "name": "Boss Raid do Chat",
+      "category": "cooperativo_boss",
+      "files": {
+        "index.html": {
+          "md5": "7e7346275cb8d1c51d759c30ac31d916",
+          "size_bytes": 41593,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "eeb65857adb0a70f564127bc9e3ea7b5",
+          "size_bytes": 3217,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "05_roleta_desafios_live",
+      "name": "Roleta dos Desafios da Live",
+      "category": "sorteios_roletas",
+      "files": {
+        "index.html": {
+          "md5": "d76414ecb08b81d5c9d7e9bbbbfa2837",
+          "size_bytes": 34214,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "672939a83441680a0ab2e33e1083d354",
+          "size_bytes": 3304,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "06_batalha_dos_baloes",
+      "name": "Batalha dos Balões Gigantes",
+      "category": "polarizacao",
+      "files": {
+        "index.html": {
+          "md5": "f077dd20fe04f8f5d3db27025be3a468",
+          "size_bytes": 31924,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "353d0b73d7d9a65bfb39d3ea820e2c8b",
+          "size_bytes": 3260,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "07_pendulo_destruidor",
+      "name": "Pêndulo Demolidor",
+      "category": "tensao_eliminacao",
+      "files": {
+        "index.html": {
+          "md5": "0519b0e1d09a354b395a0a7566333d0c",
+          "size_bytes": 30723,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "4803cfccc7724c61f07ab827fbddafd7",
+          "size_bytes": 3160,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "08_caca_tesouro_coordenadas",
+      "name": "Caça ao Baú do Tesouro",
+      "category": "tabuleiro_coordenadas",
+      "files": {
+        "index.html": {
+          "md5": "f3bf3cd53125e14ad610c24ead0a98a7",
+          "size_bytes": 40183,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "c085f5cb1dac42d5760d8fa77b3f5980",
+          "size_bytes": 3568,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "09_tsunami_de_curtidas",
+      "name": "Tsunami de Curtidas",
+      "category": "polarizacao",
+      "files": {
+        "index.html": {
+          "md5": "46e509ca6a1e83cc44a0150a65ea2f90",
+          "size_bytes": 39772,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "674604a499eb8e4a6d398c1fff059bc9",
+          "size_bytes": 3115,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "10_queda_dos_blocos",
+      "name": "Tetris da Discórdia",
+      "category": "tabuleiro_coordenadas",
+      "files": {
+        "index.html": {
+          "md5": "3f9321708d6eb1581fc6a00089f29b28",
+          "size_bytes": 38860,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "4af17a61f9f75ae0dc70b08698f29037",
+          "size_bytes": 3561,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "11_queda_de_braco_titas",
+      "name": "Queda de Braço dos Titãs",
+      "category": "polarizacao",
+      "files": {
+        "index.html": {
+          "md5": "7337b34b7747616327d63fba9e33d305",
+          "size_bytes": 39974,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "08b0d99bca994c51441430733c2e6751",
+          "size_bytes": 2977,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "12_pachinko_pinball_neon",
+      "name": "Pachinko Pinball Neon",
+      "category": "fisica_pachinko",
+      "files": {
+        "index.html": {
+          "md5": "83511fc234a59407ac0d2a555bf652a5",
+          "size_bytes": 42104,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "369c2b1c03b8f2ccd36206ace21df1fe",
+          "size_bytes": 3250,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "13_cascata_de_moedas",
+      "name": "Cascata de Moedas Douradas",
+      "category": "fisica_pachinko",
+      "files": {
+        "index.html": {
+          "md5": "4ecb4f1d5627ec28756199e5cc8b575e",
+          "size_bytes": 35225,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "6db40b6c36e55d78a98cdd7014c2af01",
+          "size_bytes": 3233,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "14_vortex_gravitacional",
+      "name": "Vortex Gravitacional",
+      "category": "fisica_pachinko",
+      "files": {
+        "index.html": {
+          "md5": "c060b4a53cc00596e05528d3681737b9",
+          "size_bytes": 33132,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "61be92ff8c152ba9f7a51a25bc0b882f",
+          "size_bytes": 3172,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "15_corrida_maluca_espacial",
+      "name": "Corrida Maluca Espacial",
+      "category": "corrida_velocidade",
+      "files": {
+        "index.html": {
+          "md5": "aad96190f8c7e7dbc13b035f18a5320f",
+          "size_bytes": 41369,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "a008df035a2564e4a1567866054505e7",
+          "size_bytes": 3100,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "16_arrancada_noturna_neon",
+      "name": "Arrancada Noturna Neon",
+      "category": "corrida_velocidade",
+      "files": {
+        "index.html": {
+          "md5": "84e969360bed0cdbf43979945deacc24",
+          "size_bytes": 41027,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "50bfdffed84bca9606e79a1643f42520",
+          "size_bytes": 3110,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "17_caca_niquel_neon_777",
+      "name": "Caça-Níquel Neon 777",
+      "category": "sorteios_roletas",
+      "files": {
+        "index.html": {
+          "md5": "d515de9f9af486dbee3e3ccc625c32aa",
+          "size_bytes": 31366,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "d80796edda0954bc617e93a21b08dd9e",
+          "size_bytes": 3259,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "18_roleta_russa_baloes",
+      "name": "Roleta Russa de Balões",
+      "category": "sorteios_roletas",
+      "files": {
+        "index.html": {
+          "md5": "dcc8c2f6a869f663efee0a6e12c416d5",
+          "size_bytes": 33157,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "1c364b731ceb7b2154b5f89e27b984f1",
+          "size_bytes": 3307,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "19_defesa_da_torre_chat",
+      "name": "Defesa da Torre do Chat",
+      "category": "cooperativo_boss",
+      "files": {
+        "index.html": {
+          "md5": "617f5e2183a645962eb1a5735dd787ff",
+          "size_bytes": 34575,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "029f9b725116bef5c3dc56b134e400dd",
+          "size_bytes": 3124,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "20_subida_da_montanha_sagrada",
+      "name": "Subida da Montanha Sagrada",
+      "category": "cooperativo_boss",
+      "files": {
+        "index.html": {
+          "md5": "0bdd54923449c978214c961db3b7a419",
+          "size_bytes": 32029,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "9b2407510ccc5f302d6695ed02ad0c94",
+          "size_bytes": 3076,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "21_batata_quente_explosiva",
+      "name": "Batata Quente Explosiva",
+      "category": "tensao_eliminacao",
+      "files": {
+        "index.html": {
+          "md5": "414da230f3f3c7532f838e80bdfde0fb",
+          "size_bytes": 32089,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "b46457360ee113a555071d0b3a5a7144",
+          "size_bytes": 3180,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "22_ponte_de_vidro_quebradico",
+      "name": "Ponte de Vidro Quebradiço",
+      "category": "tensao_eliminacao",
+      "files": {
+        "index.html": {
+          "md5": "56861adfa98dd18b1800fe6eeb24cc25",
+          "size_bytes": 34699,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "f40c3cd7904a40fb78bc233f156ea918",
+          "size_bytes": 3430,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "23_sobrevivencia_na_lava",
+      "name": "Sobrevivência na Lava",
+      "category": "tensao_eliminacao",
+      "files": {
+        "index.html": {
+          "md5": "689bde39e957f264d5e28b139730e437",
+          "size_bytes": 44960,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "68896bf3bad549d654629624d6fa7514",
+          "size_bytes": 3279,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "24_campo_minado_neon",
+      "name": "Campo Minado Neon",
+      "category": "tabuleiro_coordenadas",
+      "files": {
+        "index.html": {
+          "md5": "1fe3b2a0991177ee20201a86d66f583b",
+          "size_bytes": 40050,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "a47b74204f0130e09658ce47664f52ce",
+          "size_bytes": 3651,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "25_batalha_naval_live",
+      "name": "Batalha Naval da Live",
+      "category": "tabuleiro_coordenadas",
+      "files": {
+        "index.html": {
+          "md5": "40ee51741c441d2ee09049e15ec13737",
+          "size_bytes": 40040,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "c3f899e6a382aacb02c8ff1036506b5d",
+          "size_bytes": 3251,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "26_guerra_dos_tanques_neon",
+      "name": "Guerra dos Tanques Neon",
+      "category": "artilharia_cinematica",
+      "files": {
+        "index.html": {
+          "md5": "3e1c3871269e4e844864d601e6cd0a22",
+          "size_bytes": 51778,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "324faeb4178cf0dd0391e29e599fcad6",
+          "size_bytes": 3120,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "27_meteoro_defensor",
+      "name": "Meteoro Defensor",
+      "category": "defesa_planetaria",
+      "files": {
+        "index.html": {
+          "md5": "a6ba70642677d28c9f8a24d4a9b197c1",
+          "size_bytes": 46209,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "e7b4b02322788bac1620f0257a3851c5",
+          "size_bytes": 3120,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "28_labirinto_pacman_neon",
+      "name": "Labirinto do Pacman Neon",
+      "category": "arcade_navegacao",
+      "files": {
+        "index.html": {
+          "md5": "568686a45f7f59c2c10876815e2728e8",
+          "size_bytes": 44198,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "c7c634d0b255bdcabdde7912a518f19b",
+          "size_bytes": 3094,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "29_basquete_street_neon",
+      "name": "Basquete Street Neon",
+      "category": "esportes_fisica",
+      "files": {
+        "index.html": {
+          "md5": "84c3f964c983596308fbaf8e04959a96",
+          "size_bytes": 39945,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "2d2fff89bd16c4f0f428453290a8375b",
+          "size_bytes": 3210,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "30_gol_de_penalti_live",
+      "name": "Gol de Pênalti da Live",
+      "category": "esportes_penaltis",
+      "files": {
+        "index.html": {
+          "md5": "bf3a2624daaa3d41cd5b0d4a7718fc37",
+          "size_bytes": 44217,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "129e91d11176aa5d4d6541d5ea8a11e6",
+          "size_bytes": 3180,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "31_guitar_hero_neon",
+      "name": "Guitar Hero da Live",
+      "category": "ritmo_musical",
+      "files": {
+        "index.html": {
+          "md5": "70a9abf99fdc1ae3aed5dcc7353aac9d",
+          "size_bytes": 39936,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "04cbfd015222b679ef4c9d2ff9f7e20c",
+          "size_bytes": 3156,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "32_corte_de_frutas_neon",
+      "name": "Corte de Frutas Neon",
+      "category": "habilidade_reflexo",
+      "files": {
+        "index.html": {
+          "md5": "cd957563aff7b7fad8609d1a245caae5",
+          "size_bytes": 41414,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "3de04738e1894854c41e2fef6b4d7f3a",
+          "size_bytes": 3104,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "33_corrida_de_cavalos_retro",
+      "name": "Corrida de Cavalos Retrô",
+      "category": "apostas_corrida",
+      "files": {
+        "index.html": {
+          "md5": "71f31849617a6798bdd46505ed75c326",
+          "size_bytes": 52850,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "6eb19125dd45800a92dcc9c218f526bf",
+          "size_bytes": 3266,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "34_pinball_galactico",
+      "name": "Pinball Galáctico",
+      "category": "arcade_pinball",
+      "files": {
+        "index.html": {
+          "md5": "17dd0b58849e6a61e02db5c389c2529b",
+          "size_bytes": 48145,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "bc82e55a4bef2aabd2cb7118c38c6a84",
+          "size_bytes": 3231,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "35_quiz_frenetico_holding",
+      "name": "Quiz Frenético da Holding",
+      "category": "quiz_trivia",
+      "files": {
+        "index.html": {
+          "md5": "07586b1d276b7197139140b725f6f9a8",
+          "size_bytes": 43486,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "cb7a3e620cdc5ee496641af4f24ae1c3",
+          "size_bytes": 3292,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "36_pula_corda_extremo",
+      "name": "Pula-Corda Extremo",
+      "category": "ritmo_agilidade",
+      "files": {
+        "index.html": {
+          "md5": "92739373df28edc8b201ebde5e40ffa7",
+          "size_bytes": 38774,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "ffff09f8821c2188d26bc42bde90c16a",
+          "size_bytes": 3003,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "37_torre_de_blocos_equilibrada",
+      "name": "Torre de Blocos Equilibrada",
+      "category": "equilibrio_fisica",
+      "files": {
+        "index.html": {
+          "md5": "986966e656a402c20995e585c65dc910",
+          "size_bytes": 40716,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "0e37da5579a0a2928c24d06c95ffc807",
+          "size_bytes": 3247,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "38_fuga_da_prisao_espacial",
+      "name": "Fuga da Prisão Espacial",
+      "category": "fuga_reflexo",
+      "files": {
+        "index.html": {
+          "md5": "f7384e5b67d56e1880b061969b1ad4cf",
+          "size_bytes": 38258,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "f04a4fe0e9a47918e8a4dea26f094b42",
+          "size_bytes": 3178,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "39_alvo_movel_snipers",
+      "name": "Alvo Móvel dos Snipers",
+      "category": "pontaria_precisao",
+      "files": {
+        "index.html": {
+          "md5": "fff84ed1c9727b7f4589b337112102da",
+          "size_bytes": 39921,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "cd648c38a0c36d22f3e7cd04ea561a28",
+          "size_bytes": 3342,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "slug": "40_duelo_de_magicos_neon",
+      "name": "Duelo de Mágicos Neon",
+      "category": "batalha_polarizacao",
+      "files": {
+        "index.html": {
+          "md5": "134efef112c3150bda4cb9612207383b",
+          "size_bytes": 41512,
+          "verified": true
+        },
+        "thumbnail.svg": {
+          "md5": "52054959036a98fef428e1abcd1112a4",
+          "size_bytes": 3296,
+          "verified": true
+        }
+      },
+      "status": "VERIFIED"
+    }
+  ]
+}

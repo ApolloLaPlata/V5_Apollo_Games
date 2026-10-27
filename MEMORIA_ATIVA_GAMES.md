@@ -131,4 +131,5 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/test_manifest_consolidation_96.py`: Auditoria e consolidação estrita do manifesto com 16 campos de schema por jogo (8/8 checks aprovados).
 - `scripts/generate_cartridge_thumbnails.py`: Gerador industrial de miniaturas SVG vetoriais temáticas (viewBox 400x500) para todos os 41 cartuchos.
 - `scripts/test_cartridge_thumbnails_97.py`: Suíte de validação XML/SVG e conformidade das miniaturas (7/7 checks aprovados).
-- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 41 pastas/40 cartuchos homologados e ativos).
+- `scripts/test_md5_sync_report_98.py`: Validação criptográfica MD5 e auditoria dos relatórios de despacho JSON e Markdown (8/8 checks aprovados).
+- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo industrial com verificação MD5 bit-a-bit e gerador de relatórios de despacho (`relatorio_despacho_broadcaster.json` e `.md` com 100% integridade).
