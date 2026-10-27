@@ -295,6 +295,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "4", "a", "b", "c", "d"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "36_pula_corda_extremo": {
+        "name": "Pula-Corda Extremo",
+        "category": "ritmo_agilidade",
+        "description": "Física 3D de rotação de corda de plasma com aceleração contínua (RPM), avatares saltadores pilotados por chat, câmera lenta e Jetpack Pégaso",
+        "commands": ["1", "2", "3", "pula", "salto", "duplo", "ritmo"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 

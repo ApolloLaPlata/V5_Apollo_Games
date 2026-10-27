@@ -166,7 +166,7 @@
 ---
 
 ### FASE 10: FECHAMENTO DOS 40 JOGOS & PIPELINE INDUSTRIAL (ETAPAS 091 A 100)
-- [ ] **Etapa 091:** Forjamento do Cartucho #36: Pula-Corda Extremo (Dois avatares girando a corda cada vez mais rápido e os jogadores pulando com comandos).
+- [x] **Etapa 091:** Forjamento do Cartucho #36: Pula-Corda Extremo (Dois avatares girando a corda cada vez mais rápido e os jogadores pulando com comandos).
 - [ ] **Etapa 092:** Forjamento do Cartucho #37: Torre de Blocos Equilibrada (Jenga vertical onde presentes colocam blocos de aço e comentários removem blocos de madeira).
 - [ ] **Etapa 093:** Forjamento do Cartucho #38: Fuga da Prisão Espacial (Astronauta subindo com jetpack desviando de lasers acionados pelo chat adversário).
 - [ ] **Etapa 094:** Forjamento do Cartucho #39: Alvo Móvel dos Snipers (Dardos e flechas disparados no timing certo em direção a alvos circulares concêntricos).

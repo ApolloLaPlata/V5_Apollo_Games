@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Pula-Corda Extremo (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container Vertical 9:16 Estrito */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 35%, #0f172a 0%, #030712 90%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+    }
+
+    /* Safe Zone Topo (140px) */
+    .top-safe-zone {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 140px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 16px 8px 16px;
+      background: linear-gradient(180deg, rgba(3, 7, 18, 0.98) 0%, rgba(3, 7, 18, 0.85) 75%, rgba(3, 7, 18, 0) 100%);
+      pointer-events: none;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-pill {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #38bdf8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+      animation: pulseDot 1.5s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .round-timer-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-weight: 800;
+      font-size: 13px;
+      color: #f8fafc;
+    }
+
+    .timer-val {
+      color: #38bdf8;
+    }
+
+    /* Placar de Saltos e RPM */
+    .rope-hud-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 10px;
+      padding: 6px 12px;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
+    }
+
+    .score-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .score-title {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+    }
+
+    .jump-counter {
+      font-size: 22px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #ffd700;
+      text-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+    }
+
+    .speed-badge {
+      background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+      color: #030712;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-family: monospace;
+    }
+
+    .multiplier-tag {
+      font-size: 11px;
+      font-weight: 800;
+      color: #00ff88;
+      font-family: monospace;
+    }
+
+    /* Canvas Central de Física & Animação 3D da Corda */
+    #game-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+    }
+
+    /* Safe Zone Base (180px) */
+    .bottom-safe-zone {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 180px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 10px 14px;
+      background: linear-gradient(0deg, rgba(3, 7, 18, 0.98) 0%, rgba(3, 7, 18, 0.85) 65%, rgba(3, 7, 18, 0) 100%);
+      pointer-events: none;
+      gap: 8px;
+    }
+
+    /* Comandos do Chat */
+    .chat-commands-box {
+      display: grid;
+      grid-template-columns: 1.2fr 1.2fr 1fr 1fr;
+      gap: 6px;
+      pointer-events: auto;
+    }
+
+    .cmd-btn {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 8px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .cmd-btn:active {
+      transform: scale(0.95);
+    }
+
+    .cmd-btn.c1 { border-color: #00f0ff; color: #00f0ff; }
+    .cmd-btn.c2 { border-color: #ffd700; color: #ffd700; }
+    .cmd-btn.c3 { border-color: #ff0055; color: #ff0055; }
+    .cmd-btn.c4 { border-color: #00ff88; color: #00ff88; }
+
+    .cmd-key {
+      font-size: 13px;
+      font-weight: 900;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    .cmd-label {
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+      white-space: nowrap;
+    }
+
+    /* Barra de Gifts */
+    .gifts-reward-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px dashed rgba(56, 189, 248, 0.4);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 9px;
+      color: #f1f5f9;
+      pointer-events: auto;
+    }
+
+    .gift-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+    }
+
+    .gift-icon {
+      font-size: 13px;
+    }
+
+    .gift-effect {
+      color: #38bdf8;
+      font-weight: 800;
+    }
+
+    /* Modal de Vitória e Fim de Rodada */
+    #victory-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 50;
+      background: rgba(3, 7, 18, 0.94);
+      backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .podium-box {
+      width: 100%;
+      max-width: 340px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid #ffd700;
+      border-radius: 16px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.35);
+      animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .trophy-badge {
+      font-size: 52px;
+      filter: drop-shadow(0 0 16px #ffd700);
+      animation: floatTrophy 2s infinite ease-in-out;
+    }
+
+    @keyframes floatTrophy {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .winner-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffd700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .final-score-val {
+      font-size: 28px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #38bdf8;
+    }
+
+    .mvp-donor-card {
+      width: 100%;
+      background: rgba(255, 215, 0, 0.08);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .reset-countdown {
+      font-size: 12px;
+      color: #94a3b8;
+      font-family: monospace;
+    }
+
+    /* Painel de Depuração Local do Streamer (Tecla D) */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(3, 7, 18, 0.98);
+      border-top: 2px solid #38bdf8;
+      padding: 12px;
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.8);
+    }
+
+    .debug-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #38bdf8;
+      font-family: monospace;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .dbg-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-radius: 4px;
+      padding: 6px 2px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Safe Zone Topo (140px) -->
+    <header class="top-safe-zone">
+      <div class="header-row">
+        <div class="brand-pill">
+          <span class="live-dot"></span>
+          <span>V5 PULA-CORDA EXTREMO 9:16</span>
+        </div>
+        <div class="round-timer-badge">
+          <span>PARÊO:</span>
+          <span class="timer-val" id="time-display">00:45</span>
+        </div>
+      </div>
+
+      <!-- Placar de Saltos e RPM -->
+      <div class="rope-hud-strip">
+        <div class="score-block">
+          <span class="score-title">SALTOS CONSECUTIVOS</span>
+          <span class="jump-counter" id="jump-display">0</span>
+        </div>
+
+        <div class="speed-badge" id="rpm-badge">60 RPM</div>
+
+        <div class="score-block" style="align-items: flex-end;">
+          <span class="score-title">COMBO MULTI</span>
+          <span class="multiplier-tag" id="combo-display">1.0x COMBO</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central de Física & Animação -->
+    <canvas id="game-canvas" width="1080" height="1920"></canvas>
+
+    <!-- Safe Zone Base (180px) -->
+    <footer class="bottom-safe-zone">
+      <!-- Comandos do Chat -->
+      <div class="chat-commands-box">
+        <button class="cmd-btn c1" onclick="handleJump('normal', '@teste')">
+          <span class="cmd-key">1</span>
+          <span class="cmd-label">Pulo Normal</span>
+        </button>
+        <button class="cmd-btn c2" onclick="handleJump('double', '@teste')">
+          <span class="cmd-key">2</span>
+          <span class="cmd-label">Salto Mortal</span>
+        </button>
+        <button class="cmd-btn c3" onclick="handleJump('sync', '@teste')">
+          <span class="cmd-key">3</span>
+          <span class="cmd-label">Sincronia</span>
+        </button>
+        <button class="cmd-btn c4" onclick="handleJump('normal', '@teste')">
+          <span class="cmd-key">PULA</span>
+          <span class="cmd-label">Salto Rápido</span>
+        </button>
+      </div>
+
+      <!-- Barra de Gifts -->
+      <div class="gifts-reward-bar">
+        <div class="gift-item">
+          <span class="gift-icon">🌹</span>
+          <span>Rosa (Rose): <span class="gift-effect">Corda Slow-Mo (Câmera Lenta)</span></span>
+        </div>
+        <div class="gift-item">
+          <span class="gift-icon">🦁</span>
+          <span>Leão (Lion): <span class="gift-effect">Jetpack Pégaso (Flutuação 8s)</span></span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Modal de Vitória e Fim de Rodada -->
+    <div id="victory-modal">
+      <div class="podium-box">
+        <div class="trophy-badge">🏆</div>
+        <div class="winner-title">DESAFIO CONCLUÍDO!</div>
+        <div class="final-score-val" id="podium-jumps-val">74 SALTOS</div>
+
+        <div class="mvp-donor-card">
+          <span style="color:#ffd700; font-weight:800;">👑 REI DO PULA-CORDA:</span>
+          <span id="podium-mvp-user" style="font-weight:900; color:#fff;">@NinjaLive (560 pts)</span>
+        </div>
+
+        <div class="reset-countdown" id="podium-countdown">NOVO DESAFIO EM 5S...</div>
+      </div>
+    </div>
+
+    <!-- Painel de Depuração Local do Streamer (Tecla D) -->
+    <div id="debug-drawer">
+      <div class="debug-header">
+        <span>GAVETA DE DEPURAÇÃO DO STREAMER (TECLA D)</span>
+        <button onclick="toggleDebugDrawer()" style="background:none; border:none; color:#f43f5e; font-size:12px; cursor:pointer;">FECHAR [X]</button>
+      </div>
+      <div class="debug-grid">
+        <button class="dbg-btn" onclick="handleJump('normal', '@streamer')">Pulo Normal</button>
+        <button class="dbg-btn" onclick="handleJump('double', '@streamer')">Pulo Duplo</button>
+        <button class="dbg-btn" onclick="handleJump('sync', '@streamer')">Pulo Sincronia</button>
+        <button class="dbg-btn" onclick="triggerTrip()">Simular Tropeço</button>
+      </div>
+      <div class="debug-grid" style="margin-top:4px;">
+        <button class="dbg-btn" style="background:#0284c7;" onclick="triggerSlowMo('@streamer')">Slow-Mo (Rosa)</button>
+        <button class="dbg-btn" style="background:#d97706;" onclick="triggerJetpack('@streamer')">Jetpack (Leão)</button>
+        <button class="dbg-btn" style="background:#e11d48;" onclick="accelerateRope()">Acelerar Corda</button>
+        <button class="dbg-btn" style="background:#16a34a;" onclick="finalizeRound()">Finalizar Rodada</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE: PULA-CORDA EXTREMO (9:16 VERTICAL ENGINE)
+       Holding V5 Apollo — Capitania V5 Games
+       Conformidade Estrita com as 5 Leis Absolutas do Cartucho V5
+       ========================================================================== */
+
+    // --- LEI 4: SINTETIZADOR DE ÁUDIO PROCEDURAL (WEB AUDIO API PURA) ---
+    class ProceduralAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.init();
+      }
+
+      init() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
+      }
+
+      ensureContext() {
+        if (!this.ctx) this.init();
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Whoosh rítmico da corda cortando o ar
+      playRopeWhoosh(speedFactor = 1.0) {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(140 * speedFactor, now);
+        osc.frequency.exponentialRampToValueAtTime(70 * speedFactor, now + 0.12);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(380, now);
+
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.15);
+      }
+
+      // Som do salto / impulso
+      playJumpSound(isDouble = false) {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(isDouble ? 340 : 220, now);
+        osc.frequency.exponentialRampToValueAtTime(isDouble ? 720 : 480, now + 0.15);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.19);
+      }
+
+      // Salto bem-sucedido (acorde brilhante)
+      playScorePoint() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(659.25, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.11);
+      }
+
+      // Tropeço na corda (estalo de choque e tropeço)
+      playTripSound() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.exponentialRampToValueAtTime(45, now + 0.25);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.32);
+      }
+
+      // Efeito sonoro do Slow-Mo (Rosa)
+      playSlowMoSound() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(540, now);
+        osc.frequency.exponentialRampToValueAtTime(180, now + 0.4);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.48);
+      }
+
+      // Efeito sonoro do Jetpack Pégaso (Leão)
+      playJetpackSound() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(280, now);
+        osc.frequency.linearRampToValueAtTime(840, now + 0.35);
+
+        gain.gain.setValueAtTime(0.28, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.42);
+      }
+
+      // Fanfarra Triunfal de Conclusão da Partida
+      playVictoryFanfare() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const notes = [
+          { f: 523.25, d: 0.15 },
+          { f: 659.25, d: 0.15 },
+          { f: 783.99, d: 0.15 },
+          { f: 1046.50, d: 0.55 }
+        ];
+
+        let currTime = this.ctx.currentTime + 0.05;
+        notes.forEach(n => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(n.f, currTime);
+
+          gain.gain.setValueAtTime(0, currTime);
+          gain.gain.linearRampToValueAtTime(0.3, currTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, currTime + n.d);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(currTime);
+          osc.stop(currTime + n.d + 0.05);
+          currTime += n.d + 0.04;
+        });
+      }
+    }
+
+    const audio = new ProceduralAudioEngine();
+
+    // --- CONFIGURAÇÃO DA FÍSICA DO PULA-CORDA (1080 x 1920) ---
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+
+    const ROUND_DURATION_SEC = 45;
+    const GROUND_Y = 1450; // Linha de solo dos pés
+    const GRAVITY = 2100;   // Gravidade vertical dos saltos
+
+    const state = {
+      roundActive: true,
+      timeRemaining: ROUND_DURATION_SEC,
+      jumps: 0,
+      combo: 1.0,
+      ropeAngle: 0,         // Rotação da corda em radianos
+      ropeSpeed: 4.8,       // Velocidade angular (rad/s)
+      baseRopeSpeed: 4.8,
+      slowMoTimer: 0,
+      jetpackTimer: 0,
+      trippedTimer: 0,
+      lastInteractionTime: performance.now(),
+      resetCountdown: 5,
+      donors: {},
+      sparks: [],
+      confetti: [],
+      // Dois Saltadores no Centro da Corda
+      jumpers: [
+        { x: 470, y: GROUND_Y, vy: 0, isGrounded: true, color: '#00f0ff', height: 110, width: 44, rot: 0 },
+        { x: 610, y: GROUND_Y, vy: 0, isGrounded: true, color: '#ff0055', height: 110, width: 44, rot: 0 }
+      ],
+      // Dois Batedores de Corda nas Pontas
+      twirlers: [
+        { x: 200, y: GROUND_Y - 40, armAngle: 0 },
+        { x: 880, y: GROUND_Y - 40, armAngle: Math.PI }
+      ]
+    };
+
+    function initRopeGame() {
+      state.roundActive = true;
+      state.timeRemaining = ROUND_DURATION_SEC;
+      state.jumps = 0;
+      state.combo = 1.0;
+      state.ropeAngle = 0;
+      state.ropeSpeed = state.baseRopeSpeed;
+      state.slowMoTimer = 0;
+      state.jetpackTimer = 0;
+      state.trippedTimer = 0;
+      state.resetCountdown = 5;
+      state.donors = {};
+      state.sparks = [];
+      state.confetti = [];
+      document.getElementById('victory-modal').style.display = 'none';
+
+      state.jumpers.forEach(j => {
+        j.y = GROUND_Y;
+        j.vy = 0;
+        j.isGrounded = true;
+        j.rot = 0;
+      });
+
+      updateHUD();
+    }
+
+    // --- CONTROLE DE SALTOS DO CHAT ---
+    function handleJump(type, user) {
+      if (!state.roundActive || state.trippedTimer > 0) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@saltador";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 10;
+
+      const isDouble = (type === 'double');
+      const jumpImpulse = isDouble ? 920 : 760;
+
+      state.jumpers.forEach(j => {
+        if (j.isGrounded || state.jetpackTimer > 0) {
+          j.vy = -jumpImpulse;
+          j.isGrounded = false;
+          if (isDouble) j.rot = -Math.PI * 2; // Rotação mortal
+        }
+      });
+
+      audio.playJumpSound(isDouble);
+    }
+
+    // --- SUPER GIFTS: SLOW-MO & JETPACK ---
+    function triggerSlowMo(user) {
+      if (!state.roundActive) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@super_donor";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 200;
+
+      state.slowMoTimer = 6.0; // 6 segundos de câmera lenta
+      audio.playSlowMoSound();
+      spawnSparks(540, GROUND_Y - 100, '#38bdf8', 30);
+    }
+
+    function triggerJetpack(user) {
+      if (!state.roundActive) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@leao_vip";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 1000;
+
+      state.jetpackTimer = 8.0; // 8 segundos de flutuação
+      audio.playJetpackSound();
+      spawnSparks(540, GROUND_Y - 200, '#ffd700', 50);
+    }
+
+    function accelerateRope() {
+      state.ropeSpeed = Math.min(state.ropeSpeed + 0.8, 14.0);
+    }
+
+    function triggerTrip() {
+      state.trippedTimer = 1.2;
+      audio.playTripSound();
+      state.combo = 1.0;
+      spawnSparks(540, GROUND_Y, '#ef4444', 40);
+    }
+
+    // --- LEI 3: MOTOR ANTI-SILÊNCIO (< 3s) ---
+    const MOCK_USERS = [
+      "@pula_pula", "@ninja_salto", "@ritmo_neon", 
+      "@corda_master", "@holding_fan", "@saltador_br"
+    ];
+
+    function runAntiSilence() {
+      const now = performance.now();
+      if (now - state.lastInteractionTime > 2200 && state.roundActive && state.trippedTimer <= 0) {
+        state.lastInteractionTime = now;
+        const randomUser = MOCK_USERS[Math.floor(Math.random() * MOCK_USERS.length)];
+
+        // Timing inteligente: salta quando a corda está se aproximando do solo (entre PI e 1.4*PI)
+        handleJump('normal', randomUser);
+
+        // 10% de chance de micro-gift espontâneo
+        if (Math.random() < 0.1) {
+          triggerSlowMo(randomUser);
+        }
+      }
+    }
+
+    // --- PARTÍCULAS & CONFETES ---
+    function spawnSparks(x, y, color, count = 15) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 8 + 3;
+        state.sparks.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * spd,
+          vy: Math.sin(angle) * spd,
+          size: Math.random() * 4 + 2,
+          color: color,
+          alpha: 1.0,
+          decay: Math.random() * 0.03 + 0.02
+        });
+      }
+    }
+
+    function spawnConfetti() {
+      const colors = ['#00f0ff', '#ff0055', '#ffd700', '#00ff88', '#a855f7', '#ffffff'];
+      for (let i = 0; i < 90; i++) {
+        state.confetti.push({
+          x: Math.random() * 1080,
+          y: Math.random() * 600,
+          vx: (Math.random() - 0.5) * 6,
+          vy: Math.random() * 5 + 3,
+          rot: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 12,
+          w: Math.random() * 12 + 8,
+          h: Math.random() * 6 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1.0
+        });
+      }
+    }
+
+    // --- ATUALIZAÇÃO DA FÍSICA & CÁLCULO DA CORDA ---
+    let lastTimestamp = performance.now();
+    let prevRopeY = 0;
+
+    function updateGame(dt) {
+      runAntiSilence();
+
+      if (state.roundActive) {
+        state.timeRemaining -= dt;
+        if (state.timeRemaining <= 0) {
+          state.timeRemaining = 0;
+          finalizeRound();
+        }
+
+        // Timers de bônus
+        if (state.slowMoTimer > 0) state.slowMoTimer -= dt;
+        if (state.jetpackTimer > 0) state.jetpackTimer -= dt;
+        if (state.trippedTimer > 0) state.trippedTimer -= dt;
+
+        // Velocidade efetiva da corda (com Slow-Mo ou normal)
+        const currentSpeed = (state.slowMoTimer > 0) 
+          ? state.ropeSpeed * 0.45 
+          : state.ropeSpeed;
+
+        const prevAngle = state.ropeAngle;
+        state.ropeAngle += currentSpeed * dt;
+
+        // Toca Whoosh sonoro no ápice da rotação
+        if (Math.sin(prevAngle) < 0 && Math.sin(state.ropeAngle) >= 0) {
+          audio.playRopeWhoosh(currentSpeed / 4.8);
+        }
+
+        // Posição central da corda (oscilação senoidal 3D)
+        const ropeSin = Math.sin(state.ropeAngle);
+        const ropeCos = Math.cos(state.ropeAngle);
+        const ropeCenterY = (GROUND_Y - 260) + ropeSin * 260; // 260px de raio
+        const isRopeAtFeet = (ropeSin > 0.85 && ropeCos >= 0);
+
+        // Atualização dos Saltadores
+        state.jumpers.forEach(j => {
+          if (state.jetpackTimer > 0) {
+            // Flutua suavemente no ar
+            j.y = (GROUND_Y - 140) + Math.sin(performance.now() * 0.005) * 20;
+            j.vy = 0;
+            j.isGrounded = false;
+          } else {
+            // Física balística de salto
+            j.vy += GRAVITY * dt;
+            j.y += j.vy * dt;
+
+            // Suaviza rotação de mortal
+            if (j.rot < 0) {
+              j.rot += dt * 12;
+              if (j.rot > 0) j.rot = 0;
+            }
+
+            // Colisão com o solo
+            if (j.y >= GROUND_Y) {
+              j.y = GROUND_Y;
+              j.vy = 0;
+              j.isGrounded = true;
+              j.rot = 0;
+            }
+          }
+
+          // Checagem de Colisão com a Corda quando passa pelos pés
+          if (isRopeAtFeet && state.trippedTimer <= 0 && state.jetpackTimer <= 0) {
+            const jumperFeetY = j.y;
+            // Se o saltador estiver no chão quando a corda passa
+            if (j.isGrounded || (jumperFeetY > GROUND_Y - 45)) {
+              triggerTrip();
+            }
+          }
+        });
+
+        // Contabiliza Pulo Bem-Sucedido quando a corda completa meia volta por baixo sem tropeço
+        if (prevRopeY < GROUND_Y && ropeCenterY >= GROUND_Y && state.trippedTimer <= 0) {
+          state.jumps++;
+          state.combo = Math.min(state.combo + 0.1, 5.0);
+          audio.playScorePoint();
+          // Acelera sutilmente a cada 5 pulos
+          if (state.jumps % 5 === 0) {
+            accelerateRope();
+          }
+        }
+        prevRopeY = ropeCenterY;
+
+        updateHUD();
+      } else {
+        // Pós-rodada / Reset
+        state.resetCountdown -= dt;
+        const countdownEl = document.getElementById('podium-countdown');
+        if (countdownEl) {
+          countdownEl.innerText = `NOVO DESAFIO EM ${Math.ceil(state.resetCountdown)}S...`;
+        }
+        if (state.resetCountdown <= 0) {
+          initRopeGame();
+        }
+      }
+
+      // Atualiza Faíscas
+      for (let i = state.sparks.length - 1; i >= 0; i--) {
+        const s = state.sparks[i];
+        s.x += s.vx;
+        s.y += s.vy;
+        s.alpha -= s.decay;
+        if (s.alpha <= 0) {
+          state.sparks.splice(i, 1);
+        }
+      }
+
+      // Atualiza Confetes
+      for (let i = state.confetti.length - 1; i >= 0; i--) {
+        const c = state.confetti[i];
+        c.y += c.vy;
+        c.x += c.vx;
+        c.rot += c.rotSpeed;
+        if (c.y > 1920) c.y = -20;
+      }
+    }
+
+    function updateHUD() {
+      // Timer
+      const min = Math.floor(state.timeRemaining / 60);
+      const sec = Math.floor(state.timeRemaining % 60);
+      document.getElementById('time-display').innerText = 
+        `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+
+      // Saltos e RPM
+      document.getElementById('jump-display').innerText = state.jumps;
+      const rpm = Math.round((state.ropeSpeed / (Math.PI * 2)) * 60);
+      document.getElementById('rpm-badge').innerText = `${rpm} RPM`;
+      document.getElementById('combo-display').innerText = `${state.combo.toFixed(1)}x COMBO`;
+    }
+
+    function finalizeRound() {
+      if (!state.roundActive) return;
+      state.roundActive = false;
+
+      audio.playVictoryFanfare();
+      spawnConfetti();
+
+      // Determina MVP do chat
+      let topUser = "@NinjaDoPulaCorda";
+      let topPts = 120;
+      for (const [u, pts] of Object.entries(state.donors)) {
+        if (pts > topPts) {
+          topPts = pts;
+          topUser = u;
+        }
+      }
+
+      document.getElementById('podium-jumps-val').innerText = `${state.jumps} SALTOS`;
+      document.getElementById('podium-mvp-user').innerText = `${topUser} (${topPts} pts)`;
+      document.getElementById('victory-modal').style.display = 'flex';
+    }
+
+    // --- RENDERIZAÇÃO CANVAS 2D / 3D DA CORDA E AVATARES ---
+    function render() {
+      ctx.clearRect(0, 0, 1080, 1920);
+
+      // 1. Grade Holográfica de Solo
+      drawGround();
+
+      // 2. Batedores de Corda
+      drawTwirlers();
+
+      // 3. Corda de Plasma (Parte Traseira quando z < 0)
+      const ropeCos = Math.cos(state.ropeAngle);
+      if (ropeCos < 0) {
+        drawPlasmaRope();
+      }
+
+      // 4. Saltadores Neon
+      drawJumpers();
+
+      // 5. Corda de Plasma (Parte Frontal quando z >= 0)
+      if (ropeCos >= 0) {
+        drawPlasmaRope();
+      }
+
+      // 6. Faíscas de Impacto
+      drawSparks();
+
+      // 7. Confetes
+      if (!state.roundActive) {
+        drawConfetti();
+      }
+    }
+
+    function drawGround() {
+      // Linha de solo
+      ctx.strokeStyle = "#38bdf8";
+      ctx.lineWidth = 4;
+      ctx.shadowColor = "#38bdf8";
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.moveTo(120, GROUND_Y);
+      ctx.lineTo(960, GROUND_Y);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Grade de perspectiva sob o piso
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
+      ctx.lineWidth = 2;
+      for (let x = 140; x <= 940; x += 80) {
+        ctx.beginPath();
+        ctx.moveTo(x, GROUND_Y);
+        ctx.lineTo(x + (x - 540) * 0.4, 1720);
+        ctx.stroke();
+      }
+    }
+
+    function drawTwirlers() {
+      state.twirlers.forEach((t, i) => {
+        ctx.save();
+        ctx.translate(t.x, t.y);
+
+        // Corpo Robô
+        ctx.fillStyle = "#1e293b";
+        ctx.strokeStyle = "#94a3b8";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(-20, -70, 40, 70, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        // Cabeça
+        ctx.fillStyle = "#38bdf8";
+        ctx.beginPath();
+        ctx.arc(0, -90, 16, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Braço giratório
+        const armAngle = state.ropeAngle + (i === 1 ? Math.PI : 0);
+        ctx.strokeStyle = "#f8fafc";
+        ctx.lineWidth = 6;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(0, -45);
+        ctx.lineTo(Math.cos(armAngle) * 36, -45 + Math.sin(armAngle) * 36);
+        ctx.stroke();
+
+        ctx.restore();
+      });
+    }
+
+    function drawPlasmaRope() {
+      const p1 = { x: state.twirlers[0].x, y: state.twirlers[0].y - 45 };
+      const p2 = { x: state.twirlers[1].x, y: state.twirlers[1].y - 45 };
+
+      const ropeSin = Math.sin(state.ropeAngle);
+      const ropeCos = Math.cos(state.ropeAngle);
+
+      // Ponto de controle central da curva de Bézier
+      const ctrlY = (GROUND_Y - 260) + ropeSin * 300;
+      const ctrlX = 540;
+
+      // Profundidade (z) define espessura e luminosidade
+      const zFactor = (ropeCos + 1) * 0.5; // 0 (longe) a 1 (perto)
+      const ropeWidth = 5 + zFactor * 6;
+      const ropeColor = (state.slowMoTimer > 0) 
+        ? '#00f0ff' 
+        : (state.jetpackTimer > 0 ? '#ffd700' : '#f43f5e');
+
+      ctx.save();
+      ctx.strokeStyle = ropeColor;
+      ctx.lineWidth = ropeWidth;
+      ctx.lineCap = "round";
+      ctx.shadowColor = ropeColor;
+      ctx.shadowBlur = 20 * zFactor + 5;
+
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.quadraticCurveTo(ctrlX, ctrlY, p2.x, p2.y);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawJumpers() {
+      state.jumpers.forEach(j => {
+        ctx.save();
+        ctx.translate(j.x, j.y - j.height / 2);
+        ctx.rotate(j.rot);
+
+        // Asas de Pégaso se Jetpack ativo
+        if (state.jetpackTimer > 0) {
+          ctx.fillStyle = "rgba(255, 215, 0, 0.75)";
+          ctx.beginPath();
+          ctx.ellipse(-30, -10, 24, 10, -Math.PI * 0.2, 0, Math.PI * 2);
+          ctx.ellipse(30, -10, 24, 10, Math.PI * 0.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Sombra no solo
+        const distFromGround = GROUND_Y - j.y;
+        const shadowScale = Math.max(0.2, 1 - distFromGround / 400);
+        ctx.save();
+        ctx.translate(0, j.height / 2 + distFromGround);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 25 * shadowScale, 8 * shadowScale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // Tronco do Avatar
+        ctx.fillStyle = j.color;
+        ctx.shadowColor = j.color;
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.roundRect(-j.width / 2, -j.height / 2 + 35, j.width, 50, 8);
+        ctx.fill();
+
+        // Cabeça
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(0, -j.height / 2 + 18, 16, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Pernas (dobram no ar)
+        ctx.strokeStyle = j.color;
+        ctx.lineWidth = 6;
+        ctx.lineCap = "round";
+
+        const legBend = j.isGrounded ? 0 : 15;
+        ctx.beginPath();
+        ctx.moveTo(-12, 35);
+        ctx.lineTo(-12, 55 - legBend);
+        ctx.moveTo(12, 35);
+        ctx.lineTo(12, 55 - legBend);
+        ctx.stroke();
+
+        ctx.restore();
+      });
+    }
+
+    function drawSparks() {
+      state.sparks.forEach(s => {
+        ctx.fillStyle = s.color;
+        ctx.globalAlpha = s.alpha;
+        ctx.shadowColor = s.color;
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1.0;
+      ctx.shadowBlur = 0;
+    }
+
+    function drawConfetti() {
+      state.confetti.forEach(c => {
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate((c.rot * Math.PI) / 180);
+        ctx.fillStyle = c.color;
+        ctx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+        ctx.restore();
+      });
+    }
+
+    // --- LOOP PRINCIPAL DE ANIMAÇÃO ---
+    function gameLoop(timestamp) {
+      const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.1);
+      lastTimestamp = timestamp;
+
+      updateGame(dt);
+      render();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // --- PROTOCOLO DE EVENTOS DO BROADCASTER & SDK ---
+    function initEventBus() {
+      try {
+        const channel = new BroadcastChannel('v5_broadcaster_games');
+        channel.onmessage = (event) => {
+          handleIncomingEvent(event.data);
+        };
+      } catch (e) {
+        console.warn("BroadcastChannel não suportado");
+      }
+
+      window.addEventListener('v5_event', (e) => {
+        if (e.detail) handleIncomingEvent(e.detail);
+      });
+    }
+
+    function handleIncomingEvent(payload) {
+      if (!payload) return;
+
+      const type = payload.type;
+      const comment = (payload.comment || "").toString().toLowerCase().trim();
+      const user = payload.user || "@espectador";
+      const giftName = payload.giftName || null;
+
+      // Parsing de Comentários / Votos
+      if (type === 'comment' || comment) {
+        if (comment === '1' || comment === 'pula' || comment.includes('salto')) {
+          handleJump('normal', user);
+        } else if (comment === '2' || comment === 'duplo' || comment.includes('mortal')) {
+          handleJump('double', user);
+        } else if (comment === '3' || comment === 'ritmo' || comment.includes('combo')) {
+          handleJump('sync', user);
+        }
+      }
+
+      // Parsing de Gifts
+      if (type === 'gift' || giftName) {
+        if (giftName === 'Lion' || giftName === 'Foguete') {
+          triggerJetpack(user);
+        } else {
+          triggerSlowMo(user);
+        }
+      }
+    }
+
+    // --- GAVETA DE DEPURAÇÃO DO STREAMER ---
+    function toggleDebugDrawer() {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.style.display = (drawer.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        toggleDebugDrawer();
+      }
+    });
+
+    document.querySelector('.bottom-safe-zone').addEventListener('dblclick', () => {
+      toggleDebugDrawer();
+    });
+
+    // Início automático ao carregar
+    window.addEventListener('load', () => {
+      initRopeGame();
+      initEventBus();
+      requestAnimationFrame(gameLoop);
+    });
+  </script>
+</body>
+</html>
