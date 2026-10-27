@@ -64,6 +64,14 @@ GAME_METADATA = {
         "status": "HOMOLOGADO",
         "version": "1.0.0"
     },
+    "07_pendulo_destruidor": {
+        "name": "Pêndulo Demolidor",
+        "category": "tensao_eliminacao",
+        "description": "Chat ajusta o ângulo do pêndulo para liberar a bola demolidora e esmagar a fortaleza rival com super impacto de gifts",
+        "commands": ["1", "2", "3", "puxar", "soltar", "turbo"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
+    },
     "09_tsunami_de_curtidas": {
         "name": "Tsunami de Curtidas",
         "category": "polarizacao",

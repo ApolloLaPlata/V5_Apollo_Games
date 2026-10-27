@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Pêndulo Demolidor (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 45% 25%, #181128 0%, #0c0818 60%, #030208 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 14px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(12, 8, 24, 0.98) 0%, rgba(12, 8, 24, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #f59e0b;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .timer-badge {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.6);
+      color: #fde68a;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* HUD da Fortaleza e Pêndulo */
+    .pendulum-hud {
+      width: 100%;
+      background: rgba(24, 16, 44, 0.85);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .hud-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hud-title {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #fef3c7;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .fortress-hp-text {
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: 900;
+      color: #f59e0b;
+    }
+
+    .fortress-bar-bg {
+      position: relative;
+      width: 100%;
+      height: 14px;
+      background: #020617;
+      border-radius: 7px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .fortress-bar-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #ef4444 0%, #f59e0b 50%, #10b981 100%);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+      transition: width 0.15s ease-out;
+    }
+
+    .angle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: #94a3b8;
+    }
+
+    .angle-value {
+      color: #38bdf8;
+      font-family: monospace;
+      font-size: 11px;
+    }
+
+    /* Canvas do Pêndulo */
+    #pendulum-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 10px 14px 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(12, 8, 24, 0.98) 0%, rgba(12, 8, 24, 0) 100%);
+    }
+
+    /* Grade de Comandos */
+    .controls-grid {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .action-card {
+      flex: 1;
+      background: rgba(28, 18, 52, 0.85);
+      border: 2px solid rgba(245, 158, 11, 0.3);
+      border-radius: 10px;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      transition: transform 0.1s ease, border-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .action-card-active {
+      transform: scale(1.06);
+      border-color: #38bdf8 !important;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.6);
+    }
+
+    .action-key {
+      background: #d97706;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 900;
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 8px rgba(217, 119, 6, 0.6);
+    }
+
+    .action-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #fef3c7;
+      text-transform: uppercase;
+    }
+
+    .action-sub {
+      font-size: 9px;
+      font-weight: 700;
+      color: #f59e0b;
+      font-family: monospace;
+    }
+
+    /* Leaderboard MVP */
+    .mvp-strip {
+      width: 100%;
+      background: rgba(24, 16, 44, 0.8);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 8px;
+      padding: 5px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .mvp-tag {
+      font-weight: 800;
+      color: #f59e0b;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mvp-user {
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .mvp-pts {
+      font-family: monospace;
+      font-weight: 900;
+      color: #38bdf8;
+    }
+
+    /* Gaveta de Depuração Local */
+    .debug-drawer {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .debug-btn {
+      background: #1c1234;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #fde68a;
+      padding: 5px 9px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .debug-btn:hover { background: #78350f; }
+
+    /* Overlay de Fim de Partida */
+    #demolition-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(4, 2, 10, 0.94);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease-out;
+    }
+
+    #demolition-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .overlay-badge {
+      font-size: 48px;
+      animation: bounce 0.8s infinite alternate ease-in-out;
+    }
+
+    @keyframes bounce {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.15); }
+    }
+
+    .overlay-title {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      background: linear-gradient(135deg, #f59e0b 0%, #ef4444 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .defeat-title {
+      background: linear-gradient(135deg, #64748b 0%, #334155 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .podium-box {
+      width: 85%;
+      max-width: 320px;
+      background: rgba(28, 18, 52, 0.9);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .podium-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      background: rgba(12, 8, 24, 0.6);
+      border-radius: 6px;
+      font-size: 11px;
+    }
+
+    .auto-reset-bar {
+      width: 85%;
+      max-width: 320px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .auto-reset-fill {
+      height: 100%;
+      width: 100%;
+      background: #f59e0b;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-stage">
+    <!-- Top Safe Zone (140px) -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <div class="live-dot"></div>
+          V5 PÊNDULO DEMOLIDOR
+        </div>
+        <div class="timer-badge" id="timer-badge">
+          ⏳ <span id="timer-val">45.0s</span>
+        </div>
+      </div>
+
+      <!-- Placar da Fortaleza -->
+      <div class="pendulum-hud">
+        <div class="hud-row">
+          <div class="hud-title">
+            🏰 FORTALEZA ADVERSÁRIA
+          </div>
+          <div class="fortress-hp-text" id="fortress-hp-text">50.000 / 50.000 HP</div>
+        </div>
+
+        <div class="fortress-bar-bg">
+          <div class="fortress-bar-fill" id="fortress-bar-fill"></div>
+        </div>
+
+        <div class="angle-row">
+          <span>ÂNGULO DE LANÇAMENTO:</span>
+          <span class="angle-value" id="angle-value">60°</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Principal do Pêndulo e Fortaleza -->
+    <canvas id="pendulum-canvas"></canvas>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <footer class="bottom-panel">
+      <!-- Grade de Comandos (1, 2, 3) -->
+      <div class="controls-grid">
+        <div class="action-card" id="btn-action-1" onclick="handleAction(1)">
+          <div class="action-key">1</div>
+          <div class="action-label">PUXAR</div>
+          <div class="action-sub">+10° ALTURA</div>
+        </div>
+
+        <div class="action-card" id="btn-action-2" onclick="handleAction(2)">
+          <div class="action-key">2</div>
+          <div class="action-label">SOLTAR</div>
+          <div class="action-sub">LIBERAR BOLA</div>
+        </div>
+
+        <div class="action-card" id="btn-action-3" onclick="handleAction(3)">
+          <div class="action-key">3</div>
+          <div class="action-label">TURBO</div>
+          <div class="action-sub">+IMPULSO</div>
+        </div>
+      </div>
+
+      <!-- Leaderboard MVP Rápido -->
+      <div class="mvp-strip">
+        <div class="mvp-tag">🔨 TOP DEMOLIDOR:</div>
+        <div class="mvp-user" id="mvp-user">@aguardando_chat</div>
+        <div class="mvp-pts" id="mvp-pts">0 HP</div>
+      </div>
+
+      <!-- Gaveta de Depuração Local -->
+      <div class="debug-drawer">
+        <button class="debug-btn" onclick="handleAction(1)">⛓️ Puxar (1)</button>
+        <button class="debug-btn" onclick="handleAction(2)">🚀 Soltar (2)</button>
+        <button class="debug-btn" onclick="handleAction(3)">⚡ Turbo (3)</button>
+        <button class="debug-btn" onclick="triggerCosmicWreck()">☄️ Super Gift</button>
+        <button class="debug-btn" onclick="resetGame()">🔄 Reset</button>
+      </div>
+    </footer>
+
+    <!-- Overlay de Fim de Partida -->
+    <div id="demolition-overlay">
+      <div class="overlay-badge" id="overlay-badge">💥</div>
+      <div class="overlay-title" id="overlay-title">FORTALEZA DESTRUÍDA!</div>
+      <div style="font-size: 13px; color: #cbd5e1;" id="overlay-sub">A comunidade demoliu as defesas adversárias!</div>
+
+      <div class="podium-box">
+        <div style="font-size: 11px; font-weight: 800; color: #f59e0b; text-align: center;">TOP DEMOLIDORES DA LIVE</div>
+        <div id="podium-content"></div>
+      </div>
+
+      <div class="auto-reset-bar">
+        <div class="auto-reset-fill" id="reset-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. SINTETIZADOR DE ÁUDIO PROCEDURAL (Web Audio API - Zero Arquivos Externos)
+    // =========================================================================
+    class PendulumAudioSynthesizer {
+      constructor() {
+        this.ctx = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Catraca metálica puxando corrente
+      playChainClick() {
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(1400, now);
+        osc.frequency.exponentialRampToValueAtTime(300, now + 0.05);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.06);
+      }
+
+      // Voo da bola cortando o ar
+      playWhoosh() {
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.linearRampToValueAtTime(380, now + 0.2);
+
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.26);
+      }
+
+      // Impacto estrondoso de demolição
+      playImpact(isSuper = false) {
+        this.init();
+        const now = this.ctx.currentTime;
+
+        // Sub bass
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(isSuper ? 120 : 80, now);
+        osc.frequency.exponentialRampToValueAtTime(25, now + 0.4);
+
+        gain.gain.setValueAtTime(isSuper ? 0.8 : 0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.46);
+
+        // Ruído de alvenaria se partindo
+        const bufferSize = this.ctx.sampleRate * 0.3;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.05));
+        }
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const noiseGain = this.ctx.createGain();
+        noiseGain.gain.setValueAtTime(isSuper ? 0.6 : 0.4, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+
+        noise.connect(noiseGain);
+        noiseGain.connect(this.ctx.destination);
+        noise.start(now);
+      }
+
+      // Fanfarra triunfal
+      playVictory() {
+        this.init();
+        const freqs = [392, 523.25, 659.25, 783.99]; // G C E G
+        freqs.forEach((f, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.1);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.value = f;
+          gain.gain.setValueAtTime(0.35, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.52);
+        });
+      }
+    }
+
+    const sound = new PendulumAudioSynthesizer();
+
+    // =========================================================================
+    // 2. MOTOR DE FÍSICA PENDULAR
+    // =========================================================================
+    const stage = document.getElementById('game-stage');
+    const canvas = document.getElementById('pendulum-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = stage.clientWidth;
+      canvas.height = stage.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Parâmetros do Pêndulo
+    const pivot = { x: 0, y: 160 };
+    let ropeLength = 320;
+    let angle = Math.PI * 0.35; // Ângulo em radianos
+    let angularVel = 0;
+    let angularAcc = 0;
+    let isSwinging = false;
+    let isSuper = false;
+    const gravity = 880;
+    const damping = 0.06;
+    const ballRadius = 26;
+
+    // Fortaleza
+    const fortressMaxHp = 50000;
+    let fortressHp = fortressMaxHp;
+    let roundTimer = 45.0;
+    let isGameOver = false;
+    let winner = null;
+    let shakeIntensity = 0;
+
+    // Trackers
+    const demolishers = new Map();
+    let topDemolishers = [];
+    const debris = [];
+
+    // =========================================================================
+    // 3. COMANDOS DO PÚBLICO
+    // =========================================================================
+    function handleAction(type, user = '@espectador', giftBoost = false) {
+      if (isGameOver) return;
+      lastInteractionTime = Date.now();
+
+      const btn = document.getElementById(`btn-action-${type}`);
+      if (btn) {
+        btn.classList.add('action-card-active');
+        setTimeout(() => btn.classList.remove('action-card-active'), 150);
+      }
+
+      if (type === 1) {
+        // Puxar pêndulo mais para a esquerda (+12 graus)
+        angle = Math.min(Math.PI * 0.47, angle + 0.18);
+        isSwinging = false;
+        angularVel = 0;
+        sound.playChainClick();
+      } else if (type === 2) {
+        // Soltar bola
+        isSwinging = true;
+        sound.playWhoosh();
+      } else if (type === 3) {
+        // Turbo / Empurrar
+        isSwinging = true;
+        angularVel += 2.2;
+        sound.playWhoosh();
+      }
+
+      recordContribution(user, 50);
+    }
+
+    function triggerCosmicWreck(user = '@whale_wrecker') {
+      if (isGameOver) return;
+      lastInteractionTime = Date.now();
+
+      isSuper = true;
+      angle = Math.PI * 0.46; // Ângulo máximo
+      angularVel = 2.5;
+      isSwinging = true;
+      shakeIntensity = 20;
+      sound.playWhoosh();
+
+      recordContribution(user, 500);
+    }
+
+    function recordContribution(user, pts) {
+      let d = demolishers.get(user);
+      if (!d) {
+        d = { user, score: 0 };
+        demolishers.set(user, d);
+      }
+      d.score += pts;
+
+      topDemolishers = Array.from(demolishers.values())
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3);
+
+      if (topDemolishers[0]) {
+        document.getElementById('mvp-user').innerText = topDemolishers[0].user;
+        document.getElementById('mvp-pts').innerText = `${topDemolishers[0].score} HP`;
+      }
+    }
+
+    function spawnDebris(x, y, count = 15) {
+      for (let i = 0; i < count; i++) {
+        const ang = Math.PI * (0.8 + Math.random() * 0.4);
+        const spd = 80 + Math.random() * 220;
+        debris.push({
+          x: x,
+          y: y,
+          vx: Math.cos(ang) * spd,
+          vy: (Math.random() - 0.7) * 200,
+          color: Math.random() > 0.4 ? '#f59e0b' : '#94a3b8',
+          size: 4 + Math.random() * 6,
+          alpha: 1.0,
+          life: 0,
+          maxLife: 0.6
+        });
+      }
+    }
+
+    // =========================================================================
+    // 4. LOOP DE FÍSICA
+    // =========================================================================
+    let lastTime = performance.now();
+
+    function updatePhysics(timestamp) {
+      const dt = Math.min(0.1, (timestamp - lastTime) / 1000);
+      lastTime = timestamp;
+
+      pivot.x = canvas.width * 0.45;
+      ropeLength = canvas.height * 0.42;
+
+      // Shake decay
+      if (shakeIntensity > 0) {
+        shakeIntensity = Math.max(0, shakeIntensity - (30 * dt));
+        const sx = (Math.random() - 0.5) * shakeIntensity;
+        const sy = (Math.random() - 0.5) * shakeIntensity;
+        stage.style.transform = `translate(${sx}px, ${sy}px)`;
+      } else {
+        stage.style.transform = 'none';
+      }
+
+      if (!isGameOver) {
+        roundTimer -= dt;
+        if (roundTimer <= 0) {
+          roundTimer = 0;
+          endGame(false);
+          return;
+        }
+
+        if (isSwinging) {
+          // Equação diferencial do pêndulo
+          const naturalFreqSq = gravity / ropeLength;
+          angularAcc = (-naturalFreqSq * Math.sin(angle)) - (damping * angularVel);
+          angularVel += angularAcc * dt;
+          angle += angularVel * dt;
+
+          // Detecção de colisão com a muralha
+          const bx = pivot.x + Math.sin(angle) * ropeLength;
+          const by = pivot.y + Math.cos(angle) * ropeLength;
+          const fortressX = canvas.width * 0.76;
+
+          if (bx + ballRadius >= fortressX && angularVel > 0) {
+            // Impacto!
+            const impactSpeed = Math.abs(angularVel * ropeLength);
+            let dmg = Math.floor(impactSpeed * (isSuper ? 35 : 12));
+            fortressHp = Math.max(0, fortressHp - dmg);
+
+            angularVel = -angularVel * 0.4; // Rebote
+            shakeIntensity = isSuper ? 25 : 12;
+            sound.playImpact(isSuper);
+            spawnDebris(fortressX, by, isSuper ? 35 : 16);
+            isSuper = false;
+
+            if (fortressHp <= 0) {
+              endGame(true);
+            }
+          }
+        }
+      }
+
+      // Debris
+      for (let i = debris.length - 1; i >= 0; i--) {
+        const d = debris[i];
+        d.life += dt;
+        d.x += d.vx * dt;
+        d.y += d.vy * dt;
+        d.vy += 500 * dt;
+        d.alpha = Math.max(0, 1.0 - (d.life / d.maxLife));
+        if (d.life >= d.maxLife) debris.splice(i, 1);
+      }
+
+      render();
+      updateHUD();
+      requestAnimationFrame(updatePhysics);
+    }
+    requestAnimationFrame(updatePhysics);
+
+    // =========================================================================
+    // 5. RENDERIZAÇÃO VETORIAL
+    // =========================================================================
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const bx = pivot.x + Math.sin(angle) * ropeLength;
+      const by = pivot.y + Math.cos(angle) * ropeLength;
+      const fortressX = canvas.width * 0.76;
+      const fortressW = canvas.width * 0.20;
+      const fortressH = canvas.height * 0.45;
+      const fortressY = canvas.height - 180 - fortressH;
+
+      // 1. Desenhar Fortaleza
+      const integrity = fortressHp / fortressMaxHp;
+      ctx.save();
+      ctx.fillStyle = '#334155';
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 3;
+      ctx.shadowColor = '#f59e0b';
+      ctx.shadowBlur = 10;
+
+      // Muralha com tijolos
+      ctx.fillRect(fortressX, fortressY + (fortressH * (1 - integrity)), fortressW, fortressH * integrity);
+      ctx.strokeRect(fortressX, fortressY + (fortressH * (1 - integrity)), fortressW, fortressH * integrity);
+
+      // Tijolos desenhados
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = 1;
+      for (let y = fortressY + 20; y < canvas.height - 180; y += 25) {
+        ctx.beginPath();
+        ctx.moveTo(fortressX, y);
+        ctx.lineTo(fortressX + fortressW, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // 2. Cabo de Aço do Pêndulo
+      ctx.save();
+      ctx.strokeStyle = isSuper ? '#ef4444' : '#94a3b8';
+      ctx.lineWidth = 4;
+      ctx.shadowColor = isSuper ? '#ef4444' : '#38bdf8';
+      ctx.shadowBlur = isSuper ? 15 : 6;
+      ctx.beginPath();
+      ctx.moveTo(pivot.x, pivot.y);
+      ctx.lineTo(bx, by);
+      ctx.stroke();
+
+      // Fixação no teto
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.arc(pivot.x, pivot.y, 8, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 3. Bola Demolidora de Plasma
+      ctx.fillStyle = isSuper ? '#ef4444' : '#1e1b4b';
+      ctx.strokeStyle = isSuper ? '#facc15' : '#38bdf8';
+      ctx.lineWidth = 5;
+      ctx.shadowColor = isSuper ? '#facc15' : '#38bdf8';
+      ctx.shadowBlur = isSuper ? 30 : 16;
+      ctx.beginPath();
+      ctx.arc(bx, by, ballRadius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      // 4. Detritos
+      debris.forEach(d => {
+        ctx.save();
+        ctx.globalAlpha = d.alpha;
+        ctx.fillStyle = d.color;
+        ctx.shadowColor = d.color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    // =========================================================================
+    // 6. ATUALIZAÇÃO DA HUD
+    // =========================================================================
+    const fortressFill = document.getElementById('fortress-bar-fill');
+    const fortressHpText = document.getElementById('fortress-hp-text');
+    const angleValue = document.getElementById('angle-value');
+    const timerVal = document.getElementById('timer-val');
+
+    function updateHUD() {
+      const pct = (fortressHp / fortressMaxHp) * 100;
+      fortressFill.style.width = `${pct}%`;
+      fortressHpText.innerText = `${fortressHp.toLocaleString('pt-BR')} / ${fortressMaxHp.toLocaleString('pt-BR')} HP`;
+      angleValue.innerText = `${Math.abs(angle * 180 / Math.PI).toFixed(0)}°`;
+      timerVal.innerText = `${roundTimer.toFixed(1)}s`;
+    }
+
+    // =========================================================================
+    // 7. OVERLAY & AUTO-RESET (5 Segundos)
+    // =========================================================================
+    const demolitionOverlay = document.getElementById('demolition-overlay');
+    const overlayBadge = document.getElementById('overlay-badge');
+    const overlayTitle = document.getElementById('overlay-title');
+    const overlaySub = document.getElementById('overlay-sub');
+    const podiumContent = document.getElementById('podium-content');
+    const resetFill = document.getElementById('reset-fill');
+
+    function endGame(isVictory) {
+      isGameOver = true;
+      winner = isVictory ? 'CHAT' : 'FORTALEZA';
+      demolitionOverlay.classList.add('active');
+
+      if (isVictory) {
+        sound.playVictory();
+        overlayBadge.innerText = '💥';
+        overlayTitle.innerText = 'FORTALEZA ESMAGADA!';
+        overlayTitle.className = 'overlay-title';
+        overlaySub.innerText = 'O chat demoliu a base rival com a força máxima do pêndulo!';
+      } else {
+        overlayBadge.innerText = '🛡️';
+        overlayTitle.innerText = 'O TEMPO ESGOTOU!';
+        overlayTitle.className = 'overlay-title defeat-title';
+        overlaySub.innerText = 'A fortaleza resistiu à fúria do pêndulo!';
+      }
+
+      podiumContent.innerHTML = '';
+      if (topDemolishers.length === 0) {
+        podiumContent.innerHTML = '<div style="text-align: center; color: #94a3b8;">Nenhum demolidor registrado</div>';
+      } else {
+        topDemolishers.forEach((d, idx) => {
+          const medal = ['🥇', '🥈', '🥉'][idx];
+          podiumContent.innerHTML += `
+            <div class="podium-item">
+              <span style="font-weight: 800;">${medal} ${d.user}</span>
+              <span style="color: #f59e0b; font-weight: 900;">${d.score} HP</span>
+            </div>
+          `;
+        });
+      }
+
+      resetFill.style.transition = 'none';
+      resetFill.style.width = '100%';
+      void resetFill.offsetWidth;
+      resetFill.style.transition = 'width 5s linear';
+      resetFill.style.width = '0%';
+
+      setTimeout(() => {
+        resetGame();
+      }, 5000);
+    }
+
+    function resetGame() {
+      fortressHp = fortressMaxHp;
+      roundTimer = 45.0;
+      isGameOver = false;
+      winner = null;
+      angle = Math.PI * 0.35;
+      angularVel = 0;
+      isSwinging = false;
+      isSuper = false;
+      debris.length = 0;
+      demolishers.clear();
+      topDemolishers = [];
+      demolitionOverlay.classList.remove('active');
+      document.getElementById('mvp-user').innerText = '@aguardando_chat';
+      document.getElementById('mvp-pts').innerText = '0 HP';
+    }
+
+    // =========================================================================
+    // 8. MOTOR ANTI-SILÊNCIO
+    // =========================================================================
+    const mockUsers = ['@demolidor_neon', '@wrecking_ball', '@titan_crush', '@hammer_pro'];
+    let lastInteractionTime = Date.now();
+
+    setInterval(() => {
+      if (isGameOver) return;
+      if (Date.now() - lastInteractionTime > 2000) {
+        const randAct = 1 + Math.floor(Math.random() * 3);
+        const randUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+        handleAction(randAct, randUser, false);
+      }
+    }, 1800);
+
+    // =========================================================================
+    // 9. V5 BROADCASTER EVENT BUS
+    // =========================================================================
+    const broadcasterChannel = new BroadcastChannel('v5_broadcaster_games');
+    broadcasterChannel.onmessage = (event) => {
+      handleIncomingEvent(event.data);
+    };
+
+    window.addEventListener('v5_event', (e) => {
+      handleIncomingEvent(e.detail);
+    });
+
+    function handleIncomingEvent(data) {
+      if (!data) return;
+      lastInteractionTime = Date.now();
+
+      const user = data.user || '@espectador';
+      const comment = (data.comment || '').trim().toLowerCase();
+      const isGift = data.type === 'gift';
+
+      if (isGift) {
+        triggerCosmicWreck(user);
+      } else {
+        if (comment.includes('1') || comment.includes('puxar')) {
+          handleAction(1, user, false);
+        } else if (comment.includes('2') || comment.includes('soltar')) {
+          handleAction(2, user, false);
+        } else if (comment.includes('3') || comment.includes('turbo')) {
+          handleAction(3, user, false);
+        } else {
+          handleAction(2, user, false);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
