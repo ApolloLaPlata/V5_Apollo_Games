@@ -74,4 +74,6 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/test_polarization_cartridges.py`: Valida 100% das 5 Leis Absolutas para os jogos de polarização (36/36 checks).
 - `scripts/stress_test_physics_particles.js`: Bateria de sobrecarga de 350 esferas a 60 FPS estáveis nos 4 cenários de física (CPU headroom > 92%).
 - `scripts/test_physics_cartridges.py`: Valida 100% das 5 Leis Absolutas para os 4 cartuchos de física (45/45 checks).
-- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 9 cartuchos ativos).
+- `scripts/benchmark_racing_latency.js`: Teste de estresse com 2.000 comandos de chat a 465.000 comandos/s (latência média 0.8 µs e 99.95% folga de CPU).
+- `scripts/test_racing_cartridges.py`: Valida 100% das 5 Leis Absolutas para os 3 cartuchos de corrida (34/34 checks).
+- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 12 cartuchos ativos).
