@@ -95,6 +95,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "apollo", "solaris", "nebula"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "16_arrancada_noturna_neon": {
+        "name": "Arrancada Noturna Neon",
+        "category": "corrida_velocidade",
+        "description": "Drag Race 402m em linha reta com troca de marchas por votos, fumaça de burnout, nitro e photofinish",
+        "commands": ["1", "2", "cyber", "viper"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 

@@ -87,9 +87,9 @@
 - [x] **Etapa 033:** Implementação dos sprites procedurais vetoriais e animações dinâmicas dos 3 avatares pilotos.
 - [x] **Etapa 034:** Sistema de turbos de nitro e sons de motor com modulação de pitch proporcional à velocidade dos pilotos.
 - [x] **Etapa 035:** Forjamento do Cartucho #15: Corrida Maluca Espacial (Foguetes acelerando rumo à órbita com chuva de meteoros e escudos acionados por presentes).
-- [ ] **Etapa 036:** Forjamento do Cartucho #16: Arrancada Noturna Neon (Drag Race em linha reta com troca de marcha sincronizada por votos pontuais).
-- [ ] **Etapa 037:** Integração de fumaça de pneus, rastros de neon e sistema de ultrapassagem em milissegundos.
-- [ ] **Etapa 038:** Sistema de photofinish e replays automáticos de 3 segundos na linha de chegada.
+- [x] **Etapa 036:** Forjamento do Cartucho #16: Arrancada Noturna Neon (Drag Race em linha reta com troca de marcha sincronizada por votos pontuais).
+- [x] **Etapa 037:** Integração de fumaça de pneus, rastros de neon e sistema de ultrapassagem em milissegundos.
+- [x] **Etapa 038:** Sistema de photofinish e replays automáticos de 3 segundos na linha de chegada.
 - [ ] **Etapa 039:** Teste de latência e precisão dos comandos de corrida no Test Lab 9:16.
 - [ ] **Etapa 040:** Homologação e despacho dos cartuchos de corrida para o console do Broadcaster.
 
