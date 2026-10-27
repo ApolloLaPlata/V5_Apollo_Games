@@ -104,8 +104,8 @@
 - [x] **Etapa 046:** Síntese de sinos de jackpot, rotação mecânica e tilintar de moedas para o Caça-Níquel 777.
 - [x] **Etapa 047:** Forjamento do Cartucho #18: Roleta Russa de Balões (Ponteiro sorteia participantes e agulha aproxima do balão até o estouro fatídico).
 - [x] **Etapa 048:** Sistema de destaque visual para o usuário sorteado com avatar animado e fanfarra personalizada.
-- [ ] **Etapa 049:** Validação estatística das chances de premiação e calibração de recompensas de presentes.
-- [ ] **Etapa 050:** Homologação e sincronização dos cartuchos de sorteio no Broadcaster.
+- [x] **Etapa 049:** Validação estatística das chances de premiação e calibração de recompensas de presentes.
+- [x] **Etapa 050:** Homologação e sincronização dos cartuchos de sorteio no Broadcaster.
 
 ---
 
