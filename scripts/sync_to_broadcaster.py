@@ -239,6 +239,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "4", "cima", "baixo", "esquerda", "direita"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "29_basquete_street_neon": {
+        "name": "Basquete Street Neon",
+        "category": "esportes_fisica",
+        "description": "Desafio de arremessos livres com tabela móvel oscilante, rede elástica ondulante, bolas de fogo e ímã slam dunk de gifts",
+        "commands": ["1", "2", "3", "arremesso", "cesta", "bola"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 

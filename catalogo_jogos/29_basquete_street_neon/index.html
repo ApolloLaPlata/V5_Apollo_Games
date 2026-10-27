@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Basquete Street Neon (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 30%, #17102e 0%, #080516 60%, #020108 100%);
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(249, 115, 22, 0.2);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Vinheta e Grade Urbana Noturna */
+    #ambient-vignette {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.85);
+      z-index: 2;
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 12px 16px 6px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 10;
+      min-height: 140px;
+      background: linear-gradient(180deg, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0.75) 75%, transparent 100%);
+    }
+
+    .badge-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .live-pill {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+
+    .game-title {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #f97316;
+      text-shadow: 0 0 12px rgba(249, 115, 22, 0.6);
+      text-transform: uppercase;
+    }
+
+    .round-indicator {
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 700;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Placar de Pontos, Combo e Cronômetro */
+    .basketball-hud-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(249, 115, 22, 0.35);
+      border-radius: 10px;
+      padding: 6px 12px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hud-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .score-label {
+      color: #f97316;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .combo-badge {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 1px 6px;
+      border-radius: 6px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: rgba(2, 6, 23, 0.9);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ea580c, #f97316, #fbbf24);
+      box-shadow: 0 0 10px rgba(249, 115, 22, 0.8);
+      transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hud-subtext {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    /* Canvas Central de Arremessos e Cesta */
+    #court-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+    }
+
+    /* Toast de Notificação de Cestas e Super Gifts */
+    #action-toast {
+      position: absolute;
+      top: 148px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid #f97316;
+      box-shadow: 0 0 25px rgba(249, 115, 22, 0.6);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #f97316;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    #action-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Safe Zone Inferior (180px) */
+    .bottom-safe-zone {
+      padding: 10px 14px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      min-height: 180px;
+      background: linear-gradient(0deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.8) 75%, transparent 100%);
+    }
+
+    .command-guide-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      backdrop-filter: blur(8px);
+    }
+
+    .guide-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 900;
+      color: #f1f5f9;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .shot-types-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .shot-tag {
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.35);
+      color: #f97316;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 5px 2px;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .gift-benefit-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #fca5a5;
+    }
+
+    .recent-feed {
+      height: 24px;
+      overflow: hidden;
+      font-size: 10px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feed-avatar {
+      font-weight: 800;
+      color: #f8fafc;
+    }
+
+    /* Overlay de Vitória & Auto-Reset */
+    #victory-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(2, 6, 23, 0.92);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    #victory-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .trophy-glow {
+      font-size: 56px;
+      filter: drop-shadow(0 0 30px #f97316);
+      animation: floatTrophy 2s infinite ease-in-out;
+    }
+
+    @keyframes floatTrophy {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.05); }
+    }
+
+    .victory-title {
+      font-size: 24px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      text-align: center;
+      color: #f97316;
+      text-shadow: 0 0 20px rgba(249, 115, 22, 0.8);
+    }
+
+    .victory-subtitle {
+      font-size: 12px;
+      color: #cbd5e1;
+      font-weight: 600;
+      text-align: center;
+      max-width: 80%;
+    }
+
+    .mvp-card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mvp-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #fbbf24;
+      letter-spacing: 1px;
+    }
+
+    .mvp-name {
+      font-size: 15px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .auto-reset-meter {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    /* Gaveta de Depuração Local */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(15, 23, 42, 0.98);
+      border-top: 2px solid #f97316;
+      padding: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    #debug-drawer.open {
+      display: flex;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 6px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .debug-btn:hover {
+      background: #334155;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Vinheta e ambientação noturna -->
+    <div id="ambient-vignette"></div>
+
+    <!-- Safe Zone Superior (140px) -->
+    <header class="top-header">
+      <div class="badge-bar">
+        <div class="live-pill">
+          <div class="live-dot"></div>
+          AO VIVO
+        </div>
+        <div class="game-title">BASQUETE STREET NEON</div>
+        <div class="round-indicator" id="round-number">RODADA #1</div>
+      </div>
+
+      <div class="basketball-hud-box">
+        <div class="hud-info-row">
+          <span class="score-label">
+            <span>🏀</span>
+            <span id="score-text">0 / 50 PONTOS</span>
+          </span>
+          <span class="combo-badge" id="combo-text">COMBO 0x</span>
+          <span id="shot-accuracy-text">PRECISÃO: 100%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-bar" style="width: 0%;"></div>
+        </div>
+        <div class="hud-subtext">
+          <span id="fireball-mode-text">Modo Fogo: OFF</span>
+          <span id="baskets-count-text">Cestas: 0</span>
+          <span id="time-left-text">Tempo: 45s</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central: Tabela Móvel, Aro, Rede Elástica e Bolas -->
+    <canvas id="court-canvas" width="1080" height="1920"></canvas>
+
+    <!-- Toast de Notificação de Cestas & Especiais -->
+    <div id="action-toast">
+      <span id="toast-icon">🔥</span>
+      <span id="toast-text">CHUÁ! CESTA LIMPA +3 PONTOS!</span>
+    </div>
+
+    <!-- Safe Zone Inferior (180px) -->
+    <footer class="bottom-safe-zone">
+      <div class="command-guide-card">
+        <div class="guide-title">
+          <span>COMO ARREMESSAR (CHAT DIGITA O TIPO DE CHUTE)</span>
+          <span style="color: #f97316;">PÚBLICO É O CESTINHA</span>
+        </div>
+        <div class="shot-types-grid">
+          <div class="shot-tag">1: Suave 弧</div>
+          <div class="shot-tag">2: Perfeito ⭐</div>
+          <div class="shot-tag">3: Direto / Forte ⚡</div>
+        </div>
+      </div>
+
+      <div class="gift-benefit-bar">
+        <span>🎁 PRESENTES / GIFTS:</span>
+        <span>BOLA DE FOGO (3x PONTOS) OU ÍMÃ SLAM DUNK NO ARO!</span>
+      </div>
+
+      <div class="recent-feed" id="recent-feed">
+        <span>🏀 Quadra da Live:</span>
+        <span class="feed-avatar" id="feed-msg">Tabela em movimento! Digite 1, 2 ou 3 para arremessar!</span>
+      </div>
+    </footer>
+
+    <!-- Overlay de Vitória & Auto-Reset -->
+    <div id="victory-overlay">
+      <div class="trophy-glow">🏆</div>
+      <div class="victory-title" id="winner-title">SHOW DE BASQUETE DA LIVE!</div>
+      <div class="victory-subtitle" id="winner-summary">O chat dominou a quadra, acertou cestas consecutivas e bateu o recorde!</div>
+      <div class="mvp-card">
+        <div class="mvp-label">MAIOR CESTINHA DA LIVE (MVP)</div>
+        <div class="mvp-name" id="mvp-user-name">@cestinha_street</div>
+      </div>
+      <div class="auto-reset-meter" id="auto-reset-countdown">Próximo desafio de arremesso em 5s...</div>
+    </div>
+
+    <!-- Gaveta de Depuração Local -->
+    <div id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #f97316; display: flex; justify-content: space-between;">
+        <span>PAINEL DE DEPURAÇÃO DO STREAMER (TECLA D)</span>
+        <button onclick="toggleDebugDrawer()" style="background:none; border:none; color:#fca5a5; cursor:pointer;">✕ Fechar</button>
+      </div>
+      <div class="debug-grid">
+        <button class="debug-btn" onclick="testShot(1)">Arremesso 1 (Suave)</button>
+        <button class="debug-btn" onclick="testShot(2)">Arremesso 2 (Perfeito)</button>
+        <button class="debug-btn" onclick="testShot(3)">Arremesso 3 (Forte)</button>
+        <button class="debug-btn" onclick="testGift('Rose')">Rosa (Bola Fogo)</button>
+        <button class="debug-btn" onclick="testGift('Lion')">Leão (Ímã Dunk)</button>
+        <button class="debug-btn" onclick="testScore(20)">+20 Pontos</button>
+        <button class="debug-btn" onclick="resetMatch()">Auto-Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SDK V5 Live Event Bus -->
+  <script src="../../sdk/v5_live_game_sdk.js"></script>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE GAMES: BASQUETE STREET NEON (CARTUCHO #29)
+       Proporção: 9:16 Vertical Estrito (1080 x 1920 px)
+       Física 2D de Parábola, Colisões de Aro e Rede Elástica Ondulante
+       ========================================================================== */
+
+    // 1. SINTETIZADOR PROCEDURAL DE ÁUDIO (WEB AUDIO API PURA - ZERO .MP3/.WAV)
+    class StreetBasketballAudioSynth {
+      constructor() {
+        this.ctx = null;
+        this.isMuted = false;
+      }
+
+      initContext() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playBounce() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(120, now);
+        osc.frequency.exponentialRampToValueAtTime(42, now + 0.12);
+
+        gain.gain.setValueAtTime(0.45, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.12);
+      }
+
+      playRimClank() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const osc2 = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        // Modulação metálica estridente do aro
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(840, now);
+        osc.frequency.exponentialRampToValueAtTime(320, now + 0.18);
+
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(1420, now);
+        osc2.frequency.exponentialRampToValueAtTime(510, now + 0.18);
+
+        gain.gain.setValueAtTime(0.6, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+        osc.connect(gain);
+        osc2.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc2.start(now);
+        osc.stop(now + 0.18);
+        osc2.stop(now + 0.18);
+      }
+
+      playSwishSound() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        // Som de tecido elástico suave da rede
+        const now = this.ctx.currentTime;
+        const duration = 0.25;
+        const bufferSize = Math.floor(this.ctx.sampleRate * duration);
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.sin((i / bufferSize) * Math.PI);
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1200, now);
+        filter.frequency.exponentialRampToValueAtTime(600, now + duration);
+        filter.Q.setValueAtTime(2.0, now);
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.8, now);
+        gain.gain.linearRampToValueAtTime(0.001, now + duration);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        noise.start(now);
+      }
+
+      playFireballWhoosh() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(45, now + 0.4);
+
+        gain.gain.setValueAtTime(0.7, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.4);
+      }
+
+      playBuzzer() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(140, now);
+
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.linearRampToValueAtTime(0.001, now + 0.6);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.6);
+      }
+
+      playVictoryFanfare() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99];
+        const now = this.ctx.currentTime;
+
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const startTime = now + idx * 0.11;
+          const dur = 0.45;
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, startTime);
+
+          gain.gain.setValueAtTime(0.3, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + dur);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(startTime);
+          osc.stop(startTime + dur);
+        });
+      }
+    }
+
+    const sound = new StreetBasketballAudioSynth();
+
+    // 2. CONSTANTES E ESTADO DO JOGO
+    const STAGE_WIDTH = 1080;
+    const STAGE_HEIGHT = 1920;
+
+    const canvas = document.getElementById('court-canvas');
+    const ctx = canvas.getContext('2d');
+
+    const state = {
+      round: 1,
+      score: 0,
+      targetScore: 50,
+      totalBaskets: 0,
+      totalShots: 0,
+      combo: 0,
+      timeRemaining: 45.0,
+      isGameOver: false,
+      autoResetTimer: 5,
+      fireballActive: false,
+      magnetActive: false,
+      lastFrameTime: performance.now(),
+
+      // Posição oscilante da Tabela e Aro
+      hoop: {
+        baseX: 540,
+        x: 540,
+        y: 620,
+        oscillationSpeed: 1.2,
+        oscillationAmplitude: 140,
+        time: 0,
+        rimRadius: 55, // diâmetro 110px
+        rimHeight: 12,
+        backboardWidth: 280,
+        backboardHeight: 180,
+        netWave: 0
+      },
+
+      balls: [],
+      particles: [],
+      floatingTexts: [],
+      mvpUser: '@cestinha_street'
+    };
+
+    // 3. FÍSICA 2D DA BOLA DE BASQUETE
+    class Basketball {
+      constructor(type = 2, isFire = false, shooter = '@chat') {
+        this.shooter = shooter;
+        this.isFire = isFire;
+        this.radius = 28;
+        this.alive = true;
+        this.hasScored = false;
+        this.hitRimCount = 0;
+        this.tail = [];
+
+        // Origem do arremesso na parte inferior central
+        this.x = 540 + (Math.random() * 80 - 40);
+        this.y = 1680;
+
+        // Variação angular e de força
+        let vxBase = 0;
+        let vyBase = -1350;
+
+        // Mira em direção ao aro atual com leve erro dependendo do comando
+        const targetX = state.hoop.x + (Math.random() * 30 - 15);
+        const targetY = state.hoop.y;
+        const timeToApex = 1.35; // segundos para alcançar o aro
+
+        if (type === 1) {
+          // Arco suave / curto
+          vxBase = (targetX - this.x) / (timeToApex * 0.95);
+          vyBase = -1280;
+        } else if (type === 2) {
+          // Arco Perfeito
+          vxBase = (targetX - this.x) / timeToApex;
+          vyBase = -1380;
+        } else {
+          // Arco tenso / forte
+          vxBase = (targetX - this.x) / (timeToApex * 1.05);
+          vyBase = -1480;
+        }
+
+        this.vx = vxBase;
+        this.vy = vyBase;
+        this.gravity = 1100;
+        this.rotation = 0;
+        this.rotSpeed = (Math.random() * 2 - 1) * 6;
+      }
+
+      update(dt) {
+        if (!this.alive) return;
+
+        this.tail.push({ x: this.x, y: this.y });
+        if (this.tail.length > (this.isFire ? 15 : 6)) this.tail.shift();
+
+        // Gravidade contínua
+        this.vy += this.gravity * dt;
+
+        // Efeito Ímã Slam Dunk de Gifts
+        if (state.magnetActive && !this.hasScored && this.y < state.hoop.y + 150) {
+          const dx = state.hoop.x - this.x;
+          this.vx += dx * 8 * dt;
+        }
+
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        this.rotation += this.rotSpeed * dt;
+
+        this.checkCollisions();
+
+        // Elimina quando sai da tela
+        if (this.y > STAGE_HEIGHT + 100 || this.x < -100 || this.x > STAGE_WIDTH + 100) {
+          this.alive = false;
+        }
+      }
+
+      checkCollisions() {
+        const hoop = state.hoop;
+        const rimLeftX = hoop.x - hoop.rimRadius;
+        const rimRightX = hoop.x + hoop.rimRadius;
+        const rimY = hoop.y;
+
+        // 1. Colisão com a Tabela Traseira
+        const bbLeft = hoop.x - hoop.backboardWidth / 2;
+        const bbRight = hoop.x + hoop.backboardWidth / 2;
+        const bbTop = hoop.y - hoop.backboardHeight + 20;
+        const bbBottom = hoop.y + 20;
+
+        if (this.x + this.radius > bbLeft && this.x - this.radius < bbRight &&
+            this.y + this.radius > bbTop && this.y - this.radius < bbBottom) {
+          // Rebote elástico na tabela
+          this.vy *= -0.65;
+          this.vx += (this.x > hoop.x ? 120 : -120);
+          sound.playBounce();
+          createImpactParticles(this.x, this.y, '#ffffff', 8);
+        }
+
+        // 2. Colisão com os Aros (Esquerda e Direita)
+        [rimLeftX, rimRightX].forEach(rx => {
+          const dist = Math.hypot(this.x - rx, this.y - rimY);
+          if (dist < this.radius + 8) {
+            this.hitRimCount++;
+            sound.playRimClank();
+            const angle = Math.atan2(this.y - rimY, this.x - rx);
+            this.vx = Math.cos(angle) * 350;
+            this.vy = Math.sin(angle) * 350;
+            createImpactParticles(rx, rimY, '#ea580c', 10);
+          }
+        });
+
+        // 3. Sensor de Cesta (Passando de cima para baixo no centro do aro)
+        if (!this.hasScored && this.vy > 0 && Math.abs(this.x - hoop.x) < hoop.rimRadius - 10) {
+          if (this.y >= rimY - 10 && this.y <= rimY + 30) {
+            this.scoreBasket();
+          }
+        }
+      }
+
+      scoreBasket() {
+        this.hasScored = true;
+        state.totalBaskets++;
+        state.hoop.netWave = 1.0; // Ativa animação ondulante da rede
+        sound.playSwishSound();
+
+        const isSwish = (this.hitRimCount === 0);
+        let pts = isSwish ? 3 : 2;
+        if (this.isFire) pts *= 3; // 3x bônus de bola de fogo
+
+        state.combo++;
+        pts += Math.floor(state.combo / 2);
+        state.score += pts;
+
+        state.mvpUser = this.shooter;
+
+        // Feedback visual
+        if (isSwish) {
+          showToast(`🌟 CHUÁ LIMPO! CESTA PERFEITA +${pts} PONTOS!`);
+          createFloatingText(this.x, this.y - 40, `SWISH! +${pts}`, '#fbbf24');
+          createImpactParticles(this.x, this.y, '#fbbf24', 25);
+        } else {
+          showToast(`🏀 CESTA CONVERTIDA! +${pts} PONTOS!`);
+          createFloatingText(this.x, this.y - 40, `+${pts} PTS`, '#f97316');
+          createImpactParticles(this.x, this.y, '#f97316', 15);
+        }
+
+        updateHudUI();
+
+        if (state.score >= state.targetScore && !state.isGameOver) {
+          triggerGameOver(true);
+        }
+      }
+
+      draw(c) {
+        if (!this.alive) return;
+
+        // Cauda de fogo ou rastro
+        if (this.tail.length > 1) {
+          c.save();
+          c.beginPath();
+          c.moveTo(this.tail[0].x, this.tail[0].y);
+          for (let i = 1; i < this.tail.length; i++) {
+            c.lineTo(this.tail[i].x, this.tail[i].y);
+          }
+          c.strokeStyle = this.isFire ? '#ef4444' : '#f97316';
+          c.lineWidth = this.radius * (this.isFire ? 1.4 : 0.8);
+          c.lineCap = 'round';
+          c.globalAlpha = 0.45;
+          c.shadowColor = this.isFire ? '#ef4444' : '#f97316';
+          c.shadowBlur = 15;
+          c.stroke();
+          c.restore();
+        }
+
+        // Bola de Basquete
+        c.save();
+        c.translate(this.x, this.y);
+        c.rotate(this.rotation);
+
+        c.beginPath();
+        c.arc(0, 0, this.radius, 0, Math.PI * 2);
+        c.fillStyle = this.isFire ? '#ea580c' : '#f97316';
+        c.shadowColor = this.isFire ? '#ef4444' : '#ea580c';
+        c.shadowBlur = this.isFire ? 25 : 12;
+        c.fill();
+
+        // Linhas pretas da bola de basquete
+        c.strokeStyle = '#020617';
+        c.lineWidth = 3;
+        c.beginPath();
+        c.moveTo(-this.radius, 0);
+        c.lineTo(this.radius, 0);
+        c.moveTo(0, -this.radius);
+        c.lineTo(0, this.radius);
+        c.arc(0, 0, this.radius * 0.65, -Math.PI * 0.4, Math.PI * 0.4);
+        c.stroke();
+
+        c.restore();
+      }
+    }
+
+    // 4. DESENHO DA TABELA, ARO E REDE ELÁSTICA
+    function drawHoop(c, dt) {
+      const h = state.hoop;
+      h.time += dt * h.oscillationSpeed;
+      h.x = h.baseX + Math.sin(h.time) * h.oscillationAmplitude;
+
+      if (h.netWave > 0) {
+        h.netWave -= dt * 2.5;
+      }
+
+      c.save();
+      c.translate(h.x, h.y);
+
+      // 1. Tabela de Acrílico Neon
+      c.fillStyle = 'rgba(15, 23, 42, 0.85)';
+      c.fillRect(-h.backboardWidth / 2, -h.backboardHeight + 20, h.backboardWidth, h.backboardHeight);
+      c.strokeStyle = '#38bdf8';
+      c.lineWidth = 5;
+      c.shadowColor = '#38bdf8';
+      c.shadowBlur = 15;
+      c.strokeRect(-h.backboardWidth / 2, -h.backboardHeight + 20, h.backboardWidth, h.backboardHeight);
+
+      // Retângulo interno da tabela
+      c.strokeStyle = '#ef4444';
+      c.lineWidth = 3;
+      c.strokeRect(-60, -80, 120, 90);
+
+      // 2. Aro Metálico
+      c.beginPath();
+      c.ellipse(0, 0, h.rimRadius, h.rimHeight, 0, 0, Math.PI * 2);
+      c.strokeStyle = '#ea580c';
+      c.lineWidth = 6;
+      c.shadowColor = '#ea580c';
+      c.shadowBlur = 12;
+      c.stroke();
+
+      // 3. Rede Elástica Ondulante (Linhas trançadas com física procedural)
+      const waveOffset = Math.sin(Date.now() * 0.015) * 12 * h.netWave;
+      c.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+      c.lineWidth = 2;
+      c.shadowBlur = 0;
+
+      const netLength = 80;
+      const numLines = 8;
+      for (let i = 0; i <= numLines; i++) {
+        const topX = -h.rimRadius + (i * (h.rimRadius * 2 / numLines));
+        const bottomX = topX * 0.5 + waveOffset;
+        c.beginPath();
+        c.moveTo(topX, 0);
+        c.quadraticCurveTo(topX * 0.8, netLength * 0.5, bottomX, netLength);
+        c.stroke();
+      }
+
+      c.restore();
+    }
+
+    // Partículas e Textos Flutuantes
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() * 2 - 1) * 220;
+        this.vy = (Math.random() * 2 - 1) * 220;
+        this.color = color;
+        this.radius = Math.random() * 4 + 2;
+        this.life = 1.0;
+        this.decay = Math.random() * 2.0 + 1.2;
+      }
+
+      update(dt) {
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        this.life -= this.decay * dt;
+      }
+
+      draw(c) {
+        if (this.life <= 0) return;
+        c.save();
+        c.beginPath();
+        c.arc(this.x, this.y, this.radius * this.life, 0, Math.PI * 2);
+        c.fillStyle = this.color;
+        c.globalAlpha = this.life;
+        c.shadowColor = this.color;
+        c.shadowBlur = 10;
+        c.fill();
+        c.restore();
+      }
+    }
+
+    function createImpactParticles(x, y, color, count) {
+      for (let i = 0; i < count; i++) {
+        state.particles.push(new Particle(x, y, color));
+      }
+    }
+
+    function createFloatingText(x, y, text, color) {
+      state.floatingTexts.push({
+        x: x,
+        y: y,
+        text: text,
+        color: color,
+        alpha: 1.0,
+        vy: -70
+      });
+    }
+
+    function updateFloatingTexts(dt) {
+      for (let i = state.floatingTexts.length - 1; i >= 0; i--) {
+        const ft = state.floatingTexts[i];
+        ft.y += ft.vy * dt;
+        ft.alpha -= 1.4 * dt;
+        if (ft.alpha <= 0) {
+          state.floatingTexts.splice(i, 1);
+        }
+      }
+    }
+
+    function drawFloatingTexts(c) {
+      state.floatingTexts.forEach(ft => {
+        c.save();
+        c.font = '900 28px -apple-system, sans-serif';
+        c.fillStyle = ft.color;
+        c.globalAlpha = Math.max(0, ft.alpha);
+        c.textAlign = 'center';
+        c.shadowColor = ft.color;
+        c.shadowBlur = 12;
+        c.fillText(ft.text, ft.x, ft.y);
+        c.restore();
+      });
+    }
+
+    function updateHudUI() {
+      document.getElementById('score-text').innerText = `${state.score} / 50 PONTOS`;
+      const pct = Math.min(100, (state.score / state.targetScore) * 100);
+      document.getElementById('progress-bar').style.width = pct + '%';
+
+      document.getElementById('combo-text').innerText = `COMBO ${state.combo}x`;
+      document.getElementById('baskets-count-text').innerText = `Cestas: ${state.totalBaskets}`;
+
+      const acc = state.totalShots > 0 ? Math.round((state.totalBaskets / state.totalShots) * 100) : 100;
+      document.getElementById('shot-accuracy-text').innerText = `PRECISÃO: ${acc}%`;
+
+      document.getElementById('fireball-mode-text').innerText = state.fireballActive ? 'Modo Fogo: ON' : 'Modo Fogo: OFF';
+      document.getElementById('fireball-mode-text').style.color = state.fireballActive ? '#ea580c' : '#94a3b8';
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('action-toast');
+      const txt = document.getElementById('toast-text');
+      txt.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    function showFeed(msg, user = '') {
+      const feed = document.getElementById('feed-msg');
+      if (feed) {
+        feed.innerHTML = user ? `<strong>${user}</strong>: ${msg}` : msg;
+      }
+    }
+
+    // 5. DISPARO DE ARREMESSO DA LIVE
+    function shootBall(shotType = 2, isFire = false, shooter = '@chat') {
+      if (state.isGameOver) return;
+
+      state.totalShots++;
+      sound.playBounce();
+      if (isFire) sound.playFireballWhoosh();
+
+      const ball = new Basketball(shotType, isFire, shooter);
+      state.balls.push(ball);
+
+      showFeed(`Arremessou bola tipo ${shotType}!`, shooter);
+    }
+
+    // 6. CICLO FECHADO & AUTO-RESET (LEI 5)
+    function triggerGameOver(isVictory) {
+      state.isGameOver = true;
+      if (isVictory) {
+        sound.playVictoryFanfare();
+      } else {
+        sound.playBuzzer();
+      }
+
+      const overlay = document.getElementById('victory-overlay');
+      const title = document.getElementById('winner-title');
+      const summary = document.getElementById('winner-summary');
+      const mvp = document.getElementById('mvp-user-name');
+      const countdown = document.getElementById('auto-reset-countdown');
+
+      if (isVictory) {
+        title.innerText = 'SHOW DE BASQUETE DA LIVE!';
+        title.style.color = '#f97316';
+        summary.innerText = `O chat cravou ${state.totalBaskets} cestas perfeitas e bateu a meta com ${state.score} pontos!`;
+      } else {
+        title.innerText = 'FIM DA RODADA!';
+        title.style.color = '#ef4444';
+        summary.innerText = `Tempo esgotado! O chat conseguiu ${state.score} pontos. Vamos tentar superar na próxima!`;
+      }
+
+      mvp.innerText = state.mvpUser || '@cestinha_street';
+      overlay.classList.add('active');
+
+      state.autoResetTimer = 5;
+      const interval = setInterval(() => {
+        state.autoResetTimer--;
+        if (countdown) {
+          countdown.innerText = `Próximo desafio de arremesso em ${state.autoResetTimer}s...`;
+        }
+        if (state.autoResetTimer <= 0) {
+          clearInterval(interval);
+          resetMatch();
+        }
+      }, 1000);
+    }
+
+    function resetMatch() {
+      state.round++;
+      document.getElementById('round-number').innerText = `RODADA #${state.round}`;
+
+      state.isGameOver = false;
+      state.score = 0;
+      state.combo = 0;
+      state.totalBaskets = 0;
+      state.totalShots = 0;
+      state.timeRemaining = 45.0;
+      state.fireballActive = false;
+      state.magnetActive = false;
+      state.balls = [];
+      state.particles = [];
+      state.floatingTexts = [];
+
+      updateHudUI();
+      document.getElementById('victory-overlay').classList.remove('active');
+      showFeed('Novo quarto de basquete iniciado! Digitem seus arremessos!');
+    }
+
+    // 7. LOOP PRINCIPAL DE RENDERIZAÇÃO 60 FPS
+    function gameLoop(now) {
+      const dt = Math.min(0.06, (now - state.lastFrameTime) / 1000);
+      state.lastFrameTime = now;
+
+      // Cronômetro da Rodada
+      if (!state.isGameOver) {
+        state.timeRemaining -= dt;
+        const timeEl = document.getElementById('time-left-text');
+        if (timeEl) {
+          timeEl.innerText = `Tempo: ${Math.max(0, Math.ceil(state.timeRemaining))}s`;
+        }
+
+        if (state.timeRemaining <= 0) {
+          triggerGameOver(state.score >= 30);
+        }
+
+        // Atualização das bolas
+        for (let i = state.balls.length - 1; i >= 0; i--) {
+          const b = state.balls[i];
+          b.update(dt);
+          if (!b.alive) state.balls.splice(i, 1);
+        }
+      }
+
+      ctx.clearRect(0, 0, STAGE_WIDTH, STAGE_HEIGHT);
+
+      // Desenho da Tabela, Aro e Rede
+      drawHoop(ctx, dt);
+
+      // Desenho das Bolas
+      state.balls.forEach(b => b.draw(ctx));
+
+      // Partículas e Textos Flutuantes
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const pt = state.particles[i];
+        pt.update(dt);
+        pt.draw(ctx);
+        if (pt.life <= 0) state.particles.splice(i, 1);
+      }
+
+      updateFloatingTexts(dt);
+      drawFloatingTexts(ctx);
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // 8. INTEGRAÇÃO COM SDK V5 LIVE & PARSER DE CHAT
+    function handleLiveCommand(payload) {
+      if (!payload) return;
+      const user = payload.user || '@espectador';
+      const comment = (payload.comment || '').toString().toLowerCase().trim();
+      const giftName = payload.giftName || null;
+
+      // 1. Processamento de Presentes / Gifts
+      if (payload.type === 'gift' || giftName) {
+        if (giftName === 'Lion' || giftName === 'Cap' || comment.includes('ima') || comment.includes('dunk')) {
+          state.magnetActive = true;
+          showToast(`🧲 ÍMÃ SLAM DUNK ATIVADO POR ${user.toUpperCase()}! CESTAS AUTOMÁTICAS!`);
+          setTimeout(() => { state.magnetActive = false; }, 8000);
+        } else {
+          state.fireballActive = true;
+          showToast(`🔥 BOLA DE FOGO ATIVADA POR ${user.toUpperCase()}! 3x PONTOS!`);
+          setTimeout(() => { state.fireballActive = false; }, 8000);
+        }
+        shootBall(2, true, user);
+        return;
+      }
+
+      // 2. Comandos de Arremesso do Chat
+      let shotType = 2; // Padrão arco equilibrado
+      if (comment.includes('1') || comment.includes('suave') || comment.includes('fraco')) {
+        shotType = 1;
+      } else if (comment.includes('3') || comment.includes('forte') || comment.includes('direto')) {
+        shotType = 3;
+      } else if (comment.includes('2') || comment.includes('cesta') || comment.includes('bola') || comment.includes('arremesso')) {
+        shotType = 2;
+      }
+
+      shootBall(shotType, state.fireballActive, user);
+    }
+
+    // Inicialização do SDK V5
+    const sdk = new V5LiveSDK({
+      gameId: '29_basquete_street_neon',
+      autoBotEnabled: true,
+      autoBotInterval: 2500,
+      autoBotSilenceThreshold: 3000
+    });
+
+    sdk.on('comment', (data) => handleLiveCommand(data));
+    sdk.on('gift', (data) => handleLiveCommand(data));
+    sdk.on('like', (data) => {
+      // Likes aumentam o combo
+      if (Math.random() < 0.25) {
+        state.combo++;
+        updateHudUI();
+      }
+    });
+
+    // 9. MOTOR ANTI-SILÊNCIO ORGÂNICO (LEI 3)
+    const mockUsers = ['@jordan_v5', '@kobe_neon', '@dunker99', '@street_hoops', '@baller_live', '@cestinha_pro'];
+    setInterval(() => {
+      if (state.isGameOver) return;
+      const now = Date.now();
+      if (now - sdk.lastEventTime > 2800) {
+        const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+        const randomType = Math.floor(Math.random() * 3) + 1;
+
+        handleLiveCommand({
+          type: 'comment',
+          user: randomUser,
+          comment: `${randomType}`
+        });
+      }
+    }, 2500);
+
+    // 10. GAVETA DE DEPURAÇÃO LOCAL (TECLA D OU DUPLO CLIQUE)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        toggleDebugDrawer();
+      }
+    });
+
+    document.getElementById('game-stage').addEventListener('dblclick', () => {
+      toggleDebugDrawer();
+    });
+
+    function toggleDebugDrawer() {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.classList.toggle('open');
+    }
+
+    function testShot(type) {
+      sound.initContext();
+      handleLiveCommand({
+        type: 'comment',
+        user: '@streamer_dev',
+        comment: `${type}`
+      });
+    }
+
+    function testGift(giftName) {
+      sound.initContext();
+      handleLiveCommand({
+        type: 'gift',
+        user: '@patrocinador_live',
+        giftName: giftName,
+        value: 10
+      });
+    }
+
+    function testScore(pts) {
+      state.score += pts;
+      updateHudUI();
+    }
+
+    // Inicialização da Partida
+    window.addEventListener('DOMContentLoaded', () => {
+      updateHudUI();
+      requestAnimationFrame(gameLoop);
+    });
+
+  </script>
+</body>
+</html>

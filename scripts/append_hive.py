@@ -3,18 +3,18 @@ import os
 bus_path = r"C:\Users\v5est\.gemini\antigravity\brain\9270dd65-160e-47e8-aea2-6a92fd50cfc6\antigravity_hive_bus.md"
 
 entry = """
-### [27/10/2026 - 15:45] CAPITANIA V5 GAMES - ETAPA 083 CONCLUÍDA: CARTUCHO #28 LABIRINTO DO PACMAN NEON
-- **Cartucho Homologado:** `28_labirinto_pacman_neon` (Labirinto do Pacman Neon da Live - Navegação por Votos de Chat 9:16).
+### [27/10/2026 - 16:15] CAPITANIA V5 GAMES - ETAPA 084 CONCLUÍDA: CARTUCHO #29 BASQUETE STREET NEON
+- **Cartucho Homologado:** `29_basquete_street_neon` (Basquete Street Neon da Live - Tabela Móvel & Física 2D 9:16).
 - **Inovações de Engenharia:**
-  1. Matriz vertical retrofuturista neon de 15x21 células com corredor de túnel lateral contínuo e detecção de esquinas com buffer de intenção.
-  2. Pilotagem 100% pelo público via chat por comandos cardeais e numéricos rápidos de celular (1-Cima, 2-Baixo, 3-Esquerda, 4-Direita).
-  3. Quatro fantasmas cibernéticos (Blinky, Pinky, Inky e Clyde) com IA adaptativa (perseguição no modo padrão e fuga dispersa no modo caçador).
-  4. Super Power-ups por Gifts: Super Turbo com Modo Caçador (Pacman devora os 4 fantasmas para +1000 pts cada) e Congelamento de Fantasmas em blocos de gelo por 6s.
-  5. Síntese Web Audio API procedural completa: efeito Waka-Waka em alternância senoidal dupla (480Hz/330Hz), sirene de super pastilha, arpejo de devorar fantasma e fanfarra de vitória.
-  6. Ciclo fechado de 45s com auto-reset em 5s e pódio do Piloto Mais Rápido (MVP).
-- **Homologação:** 11/11 verificações aprovadas em `scripts/test_cartridge_28.py`.
-- **Sincronização:** Total de 29 jogos homologados e sincronizados no V5 Broadcaster (`v5_games_manifest.json`).
-- **Próxima Etapa:** Etapa 084 — Forjamento do Cartucho #29: Basquete Street 9:16 (Física de cesta e tabela móvel).
+  1. Tabela de acrílico móvel com oscilação senoidal contínua ($x(t) = x_0 + A \sin(\omega t)$), aro metálico duplo com amortecedor e rede elástica com ondulação procedural de chuá.
+  2. Arremessos 100% acionados pelo chat através de comandos numéricos e de força (1: Suave, 2: Perfeito, 3: Forte/Direto) com parábolas balísticas e detecção de rebote na tabela e ricochete no aro.
+  3. Lógica de detecção de cesta limpa (Swish/Chuá +3 pts com faíscas douradas) vs cesta normal (+2 pts) com sistema de combos progressivos da live.
+  4. Super Gifts Estratégicos: Bola de Fogo (3x pontuação com rastro de chamas) e Ímã Magnético Slam Dunk no aro (atrai todas as bolas para dentro da cesta por 8s).
+  5. Síntese Web Audio API procedural completa: drible seco no asfalto, estalo metálico no aro (modulação em anel), som de tecido elástico de chuá e buzina clássica de estádio.
+  6. Ciclo fechado de 45s com auto-reset em 5s e pódio do Maior Cestinha da Live (MVP).
+- **Homologação:** 11/11 verificações aprovadas em `scripts/test_cartridge_29.py`.
+- **Sincronização:** Total de 30 jogos homologados e sincronizados no V5 Broadcaster (`v5_games_manifest.json`).
+- **Próxima Etapa:** Etapa 085 — Forjamento do Cartucho #30: Gol de Pênalti da Live (Disputa entre batedor e goleiro).
 """
 
 if os.path.exists(bus_path):
