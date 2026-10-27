@@ -62,7 +62,7 @@
 - [x] **Etapa 016:** Homologação da Batalha dos Balões no Test Lab com simulação de 500 comentários/minuto.
 - [x] **Etapa 017:** Forjamento do Cartucho #09: Tsunami de Curtidas (Pressômetro vertical onde o time com mais likes eleva sua maré neon e afunda o rival).
 - [x] **Etapa 018:** Integração de micro-ondas de choque sonoras e partículas líquidas no Tsunami de Curtidas.
-- [ ] **Etapa 019:** Forjamento do Cartucho #11: Queda de Braço dos Titãs (Braços cibernéticos com indicador de torque pilotados por votos).
+- [x] **Etapa 019:** Forjamento do Cartucho #11: Queda de Braço dos Titãs (Braços cibernéticos com indicador de torque pilotados por votos).
 - [ ] **Etapa 020:** Homologação dos 4 cartuchos de polarização na esteira de sincronização do Broadcaster.
 
 ---
