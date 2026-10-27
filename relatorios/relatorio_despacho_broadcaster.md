@@ -1,6 +1,6 @@
 # RELATÓRIO DE DESPACHO E SINCRONIZAÇÃO INDUSTRIAL
 **Holding V5 Apollo — Capitania V5 Games -> V5 Broadcaster**  
-*Data de Execução:* 27/10/2026 08:48:24  
+*Data de Execução:* 27/10/2026 08:52:31  
 *Destino de Produção:* `E:\MEUS PROGRAMAS\V5_APOLLO_SITES\V5_Apollo_Broadcaster\frontend\public\games`
 
 ---
@@ -10,10 +10,10 @@
 | :--- | :--- |
 | **Total de Cartuchos Despachados** | **41 cartuchos** |
 | **Arquivos Verificados com Hash MD5** | **84 arquivos** |
-| **Volume de Dados Transferido** | **1.77 MB (1,851,022 bytes)** |
+| **Volume de Dados Transferido** | **1.77 MB (1,851,072 bytes)** |
 | **Taxa de Integridade Criptográfica (MD5 Match)** | **100.0%** |
 | **Erros / Mismatches Detectados** | **0** |
-| **Tempo Total de Processamento** | **1.84 segundos** |
+| **Tempo Total de Processamento** | **1.67 segundos** |
 | **Status da Homologação** | **HOMOLOGADO_DESPACHADO** |
 
 ---
@@ -42,7 +42,7 @@
 | 19 | `18_roleta_russa_baloes` | Roleta Russa de Balões | `sorteios_roletas` | `573ddfa1...` | `1c364b73...` | **VERIFIED** |
 | 20 | `19_defesa_da_torre_chat` | Defesa da Torre do Chat | `cooperativo_boss` | `872d49bd...` | `029f9b72...` | **VERIFIED** |
 | 21 | `20_subida_da_montanha_sagrada` | Subida da Montanha Sagrada | `cooperativo_boss` | `bac1a772...` | `9b240751...` | **VERIFIED** |
-| 22 | `21_batata_quente_explosiva` | Batata Quente Explosiva | `tensao_eliminacao` | `587a07bf...` | `b4645736...` | **VERIFIED** |
+| 22 | `21_batata_quente_explosiva` | Batata Quente Explosiva | `tensao_eliminacao` | `29a29daf...` | `b4645736...` | **VERIFIED** |
 | 23 | `22_ponte_de_vidro_quebradico` | Ponte de Vidro Quebradiço | `tensao_eliminacao` | `ffa72690...` | `f40c3cd7...` | **VERIFIED** |
 | 24 | `23_sobrevivencia_na_lava` | Sobrevivência na Lava | `tensao_eliminacao` | `0950857b...` | `68896bf3...` | **VERIFIED** |
 | 25 | `24_campo_minado_neon` | Campo Minado Neon | `tabuleiro_coordenadas` | `017cbf5f...` | `a47b7420...` | **VERIFIED** |

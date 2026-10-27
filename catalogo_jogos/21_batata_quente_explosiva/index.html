@@ -1020,6 +1020,8 @@
       totalRoundTime = 22.0 + Math.random() * 16.0; // 22 a 38 segundos
       timeRemaining = totalRoundTime;
       isGameOver = false;
+      passRank.clear();
+      topPasser = null;
       currentHolder = Math.floor(Math.random() * avatars.length);
       avatars.forEach((a, idx) => { a.hasBomb = (idx === currentHolder); a.immune = 0; });
       flightProgress = 1.0;

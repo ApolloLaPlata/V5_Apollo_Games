@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-10-27T08:48:24.226178",
+  "timestamp": "2026-10-27T08:52:31.960453",
   "holding": "Holding V5 Apollo",
   "captaincy": "Capitania V5 Games",
   "destination": "E:\\MEUS PROGRAMAS\\V5_APOLLO_SITES\\V5_Apollo_Broadcaster\\frontend\\public\\games",
   "total_cartridges": 41,
   "total_files_verified": 84,
-  "total_bytes_transferred": 1851022,
+  "total_bytes_transferred": 1851072,
   "total_megabytes": 1.77,
-  "duration_seconds": 1.84,
+  "duration_seconds": 1.67,
   "md5_match_rate_percent": 100.0,
   "md5_mismatches": 0,
   "status": "HOMOLOGADO_DESPACHADO",
@@ -396,8 +396,8 @@
       "category": "tensao_eliminacao",
       "files": {
         "index.html": {
-          "md5": "587a07bf7222d82e7c02b8290e19b533",
-          "size_bytes": 34406,
+          "md5": "29a29daf3935ff6791a9104ee61807d6",
+          "size_bytes": 34456,
           "verified": true
         },
         "thumbnail.svg": {
