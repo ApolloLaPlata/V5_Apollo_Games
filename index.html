@@ -761,13 +761,20 @@
       safeZoneOverlay.style.display = isChecked ? 'flex' : 'none';
     }
 
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str).replace(/[&<>"']/g, function (m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+      });
+    }
+
     function logEvent(type, message) {
       eventCount++;
       const now = new Date();
       const timeStr = now.toTimeString().split(' ')[0];
       const entry = document.createElement('div');
       entry.className = 'terminal-entry';
-      entry.innerHTML = `<span class="time">[${timeStr}]</span> <span class="type">[${type}]</span> ${message}`;
+      entry.innerHTML = `<span class="time">[${timeStr}]</span> <span class="type">[${escapeHtml(type)}]</span> ${message}`;
       terminal.appendChild(entry);
       terminal.scrollTop = terminal.scrollHeight;
       eventCounterEl.innerText = `${eventCount} eventos registrados`;
@@ -800,12 +807,15 @@
           frame.contentWindow.dispatchEvent(new CustomEvent('v5_event', { detail: payload }));
         } catch (err) {}
       }
-      // 4. Log local no monitor
+      // 4. Log local no monitor (com sanitização HTML defensiva)
+      const safeUser = escapeHtml(payload.user);
+      const safeGift = escapeHtml(payload.giftName);
+      const safeComment = escapeHtml(payload.comment || payload.action);
       const preview = payload.type === 'gift' 
-        ? `🎁 [GIFT] <span class="highlight">${payload.user}</span> enviou <b>${payload.giftName}</b> (+${payload.weight}x peso)`
+        ? `🎁 [GIFT] <span class="highlight">${safeUser}</span> enviou <b>${safeGift}</b> (+${escapeHtml(payload.weight)}x peso)`
         : (payload.type === 'like'
-            ? `❤️ [LIKE] <span class="highlight">${payload.user}</span> enviou +${payload.count} curtidas`
-            : `💬 [CHAT] <span class="highlight">${payload.user}</span>: "${payload.comment || payload.action}"`);
+            ? `❤️ [LIKE] <span class="highlight">${safeUser}</span> enviou +${escapeHtml(payload.count)} curtidas`
+            : `💬 [CHAT] <span class="highlight">${safeUser}</span>: "${safeComment}"`);
       logEvent('INJETOR', preview);
     }
 
@@ -895,7 +905,10 @@
         channel.onmessage = (event) => {
           if (event.data) {
             const d = event.data;
-            logEvent('BROADCAST', `<span class="highlight">${d.user || '@anon'}</span> -> ${d.type || 'ação'} (${d.action || d.comment || d.giftName || ''})`);
+            const u = escapeHtml(d.user || '@anon');
+            const t = escapeHtml(d.type || 'ação');
+            const a = escapeHtml(d.action || d.comment || d.giftName || '');
+            logEvent('BROADCAST', `<span class="highlight">${u}</span> -> ${t} (${a})`);
           }
         };
       }
@@ -928,7 +941,7 @@
         }
 
         if (event.data.type) {
-          logEvent('IFRAME_MSG', JSON.stringify(event.data));
+          logEvent('IFRAME_MSG', escapeHtml(JSON.stringify(event.data)));
         }
       }
     });
