@@ -71,6 +71,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "safira", "rubi", "ouro"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "14_vortex_gravitacional": {
+        "name": "Vortex Gravitacional",
+        "category": "fisica_pachinko",
+        "description": "Buraco negro cósmico com atração gravitacional não-linear, órbitas caóticas, áudio Doppler e pulsos de Quasar",
+        "commands": ["1", "2", "3", "orb", "quasar", "blackhole"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 

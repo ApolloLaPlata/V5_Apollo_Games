@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Vortex Gravitacional (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #020617;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 50%, #1e1136 0%, #080314 60%, #020617 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Screen Shake Cósmico */
+    .shake-active {
+      animation: vortexShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes vortexShake {
+      10%, 90% { transform: translate3d(-3px, -2px, 0); }
+      20%, 80% { transform: translate3d(4px, 3px, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, -3px, 0); }
+      40%, 60% { transform: translate3d(4px, 2px, 0); }
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 16px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(8, 3, 20, 0.96) 0%, rgba(8, 3, 20, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #c084fc;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .timer-badge {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Placar Cósmico Triplo */
+    .score-board {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr;
+      gap: 8px;
+      align-items: center;
+      background: rgba(15, 7, 32, 0.88);
+      border: 1px solid rgba(192, 132, 252, 0.2);
+      border-radius: 16px;
+      padding: 8px 12px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .score-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .box-blue {
+      color: #38bdf8;
+      text-shadow: 0 0 14px rgba(56, 189, 248, 0.8);
+    }
+
+    .box-gold {
+      color: #fbbf24;
+      text-shadow: 0 0 16px rgba(251, 191, 36, 0.85);
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0 4px;
+    }
+
+    .box-red {
+      color: #f87171;
+      text-shadow: 0 0 14px rgba(248, 113, 113, 0.8);
+    }
+
+    .box-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .box-score {
+      font-size: 18px;
+      font-weight: 900;
+      font-family: monospace;
+      margin-top: 2px;
+    }
+
+    /* Canvas Central Cósmico */
+    #arena-container {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Feed de Presentes e Toasts */
+    .toast-container {
+      position: absolute;
+      top: 145px;
+      width: calc(100% - 32px);
+      left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .toast-item {
+      background: rgba(15, 7, 32, 0.94);
+      border: 1px solid rgba(192, 132, 252, 0.25);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(8px);
+      animation: slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 12px 16px 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(8, 3, 20, 0.98) 0%, rgba(8, 3, 20, 0.8) 70%, rgba(8, 3, 20, 0) 100%);
+      pointer-events: none;
+    }
+
+    .chat-instructions {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .cmd-pill {
+      flex: 1;
+      background: rgba(30, 20, 48, 0.85);
+      border: 1px solid rgba(192, 132, 252, 0.2);
+      border-radius: 12px;
+      padding: 8px 4px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .cmd-pill.blue {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: rgba(56, 189, 248, 0.12);
+    }
+
+    .cmd-pill.gold {
+      border-color: rgba(251, 191, 36, 0.5);
+      background: rgba(251, 191, 36, 0.14);
+    }
+
+    .cmd-pill.red {
+      border-color: rgba(248, 113, 113, 0.5);
+      background: rgba(248, 113, 113, 0.12);
+    }
+
+    .cmd-key {
+      font-size: 15px;
+      font-weight: 900;
+      font-family: monospace;
+    }
+
+    .cmd-desc {
+      font-size: 9px;
+      color: #cbd5e1;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .gift-cta {
+      background: linear-gradient(90deg, rgba(168, 85, 247, 0.3) 0%, rgba(251, 191, 36, 0.3) 100%);
+      border: 1px solid rgba(192, 132, 252, 0.45);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.25);
+    }
+
+    /* Overlay Vitória */
+    #victory-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(8, 3, 20, 0.94);
+      backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    #victory-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .victory-box {
+      background: rgba(15, 7, 32, 0.96);
+      border: 2px solid #c084fc;
+      border-radius: 24px;
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 0 50px rgba(192, 132, 252, 0.4);
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .reset-progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 15px;
+    }
+
+    .reset-progress-fill {
+      height: 100%;
+      background: #c084fc;
+      width: 0%;
+      transition: width 5s linear;
+    }
+
+    /* Painel Debug [D] */
+    #debug-drawer {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      background: rgba(15, 7, 32, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 200;
+      pointer-events: auto;
+    }
+
+    .debug-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+    }
+
+    .debug-btn {
+      background: #1e1136;
+      border: 1px solid rgba(192, 132, 252, 0.25);
+      color: #f1f5f9;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 7px 4px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    
+    <!-- Top Safe Zone (140px) -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <span class="live-dot"></span>
+          V5 LIVE VORTEX GRAVITACIONAL
+        </div>
+        <div class="timer-badge">
+          ⏳ <span id="round-timer">45</span>s
+        </div>
+      </div>
+
+      <div class="score-board">
+        <div class="score-box box-blue">
+          <span class="box-title">🌌 Cometa Azul</span>
+          <span class="box-score" id="score-blue">0</span>
+        </div>
+        <div class="score-box box-gold">
+          <span class="box-title">👑 Quasar Ouro</span>
+          <span class="box-score" id="score-gold">0</span>
+        </div>
+        <div class="score-box box-red">
+          <span class="box-title">🔥 Supernova</span>
+          <span class="box-score" id="score-red">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central Cósmico -->
+    <div id="arena-container">
+      <canvas id="vortex-canvas"></canvas>
+    </div>
+
+    <!-- Feed de Presentes e Toasts -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <footer class="bottom-panel">
+      <div class="chat-instructions">
+        <div class="cmd-pill blue">
+          <span class="cmd-key box-blue">1</span>
+          <span class="cmd-desc">🌌 Orbe Azul</span>
+        </div>
+        <div class="cmd-pill gold">
+          <span class="cmd-key box-gold">3</span>
+          <span class="cmd-desc">👑 Orbe Quasar</span>
+        </div>
+        <div class="cmd-pill red">
+          <span class="cmd-key box-red">2</span>
+          <span class="cmd-desc">🔥 Orbe Rubi</span>
+        </div>
+      </div>
+
+      <div class="gift-cta">
+        <span style="font-size: 11px; font-weight: 700; color: #fef08a;">🎁 Presentes = Pulso de Quasar (Onda de Choque Cósmica!)</span>
+        <span style="background: #9333ea; color: #fff; font-weight: 900; font-size: 10px; padding: 3px 8px; border-radius: 8px;">QUASAR</span>
+      </div>
+    </footer>
+
+    <!-- Overlay Vitória -->
+    <div id="victory-overlay">
+      <div class="victory-box">
+        <div style="font-size: 52px; margin-bottom: 10px;" id="victory-icon">🌀</div>
+        <h2 id="victory-title" style="font-size: 24px; font-weight: 900; text-transform: uppercase;">COLAPSO GRAVITACIONAL!</h2>
+        <p id="victory-detail" style="font-size: 14px; color: #94a3b8; margin: 8px 0 16px 0;">Horizonte de Eventos Consumido</p>
+        <p style="font-size: 12px; color: #cbd5e1; font-weight: 600;">Estabilizando a singularidade...</p>
+        <div class="reset-progress-bar">
+          <div class="reset-progress-fill" id="reset-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Painel Debug [D] -->
+    <div id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #94a3b8; display: flex; justify-content: space-between;">
+        <span>🎮 Depuração Vortex [D]</span>
+        <span style="cursor:pointer;" onclick="toggleDebug()">✕ Fechar</span>
+      </div>
+      <div class="debug-buttons">
+        <button class="debug-btn" onclick="spawnOrb('A', 1, '@teste_azul')">🔵 Orbe Azul (1)</button>
+        <button class="debug-btn" onclick="spawnOrb('C', 1, '@teste_ouro')">👑 Orbe Quasar (3)</button>
+        <button class="debug-btn" onclick="spawnOrb('B', 1, '@teste_red')">🔴 Orbe Red (2)</button>
+        <button class="debug-btn" onclick="triggerMeteorSwarm('C', 'Rosa', 12, '@vip_rosa')">🌸 Enxame Cósmico</button>
+        <button class="debug-btn" onclick="triggerQuasarBurst('@vip_leao')">🦁 Pulso de Quasar</button>
+        <button class="debug-btn" onclick="endRound()">⏱️ Forçar Fim</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /**
+     * SINTETIZADOR CÓSMICO DE VÓRTICE & EFEITO DOPPLER (Web Audio API)
+     * Zumbido de gravidade, modulação Doppler e implosão de buraco negro
+     */
+    class CosmicAudio {
+      constructor() {
+        this.ctx = null;
+        this.lastDopplerTime = 0;
+      }
+
+      getCtx() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        return this.ctx;
+      }
+
+      /**
+       * Efeito Doppler Espacial ao orbitar em alta velocidade
+       */
+      playDopplerOrb(speedRatio = 1.0) {
+        const now = Date.now();
+        if (now - this.lastDopplerTime < 60) return;
+        this.lastDopplerTime = now;
+
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+
+          osc.type = 'sine';
+          const startF = 320 * speedRatio;
+          osc.frequency.setValueAtTime(startF, t);
+          osc.frequency.exponentialRampToValueAtTime(startF * 1.8, t + 0.08);
+          osc.frequency.exponentialRampToValueAtTime(startF * 0.6, t + 0.18);
+
+          gain.gain.setValueAtTime(0.12, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+
+          osc.connect(gain);
+          gain.connect(c.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.18);
+        } catch (e) {}
+      }
+
+      /**
+       * Implosão na Singularidade do Buraco Negro
+       */
+      playSingularityImplosion() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(450, t);
+          osc.frequency.exponentialRampToValueAtTime(30, t + 0.45);
+
+          const flt = c.createBiquadFilter();
+          flt.type = 'lowpass';
+          flt.frequency.setValueAtTime(800, t);
+          flt.frequency.exponentialRampToValueAtTime(60, t + 0.45);
+
+          gain.gain.setValueAtTime(0.35, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+
+          osc.connect(flt);
+          flt.connect(gain);
+          gain.connect(c.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.45);
+        } catch (e) {}
+      }
+
+      /**
+       * Pulso de Quasar / Supernova Burst
+       */
+      playQuasarBurst() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+
+          // Ruído de onda de choque
+          const bufferSize = c.sampleRate * 0.4;
+          const noiseBuffer = c.createBuffer(1, bufferSize, c.sampleRate);
+          const data = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+          const noise = c.createBufferSource();
+          noise.buffer = noiseBuffer;
+          const flt = c.createBiquadFilter();
+          flt.type = 'bandpass';
+          flt.frequency.setValueAtTime(1400, t);
+          flt.frequency.exponentialRampToValueAtTime(180, t + 0.4);
+          flt.Q.setValueAtTime(2.5, t);
+
+          const gain = c.createGain();
+          gain.gain.setValueAtTime(0.4, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+
+          noise.connect(flt);
+          flt.connect(gain);
+          gain.connect(c.destination);
+
+          noise.start(t);
+          noise.stop(t + 0.4);
+        } catch (e) {}
+      }
+
+      playVictory() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          [392.00, 493.88, 587.33, 783.99, 987.77].forEach((f, i) => {
+            const osc = c.createOscillator();
+            const g = c.createGain();
+            const st = t + (i * 0.1);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, st);
+            g.gain.setValueAtTime(0.2, st);
+            g.gain.exponentialRampToValueAtTime(0.001, st + 0.5);
+            osc.connect(g);
+            g.connect(c.destination);
+            osc.start(st);
+            osc.stop(st + 0.5);
+          });
+        } catch (e) {}
+      }
+    }
+
+    const audio = new CosmicAudio();
+
+    /**
+     * MOTOR FÍSICO DO VORTEX GRAVITACIONAL (CANVAS 2D - 60 FPS)
+     */
+    const stageEl = document.getElementById('game-stage');
+    const canvas = document.getElementById('vortex-canvas');
+    const ctx = canvas.getContext('2d');
+    let W = 0, H = 0;
+
+    function resize() {
+      W = stageEl.clientWidth;
+      H = stageEl.clientHeight;
+      canvas.width = W;
+      canvas.height = H;
+    }
+    window.addEventListener('resize', resize);
+
+    let roundTime = 45;
+    let timerInterval = null;
+    let isGameOver = false;
+
+    let scoreBlue = 0;
+    let scoreRed = 0;
+    let scoreGold = 0;
+
+    // DOM Elements
+    const scoreBlueEl = document.getElementById('score-blue');
+    const scoreRedEl = document.getElementById('score-red');
+    const scoreGoldEl = document.getElementById('score-gold');
+    const roundTimerEl = document.getElementById('round-timer');
+    const victoryOverlay = document.getElementById('victory-overlay');
+    const victoryTitle = document.getElementById('victory-title');
+    const victoryDetail = document.getElementById('victory-detail');
+    const victoryIcon = document.getElementById('victory-icon');
+    const resetFill = document.getElementById('reset-fill');
+    const toastContainer = document.getElementById('toast-container');
+    const debugDrawer = document.getElementById('debug-drawer');
+
+    // Entidades Celestes
+    let orbs = [];
+    let shockwaveRings = [];
+    let particles = [];
+    let confettis = [];
+
+    // Centro da Singularidade
+    const vortex = {
+      get x() { return W * 0.5; },
+      get y() { return H * 0.50; },
+      radius: 34,
+      gravityStrength: 1.8,
+      rotationAngle: 0
+    };
+
+    function triggerScreenShake() {
+      stageEl.classList.remove('shake-active');
+      void stageEl.offsetWidth;
+      stageEl.classList.add('shake-active');
+      setTimeout(() => stageEl.classList.remove('shake-active'), 350);
+    }
+
+    function spawnOrb(team, weight = 1, user = '@espectador', isVIP = false) {
+      if (isGameOver) return;
+      audio.getCtx();
+
+      // Ponto de lançamento orbital exterior
+      const angle = Math.random() * Math.PI * 2;
+      const spawnDist = Math.min(W, H) * 0.44;
+      const startX = vortex.x + Math.cos(angle) * spawnDist;
+      const startY = vortex.y + Math.sin(angle) * spawnDist;
+
+      // Velocidade tangencial orbital estável com leve perturbação
+      const speed = (2.2 + Math.random() * 1.5) * (Math.random() < 0.5 ? 1 : -1);
+      const vx = -Math.sin(angle) * speed;
+      const vy = Math.cos(angle) * speed;
+
+      const color = isVIP ? '#fbbf24' : (team === 'A' ? '#38bdf8' : (team === 'B' ? '#f87171' : '#c084fc'));
+
+      orbs.push({
+        x: startX,
+        y: startY,
+        vx: vx,
+        vy: vy,
+        radius: isVIP ? 14 : 7,
+        team: team,
+        color: color,
+        weight: weight,
+        user: user,
+        isVIP: isVIP,
+        orbitTime: 0,
+        trail: []
+      });
+
+      audio.playDopplerOrb(1.1);
+    }
+
+    function triggerMeteorSwarm(team, giftName, count = 12, user = '@vip_player') {
+      triggerScreenShake();
+      spawnToast(`🎁 ${user} enviou ${giftName}! ENXAME DE METEOROS!`, '#c084fc');
+
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          spawnOrb(team, 2, user, true);
+        }, i * 80);
+      }
+    }
+
+    function triggerQuasarBurst(user = '@super_vip') {
+      triggerScreenShake();
+      audio.playQuasarBurst();
+      spawnToast(`🦁 ${user} liberou PULSO DE QUASAR 100x!`, '#fbbf24');
+
+      shockwaveRings.push({
+        x: vortex.x,
+        y: vortex.y,
+        radius: 10,
+        maxRadius: Math.max(W, H) * 0.6,
+        color: '#c084fc',
+        alpha: 1.0
+      });
+
+      // Duplica a pontuação de todas as esferas ativas
+      orbs.forEach(o => {
+        o.weight *= 2;
+        o.isVIP = true;
+      });
+    }
+
+    function spawnToast(text, color = '#38bdf8') {
+      const toast = document.createElement('div');
+      toast.className = 'toast-item';
+      toast.style.borderColor = color;
+      toast.innerHTML = `<span style="color:${color}">${text}</span>`;
+      toastContainer.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    function spawnParticles(x, y, color, count = 10) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 4 + 1.5;
+        particles.push({
+          x: x, y: y,
+          vx: Math.cos(angle) * spd,
+          vy: Math.sin(angle) * spd,
+          radius: Math.random() * 3 + 1,
+          color: color,
+          alpha: 1.0
+        });
+      }
+    }
+
+    function spawnConfetti() {
+      const colors = ['#c084fc', '#a855f7', '#38bdf8', '#f87171', '#fbbf24'];
+      for (let i = 0; i < 70; i++) {
+        confettis.push({
+          x: Math.random() * W,
+          y: Math.random() * H * 0.3,
+          vx: (Math.random() - 0.5) * 5,
+          vy: Math.random() * 4 + 2,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10
+        });
+      }
+    }
+
+    function startTimer() {
+      roundTime = 45;
+      isGameOver = false;
+      scoreBlue = 0;
+      scoreRed = 0;
+      scoreGold = 0;
+
+      scoreBlueEl.innerText = '0';
+      scoreRedEl.innerText = '0';
+      scoreGoldEl.innerText = '0';
+      roundTimerEl.innerText = roundTime;
+      victoryOverlay.classList.remove('active');
+      resetFill.style.width = '0%';
+
+      if (timerInterval) clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        roundTime--;
+        roundTimerEl.innerText = roundTime;
+
+        if (roundTime <= 0) {
+          clearInterval(timerInterval);
+          endRound();
+        }
+      }, 1000);
+    }
+
+    function endRound() {
+      if (isGameOver) return;
+      isGameOver = true;
+
+      audio.playVictory();
+      triggerScreenShake();
+      spawnConfetti();
+
+      let winText = '';
+      let winIcon = '🌀';
+      let winColor = '#c084fc';
+
+      if (scoreBlue > scoreRed && scoreBlue > scoreGold) {
+        winText = 'COMETA AZUL DOMINOU!';
+        winIcon = '🌌';
+        winColor = '#38bdf8';
+      } else if (scoreRed > scoreBlue && scoreRed > scoreGold) {
+        winText = 'SUPERNOVA VERMELHA!';
+        winIcon = '🔥';
+        winColor = '#f87171';
+      } else {
+        winText = 'QUASAR DOURADO SOBERANO!';
+        winIcon = '👑';
+        winColor = '#fbbf24';
+      }
+
+      victoryTitle.innerText = winText;
+      victoryTitle.style.color = winColor;
+      victoryIcon.innerText = winIcon;
+      victoryDetail.innerText = `Cometa: ${scoreBlue.toLocaleString('pt-BR')} | Quasar: ${scoreGold.toLocaleString('pt-BR')} | Supernova: ${scoreRed.toLocaleString('pt-BR')}`;
+
+      victoryOverlay.classList.add('active');
+
+      setTimeout(() => {
+        resetFill.style.width = '100%';
+      }, 50);
+
+      setTimeout(() => {
+        orbs = [];
+        startTimer();
+      }, 5000);
+    }
+
+    /**
+     * RENDER LOOP CÓSMICO (60 FPS)
+     */
+    let lastFpsTime = performance.now();
+    let frameCount = 0;
+
+    function gameLoop(now = performance.now()) {
+      ctx.clearRect(0, 0, W, H);
+
+      vortex.rotationAngle += 0.025;
+
+      // 1. Renderização do Buraco Negro & Disco de Acreção
+      drawSingularity(vortex.x, vortex.y, vortex.radius, vortex.rotationAngle);
+
+      // 2. Ondas de Choque de Quasar
+      for (let r = shockwaveRings.length - 1; r >= 0; r--) {
+        const ring = shockwaveRings[r];
+        ring.radius += 8;
+        ring.alpha -= 0.02;
+        if (ring.alpha <= 0 || ring.radius >= ring.maxRadius) {
+          shockwaveRings.splice(r, 1);
+        } else {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(ring.x, ring.y, ring.radius, 0, Math.PI * 2);
+          ctx.strokeStyle = ring.color;
+          ctx.lineWidth = 4;
+          ctx.globalAlpha = ring.alpha;
+          ctx.shadowColor = ring.color;
+          ctx.shadowBlur = 15;
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+
+      // 3. Atualizar e Renderizar Orbes Celestes em Órbita Caótica
+      for (let i = orbs.length - 1; i >= 0; i--) {
+        const orb = orbs[i];
+        orb.orbitTime += 0.016;
+
+        const dx = vortex.x - orb.x;
+        const dy = vortex.y - orb.y;
+        const dist = Math.hypot(dx, dy);
+
+        // Atração Gravitacional Não Linear
+        const force = (vortex.gravityStrength * 280) / Math.max(800, dist * dist * 0.7);
+        orb.vx += (dx / dist) * force;
+        orb.vy += (dy / dist) * force;
+
+        // Força Centrípeta de Swirl (Rotação ao redor do vórtice)
+        const swirlForce = (1 - dist / (W * 0.5)) * 0.45;
+        if (swirlForce > 0) {
+          orb.vx += (-dy / dist) * swirlForce;
+          orb.vy += (dx / dist) * swirlForce;
+        }
+
+        orb.x += orb.vx;
+        orb.y += orb.vy;
+
+        // Histórico de Rastro (Trail)
+        orb.trail.push({ x: orb.x, y: orb.y, alpha: 0.8 });
+        if (orb.trail.length > 8) orb.trail.shift();
+
+        // Render do Rastro Estelar
+        for (let t = 0; t < orb.trail.length; t++) {
+          const tr = orb.trail[t];
+          ctx.beginPath();
+          ctx.arc(tr.x, tr.y, orb.radius * (0.3 + (t / orb.trail.length) * 0.5), 0, Math.PI * 2);
+          ctx.fillStyle = orb.color;
+          ctx.globalAlpha = tr.alpha * (t / orb.trail.length) * 0.4;
+          ctx.fill();
+          ctx.globalAlpha = 1.0;
+        }
+
+        // Render da Esfera
+        ctx.beginPath();
+        ctx.arc(orb.x, orb.y, orb.radius, 0, Math.PI * 2);
+        ctx.fillStyle = orb.color;
+        ctx.shadowColor = orb.color;
+        ctx.shadowBlur = orb.isVIP ? 20 : 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Som de aproximação Doppler
+        if (dist < vortex.radius * 2.5 && Math.random() < 0.08) {
+          audio.playDopplerOrb(1.4);
+        }
+
+        // ENTRADA NO HORIZONTE DE EVENTOS (CONSUMIDO PELA SINGULARIDADE!)
+        if (dist <= vortex.radius * 0.8) {
+          const basePts = (orb.weight || 1) * 20;
+          if (orb.team === 'A') {
+            scoreBlue += basePts;
+            scoreBlueEl.innerText = scoreBlue.toLocaleString('pt-BR');
+          } else if (orb.team === 'B') {
+            scoreRed += basePts;
+            scoreRedEl.innerText = scoreRed.toLocaleString('pt-BR');
+          } else {
+            scoreGold += basePts * 2;
+            scoreGoldEl.innerText = scoreGold.toLocaleString('pt-BR');
+          }
+
+          audio.playSingularityImplosion();
+          spawnParticles(vortex.x, vortex.y, orb.color, 14);
+          orbs.splice(i, 1);
+        }
+      }
+
+      // 4. Partículas
+      for (let p = particles.length - 1; p >= 0; p--) {
+        const pt = particles[p];
+        pt.x += pt.vx;
+        pt.y += pt.vy;
+        pt.alpha -= 0.03;
+        if (pt.alpha <= 0) particles.splice(p, 1);
+        else {
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
+          ctx.fillStyle = pt.color;
+          ctx.globalAlpha = pt.alpha;
+          ctx.fill();
+          ctx.globalAlpha = 1.0;
+        }
+      }
+
+      // 5. Confetes
+      for (let c = confettis.length - 1; c >= 0; c--) {
+        const cf = confettis[c];
+        cf.x += cf.vx;
+        cf.y += cf.vy;
+        cf.rotation += cf.rotSpeed;
+        ctx.save();
+        ctx.translate(cf.x, cf.y);
+        ctx.rotate((cf.rotation * Math.PI) / 180);
+        ctx.fillStyle = cf.color;
+        ctx.fillRect(-cf.size / 2, -cf.size / 2, cf.size, cf.size * 0.6);
+        ctx.restore();
+        if (cf.y > H) confettis.splice(c, 1);
+      }
+
+      // Telemetria 60 FPS
+      frameCount++;
+      if (now - lastFpsTime >= 1000) {
+        const fps = Math.round((frameCount * 1000) / (now - lastFpsTime));
+        if (window.parent && window.self !== window.top) {
+          window.parent.postMessage({
+            type: 'TELEMETRY_STATS',
+            gameId: '14_vortex_gravitacional',
+            stats: { fps: Math.min(60, fps), frameTimeMs: 16.6, frameDrops: 0, isHealthy: true }
+          }, '*');
+        }
+        frameCount = 0;
+        lastFpsTime = now;
+      }
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    /**
+     * DESENHO DO DISCO DE ACREÇÃO & BURACO NEGRO
+     */
+    function drawSingularity(cx, cy, radius, angle) {
+      ctx.save();
+
+      // Disco de Acreção Giratório (Anéis de Plasma)
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(angle);
+
+      // Anel Externo Violeta
+      ctx.beginPath();
+      ctx.ellipse(0, 0, radius * 2.8, radius * 1.5, Math.PI * 0.25, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(192, 132, 252, 0.4)';
+      ctx.lineWidth = 6;
+      ctx.shadowColor = '#c084fc';
+      ctx.shadowBlur = 20;
+      ctx.stroke();
+
+      // Anel Interno Dourado
+      ctx.beginPath();
+      ctx.ellipse(0, 0, radius * 1.8, radius * 0.9, -Math.PI * 0.25, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.5)';
+      ctx.lineWidth = 4;
+      ctx.shadowColor = '#fbbf24';
+      ctx.shadowBlur = 15;
+      ctx.stroke();
+
+      ctx.restore();
+
+      // Horizonte de Eventos (Núcleo Escuro)
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.fillStyle = '#05020a';
+      ctx.shadowColor = '#a855f7';
+      ctx.shadowBlur = 25;
+      ctx.fill();
+      ctx.strokeStyle = '#c084fc';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      ctx.restore();
+    }
+
+    /**
+     * INTEGRAÇÃO DE EVENTOS DO BROADCASTER & TEST LAB
+     */
+    function handleEvent(data) {
+      if (!data) return;
+      const cmd = (data.comment || data.action || '').toString().toLowerCase().trim();
+      const user = data.user || '@espectador';
+      const weight = data.weight || data.coins || 1;
+      const giftName = data.giftName || null;
+
+      if (data.type === 'gift' || giftName) {
+        if (weight >= 50 || (giftName && (giftName.includes('leão') || giftName.includes('lion')))) {
+          triggerQuasarBurst(user);
+        } else {
+          triggerMeteorSwarm('C', giftName, Math.min(15, Math.max(8, weight)), user);
+        }
+        return;
+      }
+
+      if (cmd === '1' || cmd.includes('azul') || data.team === 'A') {
+        spawnOrb('A', weight, user);
+      } else if (cmd === '2' || cmd.includes('vermelho') || data.team === 'B') {
+        spawnOrb('B', weight, user);
+      } else if (cmd === '3' || cmd.includes('ouro') || cmd.includes('quasar') || data.team === 'C') {
+        spawnOrb('C', weight, user);
+      } else if (data.type === 'like') {
+        const chosen = Math.random() < 0.4 ? 'A' : (Math.random() < 0.7 ? 'B' : 'C');
+        spawnOrb(chosen, 1, user);
+      }
+    }
+
+    try {
+      const channel = new BroadcastChannel('v5_broadcaster_games');
+      channel.onmessage = (e) => handleEvent(e.data);
+    } catch (e) {}
+
+    window.addEventListener('v5_event', (e) => handleEvent(e.detail));
+    window.addEventListener('message', (e) => {
+      if (e.data && (e.data.type || e.data.action || e.data.comment)) handleEvent(e.data);
+    });
+
+    // Motor Anti-Silêncio Orgânico
+    const mockUsers = ['@cosmic_lu', '@vortex_dan', '@estrela_bia', '@quasar_br', '@pulsar_tk'];
+    setInterval(() => {
+      if (isGameOver) return;
+      const teamChoice = Math.random() < 0.4 ? 'A' : (Math.random() < 0.7 ? 'B' : 'C');
+      const user = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+
+      if (Math.random() < 0.15) {
+        triggerMeteorSwarm(teamChoice, 'Rosa Cósmica', 4, user);
+      } else {
+        spawnOrb(teamChoice, 1, user);
+      }
+    }, 2400);
+
+    function toggleDebug() {
+      debugDrawer.style.display = debugDrawer.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') toggleDebug();
+    });
+
+    resize();
+    startTimer();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>

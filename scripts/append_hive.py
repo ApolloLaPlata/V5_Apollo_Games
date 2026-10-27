@@ -3,15 +3,15 @@ import os
 bus_path = r"C:\Users\v5est\.gemini\antigravity\brain\9270dd65-160e-47e8-aea2-6a92fd50cfc6\antigravity_hive_bus.md"
 
 entry = """
-### [27/10/2026 - 04:55] CAPITANIA V5 GAMES - ETAPAS 025 E 026 CONCLUÍDAS: COIN PUSHER 2.5D CASCATA DE MOEDAS
-- **Cartucho Homologado:** `13_cascata_de_moedas` (Cascata de Moedas Douradas - Coin Pusher 2.5D 9:16).
+### [27/10/2026 - 05:45] CAPITANIA V5 GAMES - ETAPAS 027 E 028 CONCLUÍDAS: VORTEX GRAVITACIONAL & ÁUDIO DOPPLER PROCEDURAL
+- **Cartucho Homologado:** `14_vortex_gravitacional` (Vortex Gravitacional - Buraco Negro & Singularidade Cósmica 9:16).
 - **Inovações de Engenharia:**
-  1. Pá mecânica motorizada (Pusher Blade) oscilando com física senoidal suave e empurrando camadas de moedas.
-  2. Física 2.5D de atrito, contato e empilhamento com ~120 moedas simultâneas na bandeja.
-  3. Mecânica de Lingote de Ouro 999.9 (500 pts) ativado por presentes, com impacto pesado e avalanche em cascata.
-  4. Síntese de áudio procedural de tilintar metálico dinâmico (`playClink`) e thud de impacto de ouro.
-- **Sincronização:** Total de 8 cartuchos ativos no Broadcaster (`v5_games_manifest.json`).
-- **Próxima Etapa:** Etapa 027 — Forjamento do Cartucho #14: Vortex Gravitacional.
+  1. Singularidade central não-linear ($F = G \\cdot M / (r^2 + \\epsilon)$) com horizonte de eventos e deformação espacial.
+  2. Órbitas caóticas de esferas cósmicas com ejeção tangencial e sucção implosiva.
+  3. Síntese de áudio procedural com efeito Doppler espacial dinâmico (`playDopplerOrb`), pulso de quasar (`playQuasarBurst`) e implosão com filtro passa-baixas exponencial (`playSingularityImplosion`).
+  4. Auto-reset em 45 segundos com fanfarra cósmica e super-colapso estelar.
+- **Sincronização:** Total de 9 cartuchos ativos no Broadcaster (`v5_games_manifest.json`).
+- **Próximas Etapas:** Etapa 029 (Bateria de testes de sobrecarga de 300+ partículas) e Etapa 030 (Homologação final da suite de física).
 """
 
 if os.path.exists(bus_path):

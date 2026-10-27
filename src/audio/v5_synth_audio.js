@@ -857,6 +857,99 @@
     playVictory() {
       this.playEpicVictoryJingle();
     }
+
+    /**
+     * Efeito Doppler Espacial ao orbitar em alta velocidade no Vortex Gravitacional
+     * Modulação de frequência ascendente seguida de queda rápida
+     */
+    playDopplerOrb(speedRatio = 1.0) {
+      if (!this._canPlay()) return;
+      const ctx = this._ensureContext();
+      const t = ctx.currentTime;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      const startF = 320 * Math.max(0.4, Math.min(3.0, speedRatio));
+      osc.frequency.setValueAtTime(startF, t);
+      osc.frequency.exponentialRampToValueAtTime(startF * 1.8, t + 0.08);
+      osc.frequency.exponentialRampToValueAtTime(startF * 0.6, t + 0.18);
+
+      gain.gain.setValueAtTime(0.15, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(t);
+      osc.stop(t + 0.18);
+    }
+
+    /**
+     * Implosão na Singularidade do Buraco Negro
+     * Onda dente-de-serra caindo com filtro passa-baixas exponencial
+     */
+    playSingularityImplosion() {
+      if (!this._canPlay()) return;
+      const ctx = this._ensureContext();
+      const t = ctx.currentTime;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(450, t);
+      osc.frequency.exponentialRampToValueAtTime(30, t + 0.45);
+
+      const flt = ctx.createBiquadFilter();
+      flt.type = 'lowpass';
+      flt.frequency.setValueAtTime(800, t);
+      flt.frequency.exponentialRampToValueAtTime(60, t + 0.45);
+
+      gain.gain.setValueAtTime(0.35, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+
+      osc.connect(flt);
+      flt.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(t);
+      osc.stop(t + 0.45);
+    }
+
+    /**
+     * Pulso de Quasar / Supernova Burst
+     * Ruído sintetizado com filtro passa-faixa dinâmico
+     */
+    playQuasarBurst() {
+      if (!this._canPlay()) return;
+      const ctx = this._ensureContext();
+      const t = ctx.currentTime;
+
+      const bufferSize = Math.floor(ctx.sampleRate * 0.4);
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer;
+      const flt = ctx.createBiquadFilter();
+      flt.type = 'bandpass';
+      flt.frequency.setValueAtTime(1400, t);
+      flt.frequency.exponentialRampToValueAtTime(180, t + 0.4);
+      flt.Q.setValueAtTime(2.5, t);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.4, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+
+      noise.connect(flt);
+      flt.connect(gain);
+      gain.connect(this.masterGain);
+
+      noise.start(t);
+      noise.stop(t + 0.4);
+    }
   }
 
   return V5SynthAudio;
