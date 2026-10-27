@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-10-27T08:45:27.668529",
+  "timestamp": "2026-10-27T08:48:24.226178",
   "holding": "Holding V5 Apollo",
   "captaincy": "Capitania V5 Games",
   "destination": "E:\\MEUS PROGRAMAS\\V5_APOLLO_SITES\\V5_Apollo_Broadcaster\\frontend\\public\\games",
   "total_cartridges": 41,
   "total_files_verified": 84,
-  "total_bytes_transferred": 1850366,
-  "total_megabytes": 1.76,
-  "duration_seconds": 1.89,
+  "total_bytes_transferred": 1851022,
+  "total_megabytes": 1.77,
+  "duration_seconds": 1.84,
   "md5_match_rate_percent": 100.0,
   "md5_mismatches": 0,
   "status": "HOMOLOGADO_DESPACHADO",
@@ -18,8 +18,8 @@
       "category": "polarizacao",
       "files": {
         "index.html": {
-          "md5": "af5515e217b6a43ff6bc2042fb4183e4",
-          "size_bytes": 30255,
+          "md5": "ca66757063c134f3fe291fb88a72a507",
+          "size_bytes": 30271,
           "verified": true
         },
         "thumbnail.svg": {
@@ -36,8 +36,8 @@
       "category": "polarizacao",
       "files": {
         "index.html": {
-          "md5": "677519a59008b47fe4106feeb670904b",
-          "size_bytes": 30450,
+          "md5": "590205416e77666ba867659a7abf53e7",
+          "size_bytes": 30466,
           "verified": true
         },
         "thumbnail.svg": {
@@ -54,8 +54,8 @@
       "category": "fisica_pachinko",
       "files": {
         "index.html": {
-          "md5": "1388774ad0fea41fb8be2c132922e8b0",
-          "size_bytes": 43864,
+          "md5": "936b84db0d637be7ce02b4d47fb984d7",
+          "size_bytes": 43880,
           "verified": true
         },
         "thumbnail.svg": {
@@ -72,8 +72,8 @@
       "category": "corrida_velocidade",
       "files": {
         "index.html": {
-          "md5": "84bcb8226c8cb7780d85b3e03fc421f3",
-          "size_bytes": 42891,
+          "md5": "2d9f43f860ddd4bb0242cec4d440d889",
+          "size_bytes": 42907,
           "verified": true
         },
         "thumbnail.svg": {
@@ -90,8 +90,8 @@
       "category": "cooperativo_boss",
       "files": {
         "index.html": {
-          "md5": "1e9cdbf4966b52f6bf5e89d147be6842",
-          "size_bytes": 44183,
+          "md5": "8cad7dd4f10e6d609df49bb529e77cdd",
+          "size_bytes": 44199,
           "verified": true
         },
         "thumbnail.svg": {
@@ -108,8 +108,8 @@
       "category": "sorteios_roletas",
       "files": {
         "index.html": {
-          "md5": "6bf7ee1637cbed3f673ac84765e0d806",
-          "size_bytes": 36106,
+          "md5": "508eaa6752991617bfe9d9396a17aae0",
+          "size_bytes": 36122,
           "verified": true
         },
         "thumbnail.svg": {
@@ -126,8 +126,8 @@
       "category": "polarizacao",
       "files": {
         "index.html": {
-          "md5": "cfcd62f7436b12572826f7e4029a2145",
-          "size_bytes": 33116,
+          "md5": "c634c5136be28fa0cc16dab88e43bc9d",
+          "size_bytes": 33132,
           "verified": true
         },
         "thumbnail.svg": {
@@ -144,8 +144,8 @@
       "category": "tensao_eliminacao",
       "files": {
         "index.html": {
-          "md5": "33be1b0fe9d83fc4e7aa1626eba5d2b1",
-          "size_bytes": 32938,
+          "md5": "2f980923c7d6e56e8a406f48e5d93164",
+          "size_bytes": 32954,
           "verified": true
         },
         "thumbnail.svg": {
@@ -162,8 +162,8 @@
       "category": "tabuleiro_coordenadas",
       "files": {
         "index.html": {
-          "md5": "5bae86f4fbc16c6748da809feb786642",
-          "size_bytes": 42476,
+          "md5": "302db25a383fd923559857f8625fd698",
+          "size_bytes": 42492,
           "verified": true
         },
         "thumbnail.svg": {
@@ -180,8 +180,8 @@
       "category": "polarizacao",
       "files": {
         "index.html": {
-          "md5": "f5b92db1354491ca15218c5cb852fc4a",
-          "size_bytes": 41298,
+          "md5": "6e69b733c45360166fc2d788b695a07c",
+          "size_bytes": 41314,
           "verified": true
         },
         "thumbnail.svg": {
@@ -198,8 +198,8 @@
       "category": "tabuleiro_coordenadas",
       "files": {
         "index.html": {
-          "md5": "2077131ed3f242e3b7b8a17a6f9b3a85",
-          "size_bytes": 41192,
+          "md5": "5208566776356410487a888324c9b236",
+          "size_bytes": 41208,
           "verified": true
         },
         "thumbnail.svg": {
@@ -216,8 +216,8 @@
       "category": "polarizacao",
       "files": {
         "index.html": {
-          "md5": "1d62825d7a83e4b8f1a20d31346c5c7f",
-          "size_bytes": 41512,
+          "md5": "db9d1771d29a6c99801d98f4376a5642",
+          "size_bytes": 41528,
           "verified": true
         },
         "thumbnail.svg": {
@@ -234,8 +234,8 @@
       "category": "fisica_pachinko",
       "files": {
         "index.html": {
-          "md5": "de507b706bfeb93f1d4673feb38930b6",
-          "size_bytes": 43712,
+          "md5": "ab76307126813ea23d432e4c4cb729ce",
+          "size_bytes": 43728,
           "verified": true
         },
         "thumbnail.svg": {
@@ -252,8 +252,8 @@
       "category": "fisica_pachinko",
       "files": {
         "index.html": {
-          "md5": "c44271afdcbe90166b99796f377bf6b4",
-          "size_bytes": 36588,
+          "md5": "e83db567984505c37717b4f53d722f2c",
+          "size_bytes": 36604,
           "verified": true
         },
         "thumbnail.svg": {
@@ -270,8 +270,8 @@
       "category": "fisica_pachinko",
       "files": {
         "index.html": {
-          "md5": "3c4da78d7a313c800d50ce6e6f11069c",
-          "size_bytes": 34425,
+          "md5": "04993d3b6a73be41bca7f7a3f30880c6",
+          "size_bytes": 34441,
           "verified": true
         },
         "thumbnail.svg": {
@@ -288,8 +288,8 @@
       "category": "corrida_velocidade",
       "files": {
         "index.html": {
-          "md5": "d9ef547f8987127aa4ae856703d48d57",
-          "size_bytes": 43459,
+          "md5": "82f8bd40ee12ef4777bba38ffe2ee26a",
+          "size_bytes": 43475,
           "verified": true
         },
         "thumbnail.svg": {
@@ -306,8 +306,8 @@
       "category": "corrida_velocidade",
       "files": {
         "index.html": {
-          "md5": "344d393d0dc01efb8cfefaac33c5f478",
-          "size_bytes": 43091,
+          "md5": "ca23fbdaeb423ce41b448bd460895ec7",
+          "size_bytes": 43107,
           "verified": true
         },
         "thumbnail.svg": {
@@ -324,8 +324,8 @@
       "category": "sorteios_roletas",
       "files": {
         "index.html": {
-          "md5": "bf3008dcee391f17e26420fa46ed00f3",
-          "size_bytes": 33192,
+          "md5": "c5be17cc0fb2a717f9e8bb645ef3af1c",
+          "size_bytes": 33208,
           "verified": true
         },
         "thumbnail.svg": {
@@ -342,8 +342,8 @@
       "category": "sorteios_roletas",
       "files": {
         "index.html": {
-          "md5": "bc558a64b072c4df868515534b477c51",
-          "size_bytes": 34999,
+          "md5": "573ddfa178289114de7b98cfcbb1c401",
+          "size_bytes": 35015,
           "verified": true
         },
         "thumbnail.svg": {
@@ -360,8 +360,8 @@
       "category": "cooperativo_boss",
       "files": {
         "index.html": {
-          "md5": "10b0e61276f49c0e1c7ad42b27811bad",
-          "size_bytes": 36928,
+          "md5": "872d49bd973155bc40afdcc5799d265e",
+          "size_bytes": 36944,
           "verified": true
         },
         "thumbnail.svg": {
@@ -378,8 +378,8 @@
       "category": "cooperativo_boss",
       "files": {
         "index.html": {
-          "md5": "65440495e3f1218d176a77ab98d0eb07",
-          "size_bytes": 34322,
+          "md5": "bac1a77256d8cda10accc958f3463ff3",
+          "size_bytes": 34338,
           "verified": true
         },
         "thumbnail.svg": {
@@ -396,8 +396,8 @@
       "category": "tensao_eliminacao",
       "files": {
         "index.html": {
-          "md5": "e3900254e6f97eedbbe952c4fb8aa672",
-          "size_bytes": 34390,
+          "md5": "587a07bf7222d82e7c02b8290e19b533",
+          "size_bytes": 34406,
           "verified": true
         },
         "thumbnail.svg": {
@@ -414,8 +414,8 @@
       "category": "tensao_eliminacao",
       "files": {
         "index.html": {
-          "md5": "02933cf298d294e2135d7271b3ae15e9",
-          "size_bytes": 37092,
+          "md5": "ffa72690a5e5c635cd5b092a88daa552",
+          "size_bytes": 37108,
           "verified": true
         },
         "thumbnail.svg": {
@@ -432,8 +432,8 @@
       "category": "tensao_eliminacao",
       "files": {
         "index.html": {
-          "md5": "899d79e85dadf8e8780988b61bb7fe65",
-          "size_bytes": 47430,
+          "md5": "0950857b02127f1fd1fcf340807726c2",
+          "size_bytes": 47446,
           "verified": true
         },
         "thumbnail.svg": {
@@ -450,8 +450,8 @@
       "category": "tabuleiro_coordenadas",
       "files": {
         "index.html": {
-          "md5": "8ee4367fddf4ce0e1db6b4c5be94340d",
-          "size_bytes": 42429,
+          "md5": "017cbf5fc07ac2eb7afda4105c971a3c",
+          "size_bytes": 42445,
           "verified": true
         },
         "thumbnail.svg": {
@@ -468,8 +468,8 @@
       "category": "tabuleiro_coordenadas",
       "files": {
         "index.html": {
-          "md5": "eb16bc6c69ef65bb49f9147394114578",
-          "size_bytes": 42375,
+          "md5": "36171998a53a3efd7f26325907525b0e",
+          "size_bytes": 42391,
           "verified": true
         },
         "thumbnail.svg": {
@@ -486,8 +486,8 @@
       "category": "artilharia_cinematica",
       "files": {
         "index.html": {
-          "md5": "918e42e6352d98899b8b083fc244f64f",
-          "size_bytes": 54995,
+          "md5": "7c73c41fca5dab6be801e8d9d61224d3",
+          "size_bytes": 55011,
           "verified": true
         },
         "thumbnail.svg": {
@@ -504,8 +504,8 @@
       "category": "defesa_planetaria",
       "files": {
         "index.html": {
-          "md5": "1c69288fe73e5f590c237dbad02d2a27",
-          "size_bytes": 49202,
+          "md5": "2f514ad80cb79ffb6dde85085e446307",
+          "size_bytes": 49218,
           "verified": true
         },
         "thumbnail.svg": {
@@ -522,8 +522,8 @@
       "category": "arcade_navegacao",
       "files": {
         "index.html": {
-          "md5": "89631db7af31aa0d65dda6b72edf2e1e",
-          "size_bytes": 47023,
+          "md5": "d9814422c4a5b8dcc3acfb2dd33890cd",
+          "size_bytes": 47039,
           "verified": true
         },
         "thumbnail.svg": {
@@ -540,8 +540,8 @@
       "category": "esportes_fisica",
       "files": {
         "index.html": {
-          "md5": "904c6f7fcdc0c8e11cabde0150dc8ec3",
-          "size_bytes": 42709,
+          "md5": "c093a6e8a29580644a42eec904a1b3b7",
+          "size_bytes": 42725,
           "verified": true
         },
         "thumbnail.svg": {
@@ -558,8 +558,8 @@
       "category": "esportes_penaltis",
       "files": {
         "index.html": {
-          "md5": "dfd26b825064cbace53f6ed8b3518b72",
-          "size_bytes": 47126,
+          "md5": "9e6030d005102318746c390e85cc84cb",
+          "size_bytes": 47142,
           "verified": true
         },
         "thumbnail.svg": {
@@ -576,8 +576,8 @@
       "category": "ritmo_musical",
       "files": {
         "index.html": {
-          "md5": "ca214d8f5d436c439a19d51724d974c2",
-          "size_bytes": 42658,
+          "md5": "501572d904b6afbe23d84babb4a30b09",
+          "size_bytes": 42674,
           "verified": true
         },
         "thumbnail.svg": {
@@ -594,8 +594,8 @@
       "category": "habilidade_reflexo",
       "files": {
         "index.html": {
-          "md5": "c7f23ad9c5a2b4e328f7703ef9e03075",
-          "size_bytes": 44199,
+          "md5": "16fb4150f842b4bec353ebfca23361b6",
+          "size_bytes": 44215,
           "verified": true
         },
         "thumbnail.svg": {
@@ -612,8 +612,8 @@
       "category": "apostas_corrida",
       "files": {
         "index.html": {
-          "md5": "971b71f1f358132192a5c7f05371e574",
-          "size_bytes": 55160,
+          "md5": "ddfe3ce3cb9f229bba4fb2d210b5a0b0",
+          "size_bytes": 55176,
           "verified": true
         },
         "thumbnail.svg": {
@@ -630,8 +630,8 @@
       "category": "arcade_pinball",
       "files": {
         "index.html": {
-          "md5": "26ec665409bddaeec551200d72c7f5db",
-          "size_bytes": 50391,
+          "md5": "b939a46ea0b65c052fa3ff4248623edb",
+          "size_bytes": 50407,
           "verified": true
         },
         "thumbnail.svg": {
@@ -648,8 +648,8 @@
       "category": "quiz_trivia",
       "files": {
         "index.html": {
-          "md5": "3859bdf760a2ee2c3c4803b792443ef7",
-          "size_bytes": 45581,
+          "md5": "7d5a2f1f0d75ab692fdcb0e15faaf80d",
+          "size_bytes": 45597,
           "verified": true
         },
         "thumbnail.svg": {
@@ -666,8 +666,8 @@
       "category": "ritmo_agilidade",
       "files": {
         "index.html": {
-          "md5": "e40bb7d400d9a832aaff619858c4cc6e",
-          "size_bytes": 40765,
+          "md5": "02531dc6f8ccefe3b658739e3ecc5b42",
+          "size_bytes": 40781,
           "verified": true
         },
         "thumbnail.svg": {
@@ -684,8 +684,8 @@
       "category": "equilibrio_fisica",
       "files": {
         "index.html": {
-          "md5": "3d6080e6d086b88dae7d76524c221bcf",
-          "size_bytes": 42764,
+          "md5": "166318aa0e29b7d87263cb46780e18fd",
+          "size_bytes": 42780,
           "verified": true
         },
         "thumbnail.svg": {
@@ -702,8 +702,8 @@
       "category": "fuga_reflexo",
       "files": {
         "index.html": {
-          "md5": "2ed89edf845b94dd41eba03a7e7c34d0",
-          "size_bytes": 40149,
+          "md5": "a31672385c5b4873c3f91100143b3c4a",
+          "size_bytes": 40165,
           "verified": true
         },
         "thumbnail.svg": {
@@ -720,8 +720,8 @@
       "category": "pontaria_precisao",
       "files": {
         "index.html": {
-          "md5": "2bc2f8b7237bdb968da487ecf8c6d8ba",
-          "size_bytes": 41938,
+          "md5": "b5d54a5a4af837853efb4d0f697063eb",
+          "size_bytes": 41954,
           "verified": true
         },
         "thumbnail.svg": {
@@ -738,8 +738,8 @@
       "category": "batalha_polarizacao",
       "files": {
         "index.html": {
-          "md5": "6d7499530e7c356acc11fb97337a0e9c",
-          "size_bytes": 43495,
+          "md5": "bb7ba3daa8f4dd94a3f6a17f123d872c",
+          "size_bytes": 43511,
           "verified": true
         },
         "thumbnail.svg": {

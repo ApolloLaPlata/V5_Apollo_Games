@@ -25,7 +25,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:25.817730"
+    "updatedAt": "2026-10-27T08:48:22.426253"
   },
   {
     "slug": "01b_cabo_de_guerra_elementos",
@@ -55,7 +55,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:25.851148"
+    "updatedAt": "2026-10-27T08:48:22.462898"
   },
   {
     "slug": "02_plinko_pachinko_fortuna",
@@ -84,7 +84,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:25.887554"
+    "updatedAt": "2026-10-27T08:48:22.500009"
   },
   {
     "slug": "03_corrida_avatares_holding",
@@ -116,7 +116,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:25.923949"
+    "updatedAt": "2026-10-27T08:48:22.546727"
   },
   {
     "slug": "04_boss_raid_cooperativo",
@@ -146,7 +146,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:25.971620"
+    "updatedAt": "2026-10-27T08:48:22.585333"
   },
   {
     "slug": "05_roleta_desafios_live",
@@ -176,7 +176,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.013118"
+    "updatedAt": "2026-10-27T08:48:22.631914"
   },
   {
     "slug": "06_batalha_dos_baloes",
@@ -206,7 +206,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.048991"
+    "updatedAt": "2026-10-27T08:48:22.670390"
   },
   {
     "slug": "07_pendulo_destruidor",
@@ -238,7 +238,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.085980"
+    "updatedAt": "2026-10-27T08:48:22.722268"
   },
   {
     "slug": "08_caca_tesouro_coordenadas",
@@ -269,7 +269,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.125950"
+    "updatedAt": "2026-10-27T08:48:22.771760"
   },
   {
     "slug": "09_tsunami_de_curtidas",
@@ -298,7 +298,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.162741"
+    "updatedAt": "2026-10-27T08:48:22.819147"
   },
   {
     "slug": "10_queda_dos_blocos",
@@ -332,7 +332,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.199639"
+    "updatedAt": "2026-10-27T08:48:22.859316"
   },
   {
     "slug": "11_queda_de_braco_titas",
@@ -362,7 +362,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.235113"
+    "updatedAt": "2026-10-27T08:48:22.897587"
   },
   {
     "slug": "12_pachinko_pinball_neon",
@@ -394,7 +394,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.281680"
+    "updatedAt": "2026-10-27T08:48:22.949134"
   },
   {
     "slug": "13_cascata_de_moedas",
@@ -426,7 +426,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.316096"
+    "updatedAt": "2026-10-27T08:48:22.989188"
   },
   {
     "slug": "14_vortex_gravitacional",
@@ -458,7 +458,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.358664"
+    "updatedAt": "2026-10-27T08:48:23.025594"
   },
   {
     "slug": "15_corrida_maluca_espacial",
@@ -490,7 +490,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.393979"
+    "updatedAt": "2026-10-27T08:48:23.065268"
   },
   {
     "slug": "16_arrancada_noturna_neon",
@@ -520,7 +520,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.429883"
+    "updatedAt": "2026-10-27T08:48:23.101983"
   },
   {
     "slug": "17_caca_niquel_neon_777",
@@ -550,7 +550,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.469272"
+    "updatedAt": "2026-10-27T08:48:23.144529"
   },
   {
     "slug": "18_roleta_russa_baloes",
@@ -581,7 +581,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.504031"
+    "updatedAt": "2026-10-27T08:48:23.205418"
   },
   {
     "slug": "19_defesa_da_torre_chat",
@@ -613,7 +613,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.541041"
+    "updatedAt": "2026-10-27T08:48:23.247581"
   },
   {
     "slug": "20_subida_da_montanha_sagrada",
@@ -645,7 +645,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.578299"
+    "updatedAt": "2026-10-27T08:48:23.285171"
   },
   {
     "slug": "21_batata_quente_explosiva",
@@ -675,7 +675,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.615596"
+    "updatedAt": "2026-10-27T08:48:23.323849"
   },
   {
     "slug": "22_ponte_de_vidro_quebradico",
@@ -705,7 +705,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.659136"
+    "updatedAt": "2026-10-27T08:48:23.371611"
   },
   {
     "slug": "23_sobrevivencia_na_lava",
@@ -739,7 +739,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.747029"
+    "updatedAt": "2026-10-27T08:48:23.457360"
   },
   {
     "slug": "24_campo_minado_neon",
@@ -771,7 +771,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.792008"
+    "updatedAt": "2026-10-27T08:48:23.500304"
   },
   {
     "slug": "25_batalha_naval_live",
@@ -803,7 +803,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.854098"
+    "updatedAt": "2026-10-27T08:48:23.551164"
   },
   {
     "slug": "26_guerra_dos_tanques_neon",
@@ -838,7 +838,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.927059"
+    "updatedAt": "2026-10-27T08:48:23.592456"
   },
   {
     "slug": "27_meteoro_defensor",
@@ -871,7 +871,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:26.992322"
+    "updatedAt": "2026-10-27T08:48:23.637050"
   },
   {
     "slug": "28_labirinto_pacman_neon",
@@ -905,7 +905,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:27.052310"
+    "updatedAt": "2026-10-27T08:48:23.677205"
   },
   {
     "slug": "29_basquete_street_neon",
@@ -937,7 +937,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:27.106632"
+    "updatedAt": "2026-10-27T08:48:23.714168"
   },
   {
     "slug": "30_gol_de_penalti_live",
@@ -971,7 +971,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:27.149892"
+    "updatedAt": "2026-10-27T08:48:23.755919"
   },
   {
     "slug": "31_guitar_hero_neon",
@@ -1005,7 +1005,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:27.198881"
+    "updatedAt": "2026-10-27T08:48:23.794049"
   },
   {
     "slug": "32_corte_de_frutas_neon",
@@ -1039,7 +1039,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:27.242046"
+    "updatedAt": "2026-10-27T08:48:23.838626"
   },
   {
     "slug": "33_corrida_de_cavalos_retro",
@@ -1073,7 +1073,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:27.288745"
+    "updatedAt": "2026-10-27T08:48:23.886860"
   },
   {
     "slug": "34_pinball_galactico",
@@ -1108,7 +1108,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:27.344390"
+    "updatedAt": "2026-10-27T08:48:23.927682"
   },
   {
     "slug": "35_quiz_frenetico_holding",
@@ -1142,7 +1142,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:27.397900"
+    "updatedAt": "2026-10-27T08:48:23.963763"
   },
   {
     "slug": "36_pula_corda_extremo",
@@ -1175,7 +1175,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:27.442579"
+    "updatedAt": "2026-10-27T08:48:24.002257"
   },
   {
     "slug": "37_torre_de_blocos_equilibrada",
@@ -1208,7 +1208,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:27.488162"
+    "updatedAt": "2026-10-27T08:48:24.045361"
   },
   {
     "slug": "38_fuga_da_prisao_espacial",
@@ -1242,7 +1242,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:27.529307"
+    "updatedAt": "2026-10-27T08:48:24.083474"
   },
   {
     "slug": "39_alvo_movel_snipers",
@@ -1275,7 +1275,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:27.569803"
+    "updatedAt": "2026-10-27T08:48:24.122067"
   },
   {
     "slug": "40_duelo_de_magicos_neon",
@@ -1307,6 +1307,6 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T08:45:27.608320"
+    "updatedAt": "2026-10-27T08:48:24.161254"
   }
 ]

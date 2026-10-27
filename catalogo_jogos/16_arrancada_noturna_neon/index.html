@@ -645,7 +645,7 @@
           const AudioContextClass = window.AudioContext || window.webkitAudioContext;
           this.ctx = new AudioContextClass();
         }
-        if (this.ctx.state === 'suspended') this.ctx.resume();
+        if (this.ctx.state === 'suspended') this.ctx.resume().catch(() => {});
         return this.ctx;
       }
 
