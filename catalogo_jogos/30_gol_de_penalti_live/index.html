@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Gol de Pênalti da Live (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 25%, #062b1a 0%, #03150d 55%, #010704 100%);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(16, 185, 129, 0.2);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Vinheta de Iluminação dos Refletores do Estádio */
+    #ambient-vignette {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.85);
+      z-index: 2;
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 12px 16px 6px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 10;
+      min-height: 140px;
+      background: linear-gradient(180deg, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0.75) 75%, transparent 100%);
+    }
+
+    .badge-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .live-pill {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+
+    .game-title {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #10b981;
+      text-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+      text-transform: uppercase;
+    }
+
+    .round-indicator {
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 700;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Placar de Pênaltis e HUD */
+    .penalty-hud-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 10px;
+      padding: 6px 12px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hud-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .team-score-label {
+      color: #10b981;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .kick-history-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .dot-shot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+    }
+
+    .dot-shot.goal {
+      background: #10b981;
+      border-color: #34d399;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .dot-shot.miss {
+      background: #ef4444;
+      border-color: #f87171;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: rgba(2, 6, 23, 0.9);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #10b981, #34d399, #a7f3d0);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+      transition: width 0.1s linear;
+    }
+
+    .hud-subtext {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    /* Canvas Central do Estádio e Pênaltis */
+    #stadium-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+    }
+
+    /* Toast de Notificação de Gols & Especiais */
+    #action-toast {
+      position: absolute;
+      top: 148px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid #10b981;
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #10b981;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    #action-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Safe Zone Inferior (180px) */
+    .bottom-safe-zone {
+      padding: 10px 14px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      min-height: 180px;
+      background: linear-gradient(0deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.8) 75%, transparent 100%);
+    }
+
+    .command-guide-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      backdrop-filter: blur(8px);
+    }
+
+    .guide-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 900;
+      color: #f1f5f9;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .corner-buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+    }
+
+    .corner-tag {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #10b981;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 5px 2px;
+      border-radius: 6px;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .corner-tag.active {
+      background: #10b981;
+      color: #000000;
+      box-shadow: 0 0 10px #10b981;
+    }
+
+    .gift-benefit-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #fbbf24;
+    }
+
+    .recent-feed {
+      height: 24px;
+      overflow: hidden;
+      font-size: 10px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feed-avatar {
+      font-weight: 800;
+      color: #f8fafc;
+    }
+
+    /* Overlay de Vitória & Auto-Reset */
+    #victory-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(2, 6, 23, 0.92);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    #victory-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .trophy-glow {
+      font-size: 56px;
+      filter: drop-shadow(0 0 30px #10b981);
+      animation: floatTrophy 2s infinite ease-in-out;
+    }
+
+    @keyframes floatTrophy {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.05); }
+    }
+
+    .victory-title {
+      font-size: 24px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      text-align: center;
+      color: #10b981;
+      text-shadow: 0 0 20px rgba(16, 185, 129, 0.8);
+    }
+
+    .victory-subtitle {
+      font-size: 12px;
+      color: #cbd5e1;
+      font-weight: 600;
+      text-align: center;
+      max-width: 80%;
+    }
+
+    .mvp-card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mvp-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #fbbf24;
+      letter-spacing: 1px;
+    }
+
+    .mvp-name {
+      font-size: 15px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .auto-reset-meter {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    /* Gaveta de Depuração Local */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(15, 23, 42, 0.98);
+      border-top: 2px solid #10b981;
+      padding: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    #debug-drawer.open {
+      display: flex;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 6px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .debug-btn:hover {
+      background: #334155;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Vinheta e iluminação de refletores do estádio -->
+    <div id="ambient-vignette"></div>
+
+    <!-- Safe Zone Superior (140px) -->
+    <header class="top-header">
+      <div class="badge-bar">
+        <div class="live-pill">
+          <div class="live-dot"></div>
+          AO VIVO
+        </div>
+        <div class="game-title">GOL DE PÊNALTI DA LIVE</div>
+        <div class="round-indicator" id="round-number">SÉRIE #1</div>
+      </div>
+
+      <div class="penalty-hud-box">
+        <div class="hud-info-row">
+          <span class="team-score-label">
+            <span>⚽</span>
+            <span id="score-text">CHAT 0 x 0 GOLEIRO</span>
+          </span>
+          <div class="kick-history-dots" id="kick-history">
+            <div class="dot-shot">1</div>
+            <div class="dot-shot">2</div>
+            <div class="dot-shot">3</div>
+            <div class="dot-shot">4</div>
+            <div class="dot-shot">5</div>
+          </div>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="timer-bar" style="width: 100%;"></div>
+        </div>
+        <div class="hud-subtext">
+          <span id="kick-timer-text">CHUTE EM: 3.5s</span>
+          <span id="voted-corner-text">Canto Mais Votado: Gaveta ↗</span>
+          <span id="fireball-mode-text">Bomba Atômica: OFF</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central: Gol Neon, Goleiro Mecha e Bola de Pênalti -->
+    <canvas id="stadium-canvas" width="1080" height="1920"></canvas>
+
+    <!-- Toast de Notificação de Gol / Defesa -->
+    <div id="action-toast">
+      <span id="toast-icon">⚽</span>
+      <span id="toast-text">GOOOOOOOL DA LIVE NO ÂNGULO!</span>
+    </div>
+
+    <!-- Safe Zone Inferior (180px) -->
+    <footer class="bottom-safe-zone">
+      <div class="command-guide-card">
+        <div class="guide-title">
+          <span>ESCOLHA O CANTO DO PÊNALTI (DIGITE O NÚMERO NO CHAT)</span>
+          <span style="color: #10b981;">PÚBLICO É O BATEDOR</span>
+        </div>
+        <div class="corner-buttons-grid">
+          <div class="corner-tag" id="tag-1">1: Gaveta ↖</div>
+          <div class="corner-tag" id="tag-2">2: Gaveta ↗</div>
+          <div class="corner-tag" id="tag-3">3: Rasteiro ↙</div>
+          <div class="corner-tag" id="tag-4">4: Rasteiro ↘</div>
+          <div class="corner-tag" id="tag-5">5: Meio ⬆</div>
+        </div>
+      </div>
+
+      <div class="gift-benefit-bar">
+        <span>🎁 PRESENTES / GIFTS:</span>
+        <span>BOMBA ATÔMICA (CHUTE 150 KM/H) OU ILUSÃO TRIPLA!</span>
+      </div>
+
+      <div class="recent-feed" id="recent-feed">
+        <span>🏟️ Estádio da Live:</span>
+        <span class="feed-avatar" id="feed-msg">Goleiro Mecha pronto no centro! Chat, digitem o canto do chute!</span>
+      </div>
+    </footer>
+
+    <!-- Overlay de Vitória & Auto-Reset -->
+    <div id="victory-overlay">
+      <div class="trophy-glow">🏆</div>
+      <div class="victory-title" id="winner-title">VITÓRIA DO CHAT NOS PÊNALTIS!</div>
+      <div class="victory-subtitle" id="winner-summary">Com pontaria impecável, o chat converteu a série de penalidades e levantou a taça!</div>
+      <div class="mvp-card">
+        <div class="mvp-label">BATEDOR DE OURO DA LIVE (MVP)</div>
+        <div class="mvp-name" id="mvp-user-name">@camisa10_live</div>
+      </div>
+      <div class="auto-reset-meter" id="auto-reset-countdown">Próxima série de pênaltis em 5s...</div>
+    </div>
+
+    <!-- Gaveta de Depuração Local -->
+    <div id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #10b981; display: flex; justify-content: space-between;">
+        <span>PAINEL DE DEPURAÇÃO DO STREAMER (TECLA D)</span>
+        <button onclick="toggleDebugDrawer()" style="background:none; border:none; color:#fca5a5; cursor:pointer;">✕ Fechar</button>
+      </div>
+      <div class="debug-grid">
+        <button class="debug-btn" onclick="testVote(1)">Canto 1 ↖</button>
+        <button class="debug-btn" onclick="testVote(2)">Canto 2 ↗</button>
+        <button class="debug-btn" onclick="testVote(3)">Canto 3 ↙</button>
+        <button class="debug-btn" onclick="testVote(4)">Canto 4 ↘</button>
+        <button class="debug-btn" onclick="testVote(5)">Canto 5 ⬆</button>
+      </div>
+      <div style="display: flex; gap: 6px; margin-top: 4px;">
+        <button class="debug-btn" style="flex:1" onclick="testGift('Rose')">Rosa (Bomba 150km/h)</button>
+        <button class="debug-btn" style="flex:1" onclick="testGift('Lion')">Leão (Ilusão Tripla)</button>
+        <button class="debug-btn" style="flex:1" onclick="resetMatch()">Auto-Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SDK V5 Live Event Bus -->
+  <script src="../../sdk/v5_live_game_sdk.js"></script>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE GAMES: GOL DE PÊNALTI DA LIVE (CARTUCHO #30)
+       Proporção: 9:16 Vertical Estrito (1080 x 1920 px)
+       Batedor (Chat) vs Goleiro Mecha com Física Balística, Curva e Rede 3D
+       ========================================================================== */
+
+    // 1. SINTETIZADOR PROCEDURAL DE ÁUDIO (WEB AUDIO API PURA - ZERO .MP3/.WAV)
+    class PenaltyShootoutAudioSynth {
+      constructor() {
+        this.ctx = null;
+        this.isMuted = false;
+      }
+
+      initContext() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playWhistle() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const mod = this.ctx.createOscillator();
+        const modGain = this.ctx.createGain();
+        const gain = this.ctx.createGain();
+
+        // Modulação estridente de apito de árbitro (2400Hz modulado a 35Hz)
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(2450, now);
+
+        mod.type = 'square';
+        mod.frequency.setValueAtTime(35, now);
+        modGain.gain.setValueAtTime(120, now);
+
+        mod.connect(osc.frequency);
+
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        mod.start(now);
+        osc.start(now);
+        mod.stop(now + 0.35);
+        osc.stop(now + 0.35);
+      }
+
+      playKickSound(isSuper = false) {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        const startFreq = isSuper ? 180 : 130;
+        const duration = isSuper ? 0.35 : 0.22;
+
+        osc.type = isSuper ? 'sawtooth' : 'sine';
+        osc.frequency.setValueAtTime(startFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(35, now + duration);
+
+        gain.gain.setValueAtTime(isSuper ? 0.8 : 0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + duration);
+      }
+
+      playPostHit() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(960, now);
+        osc.frequency.exponentialRampToValueAtTime(420, now + 0.3);
+
+        gain.gain.setValueAtTime(0.7, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+
+      playGlovesSave() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(260, now);
+        osc.frequency.exponentialRampToValueAtTime(60, now + 0.2);
+
+        gain.gain.setValueAtTime(0.6, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.2);
+      }
+
+      playGoalCheer() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        // Ruído em cascata de 50.000 torcedores gritando GOL
+        const now = this.ctx.currentTime;
+        const duration = 1.2;
+        const bufferSize = Math.floor(this.ctx.sampleRate * duration);
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.sin((i / bufferSize) * Math.PI);
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(800, now);
+        filter.frequency.linearRampToValueAtTime(1400, now + 0.4);
+        filter.frequency.exponentialRampToValueAtTime(400, now + duration);
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.85, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        noise.start(now);
+      }
+
+      playVictoryFanfare() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50];
+        const now = this.ctx.currentTime;
+
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const startTime = now + idx * 0.11;
+          const dur = 0.5;
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, startTime);
+
+          gain.gain.setValueAtTime(0.3, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + dur);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(startTime);
+          osc.stop(startTime + dur);
+        });
+      }
+    }
+
+    const sound = new PenaltyShootoutAudioSynth();
+
+    // 2. CONSTANTES E COORDENADAS DO CAMPO
+    const STAGE_WIDTH = 1080;
+    const STAGE_HEIGHT = 1920;
+
+    const canvas = document.getElementById('stadium-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Dimensões do Gol Neon
+    const GOAL = {
+      x: 540,
+      y: 580,
+      width: 720,
+      height: 340,
+      crossbarY: 410,
+      postLeftX: 180,
+      postRightX: 900,
+      netDepth: 90,
+      netBulge: 0
+    };
+
+    // Coordenadas Alvo dos 5 Cantos do Gol
+    const CORNERS = {
+      1: { name: 'Gaveta ↖', x: 260, y: 460 },
+      2: { name: 'Gaveta ↗', x: 820, y: 460 },
+      3: { name: 'Rasteiro ↙', x: 250, y: 700 },
+      4: { name: 'Rasteiro ↘', x: 830, y: 700 },
+      5: { name: 'Meio ⬆',    x: 540, y: 560 }
+    };
+
+    const state = {
+      round: 1,
+      shotIndex: 0,
+      chatGoals: 0,
+      keeperSaves: 0,
+      shotsHistory: [],
+      maxShots: 5,
+      isGameOver: false,
+      autoResetTimer: 5,
+      fireballActive: false,
+      tripleShotActive: false,
+      voteCountdown: 3.5, // Segundos para o chat votar o canto
+      isKicking: false,
+      lastFrameTime: performance.now(),
+
+      cornerVotes: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+      leadingCorner: 2,
+
+      goalkeeper: {
+        x: 540,
+        y: 690,
+        targetX: 540,
+        targetY: 690,
+        diveProgress: 0,
+        armSpan: 110,
+        state: 'ready' // 'ready', 'diving', 'saved', 'conceded'
+      },
+
+      ball: {
+        x: 540,
+        y: 1680,
+        startX: 540,
+        startY: 1680,
+        targetX: 540,
+        targetY: 580,
+        progress: 0,
+        scale: 1.0,
+        active: false,
+        trail: [],
+        isFire: false
+      },
+
+      particles: [],
+      floatingTexts: [],
+      mvpUser: '@camisa10_live'
+    };
+
+    // 3. FÍSICA E ANIMAÇÃO DO CHUTE E DEFESA
+    function startKickPhase() {
+      state.isKicking = true;
+      sound.playWhistle();
+
+      // Determina o canto mais votado pelo chat
+      let topCorner = 2;
+      let maxVotes = -1;
+      for (let c = 1; c <= 5; c++) {
+        if (state.cornerVotes[c] > maxVotes) {
+          maxVotes = state.cornerVotes[c];
+          topCorner = c;
+        }
+      }
+      state.leadingCorner = topCorner;
+
+      const target = CORNERS[topCorner];
+      state.ball.targetX = target.x + (Math.random() * 30 - 15);
+      state.ball.targetY = target.y + (Math.random() * 20 - 10);
+      state.ball.progress = 0;
+      state.ball.active = true;
+      state.ball.isFire = state.fireballActive;
+
+      sound.playKickSound(state.ball.isFire);
+
+      // Decisão da IA do Goleiro Mecha
+      // Se for bomba atômica ou ilusão tripla, o goleiro pula atrasado ou pula errado!
+      let keeperCorner = topCorner;
+      if (state.ball.isFire || state.tripleShotActive) {
+        keeperCorner = (topCorner % 5) + 1; // Pula no canto errado!
+      } else {
+        // 60% chance de pular no canto mais votado pelo chat
+        if (Math.random() > 0.6) {
+          keeperCorner = Math.floor(Math.random() * 5) + 1;
+        }
+      }
+
+      const keeperTarget = CORNERS[keeperCorner];
+      state.goalkeeper.targetX = keeperTarget.x * 0.8 + 540 * 0.2;
+      state.goalkeeper.targetY = keeperTarget.y;
+      state.goalkeeper.state = 'diving';
+      state.goalkeeper.diveProgress = 0;
+    }
+
+    function resolveKickOutcome() {
+      state.ball.active = false;
+      const dist = Math.hypot(state.ball.targetX - state.goalkeeper.targetX, state.ball.targetY - state.goalkeeper.targetY);
+
+      // Se o goleiro alcançou a bola
+      const saved = (dist < 100 && !state.ball.isFire && !state.tripleShotActive);
+
+      if (saved) {
+        state.keeperSaves++;
+        state.goalkeeper.state = 'saved';
+        state.shotsHistory.push('miss');
+        sound.playGlovesSave();
+        showToast('🧤 DEFESAÇA HISTÓRICA DO GOLEIRO ROBÔ!');
+        createFloatingText(state.ball.targetX, state.ball.targetY, 'DEFESA!', '#ef4444');
+        createExplosionParticles(state.ball.targetX, state.ball.targetY, '#38bdf8', 25);
+      } else {
+        state.chatGoals++;
+        state.goalkeeper.state = 'conceded';
+        state.shotsHistory.push('goal');
+        GOAL.netBulge = 1.0; // Estufa a rede
+        sound.playGoalCheer();
+        showToast('⚽ GOOOOOOL DA LIVE NO ÂNGULO!');
+        createFloatingText(state.ball.targetX, state.ball.targetY, 'GOL!', '#10b981');
+        createExplosionParticles(state.ball.targetX, state.ball.targetY, '#10b981', 40);
+      }
+
+      updateHudUI();
+
+      // Próxima cobrança ou final da série
+      setTimeout(() => {
+        state.shotIndex++;
+        if (state.shotIndex >= state.maxShots) {
+          triggerGameOver(state.chatGoals > state.keeperSaves);
+        } else {
+          resetKickRound();
+        }
+      }, 2000);
+    }
+
+    function resetKickRound() {
+      state.isKicking = false;
+      state.voteCountdown = 3.5;
+      state.cornerVotes = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      state.ball.progress = 0;
+      state.ball.active = false;
+      state.ball.trail = [];
+      state.goalkeeper.x = 540;
+      state.goalkeeper.y = 690;
+      state.goalkeeper.targetX = 540;
+      state.goalkeeper.targetY = 690;
+      state.goalkeeper.state = 'ready';
+      highlightCornerTag(null);
+      showFeed('Nova cobrança autorizada! Chat, votem no canto!');
+    }
+
+    // 4. RENDERIZAÇÃO EM CANVAS (ESTÁDIO, GOL, GOLEIRO E BOLA)
+    function drawStadium(c) {
+      c.save();
+
+      // Gramado sintético com linhas de perspectiva
+      const grassGrad = c.createLinearGradient(0, 500, 0, STAGE_HEIGHT);
+      grassGrad.addColorStop(0, '#042213');
+      grassGrad.addColorStop(0.5, '#06381e');
+      grassGrad.addColorStop(1, '#09502a');
+      c.fillStyle = grassGrad;
+      c.fillRect(0, 500, STAGE_WIDTH, STAGE_HEIGHT - 500);
+
+      // Faixas de corte da grama
+      c.fillStyle = 'rgba(255, 255, 255, 0.03)';
+      for (let y = 600; y < STAGE_HEIGHT; y += 120) {
+        c.fillRect(0, y, STAGE_WIDTH, 60);
+      }
+
+      // Grande Área e Marca do Pênalti
+      c.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+      c.lineWidth = 4;
+      c.strokeRect(100, 520, 880, 800); // Linha da grande área
+
+      // Ponto da Marca do Pênalti
+      c.beginPath();
+      c.arc(540, 1680, 8, 0, Math.PI * 2);
+      c.fillStyle = '#ffffff';
+      c.shadowColor = '#ffffff';
+      c.shadowBlur = 10;
+      c.fill();
+
+      // Arco da grande área
+      c.beginPath();
+      c.arc(540, 1320, 180, Math.PI * 0.2, Math.PI * 0.8);
+      c.stroke();
+
+      c.restore();
+    }
+
+    function drawGoalAndNet(c, dt) {
+      if (GOAL.netBulge > 0) {
+        GOAL.netBulge -= dt * 2.0;
+      }
+
+      c.save();
+
+      // 1. Rede 3D com Trama Trançada
+      c.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+      c.lineWidth = 1.5;
+
+      const bulgeY = Math.sin(Date.now() * 0.02) * 15 * GOAL.netBulge;
+
+      // Linhas verticais da rede
+      for (let x = GOAL.postLeftX; x <= GOAL.postRightX; x += 36) {
+        c.beginPath();
+        c.moveTo(x, GOAL.crossbarY);
+        c.quadraticCurveTo(x, 480 + bulgeY, x, 750);
+        c.stroke();
+      }
+
+      // Linhas horizontais da rede
+      for (let y = GOAL.crossbarY; y <= 750; y += 30) {
+        c.beginPath();
+        c.moveTo(GOAL.postLeftX, y);
+        c.quadraticCurveTo(540, y + bulgeY * 0.5, GOAL.postRightX, y);
+        c.stroke();
+      }
+
+      // 2. Trave e Travessão Neon Branco Brilhante
+      c.strokeStyle = '#ffffff';
+      c.lineWidth = 14;
+      c.lineCap = 'round';
+      c.shadowColor = '#10b981';
+      c.shadowBlur = 20;
+
+      c.beginPath();
+      c.moveTo(GOAL.postLeftX, 750);
+      c.lineTo(GOAL.postLeftX, GOAL.crossbarY);
+      c.lineTo(GOAL.postRightX, GOAL.crossbarY);
+      c.lineTo(GOAL.postRightX, 750);
+      c.stroke();
+
+      c.restore();
+    }
+
+    function drawGoalkeeper(c, dt) {
+      const g = state.goalkeeper;
+
+      if (g.state === 'diving') {
+        g.diveProgress = Math.min(1.0, g.diveProgress + dt * 3.5);
+        g.x += (g.targetX - g.x) * dt * 8;
+        g.y += (g.targetY - g.y) * dt * 8;
+      }
+
+      c.save();
+      c.translate(g.x, g.y);
+
+      // Sombra projetada
+      c.beginPath();
+      c.ellipse(0, 45, 55, 14, 0, 0, Math.PI * 2);
+      c.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      c.fill();
+
+      // Corpo Mecha Cibernético (Uniforme Vermelho/Preto)
+      c.fillStyle = '#1e1b4b';
+      c.fillRect(-35, -50, 70, 75);
+      c.strokeStyle = '#38bdf8';
+      c.lineWidth = 3;
+      c.strokeRect(-35, -50, 70, 75);
+
+      // Cabeça / Capacete Mecha com Visor Digital
+      c.beginPath();
+      c.arc(0, -68, 20, 0, Math.PI * 2);
+      c.fillStyle = '#0f172a';
+      c.fill();
+      c.stroke();
+
+      // Visor Neon dos Olhos
+      c.fillStyle = '#ef4444';
+      c.shadowColor = '#ef4444';
+      c.shadowBlur = 10;
+      c.fillRect(-12, -72, 24, 7);
+
+      // Braços Articulados e Luvas de Plasma
+      const armTilt = (g.targetX - 540) * 0.05;
+
+      // Braço Esquerdo
+      c.beginPath();
+      c.moveTo(-35, -40);
+      c.lineTo(-g.armSpan * 0.7, -55 + armTilt);
+      c.strokeStyle = '#38bdf8';
+      c.lineWidth = 8;
+      c.stroke();
+
+      // Luva Esquerda
+      c.beginPath();
+      c.arc(-g.armSpan * 0.7, -55 + armTilt, 16, 0, Math.PI * 2);
+      c.fillStyle = '#06b6d4';
+      c.shadowColor = '#06b6d4';
+      c.shadowBlur = 15;
+      c.fill();
+
+      // Braço Direito
+      c.beginPath();
+      c.moveTo(35, -40);
+      c.lineTo(g.armSpan * 0.7, -55 - armTilt);
+      c.strokeStyle = '#38bdf8';
+      c.lineWidth = 8;
+      c.stroke();
+
+      // Luva Direita
+      c.beginPath();
+      c.arc(g.armSpan * 0.7, -55 - armTilt, 16, 0, Math.PI * 2);
+      c.fillStyle = '#06b6d4';
+      c.shadowColor = '#06b6d4';
+      c.shadowBlur = 15;
+      c.fill();
+
+      c.restore();
+    }
+
+    function drawBall(c, dt) {
+      const b = state.ball;
+
+      if (b.active) {
+        b.progress = Math.min(1.0, b.progress + dt * 2.2);
+
+        // Curva balística em direção ao alvo
+        const arcY = Math.sin(b.progress * Math.PI) * 120;
+        b.x = b.startX + (b.targetX - b.startX) * b.progress;
+        b.y = b.startY + (b.targetY - b.startY) * b.progress - arcY;
+
+        // Diminuição de escala por perspectiva de profundidade
+        b.scale = 1.0 - (b.progress * 0.55);
+
+        b.trail.push({ x: b.x, y: b.y, scale: b.scale });
+        if (b.trail.length > 12) b.trail.shift();
+
+        if (b.progress >= 1.0) {
+          resolveKickOutcome();
+        }
+      }
+
+      c.save();
+
+      // Rastro de fogo da bomba atômica
+      if (b.trail.length > 1) {
+        c.beginPath();
+        c.moveTo(b.trail[0].x, b.trail[0].y);
+        for (let i = 1; i < b.trail.length; i++) {
+          c.lineTo(b.trail[i].x, b.trail[i].y);
+        }
+        c.strokeStyle = b.isFire ? '#ea580c' : 'rgba(255, 255, 255, 0.4)';
+        c.lineWidth = 14 * b.scale;
+        c.lineCap = 'round';
+        c.shadowColor = b.isFire ? '#ef4444' : '#10b981';
+        c.shadowBlur = 15;
+        c.stroke();
+      }
+
+      // Corpo da Bola de Futebol
+      const currentRadius = 32 * b.scale;
+      c.translate(b.x, b.y);
+
+      c.beginPath();
+      c.arc(0, 0, currentRadius, 0, Math.PI * 2);
+      c.fillStyle = b.isFire ? '#ea580c' : '#ffffff';
+      c.shadowColor = b.isFire ? '#ef4444' : '#10b981';
+      c.shadowBlur = 18;
+      c.fill();
+
+      // Pentágonos pretos da bola de futebol
+      c.fillStyle = '#020617';
+      c.beginPath();
+      c.arc(0, 0, currentRadius * 0.4, 0, Math.PI * 2);
+      c.fill();
+
+      c.restore();
+    }
+
+    // Partículas e Textos Flutuantes
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() * 2 - 1) * 260;
+        this.vy = (Math.random() * 2 - 1) * 260;
+        this.color = color;
+        this.radius = Math.random() * 5 + 2;
+        this.life = 1.0;
+        this.decay = Math.random() * 2.0 + 1.2;
+      }
+
+      update(dt) {
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        this.life -= this.decay * dt;
+      }
+
+      draw(c) {
+        if (this.life <= 0) return;
+        c.save();
+        c.beginPath();
+        c.arc(this.x, this.y, this.radius * this.life, 0, Math.PI * 2);
+        c.fillStyle = this.color;
+        c.globalAlpha = this.life;
+        c.shadowColor = this.color;
+        c.shadowBlur = 10;
+        c.fill();
+        c.restore();
+      }
+    }
+
+    function createExplosionParticles(x, y, color, count) {
+      for (let i = 0; i < count; i++) {
+        state.particles.push(new Particle(x, y, color));
+      }
+    }
+
+    function createFloatingText(x, y, text, color) {
+      state.floatingTexts.push({
+        x: x,
+        y: y,
+        text: text,
+        color: color,
+        alpha: 1.0,
+        vy: -70
+      });
+    }
+
+    function updateFloatingTexts(dt) {
+      for (let i = state.floatingTexts.length - 1; i >= 0; i--) {
+        const ft = state.floatingTexts[i];
+        ft.y += ft.vy * dt;
+        ft.alpha -= 1.4 * dt;
+        if (ft.alpha <= 0) {
+          state.floatingTexts.splice(i, 1);
+        }
+      }
+    }
+
+    function drawFloatingTexts(c) {
+      state.floatingTexts.forEach(ft => {
+        c.save();
+        c.font = '900 36px -apple-system, sans-serif';
+        c.fillStyle = ft.color;
+        c.globalAlpha = Math.max(0, ft.alpha);
+        c.textAlign = 'center';
+        c.shadowColor = ft.color;
+        c.shadowBlur = 15;
+        c.fillText(ft.text, ft.x, ft.y);
+        c.restore();
+      });
+    }
+
+    function updateHudUI() {
+      document.getElementById('score-text').innerText = `CHAT ${state.chatGoals} x ${state.keeperSaves} GOLEIRO`;
+
+      // Atualiza os círculos de histórico de pênaltis
+      const dots = document.getElementById('kick-history').children;
+      state.shotsHistory.forEach((res, idx) => {
+        if (idx < dots.length) {
+          dots[idx].className = `dot-shot ${res}`;
+          dots[idx].innerText = res === 'goal' ? '⚽' : '✕';
+        }
+      });
+
+      const leading = CORNERS[state.leadingCorner] ? CORNERS[state.leadingCorner].name : 'Gaveta ↗';
+      document.getElementById('voted-corner-text').innerText = `Canto Mais Votado: ${leading}`;
+
+      document.getElementById('fireball-mode-text').innerText = state.fireballActive ? 'Bomba Atômica: ON' : 'Bomba Atômica: OFF';
+      document.getElementById('fireball-mode-text').style.color = state.fireballActive ? '#ea580c' : '#94a3b8';
+    }
+
+    function highlightCornerTag(cornerId) {
+      for (let i = 1; i <= 5; i++) {
+        const el = document.getElementById(`tag-${i}`);
+        if (el) el.classList.remove('active');
+      }
+      if (cornerId) {
+        const target = document.getElementById(`tag-${cornerId}`);
+        if (target) target.classList.add('active');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('action-toast');
+      const txt = document.getElementById('toast-text');
+      txt.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    function showFeed(msg, user = '') {
+      const feed = document.getElementById('feed-msg');
+      if (feed) {
+        feed.innerHTML = user ? `<strong>${user}</strong>: ${msg}` : msg;
+      }
+    }
+
+    // 5. CICLO FECHADO & AUTO-RESET (LEI 5)
+    function triggerGameOver(isVictory) {
+      state.isGameOver = true;
+      if (isVictory) {
+        sound.playVictoryFanfare();
+      }
+
+      const overlay = document.getElementById('victory-overlay');
+      const title = document.getElementById('winner-title');
+      const summary = document.getElementById('winner-summary');
+      const mvp = document.getElementById('mvp-user-name');
+      const countdown = document.getElementById('auto-reset-countdown');
+
+      if (isVictory) {
+        title.innerText = 'VITÓRIA DO CHAT NOS PÊNALTIS!';
+        title.style.color = '#10b981';
+        summary.innerText = `O chat converteu ${state.chatGoals} pênaltis com precisão cirúrgica e conquistou a taça!`;
+      } else {
+        title.innerText = 'O GOLEIRO ROBÔ VENCEU!';
+        title.style.color = '#ef4444';
+        summary.innerText = `O Mecha defendeu ${state.keeperSaves} cobranças! Vamos ajustar a pontaria na próxima série!`;
+      }
+
+      mvp.innerText = state.mvpUser || '@camisa10_live';
+      overlay.classList.add('active');
+
+      state.autoResetTimer = 5;
+      const interval = setInterval(() => {
+        state.autoResetTimer--;
+        if (countdown) {
+          countdown.innerText = `Próxima série de pênaltis em ${state.autoResetTimer}s...`;
+        }
+        if (state.autoResetTimer <= 0) {
+          clearInterval(interval);
+          resetMatch();
+        }
+      }, 1000);
+    }
+
+    function resetMatch() {
+      state.round++;
+      document.getElementById('round-number').innerText = `SÉRIE #${state.round}`;
+
+      state.isGameOver = false;
+      state.shotIndex = 0;
+      state.chatGoals = 0;
+      state.keeperSaves = 0;
+      state.shotsHistory = [];
+      state.fireballActive = false;
+      state.tripleShotActive = false;
+      state.particles = [];
+      state.floatingTexts = [];
+
+      // Reseta histórico visual
+      const dots = document.getElementById('kick-history').children;
+      for (let i = 0; i < dots.length; i++) {
+        dots[i].className = 'dot-shot';
+        dots[i].innerText = i + 1;
+      }
+
+      resetKickRound();
+      updateHudUI();
+      document.getElementById('victory-overlay').classList.remove('active');
+    }
+
+    // 6. LOOP PRINCIPAL DE RENDERIZAÇÃO 60 FPS
+    function gameLoop(now) {
+      const dt = Math.min(0.06, (now - state.lastFrameTime) / 1000);
+      state.lastFrameTime = now;
+
+      // Contagem regressiva da votação do chute
+      if (!state.isGameOver && !state.isKicking) {
+        state.voteCountdown -= dt;
+        const pct = Math.max(0, (state.voteCountdown / 3.5) * 100);
+        document.getElementById('timer-bar').style.width = pct + '%';
+        document.getElementById('kick-timer-text').innerText = `CHUTE EM: ${Math.max(0, state.voteCountdown).toFixed(1)}s`;
+
+        if (state.voteCountdown <= 0) {
+          startKickPhase();
+        }
+      }
+
+      ctx.clearRect(0, 0, STAGE_WIDTH, STAGE_HEIGHT);
+
+      // Desenho do Estádio e do Gol
+      drawStadium(ctx);
+      drawGoalAndNet(ctx, dt);
+
+      // Desenho do Goleiro e da Bola
+      drawGoalkeeper(ctx, dt);
+      drawBall(ctx, dt);
+
+      // Partículas e Textos
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const pt = state.particles[i];
+        pt.update(dt);
+        pt.draw(ctx);
+        if (pt.life <= 0) state.particles.splice(i, 1);
+      }
+
+      updateFloatingTexts(dt);
+      drawFloatingTexts(ctx);
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // 7. INTEGRAÇÃO COM SDK V5 LIVE & PARSER DE CHAT
+    function handleLiveCommand(payload) {
+      if (!payload) return;
+      const user = payload.user || '@espectador';
+      const comment = (payload.comment || '').toString().toLowerCase().trim();
+      const giftName = payload.giftName || null;
+
+      // 1. Processamento de Presentes / Gifts
+      if (payload.type === 'gift' || giftName) {
+        if (giftName === 'Lion' || giftName === 'Cap' || comment.includes('ilusao') || comment.includes('triplo')) {
+          state.tripleShotActive = true;
+          showToast(`🌪️ CHUTE TRIPLO FANTASMA ATIVADO POR ${user.toUpperCase()}! GOLEIRO CONGELADO!`);
+          setTimeout(() => { state.tripleShotActive = false; }, 8000);
+        } else {
+          state.fireballActive = true;
+          showToast(`🔥 BOMBA ATÔMICA 150 KM/H ATIVADA POR ${user.toUpperCase()}!`);
+          setTimeout(() => { state.fireballActive = false; }, 8000);
+        }
+        state.mvpUser = user;
+        showFeed(`Ativou super chute para o chat!`, user);
+        return;
+      }
+
+      // 2. Comentários de Votação de Cantos (1 a 5)
+      let cornerChosen = null;
+      if (comment.includes('1') || comment.includes('gaveta esq') || comment.includes('alto esq')) {
+        cornerChosen = 1;
+      } else if (comment.includes('2') || comment.includes('gaveta dir') || comment.includes('alto dir')) {
+        cornerChosen = 2;
+      } else if (comment.includes('3') || comment.includes('baixo esq') || comment.includes('canto esq')) {
+        cornerChosen = 3;
+      } else if (comment.includes('4') || comment.includes('baixo dir') || comment.includes('canto dir')) {
+        cornerChosen = 4;
+      } else if (comment.includes('5') || comment.includes('meio') || comment.includes('cavadinha')) {
+        cornerChosen = 5;
+      }
+
+      if (cornerChosen) {
+        state.cornerVotes[cornerChosen]++;
+        state.mvpUser = user;
+        highlightCornerTag(cornerChosen);
+        showFeed(`Votou no Canto ${cornerChosen} (${CORNERS[cornerChosen].name})!`, user);
+        updateHudUI();
+      }
+    }
+
+    // Inicialização do SDK V5
+    const sdk = new V5LiveSDK({
+      gameId: '30_gol_de_penalti_live',
+      autoBotEnabled: true,
+      autoBotInterval: 2500,
+      autoBotSilenceThreshold: 3000
+    });
+
+    sdk.on('comment', (data) => handleLiveCommand(data));
+    sdk.on('gift', (data) => handleLiveCommand(data));
+    sdk.on('like', (data) => {
+      // Likes aumentam o ímpeto da bola
+      if (Math.random() < 0.25) {
+        showFeed('A torcida da live está empurrando o batedor!', '@torcedor');
+      }
+    });
+
+    // 8. MOTOR ANTI-SILÊNCIO ORGÂNICO (LEI 3)
+    const mockUsers = ['@artilheiro_9', '@camisa10_v5', '@neymar_neon', '@craque_live', '@batedor_ouro', '@torcedor_fiel'];
+    setInterval(() => {
+      if (state.isGameOver || state.isKicking) return;
+      const now = Date.now();
+      if (now - sdk.lastEventTime > 2800) {
+        const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+        const randomCorner = Math.floor(Math.random() * 5) + 1;
+
+        handleLiveCommand({
+          type: 'comment',
+          user: randomUser,
+          comment: `${randomCorner}`
+        });
+      }
+    }, 2500);
+
+    // 9. GAVETA DE DEPURAÇÃO LOCAL (TECLA D OU DUPLO CLIQUE)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        toggleDebugDrawer();
+      }
+    });
+
+    document.getElementById('game-stage').addEventListener('dblclick', () => {
+      toggleDebugDrawer();
+    });
+
+    function toggleDebugDrawer() {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.classList.toggle('open');
+    }
+
+    function testVote(corner) {
+      sound.initContext();
+      handleLiveCommand({
+        type: 'comment',
+        user: '@streamer_dev',
+        comment: `${corner}`
+      });
+    }
+
+    function testGift(giftName) {
+      sound.initContext();
+      handleLiveCommand({
+        type: 'gift',
+        user: '@patrocinador_live',
+        giftName: giftName,
+        value: 10
+      });
+    }
+
+    // Inicialização da Partida
+    window.addEventListener('DOMContentLoaded', () => {
+      resetMatch();
+      requestAnimationFrame(gameLoop);
+    });
+
+  </script>
+</body>
+</html>

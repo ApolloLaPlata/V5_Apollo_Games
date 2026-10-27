@@ -247,6 +247,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "arremesso", "cesta", "bola"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "30_gol_de_penalti_live": {
+        "name": "Gol de Pênalti da Live",
+        "category": "esportes_penaltis",
+        "description": "Série de pênaltis do chat contra Goleiro Mecha com votação dos 5 cantos, curva balística, bomba atômica de gifts e grito de gol",
+        "commands": ["1", "2", "3", "4", "5", "gaveta", "meio", "gol"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 
