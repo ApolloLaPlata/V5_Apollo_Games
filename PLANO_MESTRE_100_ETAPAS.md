@@ -145,9 +145,9 @@
 - [x] **Etapa 075:** Forjamento do Cartucho #24: Campo Minado Neon (Desarmamento cooperativo onde presentes revelam sensores de raio-X que mostram as bombas).
 - [x] **Etapa 076:** Forjamento do Cartucho #25: Batalha Naval da Live (Dois esquadrões afundando navios adversários com tiros de canhões disparados por comentários).
 - [x] **Etapa 077:** Síntese de sonoplastia naval: sonar submarino procedural, canhões e explosões de água.
-- [ ] **Etapa 078:** Mecânica de recompensa rápida por acerto de coordenadas e feedback tátil na tela.
-- [ ] **Etapa 079:** Verificação de usabilidade e leitura instantânea das coordenadas no feed de texto do TikTok.
-- [ ] **Etapa 080:** Homologação e sincronização dos cartuchos de tabuleiro com o Broadcaster.
+- [x] **Etapa 078:** Mecânica de recompensa rápida por acerto de coordenadas e feedback tátil na tela.
+- [x] **Etapa 079:** Verificação de usabilidade e leitura instantânea das coordenadas no feed de texto do TikTok.
+- [x] **Etapa 080:** Homologação e sincronização dos cartuchos de tabuleiro com o Broadcaster.
 
 ---
 

@@ -98,4 +98,6 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/test_tension_balance.js`: Simulação Monte Carlo (10.000 rodadas) de balanceamento da curva de adrenalina e tempo dos 4 cartuchos de eliminação (100% aprovado).
 - `scripts/test_elimination_cartridges.py`: Suíte de homologação formal das 5 Leis Absolutas para os 4 cartuchos de eliminação (33/33 checks aprovados).
 - `scripts/test_grid_coordinates_engine.js`: Validação de parsing tolerante, grids 4x4/6x6, Raio-X de Gifts e benchmark de performance (31/31 checks aprovados, 580k ops/s).
+- `scripts/test_board_usability.js`: Bateria de usabilidade e leitura de chat com 10.000 amostras (100% de reconhecimento de coordenadas, zero falsos positivos, 2.19 µs latência).
+- `scripts/test_board_cartridges.py`: Suíte de homologação formal das 5 Leis Absolutas para os 4 cartuchos de tabuleiro (#08, #10, #24, #25) com 33/33 checks aprovados.
 - `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 26 cartuchos ativos).
