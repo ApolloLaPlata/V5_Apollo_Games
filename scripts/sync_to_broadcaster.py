@@ -366,14 +366,26 @@ def sync_games():
                 "category": meta["category"],
                 "description": meta["description"],
                 "commands": meta["commands"],
+                "gifts": meta.get("gifts", ["Rosa (Rose)", "Leão (Lion)"]),
                 "status": meta["status"],
                 "version": meta["version"],
                 "path": f"/games/{item}/index.html",
                 "aspectRatio": "9:16",
                 "resolution": "1080x1920",
+                "safeZones": {"top": "140px", "bottom": "180px"},
+                "soundEngine": "Web Audio API (Procedural)",
+                "antiSilence": True,
+                "autoResetSeconds": 5,
                 "updatedAt": datetime.now().isoformat()
             })
 
+    # Salva cópia local no catálogo do repositório
+    local_manifest_path = os.path.join(CATALOG_DIR, "v5_games_manifest.json")
+    with open(local_manifest_path, "w", encoding="utf-8") as f:
+        json.dump(manifest, f, indent=2, ensure_ascii=False)
+    print(f"[MANIFEST LOCAL] {local_manifest_path}")
+
+    # Salva cópia de produção no Broadcaster
     manifest_path = os.path.join(BROADCASTER_GAMES_DIR, "v5_games_manifest.json")
     with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2, ensure_ascii=False)

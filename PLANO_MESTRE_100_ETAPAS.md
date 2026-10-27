@@ -171,7 +171,7 @@
 - [x] **Etapa 093:** Forjamento do Cartucho #38: Fuga da Prisão Espacial (Astronauta subindo com jetpack desviando de lasers acionados pelo chat adversário).
 - [x] **Etapa 094:** Forjamento do Cartucho #39: Alvo Móvel dos Snipers (Dardos e flechas disparados no timing certo em direção a alvos circulares concêntricos).
 - [x] **Etapa 095:** Forjamento do Cartucho #40: Duelo de Mágicos Neon (Magias de fogo vs gelo colidindo no centro com disputa de poder em tempo real).
-- [ ] **Etapa 096:** Consolidação e auditoria do Manifesto Global `v5_games_manifest.json` com metadados completos de todos os 40 cartuchos.
+- [x] **Etapa 096:** Consolidação e auditoria do Manifesto Global `v5_games_manifest.json` com metadados completos de todos os 40 cartuchos.
 - [ ] **Etapa 097:** Geração de miniaturas (thumbnails em SVG vetorial) automáticas para o seletor de jogos do console Broadcaster.
 - [ ] **Etapa 098:** Atualização do script `scripts/sync_to_broadcaster.py` com verificação de integridade MD5 e relatório de despacho.
 - [ ] **Etapa 099:** Execução de sincronização geral dos 40 cartuchos para a pasta pública do V5 Broadcaster.
