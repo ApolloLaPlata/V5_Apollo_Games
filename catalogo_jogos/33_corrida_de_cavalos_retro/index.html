@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Corrida de Cavalos Retrô (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container Vertical 9:16 Estrito */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: #020617;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+    }
+
+    /* Safe Zone Topo (140px) */
+    .top-safe-zone {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 140px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 14px 6px 14px;
+      background: linear-gradient(180deg, rgba(2, 6, 23, 0.96) 0%, rgba(2, 6, 23, 0.85) 75%, rgba(2, 6, 23, 0) 100%);
+      pointer-events: none;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-pill {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #38bdf8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+      animation: pulseDot 1.5s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .round-timer-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-weight: 800;
+      font-size: 13px;
+      color: #f8fafc;
+    }
+
+    .timer-val {
+      color: #38bdf8;
+    }
+
+    /* Caixa do Narrador Retrô */
+    .narrator-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      padding: 6px 10px;
+      border-radius: 10px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .narrator-avatar {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+      flex-shrink: 0;
+    }
+
+    .narrator-text-wrap {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .narrator-title {
+      font-size: 9px;
+      font-weight: 800;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .narrator-speech {
+      font-size: 11px;
+      font-weight: 700;
+      color: #f1f5f9;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      animation: fadeInSpeech 0.3s ease-out;
+    }
+
+    @keyframes fadeInSpeech {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Placar de Cavalos Compacto no Topo */
+    .horses-hud-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      width: 100%;
+    }
+
+    .horse-hud-card {
+      background: rgba(15, 23, 42, 0.85);
+      border-radius: 6px;
+      padding: 3px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: monospace;
+      font-size: 9px;
+      border-left: 3px solid #ccc;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .horse-hud-card.h1 { border-color: #00f0ff; }
+    .horse-hud-card.h2 { border-color: #ff0055; }
+    .horse-hud-card.h3 { border-color: #ffcc00; }
+    .horse-hud-card.h4 { border-color: #00ff88; }
+
+    .h-name {
+      font-weight: 800;
+      font-size: 9px;
+      white-space: nowrap;
+    }
+    .h-pos {
+      font-weight: 900;
+      font-size: 11px;
+      color: #f8fafc;
+    }
+
+    /* Canvas Central */
+    #game-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+    }
+
+    /* Minimapa / Barra de Progresso Vertical na Lateral Direita */
+    .track-minimap {
+      position: absolute;
+      right: 12px;
+      top: 155px;
+      bottom: 195px;
+      width: 24px;
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      backdrop-filter: blur(4px);
+      pointer-events: none;
+    }
+
+    .minimap-finish-icon {
+      font-size: 11px;
+    }
+
+    .minimap-track-line {
+      position: relative;
+      width: 3px;
+      height: calc(100% - 30px);
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 2px;
+    }
+
+    .minimap-marker {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      left: -4.5px;
+      transform: translateY(50%);
+      border: 1.5px solid #fff;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+      transition: bottom 0.1s linear;
+    }
+
+    .m-h1 { background: #00f0ff; box-shadow: 0 0 6px #00f0ff; }
+    .m-h2 { background: #ff0055; box-shadow: 0 0 6px #ff0055; }
+    .m-h3 { background: #ffcc00; box-shadow: 0 0 6px #ffcc00; }
+    .m-h4 { background: #00ff88; box-shadow: 0 0 6px #00ff88; }
+
+    /* Safe Zone Base (180px) */
+    .bottom-safe-zone {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 180px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 10px 14px;
+      background: linear-gradient(0deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.85) 65%, rgba(2, 6, 23, 0) 100%);
+      pointer-events: none;
+      gap: 8px;
+    }
+
+    /* Comandos do Chat */
+    .chat-commands-box {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      pointer-events: auto;
+    }
+
+    .cmd-btn {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 6px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .cmd-btn:active {
+      transform: scale(0.95);
+    }
+
+    .cmd-btn.c1 { border-color: #00f0ff; color: #00f0ff; box-shadow: 0 0 8px rgba(0, 240, 255, 0.2); }
+    .cmd-btn.c2 { border-color: #ff0055; color: #ff0055; box-shadow: 0 0 8px rgba(255, 0, 85, 0.2); }
+    .cmd-btn.c3 { border-color: #ffcc00; color: #ffcc00; box-shadow: 0 0 8px rgba(255, 204, 0, 0.2); }
+    .cmd-btn.c4 { border-color: #00ff88; color: #00ff88; box-shadow: 0 0 8px rgba(0, 255, 136, 0.2); }
+
+    .cmd-key {
+      font-size: 13px;
+      font-weight: 900;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    .cmd-label {
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.85;
+      white-space: nowrap;
+    }
+
+    /* Barra de Gifts de Impacto */
+    .gifts-reward-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px dashed rgba(255, 215, 0, 0.4);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 9px;
+      color: #f1f5f9;
+      pointer-events: auto;
+    }
+
+    .gift-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+    }
+
+    .gift-icon {
+      font-size: 13px;
+    }
+
+    .gift-effect {
+      color: #ffd700;
+      font-weight: 800;
+    }
+
+    /* Modal / Overlay de Vitória e Pódio */
+    #victory-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 50;
+      background: rgba(2, 6, 23, 0.92);
+      backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .podium-box {
+      width: 100%;
+      max-width: 340px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid #ffd700;
+      border-radius: 16px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.35);
+      animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .trophy-badge {
+      font-size: 52px;
+      filter: drop-shadow(0 0 16px #ffd700);
+      animation: floatTrophy 2s infinite ease-in-out;
+    }
+
+    @keyframes floatTrophy {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .winner-name {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .winner-lane {
+      font-size: 12px;
+      font-family: monospace;
+      color: #38bdf8;
+      font-weight: 700;
+    }
+
+    .mvp-donor-card {
+      width: 100%;
+      background: rgba(255, 215, 0, 0.08);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .reset-countdown {
+      font-size: 12px;
+      color: #94a3b8;
+      font-family: monospace;
+    }
+
+    /* Painel de Depuração Local do Streamer (Tecla D) */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(2, 6, 23, 0.98);
+      border-top: 2px solid #38bdf8;
+      padding: 12px;
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.8);
+    }
+
+    .debug-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #38bdf8;
+      font-family: monospace;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .dbg-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-radius: 4px;
+      padding: 6px 2px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Safe Zone Topo (140px) -->
+    <header class="top-safe-zone">
+      <div class="header-row">
+        <div class="brand-pill">
+          <span class="live-dot"></span>
+          <span>V5 TURFE LIVE 9:16</span>
+        </div>
+        <div class="round-timer-badge">
+          <span>PARÊO:</span>
+          <span class="timer-val" id="time-display">00:45</span>
+        </div>
+      </div>
+
+      <!-- Caixa do Narrador Retrô -->
+      <div class="narrator-box">
+        <div class="narrator-avatar">🎙️</div>
+        <div class="narrator-text-wrap">
+          <div class="narrator-title">Narrador do Hipódromo</div>
+          <div class="narrator-speech" id="narrator-text">PARTIDA AUTORIZADA! Galopam os 4 favoritos rumo à glória!</div>
+        </div>
+      </div>
+
+      <!-- Placar dos Cavalos -->
+      <div class="horses-hud-strip">
+        <div class="horse-hud-card h1">
+          <div class="h-name" style="color:#00f0ff;">1 ⚡ RELÂMPAGO</div>
+          <div class="h-pos" id="hud-pos-1">1º • 0m</div>
+        </div>
+        <div class="horse-hud-card h2">
+          <div class="h-name" style="color:#ff0055;">2 🔥 FÚRIA</div>
+          <div class="h-pos" id="hud-pos-2">2º • 0m</div>
+        </div>
+        <div class="horse-hud-card h3">
+          <div class="h-name" style="color:#ffcc00;">3 ⭐ COMETA</div>
+          <div class="h-pos" id="hud-pos-3">3º • 0m</div>
+        </div>
+        <div class="horse-hud-card h4">
+          <div class="h-name" style="color:#00ff88;">4 🍀 ESMERALDA</div>
+          <div class="h-pos" id="hud-pos-4">4º • 0m</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Principal da Corrida -->
+    <canvas id="game-canvas" width="1080" height="1920"></canvas>
+
+    <!-- Minimapa Vertical Lateral -->
+    <div class="track-minimap">
+      <div class="minimap-finish-icon">🏁</div>
+      <div class="minimap-track-line">
+        <div class="minimap-marker m-h1" id="mini-1" style="bottom: 0%;"></div>
+        <div class="minimap-marker m-h2" id="mini-2" style="bottom: 0%;"></div>
+        <div class="minimap-marker m-h3" id="mini-3" style="bottom: 0%;"></div>
+        <div class="minimap-marker m-h4" id="mini-4" style="bottom: 0%;"></div>
+      </div>
+      <div style="font-size: 9px; opacity: 0.6;">🐎</div>
+    </div>
+
+    <!-- Safe Zone Base (180px) -->
+    <footer class="bottom-safe-zone">
+      <!-- Comandos do Chat -->
+      <div class="chat-commands-box">
+        <button class="cmd-btn c1" onclick="handleHorseVote(0, '@teste')">
+          <span class="cmd-key">1</span>
+          <span class="cmd-label">Relâmpago</span>
+        </button>
+        <button class="cmd-btn c2" onclick="handleHorseVote(1, '@teste')">
+          <span class="cmd-key">2</span>
+          <span class="cmd-label">Fúria</span>
+        </button>
+        <button class="cmd-btn c3" onclick="handleHorseVote(2, '@teste')">
+          <span class="cmd-key">3</span>
+          <span class="cmd-label">Cometa</span>
+        </button>
+        <button class="cmd-btn c4" onclick="handleHorseVote(3, '@teste')">
+          <span class="cmd-key">4</span>
+          <span class="cmd-label">Esmeralda</span>
+        </button>
+      </div>
+
+      <!-- Gifts de Impacto -->
+      <div class="gifts-reward-bar">
+        <div class="gift-item">
+          <span class="gift-icon">🌹</span>
+          <span>Rosa: <span class="gift-effect">+30m Arrancada</span></span>
+        </div>
+        <div class="gift-item">
+          <span class="gift-icon">🦁</span>
+          <span>Leão: <span class="gift-effect">+100m Hiper-Turbo</span></span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Modal de Vitória e Pódio -->
+    <div id="victory-modal">
+      <div class="podium-box">
+        <div class="trophy-badge">🏆</div>
+        <div class="winner-name" id="podium-winner-name">RELÂMPAGO NEON</div>
+        <div class="winner-lane" id="podium-lane-text">VENCEDOR DO PARÊO 1.200M</div>
+
+        <div class="mvp-donor-card">
+          <span style="color:#ffd700; font-weight:800;">👑 MAIOR APOSTADOR:</span>
+          <span id="podium-mvp-user" style="font-weight:900; color:#fff;">@ApostadorReal (540 pts)</span>
+        </div>
+
+        <div class="reset-countdown" id="podium-countdown">PRÓXIMO PARÊO EM 5S...</div>
+      </div>
+    </div>
+
+    <!-- Painel de Depuração Oculto (Tecla D) -->
+    <div id="debug-drawer">
+      <div class="debug-header">
+        <span>GAVETA DE DEPURAÇÃO DO STREAMER (TECLA D)</span>
+        <button onclick="toggleDebugDrawer()" style="background:none; border:none; color:#f43f5e; font-size:12px; cursor:pointer;">FECHAR [X]</button>
+      </div>
+      <div class="debug-grid">
+        <button class="dbg-btn" onclick="handleHorseVote(0, '@streamer')">Voto Cavalo 1</button>
+        <button class="dbg-btn" onclick="handleHorseVote(1, '@streamer')">Voto Cavalo 2</button>
+        <button class="dbg-btn" onclick="handleHorseVote(2, '@streamer')">Voto Cavalo 3</button>
+        <button class="dbg-btn" onclick="handleHorseVote(3, '@streamer')">Voto Cavalo 4</button>
+      </div>
+      <div class="debug-grid" style="margin-top:4px;">
+        <button class="dbg-btn" style="background:#0284c7;" onclick="triggerGiftBoost(0, 'Rose', '@doador')">Gift Arrancada C1</button>
+        <button class="dbg-btn" style="background:#e11d48;" onclick="triggerGiftBoost(1, 'Rose', '@doador')">Gift Arrancada C2</button>
+        <button class="dbg-btn" style="background:#d97706;" onclick="triggerGiftBoost(2, 'Lion', '@baleia')">Super Gift C3</button>
+        <button class="dbg-btn" style="background:#16a34a;" onclick="triggerGiftBoost(3, 'Lion', '@baleia')">Super Gift C4</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE: CORRIDA DE CAVALOS RETRÔ (9:16 VERTICAL ENGINE)
+       Holding V5 Apollo — Capitania V5 Games
+       Conformidade Estrita com as 5 Leis Absolutas do Cartucho V5
+       ========================================================================== */
+
+    // --- LEI 4: SINTETIZADOR DE ÁUDIO PROCEDURAL (WEB AUDIO API PURA) ---
+    class ProceduralAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.gallopGain = null;
+        this.gallopOsc = null;
+        this.isGalloping = false;
+        this.init();
+      }
+
+      init() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
+      }
+
+      ensureContext() {
+        if (!this.ctx) this.init();
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Toque Clássico de Clarim de Largada do Hipódromo ("First Call")
+      playCallToThePost() {
+        this.ensureContext();
+        if (!this.ctx) return;
+        const notes = [
+          { f: 392.00, d: 0.12 }, // G4
+          { f: 523.25, d: 0.12 }, // C5
+          { f: 659.25, d: 0.12 }, // E5
+          { f: 783.99, d: 0.28 }, // G5
+          { f: 659.25, d: 0.14 }, // E5
+          { f: 783.99, d: 0.35 }  // G5
+        ];
+
+        let currTime = this.ctx.currentTime + 0.05;
+        notes.forEach(n => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(n.f, currTime);
+
+          // Filtro harmônico para timbre de trompete metálico
+          const filter = this.ctx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(n.f * 1.5, currTime);
+          filter.Q.setValueAtTime(2.5, currTime);
+
+          gain.gain.setValueAtTime(0, currTime);
+          gain.gain.linearRampToValueAtTime(0.25, currTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, currTime + n.d);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(currTime);
+          osc.stop(currTime + n.d + 0.05);
+          currTime += n.d + 0.04;
+        });
+      }
+
+      // Galope Rítmico de Cascos Procedural (Clop-Clop)
+      playHorsesHoofbeat() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(110, now);
+        osc.frequency.exponentialRampToValueAtTime(45, now + 0.07);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(320, now);
+
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.08);
+      }
+
+      // Relincho Procedural de Cavalo
+      playWhinny() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const mod = this.ctx.createOscillator();
+        const modGain = this.ctx.createGain();
+        const gain = this.ctx.createGain();
+
+        // Modulador FM para vibrato e textura de relincho
+        mod.type = 'sine';
+        mod.frequency.setValueAtTime(16, now);
+        modGain.gain.setValueAtTime(90, now);
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(750, now);
+        osc.frequency.linearRampToValueAtTime(1100, now + 0.2);
+        osc.frequency.exponentialRampToValueAtTime(400, now + 0.7);
+
+        mod.connect(osc.frequency);
+
+        gain.gain.setValueAtTime(0.0, now);
+        gain.gain.linearRampToValueAtTime(0.2, now + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        mod.start(now);
+        osc.stop(now + 0.8);
+        mod.stop(now + 0.8);
+      }
+
+      // Som de Chicote / Arrancada Turbo (Faíscas e Impacto)
+      playWhipBoost() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        // Snap de ruído branco de alta frequência
+        const bufferSize = this.ctx.sampleRate * 0.09;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.2));
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(1400, now);
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        noise.start(now);
+
+        // Tom de subida
+        const osc = this.ctx.createOscillator();
+        const oscGain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.2);
+
+        oscGain.gain.setValueAtTime(0.2, now);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+        osc.connect(oscGain);
+        oscGain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }
+
+      // Bipe Sintético de Locução do Narrador
+      playNarratorBeep() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(480 + Math.random() * 120, now);
+
+        gain.gain.setValueAtTime(0.05, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.07);
+      }
+
+      // Fanfarra de Vitória no Final
+      playVictoryFanfare() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const notes = [
+          { f: 523.25, d: 0.15 }, // C5
+          { f: 659.25, d: 0.15 }, // E5
+          { f: 783.99, d: 0.15 }, // G5
+          { f: 1046.50, d: 0.55 } // C6
+        ];
+
+        let currTime = this.ctx.currentTime + 0.05;
+        notes.forEach(n => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(n.f, currTime);
+
+          gain.gain.setValueAtTime(0, currTime);
+          gain.gain.linearRampToValueAtTime(0.3, currTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, currTime + n.d);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(currTime);
+          osc.stop(currTime + n.d + 0.05);
+          currTime += n.d + 0.04;
+        });
+      }
+    }
+
+    const audio = new ProceduralAudioEngine();
+
+    // --- CONFIGURAÇÕES DO HIPÓDROMO & ESTADO DO JOGO ---
+    const TOTAL_METERS = 1200;
+    const ROUND_DURATION_SEC = 45;
+
+    const HORSES_DATA = [
+      { id: 0, key: "1", name: "Relâmpago", color: "#00f0ff", symbol: "⚡", coat: "#1e293b", mane: "#00f0ff", glow: "rgba(0, 240, 255, 0.6)" },
+      { id: 1, key: "2", name: "Fúria", color: "#ff0055", symbol: "🔥", coat: "#3f101d", mane: "#ff0055", glow: "rgba(255, 0, 85, 0.6)" },
+      { id: 2, key: "3", name: "Cometa", color: "#ffcc00", symbol: "⭐", coat: "#422006", mane: "#ffcc00", glow: "rgba(255, 204, 0, 0.6)" },
+      { id: 3, key: "4", name: "Esmeralda", color: "#00ff88", symbol: "🍀", coat: "#062e1e", mane: "#00ff88", glow: "rgba(0, 255, 136, 0.6)" }
+    ];
+
+    const state = {
+      roundActive: true,
+      timeRemaining: ROUND_DURATION_SEC,
+      totalMeters: TOTAL_METERS,
+      winner: null,
+      resetCountdown: 5,
+      lastInteractionTime: performance.now(),
+      lastHoofbeatTime: 0,
+      cameraY: 0, // Acompanhamento vertical do pelotão
+      particles: [],
+      sparks: [],
+      confetti: [],
+      donors: { 0: {}, 1: {}, 2: {}, 3: {} },
+      horses: [
+        { x: 0, y: 0, meters: 0, speed: 22, baseSpeed: 22, votes: 0, turboBoost: 0, legPhase: 0, rank: 1 },
+        { x: 0, y: 0, meters: 0, speed: 22, baseSpeed: 22, votes: 0, turboBoost: 0, legPhase: 1.5, rank: 2 },
+        { x: 0, y: 0, meters: 0, speed: 22, baseSpeed: 22, votes: 0, turboBoost: 0, legPhase: 3.0, rank: 3 },
+        { x: 0, y: 0, meters: 0, speed: 22, baseSpeed: 22, votes: 0, turboBoost: 0, legPhase: 4.5, rank: 4 }
+      ]
+    };
+
+    // Mensagens do Narrador por Contexto
+    const NARRATOR_QUOTES = {
+      start: [
+        "PARTIDA AUTORIZADA! Galopam os 4 favoritos rumo à glória!",
+        "LÁ VÃO ELES! Cascos trovejando no piso do hipódromo!"
+      ],
+      overtake: [
+        "{HORSE} ACABA DE TOMAR A PONTA NUM GALOPE VELOZ!",
+        "PRESSÃO TOTAL! {HORSE} ENTRA POR DENTRO E LIDERA O PARÊO!",
+        "NARIZ A NARIZ! A DISPUTA PELA PONTA ESTÁ INCANDESCENTE!"
+      ],
+      boost: [
+        "ARRANCADA ESPETACULAR DE {HORSE} COM PRESENTE DE {USER}!",
+        "INACREDITÁVEL! {USER} ATIVOU O TURBO MÁXIMO EM {HORSE}!",
+        "CHICOTE ESTALOU! {HORSE} DISPARA COM FORÇA TOTAL!"
+      ],
+      finalStretch: [
+        "ENTRAMOS NA RETA FINAL! MENOS DE 300 METROS PARA O DISCO!",
+        "É CORAÇÃO NA BOCA! O PÚBLICO VAI AO DELÍRIO NA ARQUIBANCADA!"
+      ],
+      finish: [
+        "É OURO! VITÓRIA HISTÓRICA E CONSAGRAÇÃO DE {HORSE}!",
+        "CRUZOU O DISCO! {HORSE} É O GRANDE CAMPEÃO DO HIPÓDROMO!"
+      ]
+    };
+
+    function setNarratorSpeech(text) {
+      const el = document.getElementById('narrator-text');
+      if (el) {
+        el.innerText = text;
+        audio.playNarratorBeep();
+      }
+    }
+
+    // --- CANVAS & COORDENADAS VIRTUAIS (1080 x 1920) ---
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Layout das 4 raias verticais
+    const LANE_WIDTH = 200;
+    const TRACK_LEFT = (1080 - (LANE_WIDTH * 4)) / 2; // Centralizado no canvas
+    const LANE_CENTERS = [
+      TRACK_LEFT + LANE_WIDTH * 0.5,
+      TRACK_LEFT + LANE_WIDTH * 1.5,
+      TRACK_LEFT + LANE_WIDTH * 2.5,
+      TRACK_LEFT + LANE_WIDTH * 3.5
+    ];
+
+    function initHorses() {
+      state.horses.forEach((h, i) => {
+        h.x = LANE_CENTERS[i];
+        h.y = 1550; // Começam próximos da base (acima da Safe Zone inferior)
+        h.meters = 0;
+        h.speed = 22 + (Math.random() * 2 - 1);
+        h.baseSpeed = 22;
+        h.votes = 0;
+        h.turboBoost = 0;
+        h.legPhase = i * 1.2;
+        h.rank = i + 1;
+      });
+      state.winner = null;
+      state.roundActive = true;
+      state.timeRemaining = ROUND_DURATION_SEC;
+      state.cameraY = 0;
+      state.particles = [];
+      state.sparks = [];
+      state.confetti = [];
+      document.getElementById('victory-modal').style.display = 'none';
+      audio.playCallToThePost();
+      setNarratorSpeech(NARRATOR_QUOTES.start[Math.floor(Math.random() * NARRATOR_QUOTES.start.length)]);
+    }
+
+    // --- PROCESSAMENTO DE VOTOS & COMANDOS DO CHAT ---
+    function handleHorseVote(horseIndex, user) {
+      if (!state.roundActive || horseIndex < 0 || horseIndex > 3) return;
+      state.lastInteractionTime = performance.now();
+
+      const horse = state.horses[horseIndex];
+      horse.votes++;
+      // Aceleração imediata por voto do chat
+      horse.meters += 4.5;
+      horse.speed = Math.min(horse.speed + 1.2, 48);
+
+      // Contabiliza doador/apoiador
+      const userKey = user || "@espectador";
+      state.donors[horseIndex][userKey] = (state.donors[horseIndex][userKey] || 0) + 10;
+
+      // Cria partículas de energia e poeira
+      spawnDustAndSparks(horse.x, horse.y, HORSES_DATA[horseIndex].color, 8);
+
+      // Se mudar liderança, notifica narrador ocasionalmente
+      checkLeaderChange(horseIndex);
+    }
+
+    function triggerGiftBoost(horseIndex, giftName, user) {
+      if (!state.roundActive || horseIndex < 0 || horseIndex > 3) return;
+      state.lastInteractionTime = performance.now();
+
+      const horse = state.horses[horseIndex];
+      const data = HORSES_DATA[horseIndex];
+      const isSuper = (giftName === 'Lion' || giftName === 'Foguete');
+
+      const boostMeters = isSuper ? 90 : 35;
+      horse.meters += boostMeters;
+      horse.turboBoost = isSuper ? 60 : 35;
+      horse.speed = Math.min(horse.speed + (isSuper ? 16 : 8), 65);
+
+      const userKey = user || "@super_donor";
+      state.donors[horseIndex][userKey] = (state.donors[horseIndex][userKey] || 0) + (isSuper ? 500 : 150);
+
+      audio.playWhinny();
+      audio.playWhipBoost();
+
+      // Explosão de faíscas neon
+      spawnDustAndSparks(horse.x, horse.y, data.color, isSuper ? 45 : 20, true);
+
+      // Fala do Narrador
+      const quote = NARRATOR_QUOTES.boost[Math.floor(Math.random() * NARRATOR_QUOTES.boost.length)]
+        .replace("{HORSE}", data.name.toUpperCase())
+        .replace("{USER}", userKey);
+      setNarratorSpeech(quote);
+    }
+
+    let lastLeader = -1;
+    function checkLeaderChange(activeHorseIndex) {
+      const leaderIndex = getLeaderIndex();
+      if (leaderIndex !== lastLeader) {
+        lastLeader = leaderIndex;
+        if (Math.random() < 0.4) {
+          const quote = NARRATOR_QUOTES.overtake[Math.floor(Math.random() * NARRATOR_QUOTES.overtake.length)]
+            .replace("{HORSE}", HORSES_DATA[leaderIndex].name.toUpperCase());
+          setNarratorSpeech(quote);
+        }
+      }
+    }
+
+    function getLeaderIndex() {
+      let maxMeters = -1;
+      let leader = 0;
+      state.horses.forEach((h, i) => {
+        if (h.meters > maxMeters) {
+          maxMeters = h.meters;
+          leader = i;
+        }
+      });
+      return leader;
+    }
+
+    // --- LEI 3: MOTOR ANTI-SILÊNCIO EMBUTIDO (< 3s) ---
+    const MOCK_USERS = [
+      "@turfe_br", "@apostador99", "@jotinha_bets", "@dona_maroca", 
+      "@cavalo_de_ouro", "@ninja_stream", "@veloz_neon", "@baleia_live"
+    ];
+
+    function runAntiSilence() {
+      const now = performance.now();
+      if (now - state.lastInteractionTime > 2400 && state.roundActive) {
+        state.lastInteractionTime = now;
+        // Escolhe cavalo que precisa de apoio para manter disputa acirrada
+        const sortedIndices = [0, 1, 2, 3].sort((a, b) => state.horses[a].meters - state.horses[b].meters);
+        // Beneficia cavalo atrasado ou intermediário com 70% de chance
+        const targetHorse = (Math.random() < 0.7) ? sortedIndices[0] : Math.floor(Math.random() * 4);
+        const randomUser = MOCK_USERS[Math.floor(Math.random() * MOCK_USERS.length)];
+
+        // 15% de chance de micro-gift espontâneo
+        if (Math.random() < 0.15) {
+          triggerGiftBoost(targetHorse, 'Rose', randomUser);
+        } else {
+          handleHorseVote(targetHorse, randomUser);
+        }
+      }
+    }
+
+    // --- PARTÍCULAS, FAÍSCAS & POEIRA DE PISTA ---
+    function spawnDustAndSparks(x, y, color, count, isSuper = false) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.PI * 0.5 + (Math.random() - 0.5) * 1.6;
+        const speed = (Math.random() * 8 + 3) * (isSuper ? 2 : 1);
+        state.sparks.push({
+          x: x + (Math.random() - 0.5) * 40,
+          y: y + 50 + (Math.random() - 0.5) * 20,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: Math.random() * 4 + 2,
+          color: color,
+          alpha: 1.0,
+          life: 1.0,
+          decay: Math.random() * 0.03 + 0.02
+        });
+      }
+    }
+
+    function spawnConfetti() {
+      const colors = ['#00f0ff', '#ff0055', '#ffcc00', '#00ff88', '#f8fafc', '#a855f7'];
+      for (let i = 0; i < 90; i++) {
+        state.confetti.push({
+          x: Math.random() * 1080,
+          y: Math.random() * 600,
+          vx: (Math.random() - 0.5) * 6,
+          vy: Math.random() * 5 + 3,
+          rot: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 12,
+          w: Math.random() * 12 + 8,
+          h: Math.random() * 6 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1.0
+        });
+      }
+    }
+
+    // --- ATUALIZAÇÃO DA FÍSICA & CORRIDA ---
+    let lastTimestamp = performance.now();
+
+    function updateGame(dt) {
+      runAntiSilence();
+
+      if (state.roundActive) {
+        // Redução do timer
+        state.timeRemaining -= dt;
+        if (state.timeRemaining <= 0) {
+          state.timeRemaining = 0;
+          finalizeRace();
+        }
+
+        // Toca galope rítmico proporcional à velocidade média
+        const now = performance.now();
+        if (now - state.lastHoofbeatTime > 180) {
+          state.lastHoofbeatTime = now;
+          audio.playHorsesHoofbeat();
+        }
+
+        // Atualiza cavalos
+        let leaderDist = 0;
+        state.horses.forEach((h, i) => {
+          // Desaceleração suave de turbo
+          if (h.turboBoost > 0) {
+            h.turboBoost = Math.max(0, h.turboBoost - dt * 25);
+          }
+          if (h.speed > h.baseSpeed) {
+            h.speed = Math.max(h.baseSpeed, h.speed - dt * 3.5);
+          }
+
+          // Flutuação orgânica de velocidade simulando fôlego do cavalo
+          const staminaNoise = (Math.sin(performance.now() * 0.002 + i * 2) * 1.5);
+          const currentSpeed = h.speed + (h.turboBoost * 0.4) + staminaNoise;
+
+          // Incremento de metros percorridos
+          h.meters += currentSpeed * dt;
+          if (h.meters > leaderDist) leaderDist = h.meters;
+
+          // Animação de patas (fase senoidal)
+          h.legPhase += currentSpeed * dt * 0.45;
+
+          // Posição Y na tela relativa à linha de chegada e câmera
+          // Pista de 1200 metros representada verticalmente
+          const progress = h.meters / TOTAL_METERS;
+          h.y = 1550 - (progress * 1150); // Cavalos avançam em direção ao topo
+
+          // Verifica se cruzou a meta de 1.200m
+          if (h.meters >= TOTAL_METERS) {
+            h.meters = TOTAL_METERS;
+            finalizeRace(i);
+          }
+        });
+
+        // Ordena posições (ranks 1º a 4º)
+        const sorted = [...state.horses].sort((a, b) => b.meters - a.meters);
+        sorted.forEach((h, rankIdx) => {
+          h.rank = rankIdx + 1;
+        });
+
+        // Alerta da Reta Final (< 300m)
+        if (leaderDist >= 900 && leaderDist < 930) {
+          if (Math.random() < 0.08) {
+            setNarratorSpeech(NARRATOR_QUOTES.finalStretch[Math.floor(Math.random() * NARRATOR_QUOTES.finalStretch.length)]);
+          }
+        }
+
+        updateHUD();
+      } else {
+        // Pós-corrida: atualização do reset countdown
+        state.resetCountdown -= dt;
+        const countdownEl = document.getElementById('podium-countdown');
+        if (countdownEl) {
+          countdownEl.innerText = `PRÓXIMO PARÊO EM ${Math.ceil(state.resetCountdown)}S...`;
+        }
+        if (state.resetCountdown <= 0) {
+          state.resetCountdown = 5;
+          initHorses();
+        }
+      }
+
+      // Atualiza faíscas
+      for (let i = state.sparks.length - 1; i >= 0; i--) {
+        const s = state.sparks[i];
+        s.x += s.vx;
+        s.y += s.vy;
+        s.life -= s.decay;
+        s.alpha = Math.max(0, s.life);
+        if (s.life <= 0) {
+          state.sparks.splice(i, 1);
+        }
+      }
+
+      // Atualiza confetes
+      for (let i = state.confetti.length - 1; i >= 0; i--) {
+        const c = state.confetti[i];
+        c.y += c.vy;
+        c.x += c.vx;
+        c.rot += c.rotSpeed;
+        if (c.y > 1920) c.y = -20;
+      }
+    }
+
+    function finalizeRace(winnerIndex) {
+      if (!state.roundActive) return;
+      state.roundActive = false;
+
+      const finalWinner = (winnerIndex !== undefined) ? winnerIndex : getLeaderIndex();
+      state.winner = finalWinner;
+      const winnerData = HORSES_DATA[finalWinner];
+
+      audio.playVictoryFanfare();
+      spawnConfetti();
+
+      // Determina MVP dos apoiadores do cavalo campeão
+      const donorsMap = state.donors[finalWinner];
+      let topUser = "@V5TurfeFan";
+      let topPts = 120;
+      for (const [u, pts] of Object.entries(donorsMap)) {
+        if (pts > topPts) {
+          topPts = pts;
+          topUser = u;
+        }
+      }
+
+      // Atualiza modal do pódio
+      document.getElementById('podium-winner-name').innerText = `${winnerData.name.toUpperCase()} NEON`;
+      document.getElementById('podium-winner-name').style.color = winnerData.color;
+      document.getElementById('podium-lane-text').innerText = `CAMPEÃO DA RAIA ${winnerData.id + 1} (${winnerData.symbol})`;
+      document.getElementById('podium-mvp-user').innerText = `${topUser} (${topPts} pts)`;
+      document.getElementById('victory-modal').style.display = 'flex';
+
+      const finishQuote = NARRATOR_QUOTES.finish[Math.floor(Math.random() * NARRATOR_QUOTES.finish.length)]
+        .replace("{HORSE}", winnerData.name.toUpperCase());
+      setNarratorSpeech(finishQuote);
+    }
+
+    function updateHUD() {
+      // Timer
+      const min = Math.floor(state.timeRemaining / 60);
+      const sec = Math.floor(state.timeRemaining % 60);
+      document.getElementById('time-display').innerText = 
+        `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+
+      // Cards do Placar
+      state.horses.forEach((h, i) => {
+        const posEl = document.getElementById(`hud-pos-${i + 1}`);
+        if (posEl) {
+          posEl.innerText = `${h.rank}º • ${Math.floor(h.meters)}m`;
+        }
+
+        // Minimapa
+        const miniEl = document.getElementById(`mini-${i + 1}`);
+        if (miniEl) {
+          const pct = Math.min(100, Math.max(0, (h.meters / TOTAL_METERS) * 100));
+          miniEl.style.bottom = `${pct}%`;
+        }
+      });
+    }
+
+    // --- RENDERIZAÇÃO RETRÔ CANVAS 2D (1080 x 1920) ---
+    function render() {
+      ctx.clearRect(0, 0, 1080, 1920);
+
+      // 1. Fundo do Hipódromo (Grama Escura Neon)
+      ctx.fillStyle = "#051510";
+      ctx.fillRect(0, 0, 1080, 1920);
+
+      // Padrão de grama quadriculada suave
+      ctx.strokeStyle = "rgba(0, 255, 136, 0.04)";
+      ctx.lineWidth = 2;
+      const gridSize = 60;
+      for (let y = 0; y < 1920; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(1080, y);
+        ctx.stroke();
+      }
+
+      // 2. Pista de Terra Batida dos Cavalos (4 Raias)
+      ctx.fillStyle = "#1c140e";
+      ctx.fillRect(TRACK_LEFT, 0, LANE_WIDTH * 4, 1920);
+
+      // Faixas de demarcação de terra
+      for (let i = 0; i < 4; i++) {
+        const laneX = TRACK_LEFT + i * LANE_WIDTH;
+        ctx.fillStyle = (i % 2 === 0) ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.08)";
+        ctx.fillRect(laneX, 0, LANE_WIDTH, 1920);
+      }
+
+      // Zebras / Cercas Laterais Iluminadas
+      drawFence(TRACK_LEFT - 12);
+      drawFence(TRACK_LEFT + LANE_WIDTH * 4);
+
+      // Linhas divisorias tracejadas entre raias
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+      ctx.lineWidth = 4;
+      ctx.setLineDash([20, 20]);
+      for (let i = 1; i < 4; i++) {
+        const lx = TRACK_LEFT + i * LANE_WIDTH;
+        ctx.beginPath();
+        ctx.moveTo(lx, 0);
+        ctx.lineTo(lx, 1920);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+
+      // Marcadores de Metragem na Pista (1000m, 800m, 600m, 400m, 200m)
+      drawDistanceMarkers();
+
+      // Linha de Chegada (Checkered Finish Line) em Y = 400 (abaixo da Top Safe Zone)
+      drawFinishLine(400);
+
+      // 3. Faíscas & Poeira
+      renderSparks();
+
+      // 4. Desenho dos Cavalos & Jockeys
+      // Ordena por Y para sobreposição natural de profundidade
+      const sortedByY = [...state.horses].sort((a, b) => a.y - b.y);
+      sortedByY.forEach(h => {
+        const data = HORSES_DATA[sortedByY.indexOf(h)];
+        // Localiza dados originais pelo X
+        const originalIndex = LANE_CENTERS.indexOf(h.x);
+        const horseData = HORSES_DATA[originalIndex] || data;
+        drawRetroHorse(ctx, h.x, h.y, horseData, h);
+      });
+
+      // 5. Confetes de Vitória
+      if (!state.roundActive) {
+        renderConfetti();
+      }
+    }
+
+    function drawFence(x) {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(x, 0, 12, 1920);
+      // Travessas de madeira retrô
+      ctx.fillStyle = "#334155";
+      for (let y = 0; y < 1920; y += 40) {
+        ctx.fillRect(x - 2, y, 16, 6);
+      }
+    }
+
+    function drawDistanceMarkers() {
+      ctx.font = "900 24px monospace";
+      ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
+      ctx.textAlign = "center";
+
+      const markers = [
+        { y: 1550, text: "LARGADA 0M" },
+        { y: 1260, text: "300M" },
+        { y: 970, text: "600M" },
+        { y: 680, text: "RETA FINAL 900M" }
+      ];
+
+      markers.forEach(m => {
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.12)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(TRACK_LEFT, m.y);
+        ctx.lineTo(TRACK_LEFT + LANE_WIDTH * 4, m.y);
+        ctx.stroke();
+
+        ctx.fillText(m.text, 540, m.y - 10);
+      });
+    }
+
+    function drawFinishLine(y) {
+      const squareSize = 25;
+      const numSquares = (LANE_WIDTH * 4) / squareSize;
+
+      // Faixa quadriculada de bandeirada
+      for (let row = 0; row < 2; row++) {
+        for (let col = 0; col < numSquares; col++) {
+          ctx.fillStyle = ((row + col) % 2 === 0) ? "#ffffff" : "#000000";
+          ctx.fillRect(TRACK_LEFT + col * squareSize, y + row * squareSize, squareSize, squareSize);
+        }
+      }
+
+      // Faixas de neon dourado delimitando a linha
+      ctx.strokeStyle = "#ffd700";
+      ctx.lineWidth = 5;
+      ctx.shadowColor = "#ffd700";
+      ctx.shadowBlur = 15;
+      ctx.beginPath();
+      ctx.moveTo(TRACK_LEFT, y);
+      ctx.lineTo(TRACK_LEFT + LANE_WIDTH * 4, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(TRACK_LEFT, y + squareSize * 2);
+      ctx.lineTo(TRACK_LEFT + LANE_WIDTH * 4, y + squareSize * 2);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Texto de CHEGADA
+      ctx.font = "900 32px monospace";
+      ctx.fillStyle = "#ffd700";
+      ctx.textAlign = "center";
+      ctx.fillText("🏁 DISCO DE CHEGADA 1.200M 🏁", 540, y - 18);
+    }
+
+    // Desenho Articulado Vetorial do Cavalo Retrô Neon
+    function drawRetroHorse(c, x, y, data, horseState) {
+      c.save();
+      c.translate(x, y);
+
+      const isBoosted = horseState.turboBoost > 0;
+      const phase = horseState.legPhase;
+
+      // Aura de Turbo / Super Gift
+      if (isBoosted) {
+        c.shadowColor = data.color;
+        c.shadowBlur = 35;
+        c.strokeStyle = data.color;
+        c.lineWidth = 4;
+        c.beginPath();
+        c.ellipse(0, 10, 50, 75, 0, 0, Math.PI * 2);
+        c.stroke();
+        c.shadowBlur = 0;
+      }
+
+      // Sombra projetada no solo
+      c.fillStyle = "rgba(0, 0, 0, 0.45)";
+      c.beginPath();
+      c.ellipse(0, 35, 32, 16, 0, 0, Math.PI * 2);
+      c.fill();
+
+      // Rotação sutil da cabeça e corpo com o galope
+      const bodyBob = Math.sin(phase) * 6;
+      c.translate(0, bodyBob);
+
+      // Patas Traseiras (Articuladas)
+      const legR1 = Math.sin(phase) * 24;
+      const legR2 = Math.sin(phase + Math.PI) * 24;
+      c.strokeStyle = data.coat;
+      c.lineWidth = 8;
+      c.lineCap = "round";
+
+      // Pata traseira esquerda
+      c.beginPath();
+      c.moveTo(-14, 20);
+      c.lineTo(-18 + legR1 * 0.3, 45);
+      c.lineTo(-14 + legR1 * 0.7, 68);
+      c.stroke();
+
+      // Pata traseira direita
+      c.beginPath();
+      c.moveTo(14, 20);
+      c.lineTo(18 + legR2 * 0.3, 45);
+      c.lineTo(14 + legR2 * 0.7, 68);
+      c.stroke();
+
+      // Corpo Central do Cavalo (Cápsula elegante)
+      c.fillStyle = data.coat;
+      c.beginPath();
+      c.ellipse(0, 0, 24, 44, 0, 0, Math.PI * 2);
+      c.fill();
+
+      // Manta da Sela com a Cor Neon da Raia
+      c.fillStyle = data.color;
+      c.beginPath();
+      c.roundRect(-22, -14, 44, 28, 6);
+      c.fill();
+
+      // Número da Raia na Sela
+      c.fillStyle = "#000000";
+      c.font = "900 18px monospace";
+      c.textAlign = "center";
+      c.textBaseline = "middle";
+      c.fillText((data.id + 1).toString(), 0, 0);
+
+      // Jockey (Piloto Retrô Agachado)
+      c.fillStyle = data.color;
+      // Tronco
+      c.beginPath();
+      c.ellipse(0, -6, 12, 16, 0, 0, Math.PI * 2);
+      c.fill();
+      // Capacete do Jockey
+      c.fillStyle = "#ffffff";
+      c.beginPath();
+      c.arc(0, -22, 10, 0, Math.PI * 2);
+      c.fill();
+      // Óculos de proteção
+      c.fillStyle = "#000000";
+      c.fillRect(-8, -24, 16, 5);
+
+      // Pescoço e Cabeça do Cavalo (Para Cima no sentido da corrida)
+      c.fillStyle = data.coat;
+      c.beginPath();
+      c.moveTo(-12, -26);
+      c.lineTo(12, -26);
+      c.lineTo(8, -58);
+      c.lineTo(-8, -58);
+      c.closePath();
+      c.fill();
+
+      // Cabeça / Focinho
+      c.beginPath();
+      c.ellipse(0, -64, 10, 16, 0, 0, Math.PI * 2);
+      c.fill();
+
+      // Orelhas
+      c.beginPath();
+      c.moveTo(-8, -72);
+      c.lineTo(-4, -84);
+      c.lineTo(0, -74);
+      c.moveTo(0, -74);
+      c.lineTo(4, -84);
+      c.lineTo(8, -72);
+      c.fill();
+
+      // Crina Neon Ondulante
+      c.fillStyle = data.mane;
+      const maneWave = Math.sin(phase * 1.5) * 4;
+      c.beginPath();
+      c.moveTo(-4, -58);
+      c.lineTo(-12 + maneWave, -45);
+      c.lineTo(-4, -38);
+      c.lineTo(-14 + maneWave, -30);
+      c.lineTo(0, -26);
+      c.closePath();
+      c.fill();
+
+      // Cauda Balançando Atrás
+      const tailWave = Math.sin(phase) * 12;
+      c.strokeStyle = data.mane;
+      c.lineWidth = 6;
+      c.beginPath();
+      c.moveTo(0, 38);
+      c.quadraticCurveTo(tailWave, 58, tailWave * 1.5, 76);
+      c.stroke();
+
+      // Patas Dianteiras
+      const legF1 = Math.sin(phase + Math.PI * 0.5) * 26;
+      const legF2 = Math.sin(phase + Math.PI * 1.5) * 26;
+      c.strokeStyle = data.coat;
+      c.lineWidth = 8;
+
+      // Pata dianteira esquerda
+      c.beginPath();
+      c.moveTo(-12, -18);
+      c.lineTo(-14, -38 + legF1 * 0.3);
+      c.lineTo(-12, -60 + legF1 * 0.7);
+      c.stroke();
+
+      // Pata dianteira direita
+      c.beginPath();
+      c.moveTo(12, -18);
+      c.lineTo(14, -38 + legF2 * 0.3);
+      c.lineTo(12, -60 + legF2 * 0.7);
+      c.stroke();
+
+      // Cascos Dourados Neon
+      c.fillStyle = "#ffd700";
+      c.fillRect(-16, -64 + legF1 * 0.7, 8, 5);
+      c.fillRect(8, -64 + legF2 * 0.7, 8, 5);
+      c.fillRect(-18 + legR1 * 0.7, 68, 8, 5);
+      c.fillRect(10 + legR2 * 0.7, 68, 8, 5);
+
+      // Badge de Posição sobre o Cavalo (1º, 2º, 3º, 4º)
+      c.fillStyle = "rgba(15, 23, 42, 0.85)";
+      c.strokeStyle = data.color;
+      c.lineWidth = 2;
+      c.beginPath();
+      c.roundRect(-28, -105, 56, 22, 6);
+      c.fill();
+      c.stroke();
+
+      c.fillStyle = "#ffffff";
+      c.font = "900 13px monospace";
+      c.fillText(`${horseState.rank}º`, 0, -94);
+
+      c.restore();
+    }
+
+    function renderSparks() {
+      state.sparks.forEach(s => {
+        ctx.fillStyle = s.color;
+        ctx.globalAlpha = s.alpha;
+        ctx.shadowColor = s.color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1.0;
+      ctx.shadowBlur = 0;
+    }
+
+    function renderConfetti() {
+      state.confetti.forEach(c => {
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate((c.rot * Math.PI) / 180);
+        ctx.fillStyle = c.color;
+        ctx.globalAlpha = c.alpha;
+        ctx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+        ctx.restore();
+      });
+      ctx.globalAlpha = 1.0;
+    }
+
+    // --- LOOP PRINCIPAL DE ANIMAÇÃO ---
+    function gameLoop(timestamp) {
+      const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.1);
+      lastTimestamp = timestamp;
+
+      updateGame(dt);
+      render();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // --- PROTOCOLO DE EVENTOS DO BROADCASTER & SDK ---
+    function initEventBus() {
+      // 1. BroadcastChannel padrão da holding
+      try {
+        const channel = new BroadcastChannel('v5_broadcaster_games');
+        channel.onmessage = (event) => {
+          handleIncomingEvent(event.data);
+        };
+      } catch (e) {
+        console.warn("BroadcastChannel não suportado neste ambiente");
+      }
+
+      // 2. CustomEvent de Janela
+      window.addEventListener('v5_event', (e) => {
+        if (e.detail) handleIncomingEvent(e.detail);
+      });
+    }
+
+    function handleIncomingEvent(payload) {
+      if (!payload) return;
+
+      const type = payload.type;
+      const comment = (payload.comment || "").toString().toLowerCase().trim();
+      const user = payload.user || "@espectador";
+      const giftName = payload.giftName || null;
+
+      // Parsing de Comentários / Votos
+      if (type === 'comment' || comment) {
+        if (comment === '1' || comment.includes('relampago') || comment.includes('ciano') || comment.includes('azul')) {
+          handleHorseVote(0, user);
+        } else if (comment === '2' || comment.includes('furia') || comment.includes('vermelho') || comment.includes('rosa')) {
+          handleHorseVote(1, user);
+        } else if (comment === '3' || comment.includes('cometa') || comment.includes('dourado') || comment.includes('amarelo')) {
+          handleHorseVote(2, user);
+        } else if (comment === '4' || comment.includes('esmeralda') || comment.includes('verde') || comment.includes('sorte')) {
+          handleHorseVote(3, user);
+        }
+      }
+
+      // Parsing de Gifts
+      if (type === 'gift' || giftName) {
+        const targetTeam = payload.team || payload.lane || Math.floor(Math.random() * 4);
+        const horseIdx = (typeof targetTeam === 'number') ? targetTeam : parseInt(targetTeam) - 1;
+        const validIdx = (horseIdx >= 0 && horseIdx <= 3) ? horseIdx : Math.floor(Math.random() * 4);
+        triggerGiftBoost(validIdx, giftName, user);
+      }
+    }
+
+    // --- CONTROLES DE DEPURAÇÃO DO STREAMER ---
+    function toggleDebugDrawer() {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.style.display = (drawer.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        toggleDebugDrawer();
+      }
+    });
+
+    document.querySelector('.bottom-safe-zone').addEventListener('dblclick', () => {
+      toggleDebugDrawer();
+    });
+
+    // Início automático ao carregar
+    window.addEventListener('load', () => {
+      initHorses();
+      initEventBus();
+      requestAnimationFrame(gameLoop);
+    });
+  </script>
+</body>
+</html>

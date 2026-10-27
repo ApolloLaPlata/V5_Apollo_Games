@@ -271,6 +271,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "esq", "meio", "dir", "corta", "golpe"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "33_corrida_de_cavalos_retro": {
+        "name": "Corrida de Cavalos Retrô",
+        "category": "apostas_corrida",
+        "description": "Disputa de turfe clássico 9:16 com 4 raias numeradas, narração dinâmica arcade com bipes, galope rítmico procedural, arrancadas e pódio com MVP",
+        "commands": ["1", "2", "3", "4", "relampago", "furia", "cometa", "esmeralda"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 
