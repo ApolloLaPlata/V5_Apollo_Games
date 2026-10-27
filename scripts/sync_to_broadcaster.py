@@ -175,6 +175,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "esq", "dir"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "23_sobrevivencia_na_lava": {
+        "name": "Sobrevivência na Lava",
+        "category": "tensao_eliminacao",
+        "description": "Plataformas flutuantes que afundam na lava neon conforme recebem peso e calor, com erupção de partículas e borbulhamento procedural",
+        "commands": ["1", "2", "3", "4", "ciano", "roxo", "ouro", "verde"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 

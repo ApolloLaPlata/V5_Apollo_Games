@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Sobrevivência na Lava (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030408;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 25%, #1a0803 0%, #0d0301 60%, #030000 100%);
+      border: 1px solid rgba(255, 68, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(255, 40, 0, 0.25);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Vinheta de Calor Extremo / Alerta */
+    #heat-vignette {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      box-shadow: inset 0 -40px 100px rgba(255, 60, 0, 0.35);
+      transition: box-shadow 0.2s ease-out;
+      z-index: 2;
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 14px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(13, 3, 1, 0.98) 0%, rgba(13, 3, 1, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #ff5500;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ff3300;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ff3300;
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .lava-surge-badge {
+      background: rgba(255, 68, 0, 0.15);
+      border: 1px solid rgba(255, 100, 0, 0.6);
+      color: #ffaa55;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* HUD de Nível da Lava e Tempo */
+    .lava-hud {
+      width: 100%;
+      background: rgba(30, 8, 3, 0.85);
+      border: 1px solid rgba(255, 80, 0, 0.4);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .lava-status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .lava-title {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #ffeedd;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .lava-timer {
+      font-size: 13px;
+      font-weight: 900;
+      color: #ffcc00;
+      font-family: monospace;
+    }
+
+    .lava-meter-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 80, 0, 0.3);
+      position: relative;
+    }
+
+    .lava-meter-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff9900, #ff3300, #ff0055);
+      box-shadow: 0 0 10px #ff3300;
+      transition: width 0.3s ease-out;
+    }
+
+    /* Área do Canvas de Simulação */
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 10px 14px 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(8, 2, 0, 0.98) 0%, rgba(8, 2, 0, 0.85) 75%, rgba(8, 2, 0, 0) 100%);
+    }
+
+    /* Grid dos 4 Times / Plataformas */
+    .teams-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      width: 100%;
+    }
+
+    .team-card {
+      background: rgba(20, 5, 2, 0.8);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 6px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      backdrop-filter: blur(6px);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s ease, border-color 0.2s ease, opacity 0.3s ease;
+    }
+
+    .team-card.eliminated {
+      opacity: 0.35;
+      filter: grayscale(1);
+      border-color: #555 !important;
+    }
+
+    .team-card.team-1 { border-color: rgba(6, 182, 212, 0.6); }
+    .team-card.team-2 { border-color: rgba(168, 85, 247, 0.6); }
+    .team-card.team-3 { border-color: rgba(234, 179, 8, 0.6); }
+    .team-card.team-4 { border-color: rgba(34, 197, 94, 0.6); }
+
+    .team-badge {
+      font-size: 10px;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .team-1 .team-badge { background: rgba(6, 182, 212, 0.25); color: #67e8f9; }
+    .team-2 .team-badge { background: rgba(168, 85, 247, 0.25); color: #d8b4fe; }
+    .team-3 .team-badge { background: rgba(234, 179, 8, 0.25); color: #fde047; }
+    .team-4 .team-badge { background: rgba(34, 197, 94, 0.25); color: #86efac; }
+
+    .team-cmd {
+      font-size: 15px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #fff;
+    }
+
+    .team-stability {
+      font-size: 10px;
+      font-weight: 800;
+      color: #ff9955;
+    }
+
+    .team-stability-bar {
+      width: 90%;
+      height: 4px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .team-stability-fill {
+      height: 100%;
+      width: 100%;
+      transition: width 0.2s ease-out;
+    }
+
+    .team-1 .team-stability-fill { background: #06b6d4; }
+    .team-2 .team-stability-fill { background: #a855f7; }
+    .team-3 .team-stability-fill { background: #eab308; }
+    .team-4 .team-stability-fill { background: #22c55e; }
+
+    /* Barra de Instruções & Presentes */
+    .gift-cta-banner {
+      background: linear-gradient(90deg, rgba(255, 68, 0, 0.2) 0%, rgba(234, 179, 8, 0.25) 50%, rgba(255, 68, 0, 0.2) 100%);
+      border: 1px solid rgba(255, 120, 0, 0.5);
+      border-radius: 10px;
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 15px rgba(255, 80, 0, 0.2);
+    }
+
+    .gift-info {
+      font-size: 11px;
+      font-weight: 800;
+      color: #ffddbb;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .gift-badge {
+      background: #eab308;
+      color: #000;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Feed Flutuante de Atividades */
+    .activity-feed {
+      position: absolute;
+      top: 155px;
+      left: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      z-index: 5;
+      pointer-events: none;
+      max-width: 220px;
+    }
+
+    .feed-pill {
+      background: rgba(15, 4, 1, 0.85);
+      border: 1px solid rgba(255, 100, 0, 0.4);
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      animation: fadeSlide 3.5s forwards;
+    }
+
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(-10px); }
+      10% { opacity: 1; transform: translateY(0); }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
+
+    /* Overlay de Vitória & Fim de Rodada (5s) */
+    #victory-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 2, 0, 0.92);
+      backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      z-index: 100;
+      animation: fadeIn 0.4s ease-out;
+      text-align: center;
+      padding: 24px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .victory-badge {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #ffaa00;
+      text-transform: uppercase;
+    }
+
+    .victory-title {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #ffffff;
+      text-shadow: 0 0 25px rgba(255, 100, 0, 0.8);
+    }
+
+    .victory-podium {
+      width: 100%;
+      background: rgba(25, 6, 2, 0.7);
+      border: 1px solid rgba(255, 120, 0, 0.4);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .podium-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .podium-gold { border-left: 4px solid #eab308; color: #fde047; }
+    .podium-silver { border-left: 4px solid #94a3b8; color: #e2e8f0; }
+    .podium-bronze { border-left: 4px solid #b45309; color: #fdba74; }
+
+    .victory-countdown {
+      font-size: 12px;
+      color: #ff8844;
+      font-weight: 700;
+      font-family: monospace;
+    }
+
+    /* Gaveta de Testes / Debug Panel */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(10, 2, 1, 0.95);
+      border-top: 1px solid #ff4400;
+      padding: 10px 14px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 200;
+      backdrop-filter: blur(8px);
+    }
+
+    .debug-title {
+      font-size: 11px;
+      font-weight: 900;
+      color: #ff5500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .debug-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .debug-btn {
+      background: rgba(255, 68, 0, 0.2);
+      border: 1px solid rgba(255, 68, 0, 0.5);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .debug-btn:active {
+      transform: scale(0.95);
+      background: rgba(255, 68, 0, 0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Vinheta de Calor Extremo -->
+    <div id="heat-vignette"></div>
+
+    <!-- Feed Flutuante de Comentários e Presentes -->
+    <div class="activity-feed" id="activity-feed"></div>
+
+    <!-- Top Safe Zone (140px) -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <span class="live-dot"></span>
+          V5 LIVE BATTLE
+        </div>
+        <div class="lava-surge-badge">
+          🔥 LAVA LEVEL: <span id="lava-pct">0%</span>
+        </div>
+      </div>
+
+      <div class="lava-hud">
+        <div class="lava-status-row">
+          <span class="lava-title">🌋 SOBREVIVÊNCIA NA LAVA</span>
+          <span class="lava-timer" id="round-timer">45.0s</span>
+        </div>
+        <div class="lava-meter-track">
+          <div class="lava-meter-fill" id="lava-meter-fill"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central de Física & Renderização (Canvas 2D) -->
+    <div id="canvas-container">
+      <canvas id="game-canvas"></canvas>
+    </div>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <footer class="bottom-panel" id="bottom-panel" onclick="toggleDebugOnClick(event)">
+      <div class="teams-grid">
+        <div class="team-card team-1" id="card-1">
+          <span class="team-badge">CIANO</span>
+          <span class="team-cmd">1</span>
+          <div class="team-stability-bar"><div class="team-stability-fill" id="stab-fill-1"></div></div>
+          <span class="team-stability" id="stab-val-1">100%</span>
+        </div>
+
+        <div class="team-card team-2" id="card-2">
+          <span class="team-badge">ROXO</span>
+          <span class="team-cmd">2</span>
+          <div class="team-stability-bar"><div class="team-stability-fill" id="stab-fill-2"></div></div>
+          <span class="team-stability" id="stab-val-2">100%</span>
+        </div>
+
+        <div class="team-card team-3" id="card-3">
+          <span class="team-badge">OURO</span>
+          <span class="team-cmd">3</span>
+          <div class="team-stability-bar"><div class="team-stability-fill" id="stab-fill-3"></div></div>
+          <span class="team-stability" id="stab-val-3">100%</span>
+        </div>
+
+        <div class="team-card team-4" id="card-4">
+          <span class="team-badge">VERDE</span>
+          <span class="team-cmd">4</span>
+          <div class="team-stability-bar"><div class="team-stability-fill" id="stab-fill-4"></div></div>
+          <span class="team-stability" id="stab-val-4">100%</span>
+        </div>
+      </div>
+
+      <div class="gift-cta-banner">
+        <div class="gift-info">
+          <span class="gift-badge">GIFT</span>
+          <span>ROSA (+25% Estabilidade) | LEÃO (Super Escudo)</span>
+        </div>
+        <div style="font-size: 11px; font-weight: 800; color: #ffaa00; font-family: monospace;">
+          Pressione 'D' (Debug)
+        </div>
+      </div>
+    </footer>
+
+    <!-- Overlay de Vitória & Ciclo Fechado 5s -->
+    <div id="victory-overlay">
+      <span class="victory-badge">RODADA ENCERRADA</span>
+      <h1 class="victory-title" id="winner-name">PLATAFORMA VENCEDORA!</h1>
+      <div class="victory-podium">
+        <div class="podium-row podium-gold">
+          <span>🥇 1º Lugar</span>
+          <span id="mvp-1">@jogador_alpha (+1200)</span>
+        </div>
+        <div class="podium-row podium-silver">
+          <span>🥈 2º Lugar</span>
+          <span id="mvp-2">@magma_rider (+850)</span>
+        </div>
+        <div class="podium-row podium-bronze">
+          <span>🥉 3º Lugar</span>
+          <span id="mvp-3">@neon_phoenix (+600)</span>
+        </div>
+      </div>
+      <span class="victory-countdown">REINICIANDO NOVA PARTIDA EM <span id="reset-counter">5</span>s...</span>
+    </div>
+
+    <!-- Gaveta de Teste Local / Debug Drawer -->
+    <div id="debug-drawer">
+      <div class="debug-title">
+        <span>PAINEL DE SIMULAÇÃO LOCAL (TECLA D)</span>
+        <span onclick="toggleDebug(false)" style="cursor: pointer;">✕</span>
+      </div>
+      <div class="debug-buttons">
+        <button class="debug-btn" onclick="sendMockAction('comment', '1', '@teste_ciano')">Votar 1 (Ciano)</button>
+        <button class="debug-btn" onclick="sendMockAction('comment', '2', '@teste_roxo')">Votar 2 (Roxo)</button>
+        <button class="debug-btn" onclick="sendMockAction('comment', '3', '@teste_ouro')">Votar 3 (Ouro)</button>
+        <button class="debug-btn" onclick="sendMockAction('comment', '4', '@teste_verde')">Votar 4 (Verde)</button>
+      </div>
+      <div class="debug-buttons" style="margin-top: 4px;">
+        <button class="debug-btn" style="border-color: #eab308; color: #fde047;" onclick="sendMockAction('gift', 'Rose', '@doador_rosa', 10)">Gift Rosa</button>
+        <button class="debug-btn" style="border-color: #ef4444; color: #fca5a5;" onclick="sendMockAction('gift', 'Lion', '@rei_leao', 500)">Gift Leão</button>
+        <button class="debug-btn" style="border-color: #ff5500; color: #ff8844;" onclick="triggerEruptionEvent()">Erupção!</button>
+        <button class="debug-btn" style="border-color: #06b6d4; color: #67e8f9;" onclick="resetRound()">Reset Forçado</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE GAMES — CARTUCHO #23: SOBREVIVÊNCIA NA LAVA (9:16 VERTICAL)
+       Arquitetura: Web Audio Procedural + Partículas Incandescentes + Físicas de Plataforma
+       ========================================================================== */
+
+    // --------------------------------------------------------------------------
+    // 1. Sintetizador de Áudio Procedural (Web Audio API - Etapa 068)
+    // --------------------------------------------------------------------------
+    class LavaAudioSynth {
+      constructor() {
+        this.ctx = null;
+        this.isMuted = false;
+        this.ambientLavaNode = null;
+        this.ambientGainNode = null;
+        this.isAmbientActive = false;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+        if (!this.isAmbientActive) {
+          this.startLavaAmbience();
+        }
+      }
+
+      // Som ambiente contínuo de lava borbulhando e reverberando
+      startLavaAmbience() {
+        if (!this.ctx || this.isAmbientActive) return;
+        this.isAmbientActive = true;
+
+        const bufferSize = this.ctx.sampleRate * 2;
+        const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        let b0 = 0, b1 = 0, b2 = 0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          b0 = 0.99 * b0 + white * 0.05;
+          b1 = 0.95 * b1 + white * 0.1;
+          b2 = 0.85 * b2 + white * 0.2;
+          output[i] = (b0 + b1 + b2) * 0.15;
+        }
+
+        const whiteNoise = this.ctx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+        whiteNoise.loop = true;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(140, this.ctx.currentTime);
+        filter.Q.setValueAtTime(3.5, this.ctx.currentTime);
+
+        this.ambientGainNode = this.ctx.createGain();
+        this.ambientGainNode.gain.setValueAtTime(0.08, this.ctx.currentTime);
+
+        whiteNoise.connect(filter);
+        filter.connect(this.ambientGainNode);
+        this.ambientGainNode.connect(this.ctx.destination);
+
+        whiteNoise.start();
+        this.ambientLavaNode = whiteNoise;
+      }
+
+      // Bolha de magma estourando (pop orgânico com pitch bend descendente)
+      playBubblePop() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        const startFreq = 160 + Math.random() * 80;
+        const endFreq = 45 + Math.random() * 20;
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(startFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(endFreq, now + 0.12);
+
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.13);
+      }
+
+      // Erupção de magma potente e estrondo vulcânico (sub-bass 40Hz + ruído marrom)
+      playEruptionSound() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+
+        // Sub grave profundo
+        const osc = this.ctx.createOscillator();
+        const oscGain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(65, now);
+        osc.frequency.exponentialRampToValueAtTime(28, now + 0.8);
+
+        oscGain.gain.setValueAtTime(0.4, now);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+
+        osc.connect(oscGain);
+        oscGain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.85);
+
+        // Explosão de ruído térmico
+        const bufferSize = this.ctx.sampleRate * 0.7;
+        const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.18));
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = noiseBuffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(250, now);
+        filter.Q.setValueAtTime(1.8, now);
+
+        const noiseGain = this.ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.35, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(this.ctx.destination);
+
+        noise.start(now);
+        noise.stop(now + 0.75);
+      }
+
+      // Chiado de vapor de resfriamento criogênico / ativação de propulsor
+      playSteamHiss() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const bufferSize = this.ctx.sampleRate * 0.4;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+
+        const src = this.ctx.createBufferSource();
+        src.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(3200, now);
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+
+        src.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        src.start(now);
+        src.stop(now + 0.4);
+      }
+
+      // Splash e afundamento trágico de plataforma
+      playSubmergeSplash() {
+        if (!this.ctx) return;
+        this.playEruptionSound();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.exponentialRampToValueAtTime(60, now + 0.5);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.52);
+      }
+
+      // Fanfarra triunfante de encerramento
+      playVictoryFanfare() {
+        if (!this.ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        notes.forEach((freq, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.12);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.85);
+        });
+      }
+    }
+
+    const audio = new LavaAudioSynth();
+
+    // --------------------------------------------------------------------------
+    // 2. Estado Global do Jogo & Parâmetros das 4 Plataformas
+    // --------------------------------------------------------------------------
+    const ROUND_DURATION = 45.0; // 45 segundos por partida
+    let roundTimeRemaining = ROUND_DURATION;
+    let isGameOver = false;
+    let lavaLevelProgress = 0; // 0.0 a 1.0 (sobe durante a partida)
+    let screenShake = 0;
+
+    // Definição das 4 plataformas
+    const PLATFORMS = [
+      {
+        id: 1,
+        name: "Ciano",
+        color: "#06b6d4",
+        secondaryColor: "#67e8f9",
+        xRatio: 0.28,
+        yRatio: 0.42,
+        stability: 100,
+        heightOffset: 0,
+        verticalSpeed: 0,
+        votes: 0,
+        isSunk: false,
+        shieldUntil: 0,
+        voters: {}
+      },
+      {
+        id: 2,
+        name: "Roxo",
+        color: "#a855f7",
+        secondaryColor: "#d8b4fe",
+        xRatio: 0.72,
+        yRatio: 0.42,
+        stability: 100,
+        heightOffset: 0,
+        verticalSpeed: 0,
+        votes: 0,
+        isSunk: false,
+        shieldUntil: 0,
+        voters: {}
+      },
+      {
+        id: 3,
+        name: "Ouro",
+        color: "#eab308",
+        secondaryColor: "#fde047",
+        xRatio: 0.28,
+        yRatio: 0.68,
+        stability: 100,
+        heightOffset: 0,
+        verticalSpeed: 0,
+        votes: 0,
+        isSunk: false,
+        shieldUntil: 0,
+        voters: {}
+      },
+      {
+        id: 4,
+        name: "Verde",
+        color: "#22c55e",
+        secondaryColor: "#86efac",
+        xRatio: 0.72,
+        yRatio: 0.68,
+        stability: 100,
+        heightOffset: 0,
+        verticalSpeed: 0,
+        votes: 0,
+        isSunk: false,
+        shieldUntil: 0,
+        voters: {}
+      }
+    ];
+
+    // Sistema de Partículas Incandescentes (Etapa 068)
+    const MAX_PARTICLES = 160;
+    const particles = [];
+
+    // Gerador de brasas e faíscas incandescentes
+    function spawnIncandescentParticle(x, y, isEruption = false) {
+      if (particles.length >= MAX_PARTICLES) particles.shift();
+      const speed = isEruption ? (4 + Math.random() * 8) : (1 + Math.random() * 3);
+      const angle = isEruption ? (-Math.PI / 2 + (Math.random() - 0.5) * 1.2) : (-Math.PI / 2 + (Math.random() - 0.5) * 0.8);
+      particles.push({
+        x: x,
+        y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: isEruption ? (3 + Math.random() * 5) : (1.5 + Math.random() * 3),
+        alpha: 1.0,
+        decay: isEruption ? (0.015 + Math.random() * 0.02) : (0.008 + Math.random() * 0.015),
+        color: Math.random() > 0.4 ? "#ff6600" : (Math.random() > 0.5 ? "#ffcc00" : "#ff2200")
+      });
+    }
+
+    // --------------------------------------------------------------------------
+    // 3. Renderização no Canvas 2D (Física & Gráficos Incandescentes)
+    // --------------------------------------------------------------------------
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+    let width = 0, height = 0;
+    let wavePhase = 0;
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      width = rect.width;
+      height = rect.height;
+      canvas.width = width * window.devicePixelRatio;
+      canvas.height = height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function drawLavaBackground(now) {
+      // Gradiente de fundo de caverna vulcânica
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+      bgGrad.addColorStop(0, '#0a0302');
+      bgGrad.addColorStop(0.5, '#190602');
+      bgGrad.addColorStop(1, '#2d0801');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      // Lago de lava no fundo subindo conforme lavaLevelProgress
+      const baseLavaY = height * (0.85 - lavaLevelProgress * 0.35);
+
+      // Ondas senoidais de magma incandescente
+      ctx.save();
+      for (let layer = 0; layer < 3; layer++) {
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+        const yOffset = baseLavaY + layer * 22;
+        ctx.lineTo(0, yOffset);
+
+        for (let x = 0; x <= width; x += 15) {
+          const waveY = Math.sin((x * 0.015) + wavePhase + (layer * 1.5)) * (8 + layer * 4) +
+                        Math.cos((x * 0.025) - wavePhase * 0.7) * 5;
+          ctx.lineTo(x, yOffset + waveY);
+        }
+
+        ctx.lineTo(width, height);
+        ctx.closePath();
+
+        if (layer === 0) {
+          ctx.fillStyle = 'rgba(255, 60, 0, 0.45)';
+        } else if (layer === 1) {
+          ctx.fillStyle = 'rgba(255, 120, 0, 0.7)';
+        } else {
+          const grad = ctx.createLinearGradient(0, yOffset, 0, height);
+          grad.addColorStop(0, '#ffbb00');
+          grad.addColorStop(0.2, '#ff4400');
+          grad.addColorStop(1, '#880000');
+          ctx.fillStyle = grad;
+        }
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // Gerar bolhas e brasas na lava
+      if (Math.random() < 0.18) {
+        const px = Math.random() * width;
+        const py = baseLavaY + Math.random() * 50;
+        spawnIncandescentParticle(px, py, false);
+        if (Math.random() < 0.3) audio.playBubblePop();
+      }
+    }
+
+    function drawPlatform(plat, now) {
+      if (plat.isSunk) return;
+
+      const px = width * plat.xRatio;
+      const py = height * plat.yRatio + plat.heightOffset;
+      const platW = width * 0.38;
+      const platH = 34;
+
+      ctx.save();
+      ctx.translate(px, py);
+
+      // Tremor de plataforma se estabilidade for baixa (< 30%)
+      if (plat.stability < 30) {
+        ctx.translate((Math.random() - 0.5) * 4, (Math.random() - 0.5) * 4);
+      }
+
+      // Propulsor a jato na base da plataforma
+      const thrustGlow = ctx.createRadialGradient(0, platH * 0.6, 2, 0, platH * 1.2, 28);
+      thrustGlow.addColorStop(0, plat.color);
+      thrustGlow.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = thrustGlow;
+      ctx.fillRect(-platW * 0.4, platH * 0.4, platW * 0.8, 30);
+
+      // Corpo da Plataforma (Obsidiana com borda Neon)
+      ctx.beginPath();
+      ctx.roundRect(-platW / 2, -platH / 2, platW, platH, 10);
+      const bodyGrad = ctx.createLinearGradient(0, -platH / 2, 0, platH / 2);
+      bodyGrad.addColorStop(0, '#22252a');
+      bodyGrad.addColorStop(1, '#0e1116');
+      ctx.fillStyle = bodyGrad;
+      ctx.fill();
+
+      // Borda Neon Iluminada
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = plat.color;
+      ctx.shadowColor = plat.color;
+      ctx.shadowBlur = plat.stability > 50 ? 15 : 6;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Escudo Defletor de Gift ativo
+      if (plat.shieldUntil > Date.now()) {
+        ctx.beginPath();
+        ctx.arc(0, 0, platW * 0.58, 0, Math.PI * 2);
+        ctx.strokeStyle = '#fde047';
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = '#eab308';
+        ctx.shadowBlur = 18;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+
+      // Ícone e Nome do Time
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 13px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`${plat.id} • ${plat.name.toUpperCase()}`, 0, -2);
+
+      // Avatares empilhados sobre a plataforma
+      const voterCount = Object.keys(plat.voters).length;
+      if (voterCount > 0) {
+        const displayAvatars = Math.min(voterCount, 4);
+        const startX = -((displayAvatars - 1) * 16) / 2;
+        for (let i = 0; i < displayAvatars; i++) {
+          ctx.beginPath();
+          ctx.arc(startX + (i * 16), -platH / 2 - 12, 7, 0, Math.PI * 2);
+          ctx.fillStyle = plat.secondaryColor;
+          ctx.fill();
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+      }
+
+      ctx.restore();
+    }
+
+    function drawParticles() {
+      ctx.save();
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8;
+        ctx.fill();
+      }
+      ctx.restore();
+      ctx.globalAlpha = 1.0;
+      ctx.shadowBlur = 0;
+    }
+
+    // --------------------------------------------------------------------------
+    // 4. Loop Principal de Física e Simulação
+    // --------------------------------------------------------------------------
+    let lastTime = performance.now();
+
+    function gameLoop(now) {
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+      wavePhase += dt * 3.5;
+
+      // Tremor de tela
+      if (screenShake > 0) {
+        screenShake = Math.max(0, screenShake - dt * 25);
+        const stage = document.getElementById('game-stage');
+        const offsetX = (Math.random() - 0.5) * screenShake;
+        const offsetY = (Math.random() - 0.5) * screenShake;
+        stage.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+      }
+
+      if (!isGameOver) {
+        // Atualização do Tempo e Nível da Lava
+        roundTimeRemaining = Math.max(0, roundTimeRemaining - dt);
+        document.getElementById('round-timer').textContent = roundTimeRemaining.toFixed(1) + 's';
+
+        // Lava sobe mais agressivamente na reta final
+        lavaLevelProgress = 1.0 - (roundTimeRemaining / ROUND_DURATION);
+        document.getElementById('lava-pct').textContent = Math.floor(lavaLevelProgress * 100) + '%';
+        document.getElementById('lava-meter-fill').style.width = (lavaLevelProgress * 100) + '%';
+
+        // Atualização de estabilidade das plataformas
+        let activeCount = 0;
+        let lastAlivePlatform = null;
+
+        PLATFORMS.forEach(plat => {
+          if (plat.isSunk) return;
+
+          // Se tiver escudo ativo, estabilidade não cai
+          if (plat.shieldUntil <= Date.now()) {
+            // Decaimento contínuo de estabilidade acelerado pelo nível da lava
+            const decayRate = 1.8 + (lavaLevelProgress * 3.5);
+            plat.stability = Math.max(0, plat.stability - dt * decayRate);
+          }
+
+          // Afundamento físico
+          const targetOffset = (100 - plat.stability) * 0.8;
+          plat.heightOffset += (targetOffset - plat.heightOffset) * dt * 4;
+
+          // Se a estabilidade zerar ou a lava engolir a plataforma
+          const currentY = height * plat.yRatio + plat.heightOffset;
+          const lavaSurfaceY = height * (0.85 - lavaLevelProgress * 0.35);
+
+          if (plat.stability <= 0 || currentY >= lavaSurfaceY) {
+            plat.isSunk = true;
+            document.getElementById(`card-${plat.id}`).classList.add('eliminated');
+            audio.playSubmergeSplash();
+            screenShake = 12;
+
+            // Erupção de partículas no ponto do naufrágio
+            for (let k = 0; k < 30; k++) {
+              spawnIncandescentParticle(width * plat.xRatio, currentY, true);
+            }
+            pushActivityFeed(`🔥 Plataforma ${plat.name} foi derretida pela lava!`);
+          } else {
+            activeCount++;
+            lastAlivePlatform = plat;
+          }
+
+          // Atualizar HUD
+          document.getElementById(`stab-val-${plat.id}`).textContent = Math.round(plat.stability) + '%';
+          document.getElementById(`stab-fill-${plat.id}`).style.width = plat.stability + '%';
+        });
+
+        // Condição de Vitória: 1 plataforma sobrevivente ou fim do cronômetro
+        if ((activeCount <= 1 || roundTimeRemaining <= 0) && !isGameOver) {
+          triggerVictory(lastAlivePlatform);
+        }
+      }
+
+      // Renderização
+      drawLavaBackground(now);
+      PLATFORMS.forEach(plat => drawPlatform(plat, now));
+      drawParticles();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // --------------------------------------------------------------------------
+    // 5. Mecânica de Votos, Presentes & Event Bus
+    // --------------------------------------------------------------------------
+    function handleGameEvent(data) {
+      if (isGameOver) return;
+      audio.init();
+
+      const type = data.type || "comment";
+      const comment = (data.comment || "").trim().toLowerCase();
+      const giftName = data.giftName || "";
+      const user = data.user || "@espectador";
+      const value = data.value || 1;
+
+      // Resolução de time votado
+      let teamId = null;
+      if (comment === "1" || comment === "ciano" || comment === "azul") teamId = 1;
+      else if (comment === "2" || comment === "roxo") teamId = 2;
+      else if (comment === "3" || comment === "ouro" || comment === "amarelo") teamId = 3;
+      else if (comment === "4" || comment === "verde") teamId = 4;
+      else if (data.team) teamId = parseInt(data.team);
+
+      if (type === "comment" && teamId) {
+        applyVote(teamId, user, 1);
+      } else if (type === "gift") {
+        // Se o gift veio sem time definido, aplica na plataforma com menor estabilidade ou no time do payload
+        const targetTeam = teamId || getPlatformNeedingHelp();
+        const boostVal = (giftName.toLowerCase().includes("lion") || value >= 500) ? 50 : 25;
+        applyGiftBoost(targetTeam, user, giftName, boostVal);
+      }
+    }
+
+    function applyVote(teamId, user, weight) {
+      const plat = PLATFORMS.find(p => p.id === teamId);
+      if (!plat || plat.isSunk) return;
+
+      plat.stability = Math.min(100, plat.stability + 2.5 * weight);
+      plat.votes += weight;
+      plat.voters[user] = (plat.voters[user] || 0) + weight;
+
+      audio.playSteamHiss();
+      pushActivityFeed(`💨 ${user} resfriou Plataforma ${plat.name}!`);
+
+      // Spawn fagulhas de propulsão
+      for (let i = 0; i < 5; i++) {
+        spawnIncandescentParticle(width * plat.xRatio, height * plat.yRatio + plat.heightOffset, false);
+      }
+    }
+
+    function applyGiftBoost(teamId, user, giftName, boostVal) {
+      const plat = PLATFORMS.find(p => p.id === teamId);
+      if (!plat || plat.isSunk) return;
+
+      plat.stability = Math.min(100, plat.stability + boostVal);
+      plat.shieldUntil = Date.now() + 4500; // Escudo térmico de 4.5s
+      plat.votes += boostVal * 5;
+      plat.voters[user] = (plat.voters[user] || 0) + boostVal * 10;
+
+      audio.playEruptionSound();
+      screenShake = 15;
+      pushActivityFeed(`🛡️ ${user} enviou ${giftName}! ESCUDO TÉRMICO ativado!`);
+
+      // Drenar 10% de estabilidade das plataformas rivais
+      PLATFORMS.forEach(p => {
+        if (p.id !== teamId && !p.isSunk && p.shieldUntil <= Date.now()) {
+          p.stability = Math.max(5, p.stability - 12);
+        }
+      });
+    }
+
+    function getPlatformNeedingHelp() {
+      const alive = PLATFORMS.filter(p => !p.isSunk);
+      if (alive.length === 0) return 1;
+      alive.sort((a, b) => a.stability - b.stability);
+      return alive[0].id;
+    }
+
+    function triggerEruptionEvent() {
+      audio.init();
+      audio.playEruptionSound();
+      screenShake = 18;
+      for (let i = 0; i < 40; i++) {
+        spawnIncandescentParticle(Math.random() * width, height * 0.8, true);
+      }
+      pushActivityFeed("🌋 ERUPÇÃO VULCÂNICA! LAVA SUBINDO!");
+    }
+
+    function pushActivityFeed(text) {
+      const feed = document.getElementById('activity-feed');
+      const pill = document.createElement('div');
+      pill.className = 'feed-pill';
+      pill.textContent = text;
+      feed.appendChild(pill);
+      setTimeout(() => {
+        if (pill.parentNode) pill.parentNode.removeChild(pill);
+      }, 3500);
+    }
+
+    // --------------------------------------------------------------------------
+    // 6. Ciclo Fechado & Auto-Reset (5 Segundos)
+    // --------------------------------------------------------------------------
+    function triggerVictory(winnerPlatform) {
+      isGameOver = true;
+      audio.playVictoryFanfare();
+
+      const overlay = document.getElementById('victory-overlay');
+      const title = document.getElementById('winner-name');
+
+      if (winnerPlatform) {
+        title.textContent = `PLATAFORMA ${winnerPlatform.name.toUpperCase()} VENCEU!`;
+        title.style.color = winnerPlatform.secondaryColor;
+      } else {
+        // Encontrar quem sobreviveu mais tempo
+        PLATFORMS.sort((a, b) => b.stability - a.stability);
+        title.textContent = `PLATAFORMA ${PLATFORMS[0].name.toUpperCase()} SOBREVIVEU!`;
+        title.style.color = PLATFORMS[0].secondaryColor;
+      }
+
+      // Ranking MVP de doadores e sobreviventes
+      const allVoters = [];
+      PLATFORMS.forEach(p => {
+        for (const [u, pts] of Object.entries(p.voters)) {
+          allVoters.push({ user: u, points: pts, team: p.name });
+        }
+      });
+      allVoters.sort((a, b) => b.points - a.points);
+
+      document.getElementById('mvp-1').textContent = allVoters[0] ? `${allVoters[0].user} (+${allVoters[0].points} pts)` : "@sobrevivente_1 (+500)";
+      document.getElementById('mvp-2').textContent = allVoters[1] ? `${allVoters[1].user} (+${allVoters[1].points} pts)` : "@sobrevivente_2 (+300)";
+      document.getElementById('mvp-3').textContent = allVoters[2] ? `${allVoters[2].user} (+${allVoters[2].points} pts)` : "@sobrevivente_3 (+150)";
+
+      overlay.style.display = 'flex';
+
+      let count = 5;
+      const counterEl = document.getElementById('reset-counter');
+      const timerInterval = setInterval(() => {
+        count--;
+        if (counterEl) counterEl.textContent = count;
+        if (count <= 0) {
+          clearInterval(timerInterval);
+          resetRound();
+        }
+      }, 1000);
+    }
+
+    function resetRound() {
+      roundTimeRemaining = ROUND_DURATION;
+      lavaLevelProgress = 0;
+      isGameOver = false;
+      screenShake = 0;
+
+      PLATFORMS.forEach(plat => {
+        plat.stability = 100;
+        plat.heightOffset = 0;
+        plat.verticalSpeed = 0;
+        plat.votes = 0;
+        plat.isSunk = false;
+        plat.shieldUntil = 0;
+        plat.voters = {};
+        const card = document.getElementById(`card-${plat.id}`);
+        if (card) card.classList.remove('eliminated');
+        document.getElementById(`stab-val-${plat.id}`).textContent = '100%';
+        document.getElementById(`stab-fill-${plat.id}`).style.width = '100%';
+      });
+
+      document.getElementById('victory-overlay').style.display = 'none';
+      document.getElementById('activity-feed').innerHTML = '';
+      document.getElementById('lava-pct').textContent = '0%';
+      document.getElementById('lava-meter-fill').style.width = '0%';
+    }
+
+    // --------------------------------------------------------------------------
+    // 7. Motor Anti-Silêncio (Simulação Autônoma)
+    // --------------------------------------------------------------------------
+    const mockUsers = ["@lava_master", "@magma_survivor", "@cyber_walker", "@neon_phoenix", "@vulkan_hero", "@pyro_streamer"];
+    setInterval(() => {
+      if (isGameOver) return;
+      const randomTeam = Math.floor(Math.random() * 4) + 1;
+      const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+      handleGameEvent({
+        type: "comment",
+        comment: randomTeam.toString(),
+        user: randomUser
+      });
+    }, 2500);
+
+    // --------------------------------------------------------------------------
+    // 8. Integração V5 Broadcaster & Debug Controls
+    // --------------------------------------------------------------------------
+    try {
+      const channel = new BroadcastChannel('v5_broadcaster_games');
+      channel.onmessage = (e) => handleGameEvent(e.data);
+    } catch (e) {
+      console.warn("BroadcastChannel offline:", e);
+    }
+
+    window.addEventListener('v5_event', (e) => {
+      if (e.detail) handleGameEvent(e.detail);
+    });
+
+    function toggleDebug(show) {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.style.display = (show !== undefined) ? (show ? 'flex' : 'none') : (drawer.style.display === 'flex' ? 'none' : 'flex');
+    }
+
+    function toggleDebugOnClick(e) {
+      if (e.detail === 3) toggleDebug(); // Triplo clique abre debug
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') toggleDebug();
+    });
+
+    function sendMockAction(type, val, user, giftVal = 1) {
+      if (type === 'comment') {
+        handleGameEvent({ type: 'comment', comment: val, user: user });
+      } else {
+        handleGameEvent({ type: 'gift', giftName: val, value: giftVal, user: user });
+      }
+    }
+
+    // Iniciar Loop
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>

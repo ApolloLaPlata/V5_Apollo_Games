@@ -3,16 +3,16 @@ import os
 bus_path = r"C:\Users\v5est\.gemini\antigravity\brain\9270dd65-160e-47e8-aea2-6a92fd50cfc6\antigravity_hive_bus.md"
 
 entry = """
-### [27/10/2026 - 12:00] CAPITANIA V5 GAMES - ETAPA 066 CONCLUÍDA: CARTUCHO #22 PONTE DE VIDRO QUEBRADIÇO
-- **Cartucho Homologado:** `22_ponte_de_vidro_quebradico` (Ponte de Vidro Quebradiço - Abismo 200m & Eliminação 9:16).
+### [27/10/2026 - 12:15] CAPITANIA V5 GAMES - ETAPAS 067 E 068 CONCLUÍDAS: CARTUCHO #23 SOBREVIVÊNCIA NA LAVA
+- **Cartucho Homologado:** `23_sobrevivencia_na_lava` (Sobrevivência na Lava - Plataformas & Erupções Incandescentes 9:16).
 - **Inovações de Engenharia:**
-  1. Travessia de 8 degraus duplos sobre o precipício neon com perspectiva 2.5D vertical e névoa atmosférica abissal.
-  2. Votação dividida 50/50 em tempo real (comandos `1` / `esq` vs `2` / `dir`) com barra de votos volumétrica no degrau ativo.
-  3. Síntese procedural Web Audio API: estilhaçamento agudo de vidro temperado via cluster oscilador de 1200-3400Hz com envelope exponencial, grito Doppler descendente (450Hz -> 80Hz) de queda no abismo e sino de avanço seguro.
-  4. Revelação raio-X de Gifts: presentes revelam instantaneamente a placa correta com glow dourado cintilante e escudo de proteção.
-  5. Pódio de sobreviventes com nomes de espectadores que votaram no caminho correto até a chegada.
-- **Sincronização:** Total de 21 cartuchos homologados e sincronizados no Broadcaster (`v5_games_manifest.json`).
-- **Próximas Etapas:** Etapas 067 & 068 — Forjamento do Cartucho #23: Sobrevivência na Lava (Plataformas que afundam com erupções incandescentes).
+  1. 4 plataformas de obsidiana neon com física de flutuabilidade e estabilidade térmica (Ciano, Roxo, Ouro, Verde) afundando progressivamente sob a subida do nível de lava.
+  2. Sistema vetorial de partículas incandescentes (Etapa 068): brasas flutuantes, fagulhas de propulsores e jatos piroclásticos no naufrágio.
+  3. Síntese procedural de áudio (Web Audio API - Etapa 068): borbulhamento contínuo de magma com filtro passa-baixo a 140Hz, pop orgânico de bolhas estourando (160Hz -> 45Hz), estrondo vulcânico com sub-grave de 40Hz e chiado de vapor criogênico a 3200Hz.
+  4. Presentes ativam Escudo Térmico / Domo Criogênico por 4.5s com drenagem de estabilidade das plataformas rivais.
+  5. Ciclo fechado de 45 segundos com tela de vitória, pódio dos maiores defensores e reinício automático em 5s.
+- **Sincronização:** Total de 22 cartuchos homologados e sincronizados no Broadcaster (`v5_games_manifest.json`).
+- **Próximas Etapas:** Etapas 069 & 070 — Testes de balanceamento de tempo/adrenalina e homologação final da Fase 7.
 """
 
 if os.path.exists(bus_path):
