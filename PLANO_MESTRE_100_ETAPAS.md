@@ -170,7 +170,7 @@
 - [x] **Etapa 092:** Forjamento do Cartucho #37: Torre de Blocos Equilibrada (Jenga vertical onde presentes colocam blocos de aço e comentários removem blocos de madeira).
 - [x] **Etapa 093:** Forjamento do Cartucho #38: Fuga da Prisão Espacial (Astronauta subindo com jetpack desviando de lasers acionados pelo chat adversário).
 - [x] **Etapa 094:** Forjamento do Cartucho #39: Alvo Móvel dos Snipers (Dardos e flechas disparados no timing certo em direção a alvos circulares concêntricos).
-- [ ] **Etapa 095:** Forjamento do Cartucho #40: Duelo de Mágicos Neon (Magias de fogo vs gelo colidindo no centro com disputa de poder em tempo real).
+- [x] **Etapa 095:** Forjamento do Cartucho #40: Duelo de Mágicos Neon (Magias de fogo vs gelo colidindo no centro com disputa de poder em tempo real).
 - [ ] **Etapa 096:** Consolidação e auditoria do Manifesto Global `v5_games_manifest.json` com metadados completos de todos os 40 cartuchos.
 - [ ] **Etapa 097:** Geração de miniaturas (thumbnails em SVG vetorial) automáticas para o seletor de jogos do console Broadcaster.
 - [ ] **Etapa 098:** Atualização do script `scripts/sync_to_broadcaster.py` com verificação de integridade MD5 e relatório de despacho.

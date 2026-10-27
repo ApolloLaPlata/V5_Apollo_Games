@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Duelo de Mágicos Neon (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container Vertical 9:16 Estrito */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 50%, #0c0a1a 0%, #030712 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+    }
+
+    /* Safe Zone Topo (140px) */
+    .top-safe-zone {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 140px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 16px 8px 16px;
+      background: linear-gradient(180deg, rgba(3, 7, 18, 0.98) 0%, rgba(3, 7, 18, 0.85) 75%, rgba(3, 7, 18, 0) 100%);
+      pointer-events: none;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-pill {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #f43f5e;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+      animation: pulseDot 1.5s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .round-timer-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 3px 10px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    .timer-val {
+      color: #ffd700;
+      font-size: 14px;
+    }
+
+    /* Placar de Dominação e Polarização (Fogo vs Gelo) */
+    .magic-hud-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 6px 14px;
+      backdrop-filter: blur(8px);
+    }
+
+    .faction-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .faction-fogo {
+      align-items: flex-start;
+      color: #ff4500;
+    }
+
+    .faction-gelo {
+      align-items: flex-end;
+      color: #00e5ff;
+    }
+
+    .faction-name {
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .faction-score {
+      font-size: 18px;
+      font-weight: 900;
+      font-family: monospace;
+    }
+
+    /* Barra de Polarização Central Superior */
+    .power-tug-meter {
+      flex: 1;
+      height: 12px;
+      background: #1e1b4b;
+      margin: 0 16px;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.8);
+      position: relative;
+    }
+
+    .meter-fogo {
+      height: 100%;
+      background: linear-gradient(90deg, #ff0055, #ff6a00);
+      transition: width 0.15s ease-out;
+      box-shadow: 0 0 10px #ff4500;
+    }
+
+    .meter-gelo {
+      height: 100%;
+      background: linear-gradient(90deg, #00d4ff, #8000ff);
+      transition: width 0.15s ease-out;
+      box-shadow: 0 0 10px #00e5ff;
+    }
+
+    /* Canvas Central de Duelo */
+    #duel-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Safe Zone Base (180px) */
+    .bottom-safe-zone {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 180px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 8px 14px 14px 14px;
+      background: linear-gradient(0deg, rgba(3, 7, 18, 0.98) 0%, rgba(3, 7, 18, 0.88) 75%, rgba(3, 7, 18, 0) 100%);
+      pointer-events: auto;
+    }
+
+    /* Botoes de Comando do Chat */
+    .chat-commands-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .cmd-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 6px;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 2px solid;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(6px);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .cmd-btn:active {
+      transform: scale(0.96);
+    }
+
+    .btn-fogo {
+      border-color: #ff4500;
+      box-shadow: 0 0 15px rgba(255, 69, 0, 0.35);
+    }
+
+    .btn-gelo {
+      border-color: #00e5ff;
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.35);
+    }
+
+    .cmd-key {
+      font-size: 15px;
+      font-weight: 900;
+      font-family: monospace;
+      letter-spacing: 1px;
+    }
+
+    .btn-fogo .cmd-key { color: #ff6a00; }
+    .btn-gelo .cmd-key { color: #00e5ff; }
+
+    .cmd-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* Barra de Super Gifts */
+    .gifts-reward-bar {
+      display: flex;
+      justify-content: space-around;
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 8px;
+      padding: 5px 8px;
+      font-size: 10px;
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+
+    .gift-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .gift-icon {
+      font-size: 14px;
+    }
+
+    .gift-effect {
+      color: #ffd700;
+      font-weight: 800;
+    }
+
+    /* Modal de Vitória e Fim de Rodada */
+    #victory-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(3, 7, 18, 0.88);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .podium-box {
+      width: 90%;
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid #ffd700;
+      border-radius: 16px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.35);
+      animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .trophy-badge {
+      font-size: 52px;
+      filter: drop-shadow(0 0 16px #ffd700);
+      animation: floatTrophy 2s infinite ease-in-out;
+    }
+
+    @keyframes floatTrophy {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .winner-title {
+      font-size: 22px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .fogo-win { color: #ff4500; text-shadow: 0 0 15px #ff4500; }
+    .gelo-win { color: #00e5ff; text-shadow: 0 0 15px #00e5ff; }
+
+    .final-score-val {
+      font-size: 28px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #ffd700;
+    }
+
+    .mvp-donor-card {
+      width: 100%;
+      background: rgba(255, 215, 0, 0.08);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .reset-countdown {
+      font-size: 12px;
+      color: #94a3b8;
+      font-family: monospace;
+    }
+
+    /* Painel de Depuração Local do Streamer (Tecla D) */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(3, 7, 18, 0.98);
+      border-top: 2px solid #f43f5e;
+      padding: 12px;
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.8);
+    }
+
+    .debug-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #f43f5e;
+      font-family: monospace;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .dbg-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-radius: 4px;
+      padding: 6px 2px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Safe Zone Topo (140px) -->
+    <header class="top-safe-zone">
+      <div class="header-row">
+        <div class="brand-pill">
+          <span class="live-dot"></span>
+          <span>V5 NEON MAGES 9:16</span>
+        </div>
+        <div class="round-timer-badge">
+          <span>DUELO:</span>
+          <span class="timer-val" id="time-display">00:45</span>
+        </div>
+      </div>
+
+      <!-- Placar de Dominação e Polarização (Fogo vs Gelo) -->
+      <div class="magic-hud-strip">
+        <div class="faction-info faction-fogo">
+          <span class="faction-name">🔥 PYRO (1)</span>
+          <span class="faction-score" id="score-fogo">50%</span>
+        </div>
+
+        <div class="power-tug-meter">
+          <div class="meter-fogo" id="meter-fogo" style="width: 50%;"></div>
+          <div class="meter-gelo" id="meter-gelo" style="width: 50%;"></div>
+        </div>
+
+        <div class="faction-info faction-gelo">
+          <span class="faction-name">❄️ CRYO (2)</span>
+          <span class="faction-score" id="score-gelo">50%</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central do Duelo de Raios -->
+    <canvas id="duel-canvas" width="1080" height="1920"></canvas>
+
+    <!-- Safe Zone Base (180px) -->
+    <footer class="bottom-safe-zone">
+      <!-- Comandos do Chat -->
+      <div class="chat-commands-box">
+        <button class="cmd-btn btn-fogo" onclick="castSpell('fogo', 1, '@teste')">
+          <span class="cmd-key">1 ou FOGO</span>
+          <span class="cmd-label">Empurrar Feixe 🔥</span>
+        </button>
+        <button class="cmd-btn btn-gelo" onclick="castSpell('gelo', 1, '@teste')">
+          <span class="cmd-key">2 ou GELO</span>
+          <span class="cmd-label">Empurrar Feixe ❄️</span>
+        </button>
+      </div>
+
+      <!-- Barra de Gifts -->
+      <div class="gifts-reward-bar">
+        <div class="gift-item">
+          <span class="gift-icon">🌹</span>
+          <span>Rosa (Rose): <span class="gift-effect">+15% Choque Elemental</span></span>
+        </div>
+        <div class="gift-item">
+          <span class="gift-icon">🦁</span>
+          <span>Leão (Lion): <span class="gift-effect">+40% Meteoro/Titã</span></span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Modal de Vitória e Fim de Rodada -->
+    <div id="victory-modal">
+      <div class="podium-box">
+        <div class="trophy-badge" id="podium-icon">🏆</div>
+        <div class="winner-title" id="podium-winner-title">MAGO DO FOGO VENCEU!</div>
+        <div class="final-score-val" id="podium-score-val">DOMINAÇÃO SUPREMA</div>
+
+        <div class="mvp-donor-card">
+          <span style="color:#ffd700; font-weight:800;">👑 ARQUIMAGO MVP:</span>
+          <span id="podium-mvp-user" style="font-weight:900; color:#fff;">@MagoSupremo (12.400 pts)</span>
+        </div>
+
+        <div class="reset-countdown" id="podium-countdown">NOVO DUELO EM 5S...</div>
+      </div>
+    </div>
+
+    <!-- Painel de Depuração Local do Streamer (Tecla D) -->
+    <div id="debug-drawer">
+      <div class="debug-header">
+        <span>GAVETA DE DEPURAÇÃO DO STREAMER (TECLA D)</span>
+        <button onclick="toggleDebugDrawer()" style="background:none; border:none; color:#f43f5e; font-size:12px; cursor:pointer;">FECHAR [X]</button>
+      </div>
+      <div class="debug-grid">
+        <button class="dbg-btn" onclick="castSpell('fogo', 2, '@streamer')">Voto Fogo (+2)</button>
+        <button class="dbg-btn" onclick="castSpell('gelo', 2, '@streamer')">Voto Gelo (+2)</button>
+        <button class="dbg-btn" onclick="triggerMagicGift('fogo', 'Rose', '@streamer')">Rosa Fogo (+15%)</button>
+        <button class="dbg-btn" onclick="triggerMagicGift('gelo', 'Rose', '@streamer')">Rosa Gelo (+15%)</button>
+        <button class="dbg-btn" onclick="triggerMagicGift('fogo', 'Lion', '@streamer')">Leão Fogo (+40%)</button>
+        <button class="dbg-btn" onclick="triggerMagicGift('gelo', 'Lion', '@streamer')">Leão Gelo (+40%)</button>
+        <button class="dbg-btn" onclick="finalizeDuel('fogo')">Vitória Fogo</button>
+        <button class="dbg-btn" onclick="finalizeDuel('gelo')">Vitória Gelo</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- SINTETIZADOR PROCEDURAL DE ÁUDIO (WEB AUDIO API - ZERO ARQUIVOS EXTERNOS) ---
+    class ProceduralAudioEngine {
+      constructor() {
+        this.ctx = null;
+      }
+
+      ensureContext() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Pulso de Magia de Fogo (Rugido com estalo de plasma)
+      playFireSurge() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.exponentialRampToValueAtTime(50, now + 0.18);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(800, now);
+        filter.frequency.exponentialRampToValueAtTime(200, now + 0.18);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.22);
+      }
+
+      // Pulso de Magia de Gelo (Estalo cristalino agudo)
+      playIceSurge() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, now);
+        osc.frequency.exponentialRampToValueAtTime(1760, now + 0.12);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.16);
+      }
+
+      // Colisão contínua / Onda de choque no centro
+      playClashImpact() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.exponentialRampToValueAtTime(80, now + 0.25);
+
+        gain.gain.setValueAtTime(0.28, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+
+      // Super Gift (Rosa ou Leão) — Explosão Sísmica
+      playSuperGiftRoar() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        // Ruído subsônico
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 0.6);
+
+        gain.gain.setValueAtTime(0.45, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.7);
+      }
+
+      // Fanfarra triunfal de encerramento
+      playVictoryFanfare() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const notes = [
+          { f: 523.25, d: 0.16 }, // C5
+          { f: 659.25, d: 0.16 }, // E5
+          { f: 783.99, d: 0.16 }, // G5
+          { f: 1046.50, d: 0.60 } // C6
+        ];
+
+        let currTime = this.ctx.currentTime + 0.05;
+        notes.forEach(n => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(n.f, currTime);
+
+          gain.gain.setValueAtTime(0, currTime);
+          gain.gain.linearRampToValueAtTime(0.35, currTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, currTime + n.d);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(currTime);
+          osc.stop(currTime + n.d + 0.05);
+          currTime += n.d + 0.04;
+        });
+      }
+    }
+
+    const audio = new ProceduralAudioEngine();
+
+    // --- CONFIGURAÇÃO DO DUELO E FÍSICA DE ENERGIA (1080 x 1920) ---
+    const canvas = document.getElementById('duel-canvas');
+    const ctx = canvas.getContext('2d');
+
+    const ROUND_DURATION_SEC = 45;
+    const MAGE_FIRE_Y = 320;
+    const MAGE_ICE_Y = 1580;
+    const MIN_CLASH_Y = 480;
+    const MAX_CLASH_Y = 1420;
+    const MID_CLASH_Y = (MIN_CLASH_Y + MAX_CLASH_Y) / 2; // 950
+
+    const state = {
+      roundActive: true,
+      timeRemaining: ROUND_DURATION_SEC,
+      powerBalance: 0.5, // 0.0 = Mago do Fogo venceu (empurrou tudo p/ baixo), 1.0 = Mago do Gelo venceu (p/ cima)
+      targetPowerBalance: 0.5,
+      clashY: MID_CLASH_Y,
+      clashIntensity: 1.0,
+      votesFogo: 0,
+      votesGelo: 0,
+      screenShake: 0,
+      particles: [],
+      lightningArcs: [],
+      confetti: [],
+      lastInteractionTime: performance.now(),
+      resetCountdown: 5,
+      donors: {},
+      winner: null
+    };
+
+    function initDuelGame() {
+      state.roundActive = true;
+      state.timeRemaining = ROUND_DURATION_SEC;
+      state.powerBalance = 0.5;
+      state.targetPowerBalance = 0.5;
+      state.clashY = MID_CLASH_Y;
+      state.clashIntensity = 1.0;
+      state.votesFogo = 0;
+      state.votesGelo = 0;
+      state.screenShake = 0;
+      state.particles = [];
+      state.lightningArcs = [];
+      state.confetti = [];
+      state.resetCountdown = 5;
+      state.donors = {};
+      state.winner = null;
+
+      document.getElementById('victory-modal').style.display = 'none';
+      updateHUD();
+    }
+
+    // --- CONJURAÇÃO DE MAGIA PELO CHAT ---
+    function castSpell(element, power = 1, user = "@mago") {
+      if (!state.roundActive) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@espectador";
+      state.donors[userKey] = (state.donors[userKey] || 0) + power * 10;
+
+      // Fogo empurra a viga para BAIXO (diminui powerBalance ou aumenta Y do choque)
+      // Definimos: 0.0 = Feixe de Fogo domina totalmente (empurra até Mago de Gelo na base, Y cresce)
+      // 1.0 = Feixe de Gelo domina totalmente (empurra até Mago de Fogo no topo, Y decresce)
+      const delta = 0.012 * power;
+
+      if (element === 'fogo') {
+        state.targetPowerBalance = Math.min(1.0, state.targetPowerBalance + delta);
+        state.votesFogo += power;
+        audio.playFireSurge();
+        spawnMagicBurst(540, MAGE_FIRE_Y + 70, '#ff4500', 12);
+      } else {
+        state.targetPowerBalance = Math.max(0.0, state.targetPowerBalance - delta);
+        state.votesGelo += power;
+        audio.playIceSurge();
+        spawnMagicBurst(540, MAGE_ICE_Y - 70, '#00e5ff', 12);
+      }
+
+      state.clashIntensity = Math.min(2.5, state.clashIntensity + 0.15);
+      state.screenShake = Math.min(12, state.screenShake + 2);
+      updateHUD();
+      checkInstantWin();
+    }
+
+    // --- SUPER GIFTS (ROSA E LEÃO) ---
+    function triggerMagicGift(element, giftName, user = "@super_mago") {
+      if (!state.roundActive) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@super_mago";
+      const isLion = (giftName === 'Lion' || giftName === 'Foguete');
+      const boostAmount = isLion ? 0.35 : 0.15;
+      const points = isLion ? 1000 : 200;
+
+      state.donors[userKey] = (state.donors[userKey] || 0) + points;
+      audio.playSuperGiftRoar();
+      state.screenShake = isLion ? 30 : 18;
+
+      if (element === 'fogo') {
+        state.targetPowerBalance = Math.min(1.0, state.targetPowerBalance + boostAmount);
+        state.votesFogo += isLion ? 50 : 20;
+        spawnMagicBurst(540, state.clashY, '#ff2200', isLion ? 60 : 30);
+      } else {
+        state.targetPowerBalance = Math.max(0.0, state.targetPowerBalance - boostAmount);
+        state.votesGelo += isLion ? 50 : 20;
+        spawnMagicBurst(540, state.clashY, '#00f0ff', isLion ? 60 : 30);
+      }
+
+      state.clashIntensity = 3.0;
+      updateHUD();
+      checkInstantWin();
+    }
+
+    function checkInstantWin() {
+      if (!state.roundActive) return;
+      if (state.targetPowerBalance >= 0.95) {
+        finalizeDuel('fogo');
+      } else if (state.targetPowerBalance <= 0.05) {
+        finalizeDuel('gelo');
+      }
+    }
+
+    // --- LEI 3: MOTOR ANTI-SILÊNCIO (< 3s) ---
+    const MOCK_WIZARDS = [
+      "@ignis_flame", "@frost_blade", "@pyro_lord",
+      "@cryo_queen", "@holding_sorcerer", "@arcane_master"
+    ];
+
+    function runAntiSilence() {
+      const now = performance.now();
+      if (now - state.lastInteractionTime > 2200 && state.roundActive) {
+        state.lastInteractionTime = now;
+        const randomUser = MOCK_WIZARDS[Math.floor(Math.random() * MOCK_WIZARDS.length)];
+        const elem = Math.random() < 0.5 ? 'fogo' : 'gelo';
+        castSpell(elem, 1, randomUser);
+
+        // 8% de chance de presente orgânico
+        if (Math.random() < 0.08) {
+          triggerMagicGift(elem, 'Rose', randomUser);
+        }
+      }
+    }
+
+    // --- PARTÍCULAS E EFEITOS DE VAPOR/FAÍSCA ---
+    function spawnMagicBurst(x, y, color, count = 20) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 12 + 4;
+        state.particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * spd,
+          vy: Math.sin(angle) * spd,
+          size: Math.random() * 7 + 3,
+          color: color,
+          alpha: 1.0,
+          decay: Math.random() * 0.04 + 0.03
+        });
+      }
+    }
+
+    function spawnClashSparks(y) {
+      // Faíscas de fogo e gelo espirrando do ponto de choque central
+      for (let i = 0; i < 4; i++) {
+        const isFogo = Math.random() < 0.5;
+        const angle = isFogo ? (Math.random() * Math.PI - Math.PI / 2) : (Math.random() * Math.PI + Math.PI / 2);
+        const spd = Math.random() * 10 + 6;
+        state.particles.push({
+          x: 540 + (Math.random() - 0.5) * 60,
+          y: y + (Math.random() - 0.5) * 20,
+          vx: Math.cos(angle) * spd * 1.5,
+          vy: Math.sin(angle) * spd,
+          size: Math.random() * 6 + 2,
+          color: isFogo ? '#ff4500' : '#00e5ff',
+          alpha: 1.0,
+          decay: Math.random() * 0.05 + 0.04
+        });
+      }
+    }
+
+    function spawnConfetti() {
+      const colors = ['#ff4500', '#ff0055', '#00e5ff', '#ffd700', '#ffffff', '#a855f7'];
+      for (let i = 0; i < 90; i++) {
+        state.confetti.push({
+          x: Math.random() * 1080,
+          y: Math.random() * 600,
+          vx: (Math.random() - 0.5) * 7,
+          vy: Math.random() * 6 + 3,
+          rot: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 14,
+          w: Math.random() * 14 + 8,
+          h: Math.random() * 7 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1.0
+        });
+      }
+    }
+
+    // --- LEI 5: CICLO FECHADO & AUTO-RESET EM 5s ---
+    function finalizeDuel(winnerParam) {
+      if (!state.roundActive) return;
+      state.roundActive = false;
+
+      let winningFaction = winnerParam;
+      if (!winningFaction) {
+        winningFaction = (state.powerBalance >= 0.5) ? 'fogo' : 'gelo';
+      }
+      state.winner = winningFaction;
+
+      audio.playVictoryFanfare();
+      spawnConfetti();
+
+      // Cálculo de MVP
+      let topUser = "@MagoSupremo";
+      let topPts = 0;
+      for (const [user, pts] of Object.entries(state.donors)) {
+        if (pts > topPts) {
+          topPts = pts;
+          topUser = user;
+        }
+      }
+
+      const modal = document.getElementById('victory-modal');
+      const title = document.getElementById('podium-winner-title');
+      const scoreVal = document.getElementById('podium-score-val');
+      const mvpCard = document.getElementById('podium-mvp-user');
+
+      if (winningFaction === 'fogo') {
+        title.innerHTML = "🔥 MAGO DO FOGO VENCEU!";
+        title.className = "winner-title fogo-win";
+        scoreVal.innerHTML = `${Math.round(state.powerBalance * 100)}% DOMINAÇÃO PYRO`;
+      } else {
+        title.innerHTML = "❄️ MAGO DO GELO VENCEU!";
+        title.className = "winner-title gelo-win";
+        scoreVal.innerHTML = `${Math.round((1 - state.powerBalance) * 100)}% DOMINAÇÃO CRYO`;
+      }
+
+      mvpCard.innerHTML = `${topUser} (${topPts} pts)`;
+      modal.style.display = 'flex';
+
+      // Auto-Reset 5s
+      state.resetCountdown = 5;
+      const countEl = document.getElementById('podium-countdown');
+      const interval = setInterval(() => {
+        state.resetCountdown--;
+        if (countEl) countEl.innerHTML = `NOVO DUELO EM ${state.resetCountdown}S...`;
+        if (state.resetCountdown <= 0) {
+          clearInterval(interval);
+          initDuelGame();
+        }
+      }, 1000);
+    }
+
+    function updateHUD() {
+      const pctFogo = Math.round(state.powerBalance * 100);
+      const pctGelo = 100 - pctFogo;
+
+      document.getElementById('score-fogo').innerHTML = `${pctFogo}%`;
+      document.getElementById('score-gelo').innerHTML = `${pctGelo}%`;
+      document.getElementById('meter-fogo').style.width = `${pctFogo}%`;
+      document.getElementById('meter-gelo').style.width = `${pctGelo}%`;
+
+      const m = Math.floor(state.timeRemaining / 60);
+      const s = Math.floor(state.timeRemaining % 60);
+      document.getElementById('time-display').innerHTML = 
+        `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    // --- FÍSICA E ANIMAÇÃO ---
+    let lastTimestamp = performance.now();
+
+    function updateGame(dt) {
+      runAntiSilence();
+
+      if (state.roundActive) {
+        state.timeRemaining -= dt;
+        if (state.timeRemaining <= 0) {
+          state.timeRemaining = 0;
+          finalizeDuel();
+        }
+
+        // Interpolação suave de poder
+        state.powerBalance += (state.targetPowerBalance - state.powerBalance) * 0.12;
+
+        // Posição de colisão correspondente ao balanço de poder:
+        // 0.0 (Gelo vence) -> Y vai para MIN_CLASH_Y (topo)
+        // 1.0 (Fogo vence) -> Y vai para MAX_CLASH_Y (base)
+        state.clashY = MIN_CLASH_Y + state.powerBalance * (MAX_CLASH_Y - MIN_CLASH_Y);
+
+        // Amortecimento de intensidade e tremor
+        state.clashIntensity += (1.0 - state.clashIntensity) * 0.08;
+        if (state.screenShake > 0) {
+          state.screenShake = Math.max(0, state.screenShake - dt * 25);
+        }
+
+        spawnClashSparks(state.clashY);
+      }
+
+      // Atualização de partículas
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const p = state.particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+        if (p.alpha <= 0) {
+          state.particles.splice(i, 1);
+        }
+      }
+
+      // Atualização de confetes
+      for (let i = state.confetti.length - 1; i >= 0; i--) {
+        const c = state.confetti[i];
+        c.x += c.vx;
+        c.y += c.vy;
+        c.rot += c.rotSpeed;
+        if (c.y > 1920) {
+          c.y = -20;
+          c.x = Math.random() * 1080;
+        }
+      }
+    }
+
+    // --- RENDERIZAÇÃO DOS MAGOS E FEIXES DE ENERGIA ---
+    function render() {
+      ctx.save();
+
+      // Screen Shake
+      if (state.screenShake > 0) {
+        const sx = (Math.random() - 0.5) * state.screenShake;
+        const sy = (Math.random() - 0.5) * state.screenShake;
+        ctx.translate(sx, sy);
+      }
+
+      // Fundo Cósmico da Arena Mágica
+      ctx.fillStyle = '#030712';
+      ctx.fillRect(0, 0, 1080, 1920);
+
+      drawBackgroundRunicCircle();
+
+      // 1. Feixe de Fogo (Descendente: Mago do Topo -> Clash Point)
+      drawFireBeam(540, MAGE_FIRE_Y + 70, 540, state.clashY);
+
+      // 2. Feixe de Gelo (Ascendente: Mago da Base -> Clash Point)
+      drawIceBeam(540, MAGE_ICE_Y - 70, 540, state.clashY);
+
+      // 3. Orbe de Colisão e Choque de Energia Central
+      drawClashOrb(540, state.clashY);
+
+      // 4. Desenho dos Dois Magos
+      drawFireMage(540, MAGE_FIRE_Y);
+      drawIceMage(540, MAGE_ICE_Y);
+
+      // 5. Partículas e Confetes
+      drawParticles();
+      if (!state.roundActive) {
+        drawConfetti();
+      }
+
+      ctx.restore();
+    }
+
+    function drawBackgroundRunicCircle() {
+      ctx.save();
+      const time = performance.now() * 0.0006;
+      ctx.translate(540, 950);
+      ctx.rotate(time);
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(0, 0, 360, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(0, 0, 480, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Linhas radiantes runicas
+      for (let i = 0; i < 12; i++) {
+        const rad = (i * Math.PI * 2) / 12;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(rad) * 320, Math.sin(rad) * 320);
+        ctx.lineTo(Math.cos(rad) * 480, Math.sin(rad) * 480);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Desenho do Mago do Fogo (Topo)
+    function drawFireMage(x, y) {
+      ctx.save();
+      const floatY = Math.sin(performance.now() * 0.004) * 8;
+      ctx.translate(x, y + floatY);
+
+      // Aura flamejante externa
+      const aura = ctx.createRadialGradient(0, 0, 20, 0, 0, 95);
+      aura.addColorStop(0, 'rgba(255, 69, 0, 0.6)');
+      aura.addColorStop(0.5, 'rgba(255, 0, 85, 0.25)');
+      aura.addColorStop(1, 'rgba(255, 69, 0, 0)');
+      ctx.fillStyle = aura;
+      ctx.beginPath();
+      ctx.arc(0, 0, 95, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Manto / Túnica do Mago
+      ctx.fillStyle = '#1e0505';
+      ctx.strokeStyle = '#ff4500';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(-45, 60);
+      ctx.lineTo(45, 60);
+      ctx.lineTo(25, -20);
+      ctx.lineTo(-25, -20);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Capuz Místico
+      ctx.fillStyle = '#ff2200';
+      ctx.beginPath();
+      ctx.arc(0, -25, 30, Math.PI, 0, false);
+      ctx.lineTo(0, -65);
+      ctx.closePath();
+      ctx.fill();
+
+      // Olhos Brilhantes Carmesim
+      ctx.fillStyle = '#ffd700';
+      ctx.shadowColor = '#ffd700';
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.arc(-10, -22, 4, 0, Math.PI * 2);
+      ctx.arc(10, -22, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Orbe de Fogo Flutuante nas Mãos
+      const fireOrb = ctx.createRadialGradient(0, 45, 5, 0, 45, 30);
+      fireOrb.addColorStop(0, '#ffffff');
+      fireOrb.addColorStop(0.3, '#ffd700');
+      fireOrb.addColorStop(0.7, '#ff4500');
+      fireOrb.addColorStop(1, 'rgba(255, 69, 0, 0)');
+      ctx.fillStyle = fireOrb;
+      ctx.beginPath();
+      ctx.arc(0, 45, 30, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // Desenho do Mago do Gelo (Base)
+    function drawIceMage(x, y) {
+      ctx.save();
+      const floatY = Math.sin(performance.now() * 0.004 + Math.PI) * 8;
+      ctx.translate(x, y + floatY);
+
+      // Aura criogênica externa
+      const aura = ctx.createRadialGradient(0, 0, 20, 0, 0, 95);
+      aura.addColorStop(0, 'rgba(0, 229, 255, 0.6)');
+      aura.addColorStop(0.5, 'rgba(128, 0, 255, 0.25)');
+      aura.addColorStop(1, 'rgba(0, 229, 255, 0)');
+      ctx.fillStyle = aura;
+      ctx.beginPath();
+      ctx.arc(0, 0, 95, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Manto / Túnica Glacial
+      ctx.fillStyle = '#050f1e';
+      ctx.strokeStyle = '#00e5ff';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(-45, -60);
+      ctx.lineTo(45, -60);
+      ctx.lineTo(25, 20);
+      ctx.lineTo(-25, 20);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Capuz Místico
+      ctx.fillStyle = '#0088ff';
+      ctx.beginPath();
+      ctx.arc(0, 25, 30, 0, Math.PI, false);
+      ctx.lineTo(0, 65);
+      ctx.closePath();
+      ctx.fill();
+
+      // Olhos Brilhantes Ciano
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#00e5ff';
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.arc(-10, 22, 4, 0, Math.PI * 2);
+      ctx.arc(10, 22, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Cristal de Gelo Flutuante nas Mãos
+      const iceOrb = ctx.createRadialGradient(0, -45, 5, 0, -45, 30);
+      iceOrb.addColorStop(0, '#ffffff');
+      iceOrb.addColorStop(0.3, '#00e5ff');
+      iceOrb.addColorStop(0.7, '#0055ff');
+      iceOrb.addColorStop(1, 'rgba(0, 229, 255, 0)');
+      ctx.fillStyle = iceOrb;
+      ctx.beginPath();
+      ctx.arc(0, -45, 30, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // Feixe de Plasma de Fogo Descendente
+    function drawFireBeam(x1, y1, x2, y2) {
+      ctx.save();
+      const beamW = 28 * state.clashIntensity;
+
+      // Glow externo
+      ctx.strokeStyle = 'rgba(255, 69, 0, 0.45)';
+      ctx.lineWidth = beamW * 2.2;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+
+      // Feixe principal com gradiente
+      const grad = ctx.createLinearGradient(x1, y1, x2, y2);
+      grad.addColorStop(0, '#ffd700');
+      grad.addColorStop(0.5, '#ff4500');
+      grad.addColorStop(1, '#ff0055');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = beamW;
+      ctx.stroke();
+
+      // Núcleo branco incandescente
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = beamW * 0.35;
+      ctx.stroke();
+
+      // Ondulações de energia ardente
+      const t = performance.now() * 0.02;
+      ctx.strokeStyle = 'rgba(255, 230, 0, 0.8)';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      for (let y = y1; y <= y2; y += 15) {
+        const offset = Math.sin(y * 0.05 + t) * (14 * state.clashIntensity);
+        if (y === y1) ctx.moveTo(x1 + offset, y);
+        else ctx.lineTo(x1 + offset, y);
+      }
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    // Feixe Criogênico de Gelo Ascendente
+    function drawIceBeam(x1, y1, x2, y2) {
+      ctx.save();
+      const beamW = 28 * state.clashIntensity;
+
+      // Glow externo
+      ctx.strokeStyle = 'rgba(0, 229, 255, 0.45)';
+      ctx.lineWidth = beamW * 2.2;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+
+      // Feixe principal com gradiente
+      const grad = ctx.createLinearGradient(x1, y1, x2, y2);
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(0.5, '#00e5ff');
+      grad.addColorStop(1, '#7c3aed');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = beamW;
+      ctx.stroke();
+
+      // Núcleo branco congelado
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = beamW * 0.35;
+      ctx.stroke();
+
+      // Cristais pontiagudos de gelo oscilando no feixe
+      const t = performance.now() * 0.02;
+      ctx.strokeStyle = 'rgba(200, 245, 255, 0.85)';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      for (let y = y1; y >= y2; y -= 15) {
+        const offset = Math.cos(y * 0.05 + t) * (14 * state.clashIntensity);
+        if (y === y1) ctx.moveTo(x1 + offset, y);
+        else ctx.lineTo(x1 + offset, y);
+      }
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    // Choque de Magias Central (Clash Orb)
+    function drawClashOrb(x, y) {
+      ctx.save();
+      const r = 55 * state.clashIntensity;
+
+      // Onda de choque radial externa
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 1.5, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Halo bicolore de colisão
+      const clashGrad = ctx.createRadialGradient(x, y, 10, x, y, r);
+      clashGrad.addColorStop(0, '#ffffff');
+      clashGrad.addColorStop(0.3, '#ffd700');
+      clashGrad.addColorStop(0.6, '#ff0055');
+      clashGrad.addColorStop(0.8, '#00e5ff');
+      clashGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+      ctx.fillStyle = clashGrad;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Linhas de tensão elétrica
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 3;
+      for (let i = 0; i < 6; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const len = r * (0.8 + Math.random() * 0.8);
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + Math.cos(ang) * len, y + Math.sin(ang) * len);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    function drawParticles() {
+      state.particles.forEach(p => {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.alpha);
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    function drawConfetti() {
+      state.confetti.forEach(c => {
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate((c.rot * Math.PI) / 180);
+        ctx.fillStyle = c.color;
+        ctx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+        ctx.restore();
+      });
+    }
+
+    // --- LOOP PRINCIPAL DE ANIMAÇÃO ---
+    function gameLoop(timestamp) {
+      const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.1);
+      lastTimestamp = timestamp;
+
+      updateGame(dt);
+      render();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // --- PROTOCOLO DE EVENTOS DO BROADCASTER & SDK ---
+    function initEventBus() {
+      try {
+        const channel = new BroadcastChannel('v5_broadcaster_games');
+        channel.onmessage = (event) => {
+          handleIncomingEvent(event.data);
+        };
+      } catch (e) {
+        console.warn("BroadcastChannel não suportado");
+      }
+
+      window.addEventListener('v5_event', (e) => {
+        if (e.detail) handleIncomingEvent(e.detail);
+      });
+    }
+
+    function handleIncomingEvent(payload) {
+      if (!payload) return;
+
+      const type = payload.type;
+      const comment = (payload.comment || "").toString().toLowerCase().trim();
+      const user = payload.user || "@espectador";
+      const giftName = payload.giftName || null;
+
+      // Parsing de Comentários / Votos
+      if (type === 'comment' || comment) {
+        if (comment === '1' || comment === 'fogo' || comment.includes('pyro') || comment.includes('vermelho')) {
+          castSpell('fogo', 1, user);
+        } else if (comment === '2' || comment === 'gelo' || comment.includes('cryo') || comment.includes('azul')) {
+          castSpell('gelo', 1, user);
+        }
+      }
+
+      // Parsing de Gifts
+      if (type === 'gift' || giftName) {
+        const targetTeam = (state.powerBalance >= 0.5) ? 'fogo' : 'gelo';
+        triggerMagicGift(targetTeam, giftName, user);
+      }
+    }
+
+    // --- GAVETA DE DEPURAÇÃO DO STREAMER ---
+    function toggleDebugDrawer() {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.style.display = (drawer.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        toggleDebugDrawer();
+      }
+    });
+
+    document.querySelector('.bottom-safe-zone').addEventListener('dblclick', () => {
+      toggleDebugDrawer();
+    });
+
+    // Início automático ao carregar
+    window.addEventListener('load', () => {
+      initDuelGame();
+      initEventBus();
+      requestAnimationFrame(gameLoop);
+    });
+  </script>
+</body>
+</html>

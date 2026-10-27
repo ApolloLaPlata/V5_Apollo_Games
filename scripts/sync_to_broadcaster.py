@@ -327,6 +327,14 @@ GAME_METADATA = {
         "commands": ["fogo", "1", "2", "3", "esq", "meio", "dir"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "40_duelo_de_magicos_neon": {
+        "name": "Duelo de Mágicos Neon",
+        "category": "batalha_polarizacao",
+        "description": "Duelo cósmico vertical 9:16 entre Arquimago do Fogo e Arquimago do Gelo com feixes colidindo no centro, empuxo por chat e Super Gifts",
+        "commands": ["1", "2", "fogo", "gelo", "pyro", "cryo"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 
