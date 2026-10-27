@@ -33,18 +33,34 @@
         like: [],
         round_start: [],
         round_end: [],
+        telemetry: [],
         any: []
       };
 
       this.channel = null;
       this.botTimer = null;
+      this.telemetryAnimId = null;
       this.lastEventTime = Date.now();
+
+      // Métricas de Telemetria e Desempenho (Etapa 004)
+      this.telemetryEnabled = options.telemetryEnabled !== undefined ? options.telemetryEnabled : true;
+      this.telemetryStats = {
+        fps: 60,
+        frameTimeMs: 16.6,
+        frameDrops: 0,
+        memoryMB: 0,
+        isHealthy: true
+      };
 
       this.initBroadcastChannel();
       this.initWindowListener();
 
       if (this.autoBotEnabled) {
         this.initAutoBot();
+      }
+
+      if (this.telemetryEnabled) {
+        this.initTelemetry();
       }
 
       // Notifica o ambiente sobre prontidão
@@ -236,6 +252,78 @@
       }, this.autoBotInterval);
     }
 
+    /**
+     * Monitor de Telemetria e Desempenho (60 FPS & CPU)
+     */
+    initTelemetry() {
+      let lastTime = performance.now();
+      let frames = 0;
+      let lastFpsUpdate = lastTime;
+      let totalDelta = 0;
+
+      const telemetryLoop = (now) => {
+        frames++;
+        const delta = now - lastTime;
+        totalDelta += delta;
+
+        // Se delta > 33.3ms, houve frame drop abaixo de 30 FPS
+        if (delta > 33.3) {
+          this.telemetryStats.frameDrops++;
+        }
+
+        lastTime = now;
+
+        // Atualização periódica de 1 em 1 segundo
+        if (now - lastFpsUpdate >= 1000) {
+          const fps = Math.round((frames * 1000) / (now - lastFpsUpdate));
+          const avgFrameTime = Number((totalDelta / frames).toFixed(1));
+
+          let memoryMB = 0;
+          if (typeof performance !== 'undefined' && performance.memory) {
+            memoryMB = Number((performance.memory.usedJSHeapSize / (1024 * 1024)).toFixed(1));
+          }
+
+          this.telemetryStats.fps = Math.min(60, fps);
+          this.telemetryStats.frameTimeMs = avgFrameTime;
+          this.telemetryStats.memoryMB = memoryMB;
+          this.telemetryStats.isHealthy = fps >= 50;
+
+          // Emite para inscritos locais
+          if (this.callbacks.telemetry) {
+            this.callbacks.telemetry.forEach(fn => fn(this.telemetryStats));
+          }
+
+          // Envia dados para o parent do Test Lab via postMessage
+          if (this.isIframe && window.parent) {
+            window.parent.postMessage({
+              type: 'TELEMETRY_STATS',
+              gameId: this.gameId,
+              stats: this.telemetryStats
+            }, '*');
+          }
+
+          frames = 0;
+          totalDelta = 0;
+          lastFpsUpdate = now;
+        }
+
+        this.telemetryAnimId = requestAnimationFrame(telemetryLoop);
+      };
+
+      this.telemetryAnimId = requestAnimationFrame(telemetryLoop);
+    }
+
+    onTelemetry(callback) {
+      if (this.callbacks.telemetry) {
+        this.callbacks.telemetry.push(callback);
+      }
+      return this;
+    }
+
+    getStats() {
+      return { ...this.telemetryStats };
+    }
+
     // Assinatura de Eventos
     on(type, callback) {
       if (this.callbacks[type]) {
@@ -295,6 +383,7 @@
 
     destroy() {
       if (this.botTimer) clearInterval(this.botTimer);
+      if (this.telemetryAnimId) cancelAnimationFrame(this.telemetryAnimId);
       if (this.channel) this.channel.close();
     }
   }

@@ -575,7 +575,7 @@
       <div class="panel-card">
         <div class="panel-header">
           <span class="panel-title">📱 Visualização & Safe Zones</span>
-          <span class="status-pill"><span class="pulse-dot"></span> 60 FPS</span>
+          <span class="status-pill" id="fps-pill"><span class="pulse-dot"></span> <span id="fps-text">60 FPS</span></span>
         </div>
 
         <div class="toggle-row">
@@ -866,8 +866,31 @@
 
     // Escuta de mensagens via window.postMessage do iframe
     window.addEventListener('message', (event) => {
-      if (event.data && event.data.type) {
-        logEvent('IFRAME_MSG', JSON.stringify(event.data));
+      if (event.data) {
+        if (event.data.type === 'TELEMETRY_STATS' && event.data.stats) {
+          const s = event.data.stats;
+          const pill = document.getElementById('fps-pill');
+          const text = document.getElementById('fps-text');
+          text.innerText = `${s.fps} FPS • ${s.frameTimeMs}ms`;
+          if (s.fps >= 55) {
+            pill.style.color = '#34d399';
+            pill.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+            pill.style.background = 'rgba(16, 185, 129, 0.15)';
+          } else if (s.fps >= 40) {
+            pill.style.color = '#fbbf24';
+            pill.style.borderColor = 'rgba(251, 191, 36, 0.4)';
+            pill.style.background = 'rgba(251, 191, 36, 0.15)';
+          } else {
+            pill.style.color = '#ef4444';
+            pill.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+            pill.style.background = 'rgba(239, 68, 68, 0.15)';
+          }
+          return;
+        }
+
+        if (event.data.type) {
+          logEvent('IFRAME_MSG', JSON.stringify(event.data));
+        }
       }
     });
   </script>
