@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-10-27T09:05:34.002145",
+  "timestamp": "2026-10-27T10:12:22.797599",
   "holding": "Holding V5 Apollo",
   "captaincy": "Capitania V5 Games",
   "destination": "E:\\MEUS PROGRAMAS\\V5_APOLLO_SITES\\V5_Apollo_Broadcaster\\frontend\\public\\games",
   "total_cartridges": 41,
   "total_files_verified": 84,
-  "total_bytes_transferred": 1861565,
+  "total_bytes_transferred": 1864652,
   "total_megabytes": 1.78,
-  "duration_seconds": 2.3,
+  "duration_seconds": 1.73,
   "md5_match_rate_percent": 100.0,
   "md5_mismatches": 0,
   "status": "HOMOLOGADO_DESPACHADO",
@@ -486,8 +486,8 @@
       "category": "artilharia_cinematica",
       "files": {
         "index.html": {
-          "md5": "a4f817029ce948187cf5692ba71885c2",
-          "size_bytes": 55178,
+          "md5": "3cff3d38fc1dbd2ab3f97a8b1a5d826b",
+          "size_bytes": 55619,
           "verified": true
         },
         "thumbnail.svg": {
@@ -504,8 +504,8 @@
       "category": "defesa_planetaria",
       "files": {
         "index.html": {
-          "md5": "571c6d52ac9a16f25875778294f297f3",
-          "size_bytes": 49385,
+          "md5": "f3dd9f76a132144cc9f72930999316cf",
+          "size_bytes": 49826,
           "verified": true
         },
         "thumbnail.svg": {
@@ -522,8 +522,8 @@
       "category": "arcade_navegacao",
       "files": {
         "index.html": {
-          "md5": "7a100f6a850752ed00a31a2b4c40d09c",
-          "size_bytes": 47206,
+          "md5": "2c66c241b784c133474f6637a78c03c1",
+          "size_bytes": 47647,
           "verified": true
         },
         "thumbnail.svg": {
@@ -540,8 +540,8 @@
       "category": "esportes_fisica",
       "files": {
         "index.html": {
-          "md5": "a8d573ea849bf3e1982d63bf9567ccbf",
-          "size_bytes": 42892,
+          "md5": "3fa1d1a42904b777358238509626b5b5",
+          "size_bytes": 43333,
           "verified": true
         },
         "thumbnail.svg": {
@@ -558,8 +558,8 @@
       "category": "esportes_penaltis",
       "files": {
         "index.html": {
-          "md5": "0fe821845e77ca6a80c2a693ff9eebe7",
-          "size_bytes": 47309,
+          "md5": "e81eddf1fe25b65cd95b26c9f968d642",
+          "size_bytes": 47750,
           "verified": true
         },
         "thumbnail.svg": {
@@ -576,8 +576,8 @@
       "category": "ritmo_musical",
       "files": {
         "index.html": {
-          "md5": "f804412807515d744a2b595e7e6e1df4",
-          "size_bytes": 42841,
+          "md5": "8c0e3565bf310ce6bdb18a643f0ad7d3",
+          "size_bytes": 43282,
           "verified": true
         },
         "thumbnail.svg": {
@@ -594,8 +594,8 @@
       "category": "habilidade_reflexo",
       "files": {
         "index.html": {
-          "md5": "a017d285e4100230cdae5f5d7721be58",
-          "size_bytes": 44382,
+          "md5": "d517abe07bf9f7e957ab593188764a13",
+          "size_bytes": 44823,
           "verified": true
         },
         "thumbnail.svg": {

@@ -1486,6 +1486,17 @@
       }
     });
 
+        // BroadcastChannel Inter-tab Sync
+    const channel = new BroadcastChannel('v5_broadcaster_games');
+    channel.onmessage = (e) => {
+      let d = e.data;
+      if (typeof d === 'string') {
+        try { d = JSON.parse(d); } catch (err) {}
+      }
+      if (d && (d.type || d.action || d.comment)) handleLiveCommand(d);
+    };
+    window.addEventListener('beforeunload', () => { try { channel.close(); } catch(e) {} });
+
     // Redundant direct bridges for standalone testing
     window.addEventListener('v5_event', (e) => {
       const d = e.detail || e.data;

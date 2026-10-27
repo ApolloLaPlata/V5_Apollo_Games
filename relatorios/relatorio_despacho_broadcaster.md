@@ -1,6 +1,6 @@
 # RELATÓRIO DE DESPACHO E SINCRONIZAÇÃO INDUSTRIAL
 **Holding V5 Apollo — Capitania V5 Games -> V5 Broadcaster**  
-*Data de Execução:* 27/10/2026 09:05:34  
+*Data de Execução:* 27/10/2026 10:12:22  
 *Destino de Produção:* `E:\MEUS PROGRAMAS\V5_APOLLO_SITES\V5_Apollo_Broadcaster\frontend\public\games`
 
 ---
@@ -10,10 +10,10 @@
 | :--- | :--- |
 | **Total de Cartuchos Despachados** | **41 cartuchos** |
 | **Arquivos Verificados com Hash MD5** | **84 arquivos** |
-| **Volume de Dados Transferido** | **1.78 MB (1,861,565 bytes)** |
+| **Volume de Dados Transferido** | **1.78 MB (1,864,652 bytes)** |
 | **Taxa de Integridade Criptográfica (MD5 Match)** | **100.0%** |
 | **Erros / Mismatches Detectados** | **0** |
-| **Tempo Total de Processamento** | **2.3 segundos** |
+| **Tempo Total de Processamento** | **1.73 segundos** |
 | **Status da Homologação** | **HOMOLOGADO_DESPACHADO** |
 
 ---
@@ -47,13 +47,13 @@
 | 24 | `23_sobrevivencia_na_lava` | Sobrevivência na Lava | `tensao_eliminacao` | `e37df443...` | `68896bf3...` | **VERIFIED** |
 | 25 | `24_campo_minado_neon` | Campo Minado Neon | `tabuleiro_coordenadas` | `bb8d4ef1...` | `a47b7420...` | **VERIFIED** |
 | 26 | `25_batalha_naval_live` | Batalha Naval da Live | `tabuleiro_coordenadas` | `962e37cf...` | `c3f899e6...` | **VERIFIED** |
-| 27 | `26_guerra_dos_tanques_neon` | Guerra dos Tanques Neon | `artilharia_cinematica` | `a4f81702...` | `324faeb4...` | **VERIFIED** |
-| 28 | `27_meteoro_defensor` | Meteoro Defensor | `defesa_planetaria` | `571c6d52...` | `e7b4b023...` | **VERIFIED** |
-| 29 | `28_labirinto_pacman_neon` | Labirinto do Pacman Neon | `arcade_navegacao` | `7a100f6a...` | `c7c634d0...` | **VERIFIED** |
-| 30 | `29_basquete_street_neon` | Basquete Street Neon | `esportes_fisica` | `a8d573ea...` | `2d2fff89...` | **VERIFIED** |
-| 31 | `30_gol_de_penalti_live` | Gol de Pênalti da Live | `esportes_penaltis` | `0fe82184...` | `129e91d1...` | **VERIFIED** |
-| 32 | `31_guitar_hero_neon` | Guitar Hero da Live | `ritmo_musical` | `f8044128...` | `04cbfd01...` | **VERIFIED** |
-| 33 | `32_corte_de_frutas_neon` | Corte de Frutas Neon | `habilidade_reflexo` | `a017d285...` | `3de04738...` | **VERIFIED** |
+| 27 | `26_guerra_dos_tanques_neon` | Guerra dos Tanques Neon | `artilharia_cinematica` | `3cff3d38...` | `324faeb4...` | **VERIFIED** |
+| 28 | `27_meteoro_defensor` | Meteoro Defensor | `defesa_planetaria` | `f3dd9f76...` | `e7b4b023...` | **VERIFIED** |
+| 29 | `28_labirinto_pacman_neon` | Labirinto do Pacman Neon | `arcade_navegacao` | `2c66c241...` | `c7c634d0...` | **VERIFIED** |
+| 30 | `29_basquete_street_neon` | Basquete Street Neon | `esportes_fisica` | `3fa1d1a4...` | `2d2fff89...` | **VERIFIED** |
+| 31 | `30_gol_de_penalti_live` | Gol de Pênalti da Live | `esportes_penaltis` | `e81eddf1...` | `129e91d1...` | **VERIFIED** |
+| 32 | `31_guitar_hero_neon` | Guitar Hero da Live | `ritmo_musical` | `8c0e3565...` | `04cbfd01...` | **VERIFIED** |
+| 33 | `32_corte_de_frutas_neon` | Corte de Frutas Neon | `habilidade_reflexo` | `d517abe0...` | `3de04738...` | **VERIFIED** |
 | 34 | `33_corrida_de_cavalos_retro` | Corrida de Cavalos Retrô | `apostas_corrida` | `8e04599a...` | `6eb19125...` | **VERIFIED** |
 | 35 | `34_pinball_galactico` | Pinball Galáctico | `arcade_pinball` | `68c7ac19...` | `bc82e55a...` | **VERIFIED** |
 | 36 | `35_quiz_frenetico_holding` | Quiz Frenético da Holding | `quiz_trivia` | `dd2267ff...` | `cb7a3e62...` | **VERIFIED** |
