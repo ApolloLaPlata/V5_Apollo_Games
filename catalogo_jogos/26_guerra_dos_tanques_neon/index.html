@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Guerra dos Tanques Neon (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 25%, #07192f 0%, #030b18 55%, #01040a 100%);
+      border: 1px solid rgba(0, 243, 255, 0.25);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(0, 243, 255, 0.15);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Vinheta e Grade Cibernética do Fundo */
+    #ambient-vignette {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.85);
+      z-index: 2;
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 12px 16px 6px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 10;
+      min-height: 140px;
+      background: linear-gradient(180deg, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0.7) 75%, transparent 100%);
+    }
+
+    .badge-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .live-pill {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+
+    .game-title {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #38bdf8;
+      text-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+      text-transform: uppercase;
+    }
+
+    .round-indicator {
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 700;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Placar Superior e Barras de Vida dos Tanques */
+    .hp-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 2px;
+    }
+
+    .tank-hud-box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .tank-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .team-alpha-name {
+      color: #00f3ff;
+      text-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
+    }
+
+    .team-omega-name {
+      color: #ff0077;
+      text-shadow: 0 0 8px rgba(255, 0, 119, 0.6);
+    }
+
+    .hp-bar-bg {
+      width: 100%;
+      height: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      position: relative;
+    }
+
+    .hp-bar-fill-alpha {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #00f3ff, #00a8ff);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.8);
+      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hp-bar-fill-omega {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #ff7700, #ff0077);
+      box-shadow: 0 0 10px rgba(255, 0, 119, 0.8);
+      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      float: right;
+    }
+
+    .tank-subtext {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    /* Centro: Indicador de Vento e Temporizador */
+    .telemetry-center-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 80px;
+    }
+
+    .wind-badge {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 8px;
+      padding: 3px 6px;
+      font-size: 10px;
+      font-weight: 900;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .timer-badge {
+      font-size: 11px;
+      font-weight: 900;
+      color: #facc15;
+      margin-top: 2px;
+    }
+
+    /* Canvas Central do Jogo */
+    #battle-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+    }
+
+    /* Notificação de Doador e Ataque Especial no Centro */
+    #action-toast {
+      position: absolute;
+      top: 148px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid #f59e0b;
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.5);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    #action-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Safe Zone Inferior (180px) */
+    .bottom-safe-zone {
+      padding: 10px 14px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      min-height: 180px;
+      background: linear-gradient(0deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.8) 75%, transparent 100%);
+    }
+
+    .command-guide-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      backdrop-filter: blur(8px);
+    }
+
+    .guide-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 900;
+      color: #f1f5f9;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .guide-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .cmd-box {
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .cmd-box.alpha {
+      background: rgba(0, 243, 255, 0.1);
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      color: #00f3ff;
+    }
+
+    .cmd-box.omega {
+      background: rgba(255, 0, 119, 0.1);
+      border: 1px solid rgba(255, 0, 119, 0.3);
+      color: #ff0077;
+    }
+
+    .cmd-tag {
+      font-weight: 900;
+      font-size: 11px;
+    }
+
+    .gift-benefit-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #fbbf24;
+    }
+
+    .recent-feed {
+      height: 24px;
+      overflow: hidden;
+      font-size: 10px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feed-avatar {
+      font-weight: 800;
+      color: #f8fafc;
+    }
+
+    /* Overlay de Vitória & Auto-Reset */
+    #victory-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(2, 6, 23, 0.92);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    #victory-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .trophy-glow {
+      font-size: 56px;
+      filter: drop-shadow(0 0 30px #f59e0b);
+      animation: floatTrophy 2s infinite ease-in-out;
+    }
+
+    @keyframes floatTrophy {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.05); }
+    }
+
+    .victory-title {
+      font-size: 24px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      text-align: center;
+    }
+
+    .victory-subtitle {
+      font-size: 12px;
+      color: #cbd5e1;
+      font-weight: 600;
+      text-align: center;
+      max-width: 80%;
+    }
+
+    .mvp-card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mvp-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #fbbf24;
+      letter-spacing: 1px;
+    }
+
+    .mvp-name {
+      font-size: 15px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .auto-reset-meter {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    /* Gaveta de Depuração Local (Tecla D ou duplo clique) */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(15, 23, 42, 0.98);
+      border-top: 2px solid #38bdf8;
+      padding: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    #debug-drawer.open {
+      display: flex;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 6px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .debug-btn:hover {
+      background: #334155;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Vinheta de iluminação atmosférica -->
+    <div id="ambient-vignette"></div>
+
+    <!-- Safe Zone Superior (140px) -->
+    <header class="top-header">
+      <div class="badge-bar">
+        <div class="live-pill">
+          <div class="live-dot"></div>
+          AO VIVO
+        </div>
+        <div class="game-title">GUERRA DOS TANQUES NEON</div>
+        <div class="round-indicator" id="round-number">RODADA #1</div>
+      </div>
+
+      <div class="hp-container">
+        <!-- Time Alpha (Ciano) -->
+        <div class="tank-hud-box">
+          <div class="tank-info-row">
+            <span class="team-alpha-name">ESQUADRÃO CIANO</span>
+            <span id="hp-alpha-text">1000 HP</span>
+          </div>
+          <div class="hp-bar-bg">
+            <div class="hp-bar-fill-alpha" id="hp-alpha-bar" style="width: 100%;"></div>
+          </div>
+          <div class="tank-subtext">
+            <span id="angle-alpha-text">Ângulo: 45°</span>
+            <span id="shield-alpha-text">Escudo: OFF</span>
+          </div>
+        </div>
+
+        <!-- Centro: Vento & Timer -->
+        <div class="telemetry-center-badge">
+          <div class="wind-badge" id="wind-badge">
+            <span id="wind-icon">◀</span>
+            <span id="wind-val">4 m/s</span>
+          </div>
+          <div class="timer-badge" id="fire-timer-badge">DISPARO: 3.5s</div>
+        </div>
+
+        <!-- Time Ômega (Magenta/Laranja) -->
+        <div class="tank-hud-box">
+          <div class="tank-info-row">
+            <span id="hp-omega-text">1000 HP</span>
+            <span class="team-omega-name">ESQUADRÃO MAGENTA</span>
+          </div>
+          <div class="hp-bar-bg">
+            <div class="hp-bar-fill-omega" id="hp-omega-bar" style="width: 100%;"></div>
+          </div>
+          <div class="tank-subtext">
+            <span id="shield-omega-text">Escudo: OFF</span>
+            <span id="angle-omega-text">Ângulo: 45°</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central 2D com Física de Artilharia e Terreno -->
+    <canvas id="battle-canvas" width="1080" height="1920"></canvas>
+
+    <!-- Toast de Notificação de Ataques & Super Gifts -->
+    <div id="action-toast">
+      <span id="toast-icon">🚀</span>
+      <span id="toast-text">MEGA MÍSSIL DISPARADO!</span>
+    </div>
+
+    <!-- Safe Zone Inferior (180px) -->
+    <footer class="bottom-safe-zone">
+      <div class="command-guide-card">
+        <div class="guide-title">
+          <span>COMANDOS DA LIVE (PÚBLICO É O CONTROLE)</span>
+          <span style="color: #38bdf8;">SEM TECLADO / SEM MOUSE</span>
+        </div>
+        <div class="guide-columns">
+          <div class="cmd-box alpha">
+            <span class="cmd-tag">DIGITE "1" OU "AZUL"</span>
+            <span>Vota na mira e dispara Tanque Ciano</span>
+            <span style="font-size: 8px; opacity: 0.8;">Ângulo: digite 30 a 80</span>
+          </div>
+          <div class="cmd-box omega">
+            <span class="cmd-tag">DIGITE "2" OU "VERMELHO"</span>
+            <span>Vota na mira e dispara Tanque Magenta</span>
+            <span style="font-size: 8px; opacity: 0.8;">Ângulo: digite 30 a 80</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gift-benefit-bar">
+        <span>🎁 PRESENTES / GIFTS:</span>
+        <span>SUPER MÍSSIL NUCLEAR (5x DANO) OU ESCUDO DE ENERGIA</span>
+      </div>
+
+      <div class="recent-feed" id="recent-feed">
+        <span>⚡ Transmissão:</span>
+        <span class="feed-avatar" id="feed-msg">Aguardando coordenadas dos generais do chat...</span>
+      </div>
+    </footer>
+
+    <!-- Overlay de Vitória & MVP -->
+    <div id="victory-overlay">
+      <div class="trophy-glow">🏆</div>
+      <div class="victory-title" id="winner-team-title">ESQUADRÃO CIANO VENCEU!</div>
+      <div class="victory-subtitle" id="winner-summary">O tanque inimigo foi completamente aniquilado pela artilharia pesada da live!</div>
+      <div class="mvp-card">
+        <div class="mvp-label">GENERAL DE ARTILHARIA (MVP)</div>
+        <div class="mvp-name" id="mvp-user-name">@artilheiro_mestre</div>
+      </div>
+      <div class="auto-reset-meter" id="auto-reset-countdown">Reiniciando campo de batalha em 5s...</div>
+    </div>
+
+    <!-- Gaveta de Depuração Local -->
+    <div id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #38bdf8; display: flex; justify-content: space-between;">
+        <span>PAINEL DE DEPURAÇÃO DO STREAMER (TECLA D)</span>
+        <button onclick="toggleDebugDrawer()" style="background:none; border:none; color:#fca5a5; cursor:pointer;">✕ Fechar</button>
+      </div>
+      <div class="debug-grid">
+        <button class="debug-btn" onclick="testVote('1')">Tiro Ciano (1)</button>
+        <button class="debug-btn" onclick="testVote('2')">Tiro Magenta (2)</button>
+        <button class="debug-btn" onclick="testAngle(1, 5)">Ciano Ângulo +5°</button>
+        <button class="debug-btn" onclick="testAngle(2, 5)">Magenta Ângulo +5°</button>
+        <button class="debug-btn" onclick="testGift('Rose', '1')">Rosa Ciano (Míssil)</button>
+        <button class="debug-btn" onclick="testGift('Lion', '2')">Leão Magenta (Escudo)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SDK V5 Live Event Bus -->
+  <script src="../../sdk/v5_live_game_sdk.js"></script>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE GAMES: GUERRA DOS TANQUES NEON (CARTUCHO #26)
+       Proporção: 9:16 Vertical Estrito (1080 x 1920 px)
+       Motor de Física 2D Balística com Parábolas, Terreno Procedural e Destruição
+       ========================================================================== */
+
+    // 1. SINTETIZADOR PROCEDURAL DE ÁUDIO (WEB AUDIO API PURA - ZERO .MP3/.WAV)
+    class NeonTankAudioSynth {
+      constructor() {
+        this.ctx = null;
+        this.isMuted = false;
+      }
+
+      initContext() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playCannonFire(isSuper = false) {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        // Recuo grave e punch sísmico
+        const startFreq = isSuper ? 160 : 120;
+        const endFreq = isSuper ? 25 : 30;
+        const duration = isSuper ? 0.45 : 0.3;
+
+        osc.type = isSuper ? 'sawtooth' : 'triangle';
+        osc.frequency.setValueAtTime(startFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
+
+        gain.gain.setValueAtTime(isSuper ? 0.9 : 0.6, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + duration);
+
+        // Ruído branco de deflagração
+        this.playPowderNoise(isSuper ? 0.35 : 0.2, isSuper ? 0.5 : 0.3);
+      }
+
+      playPowderNoise(duration, volume) {
+        if (!this.ctx || this.isMuted) return;
+        const bufferSize = Math.floor(this.ctx.sampleRate * duration);
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-3 * (i / bufferSize));
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(600, this.ctx.currentTime);
+        filter.frequency.exponentialRampToValueAtTime(120, this.ctx.currentTime + duration);
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(volume, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        noise.start();
+      }
+
+      playProjectileWhistle(progress) {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        // Breve silvo balístico descendente
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        const freq = 650 - progress * 350;
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(Math.max(150, freq), now);
+
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.linearRampToValueAtTime(0.001, now + 0.08);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.08);
+      }
+
+      playExplosion(isSuper = false) {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const duration = isSuper ? 0.8 : 0.5;
+
+        // Sub-grave de abalo sísmico
+        const sub = this.ctx.createOscillator();
+        const subGain = this.ctx.createGain();
+        sub.type = 'sine';
+        sub.frequency.setValueAtTime(isSuper ? 85 : 65, now);
+        sub.frequency.exponentialRampToValueAtTime(20, now + duration);
+
+        subGain.gain.setValueAtTime(isSuper ? 0.8 : 0.5, now);
+        subGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        sub.connect(subGain);
+        subGain.connect(this.ctx.destination);
+        sub.start(now);
+        sub.stop(now + duration);
+
+        // Ruído volumétrico de explosão
+        this.playPowderNoise(duration, isSuper ? 0.9 : 0.6);
+      }
+
+      playShieldDeflect() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.linearRampToValueAtTime(1320, now + 0.15);
+        osc.frequency.linearRampToValueAtTime(880, now + 0.3);
+
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+
+      playVictoryFanfare() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99]; // Dó, Mi, Sol, Dó5, Mi5, Sol5
+        const now = this.ctx.currentTime;
+
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const startTime = now + idx * 0.11;
+          const dur = 0.45;
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, startTime);
+
+          gain.gain.setValueAtTime(0.25, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + dur);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(startTime);
+          osc.stop(startTime + dur);
+        });
+      }
+    }
+
+    const sound = new NeonTankAudioSynth();
+
+    // 2. ESTADO DO JOGO E VARIÁVEIS DO CAMPO DE BATALHA
+    const STAGE_WIDTH = 1080;
+    const STAGE_HEIGHT = 1920;
+
+    const canvas = document.getElementById('battle-canvas');
+    const ctx = canvas.getContext('2d');
+
+    const state = {
+      round: 1,
+      isGameOver: false,
+      autoResetTimer: 5,
+      fireCooldown: 3.5, // Segundos até a próxima salva
+      currentTurn: 'alpha', // 'alpha' ou 'omega'
+      wind: 0, // em m/s (-15 a +15)
+      lastFrameTime: performance.now(),
+      gravity: 950, // px/s² no sistema virtual
+
+      tanks: {
+        alpha: {
+          x: 180,
+          y: 0,
+          hp: 1000,
+          maxHp: 1000,
+          angle: 45, // Graus apontando para a direita
+          power: 1250,
+          hasShield: false,
+          color: '#00f3ff',
+          name: 'Ciano',
+          scoreVotes: 0,
+          mvpUser: '@piloto_ciano'
+        },
+        omega: {
+          x: 900,
+          y: 0,
+          hp: 1000,
+          maxHp: 1000,
+          angle: 45, // Graus apontando para a esquerda
+          power: 1250,
+          hasShield: false,
+          color: '#ff0077',
+          name: 'Magenta',
+          scoreVotes: 0,
+          mvpUser: '@artilheiro_magenta'
+        }
+      },
+
+      projectiles: [],
+      particles: [],
+      shockwaves: [],
+      terrain: new Float32Array(STAGE_WIDTH),
+      topContributors: {}
+    };
+
+    // 3. GERAÇÃO PROCEDURAL DO TERRENO 2D NEON
+    function generateTerrain() {
+      // Criação de colina esquerda, vale no centro e colina direita
+      const baseHeight = 1200; // Nível base do solo
+      const freq1 = 0.003;
+      const freq2 = 0.006;
+      const seed = Math.random() * 1000;
+
+      for (let x = 0; x < STAGE_WIDTH; x++) {
+        // Harmônicas suaves de elevação
+        const h1 = Math.sin(x * freq1 + seed) * 160;
+        const h2 = Math.cos(x * freq2 + seed * 1.5) * 80;
+
+        // Platô esquerdo para o Tanque Alpha (x: 120 a 240)
+        let altitude = baseHeight + h1 + h2;
+
+        if (x >= 120 && x <= 240) {
+          altitude = 1280; // Platô fixo
+        } else if (x >= 840 && x <= 960) {
+          altitude = 1280; // Platô fixo do Ômega
+        }
+
+        state.terrain[x] = altitude;
+      }
+
+      // Posiciona os tanques exatamente sobre a superfície do terreno
+      state.tanks.alpha.y = state.terrain[state.tanks.alpha.x] - 14;
+      state.tanks.omega.y = state.terrain[state.tanks.omega.x] - 14;
+    }
+
+    // Criar cratera circular no terreno após impacto
+    function deformTerrain(impactX, impactY, radius) {
+      const startX = Math.max(0, Math.floor(impactX - radius));
+      const endX = Math.min(STAGE_WIDTH - 1, Math.ceil(impactX + radius));
+
+      for (let x = startX; x <= endX; x++) {
+        const dx = x - impactX;
+        const depth = Math.sqrt(Math.max(0, radius * radius - dx * dx));
+        if (impactY + depth > state.terrain[x]) {
+          state.terrain[x] = Math.min(STAGE_HEIGHT - 100, Math.max(state.terrain[x], impactY + depth));
+        }
+      }
+
+      // Reajustar altura dos tanques se o solo ceder
+      state.tanks.alpha.y = state.terrain[state.tanks.alpha.x] - 14;
+      state.tanks.omega.y = state.terrain[state.tanks.omega.x] - 14;
+    }
+
+    // Gerar novo vento para a rodada/turno
+    function randomizeWind() {
+      state.wind = Math.round((Math.random() * 24 - 12) * 10) / 10;
+      updateWindUI();
+    }
+
+    function updateWindUI() {
+      const badge = document.getElementById('wind-badge');
+      const val = document.getElementById('wind-val');
+      const icon = document.getElementById('wind-icon');
+
+      if (state.wind < 0) {
+        icon.innerText = '◀◀';
+        val.innerText = Math.abs(state.wind) + ' m/s';
+        badge.style.color = '#38bdf8';
+        badge.style.borderColor = 'rgba(56, 189, 248, 0.5)';
+      } else if (state.wind > 0) {
+        icon.innerText = '▶▶';
+        val.innerText = state.wind + ' m/s';
+        badge.style.color = '#f59e0b';
+        badge.style.borderColor = 'rgba(245, 158, 11, 0.5)';
+      } else {
+        icon.innerText = '●';
+        val.innerText = '0 m/s';
+        badge.style.color = '#94a3b8';
+      }
+    }
+
+    // 4. SISTEMA DE FÍSICA BALÍSTICA E PROJÉTEIS
+    class BallisticProjectile {
+      constructor(sourceTeam, x, y, angleDeg, power, isSuper = false, isCluster = false) {
+        this.sourceTeam = sourceTeam;
+        this.x = x;
+        this.y = y;
+        this.isSuper = isSuper;
+        this.isCluster = isCluster;
+        this.radius = isSuper ? 16 : 8;
+        this.history = [];
+        this.alive = true;
+
+        const rad = (angleDeg * Math.PI) / 180;
+        const dir = sourceTeam === 'alpha' ? 1 : -1;
+
+        // Velocidades balísticas iniciais
+        this.vx = Math.cos(rad) * power * dir;
+        this.vy = -Math.sin(rad) * power;
+        this.color = sourceTeam === 'alpha' ? '#00f3ff' : '#ff0077';
+        if (isSuper) this.color = '#fbbf24';
+
+        this.hasSplit = false;
+      }
+
+      update(dt) {
+        if (!this.alive) return;
+
+        // Adiciona rastro
+        this.history.push({ x: this.x, y: this.y });
+        if (this.history.length > 25) this.history.shift();
+
+        // Aplica vento contínuo e gravidade
+        this.vx += state.wind * 45 * dt;
+        this.vy += state.gravity * dt;
+
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+
+        // Cluster bomb se divide no ponto mais alto (vy passa de negativo para positivo)
+        if (this.isCluster && !this.hasSplit && this.vy > 0) {
+          this.hasSplit = true;
+          this.splitCluster();
+        }
+
+        // Sons de silvo em intervalos
+        if (Math.random() < 0.25) {
+          sound.playProjectileWhistle((this.y - 400) / 1000);
+        }
+
+        this.checkCollisions();
+      }
+
+      splitCluster() {
+        showToast('🚀 OGIVA DIVIDIDA EM 3 BOMBAS CLUSTER!');
+        for (let i = -1; i <= 1; i += 2) {
+          const sub = new BallisticProjectile(this.sourceTeam, this.x, this.y, 45, 1000, false, false);
+          sub.vx = this.vx + i * 250;
+          sub.vy = this.vy - 150;
+          sub.radius = 10;
+          state.projectiles.push(sub);
+        }
+      }
+
+      checkCollisions() {
+        // Colisão com as bordas laterais
+        if (this.x < -100 || this.x > STAGE_WIDTH + 100 || this.y > STAGE_HEIGHT + 100) {
+          this.alive = false;
+          return;
+        }
+
+        // 1. Colisão com o solo/terreno
+        const colX = Math.round(this.x);
+        if (colX >= 0 && colX < STAGE_WIDTH) {
+          const groundY = state.terrain[colX];
+          if (this.y >= groundY - this.radius) {
+            this.detonate(this.x, groundY, null);
+            return;
+          }
+        }
+
+        // 2. Colisão direta com os tanques
+        const targetTeam = this.sourceTeam === 'alpha' ? 'omega' : 'alpha';
+        const targetTank = state.tanks[targetTeam];
+
+        const dist = Math.hypot(this.x - targetTank.x, this.y - targetTank.y);
+        if (dist <= this.radius + 36) {
+          this.detonate(this.x, this.y, targetTeam);
+        }
+      }
+
+      detonate(x, y, directHitTeam) {
+        this.alive = false;
+        const blastRadius = this.isSuper ? 120 : 65;
+
+        // Deforma o terreno no impacto
+        deformTerrain(x, y, blastRadius * 0.7);
+
+        // Som de explosão
+        sound.playExplosion(this.isSuper);
+
+        // Criação de onda de choque visual
+        state.shockwaves.push(new Shockwave(x, y, blastRadius * 1.5, this.isSuper ? '#fbbf24' : '#38bdf8'));
+
+        // Partículas incandescentes e detritos
+        createExplosionParticles(x, y, this.isSuper ? 60 : 35, this.color);
+
+        // Abano de tela no estágio
+        shakeScreen(this.isSuper ? 18 : 8);
+
+        // Cálculo de Dano aos Tanques
+        ['alpha', 'omega'].forEach(teamKey => {
+          const tank = state.tanks[teamKey];
+          const dist = Math.hypot(x - tank.x, y - tank.y);
+
+          if (dist <= blastRadius) {
+            if (tank.hasShield) {
+              tank.hasShield = false;
+              updateShieldUI(teamKey);
+              sound.playShieldDeflect();
+              showToast(`🛡️ ESCUDO DO TANQUE ${tank.name.toUpperCase()} DEFLETIU O IMPACTO!`);
+              return;
+            }
+
+            // Proximidade determina o dano
+            const proximityFactor = Math.max(0.2, 1 - (dist / blastRadius));
+            let damage = Math.round((this.isSuper ? 480 : 260) * proximityFactor);
+
+            tank.hp = Math.max(0, tank.hp - damage);
+            updateHpUI(teamKey);
+
+            createFloatingText(tank.x, tank.y - 50, `-${damage} HP`, '#ef4444');
+
+            if (tank.hp <= 0 && !state.isGameOver) {
+              triggerVictory(this.sourceTeam);
+            }
+          }
+        });
+      }
+
+      draw(c) {
+        if (!this.alive) return;
+
+        // Desenha traçante neon
+        if (this.history.length > 1) {
+          c.save();
+          c.beginPath();
+          c.moveTo(this.history[0].x, this.history[0].y);
+          for (let i = 1; i < this.history.length; i++) {
+            c.lineTo(this.history[i].x, this.history[i].y);
+          }
+          c.strokeStyle = this.color;
+          c.lineWidth = this.radius * 0.8;
+          c.lineCap = 'round';
+          c.globalAlpha = 0.45;
+          c.shadowColor = this.color;
+          c.shadowBlur = 15;
+          c.stroke();
+          c.restore();
+        }
+
+        // Corpo do Projétil
+        c.save();
+        c.beginPath();
+        c.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        c.fillStyle = '#ffffff';
+        c.shadowColor = this.color;
+        c.shadowBlur = 20;
+        c.fill();
+
+        c.beginPath();
+        c.arc(this.x, this.y, this.radius * 1.4, 0, Math.PI * 2);
+        c.strokeStyle = this.color;
+        c.lineWidth = 3;
+        c.stroke();
+        c.restore();
+      }
+    }
+
+    // 5. ONDA DE CHOQUE & PARTÍCULAS
+    class Shockwave {
+      constructor(x, y, maxRadius, color) {
+        this.x = x;
+        this.y = y;
+        this.radius = 5;
+        this.maxRadius = maxRadius;
+        this.color = color;
+        this.alpha = 1;
+        this.alive = true;
+      }
+
+      update(dt) {
+        this.radius += (this.maxRadius - this.radius) * 12 * dt;
+        this.alpha -= 2.2 * dt;
+        if (this.alpha <= 0 || this.radius >= this.maxRadius - 2) {
+          this.alive = false;
+        }
+      }
+
+      draw(c) {
+        if (!this.alive) return;
+        c.save();
+        c.beginPath();
+        c.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        c.strokeStyle = this.color;
+        c.lineWidth = 6 * this.alpha;
+        c.globalAlpha = Math.max(0, this.alpha);
+        c.shadowColor = this.color;
+        c.shadowBlur = 15;
+        c.stroke();
+        c.restore();
+      }
+    }
+
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() * 2 - 1) * 350;
+        this.vy = (Math.random() * -1) * 450 - 50;
+        this.color = color;
+        this.radius = Math.random() * 5 + 2;
+        this.life = 1.0;
+        this.decay = Math.random() * 1.5 + 0.8;
+      }
+
+      update(dt) {
+        this.vy += 800 * dt; // Gravidade nas fagulhas
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        this.life -= this.decay * dt;
+      }
+
+      draw(c) {
+        if (this.life <= 0) return;
+        c.save();
+        c.beginPath();
+        c.arc(this.x, this.y, this.radius * this.life, 0, Math.PI * 2);
+        c.fillStyle = this.color;
+        c.globalAlpha = this.life;
+        c.shadowColor = this.color;
+        c.shadowBlur = 10;
+        c.fill();
+        c.restore();
+      }
+    }
+
+    function createExplosionParticles(x, y, count, color) {
+      for (let i = 0; i < count; i++) {
+        state.particles.push(new Particle(x, y, color));
+      }
+    }
+
+    // Textos Flutuantes de Dano
+    const floatingTexts = [];
+    function createFloatingText(x, y, text, color) {
+      floatingTexts.push({
+        x: x,
+        y: y,
+        text: text,
+        color: color,
+        alpha: 1.0,
+        vy: -70
+      });
+    }
+
+    function updateFloatingTexts(dt) {
+      for (let i = floatingTexts.length - 1; i >= 0; i--) {
+        const ft = floatingTexts[i];
+        ft.y += ft.vy * dt;
+        ft.alpha -= 1.2 * dt;
+        if (ft.alpha <= 0) {
+          floatingTexts.splice(i, 1);
+        }
+      }
+    }
+
+    function drawFloatingTexts(c) {
+      floatingTexts.forEach(ft => {
+        c.save();
+        c.font = '900 28px -apple-system, sans-serif';
+        c.fillStyle = ft.color;
+        c.globalAlpha = ft.alpha;
+        c.textAlign = 'center';
+        c.shadowColor = ft.color;
+        c.shadowBlur = 10;
+        c.fillText(ft.text, ft.x, ft.y);
+        c.restore();
+      });
+    }
+
+    // Efeito de Trepidação da Tela (Screen Shake)
+    let shakeIntensity = 0;
+    function shakeScreen(amount) {
+      shakeIntensity = amount;
+    }
+
+    // 6. RENDERIZAÇÃO DO TERRENO E DOS TANQUES NEON
+    function drawTerrain(c) {
+      c.save();
+      c.beginPath();
+      c.moveTo(0, STAGE_HEIGHT);
+      c.lineTo(0, state.terrain[0]);
+
+      for (let x = 1; x < STAGE_WIDTH; x++) {
+        c.lineTo(x, state.terrain[x]);
+      }
+
+      c.lineTo(STAGE_WIDTH, STAGE_HEIGHT);
+      c.closePath();
+
+      // Gradiente de Relevo Tecnológico Neon
+      const grad = c.createLinearGradient(0, 1000, 0, STAGE_HEIGHT);
+      grad.addColorStop(0, '#062644');
+      grad.addColorStop(0.3, '#031424');
+      grad.addColorStop(1, '#01050a');
+
+      c.fillStyle = grad;
+      c.fill();
+
+      // Borda luminosa do terreno
+      c.beginPath();
+      c.moveTo(0, state.terrain[0]);
+      for (let x = 1; x < STAGE_WIDTH; x++) {
+        c.lineTo(x, state.terrain[x]);
+      }
+      c.strokeStyle = '#00f3ff';
+      c.lineWidth = 4;
+      c.shadowColor = '#00f3ff';
+      c.shadowBlur = 15;
+      c.stroke();
+
+      // Linhas da grade isométrica do relevo
+      c.strokeStyle = 'rgba(0, 243, 255, 0.08)';
+      c.lineWidth = 2;
+      c.shadowBlur = 0;
+      for (let x = 40; x < STAGE_WIDTH; x += 60) {
+        c.beginPath();
+        c.moveTo(x, state.terrain[x]);
+        c.lineTo(x, STAGE_HEIGHT);
+        c.stroke();
+      }
+
+      c.restore();
+    }
+
+    function drawTank(c, teamKey) {
+      const tank = state.tanks[teamKey];
+      c.save();
+      c.translate(tank.x, tank.y);
+
+      const isAlpha = teamKey === 'alpha';
+      const dir = isAlpha ? 1 : -1;
+      const angleRad = (tank.angle * Math.PI) / 180;
+
+      // 1. Escudo Protetor de Energia Neon
+      if (tank.hasShield) {
+        c.save();
+        c.beginPath();
+        c.arc(0, -10, 48, 0, Math.PI * 2);
+        c.strokeStyle = '#38bdf8';
+        c.lineWidth = 4;
+        c.fillStyle = 'rgba(56, 189, 248, 0.15)';
+        c.shadowColor = '#38bdf8';
+        c.shadowBlur = 25;
+        c.fill();
+        c.stroke();
+        c.restore();
+      }
+
+      // 2. Fumaça de Alerta de Dano Crítico
+      if (tank.hp < 400 && Math.random() < 0.3) {
+        state.particles.push(new Particle(tank.x + (Math.random() * 20 - 10), tank.y - 20, '#64748b'));
+      }
+
+      // 3. Cano do Canhão Articulado
+      c.save();
+      c.translate(0, -16);
+      c.rotate(isAlpha ? -angleRad : angleRad);
+      c.fillStyle = '#ffffff';
+      c.shadowColor = tank.color;
+      c.shadowBlur = 12;
+      c.fillRect(0, -5, 42 * dir, 10);
+      c.strokeStyle = tank.color;
+      c.lineWidth = 2;
+      c.strokeRect(0, -5, 42 * dir, 10);
+      c.restore();
+
+      // 4. Torreta Central do Tanque
+      c.beginPath();
+      c.arc(0, -14, 16, 0, Math.PI * 2);
+      c.fillStyle = tank.color;
+      c.shadowColor = tank.color;
+      c.shadowBlur = 15;
+      c.fill();
+
+      // 5. Chassi e Blindagem
+      c.fillStyle = '#0f172a';
+      c.fillRect(-28, -8, 56, 14);
+      c.strokeStyle = tank.color;
+      c.lineWidth = 3;
+      c.strokeRect(-28, -8, 56, 14);
+
+      // 6. Lagartas e Rodas de Tração
+      c.fillStyle = '#020617';
+      c.fillRect(-34, 4, 68, 12);
+      c.strokeStyle = '#ffffff';
+      c.lineWidth = 2;
+      c.strokeRect(-34, 4, 68, 12);
+
+      // Rodas internas
+      for (let i = -24; i <= 24; i += 16) {
+        c.beginPath();
+        c.arc(i, 10, 4, 0, Math.PI * 2);
+        c.fillStyle = tank.color;
+        c.fill();
+      }
+
+      // Nome do Tanque no topo
+      c.font = '800 13px -apple-system, sans-serif';
+      c.fillStyle = '#ffffff';
+      c.textAlign = 'center';
+      c.shadowColor = tank.color;
+      c.shadowBlur = 8;
+      c.fillText(tank.name.toUpperCase(), 0, -42);
+
+      c.restore();
+    }
+
+    // 7. MECÂNICA DE DISPARO, VOTAÇÃO E CONTROLE
+    function fireTank(teamKey, isSuper = false, isCluster = false) {
+      if (state.isGameOver) return;
+
+      const tank = state.tanks[teamKey];
+      sound.playCannonFire(isSuper);
+
+      // Cria o projétil balístico na saída do cano
+      const rad = (tank.angle * Math.PI) / 180;
+      const dir = teamKey === 'alpha' ? 1 : -1;
+      const barrelLen = 42;
+      const spawnX = tank.x + Math.cos(rad) * barrelLen * dir;
+      const spawnY = tank.y - 16 - Math.sin(rad) * barrelLen;
+
+      const p = new BallisticProjectile(teamKey, spawnX, spawnY, tank.angle, tank.power, isSuper, isCluster);
+      state.projectiles.push(p);
+
+      // Efeito de recuo do tanque
+      tank.x -= dir * 8;
+      setTimeout(() => {
+        tank.x += dir * 8;
+      }, 100);
+
+      // Feedback visual e sonoro de disparo
+      createExplosionParticles(spawnX, spawnY, 15, tank.color);
+
+      showFeed(`🔥 Tanque ${tank.name} disparou a ${tank.angle}° com mira do chat!`);
+    }
+
+    function adjustAngle(teamKey, delta) {
+      const tank = state.tanks[teamKey];
+      tank.angle = Math.max(20, Math.min(80, tank.angle + delta));
+      updateAngleUI(teamKey);
+    }
+
+    function setDirectAngle(teamKey, targetAngle) {
+      const tank = state.tanks[teamKey];
+      tank.angle = Math.max(20, Math.min(80, targetAngle));
+      updateAngleUI(teamKey);
+    }
+
+    function updateAngleUI(teamKey) {
+      const el = document.getElementById(`angle-${teamKey}-text`);
+      if (el) el.innerText = `Ângulo: ${state.tanks[teamKey].angle}°`;
+    }
+
+    function updateHpUI(teamKey) {
+      const tank = state.tanks[teamKey];
+      const pct = Math.max(0, Math.min(100, (tank.hp / tank.maxHp) * 100));
+      const bar = document.getElementById(`hp-${teamKey}-bar`);
+      const txt = document.getElementById(`hp-${teamKey}-text`);
+
+      if (bar) bar.style.width = pct + '%';
+      if (txt) txt.innerText = tank.hp + ' HP';
+    }
+
+    function updateShieldUI(teamKey) {
+      const el = document.getElementById(`shield-${teamKey}-text`);
+      if (el) {
+        el.innerText = state.tanks[teamKey].hasShield ? 'Escudo: ON' : 'Escudo: OFF';
+        el.style.color = state.tanks[teamKey].hasShield ? '#38bdf8' : '#94a3b8';
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('action-toast');
+      const txt = document.getElementById('toast-text');
+      txt.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    function showFeed(msg, user = '') {
+      const feed = document.getElementById('feed-msg');
+      if (feed) {
+        feed.innerHTML = user ? `<strong>${user}</strong>: ${msg}` : msg;
+      }
+    }
+
+    // 8. FINALIZAÇÃO DA PARTIDA & CICLO FECHADO (AUTO-RESET)
+    function triggerVictory(winnerTeamKey) {
+      state.isGameOver = true;
+      sound.playVictoryFanfare();
+
+      const winnerTank = state.tanks[winnerTeamKey];
+      const loserKey = winnerTeamKey === 'alpha' ? 'omega' : 'alpha';
+      const loserTank = state.tanks[loserKey];
+
+      // Explosão terminal do perdedor
+      createExplosionParticles(loserTank.x, loserTank.y, 100, loserTank.color);
+      state.shockwaves.push(new Shockwave(loserTank.x, loserTank.y, 250, '#ef4444'));
+
+      const overlay = document.getElementById('victory-overlay');
+      const title = document.getElementById('winner-team-title');
+      const mvp = document.getElementById('mvp-user-name');
+      const countdown = document.getElementById('auto-reset-countdown');
+
+      title.innerText = `ESQUADRÃO ${winnerTank.name.toUpperCase()} VENCEU!`;
+      title.style.color = winnerTank.color;
+      mvp.innerText = winnerTank.mvpUser || '@artilheiro_mestre';
+
+      overlay.classList.add('active');
+
+      // Contagem de Auto-Reset de 5 segundos
+      state.autoResetTimer = 5;
+      const interval = setInterval(() => {
+        state.autoResetTimer--;
+        if (countdown) {
+          countdown.innerText = `Reiniciando campo de batalha em ${state.autoResetTimer}s...`;
+        }
+        if (state.autoResetTimer <= 0) {
+          clearInterval(interval);
+          resetMatch();
+        }
+      }, 1000);
+    }
+
+    function resetMatch() {
+      state.round++;
+      document.getElementById('round-number').innerText = `RODADA #${state.round}`;
+
+      state.isGameOver = false;
+      state.fireCooldown = 3.5;
+      state.tanks.alpha.hp = state.tanks.alpha.maxHp;
+      state.tanks.omega.hp = state.tanks.omega.maxHp;
+      state.tanks.alpha.hasShield = false;
+      state.tanks.omega.hasShield = false;
+      state.projectiles = [];
+      state.particles = [];
+      state.shockwaves = [];
+
+      updateHpUI('alpha');
+      updateHpUI('omega');
+      updateShieldUI('alpha');
+      updateShieldUI('omega');
+
+      randomizeWind();
+      generateTerrain();
+
+      document.getElementById('victory-overlay').classList.remove('active');
+      showFeed('Novo duelo de artilharia iniciado! Escolham seus ângulos!');
+    }
+
+    // 9. LOOP PRINCIPAL DE RENDERIZAÇÃO 60 FPS (CANVAS)
+    function gameLoop(now) {
+      const dt = Math.min(0.06, (now - state.lastFrameTime) / 1000);
+      state.lastFrameTime = now;
+
+      // Atualização de Temporizadores e Salvas Alternadas
+      if (!state.isGameOver) {
+        state.fireCooldown -= dt;
+        const timerBadge = document.getElementById('fire-timer-badge');
+        if (timerBadge) {
+          timerBadge.innerText = `DISPARO: ${Math.max(0, state.fireCooldown).toFixed(1)}s`;
+        }
+
+        // Quando o cronômetro bate zero, a salva de artilharia é disparada!
+        if (state.fireCooldown <= 0) {
+          state.fireCooldown = 3.5;
+          fireTank(state.currentTurn);
+          state.currentTurn = state.currentTurn === 'alpha' ? 'omega' : 'alpha';
+          randomizeWind();
+        }
+      }
+
+      // Trepidação da tela
+      let shakeX = 0;
+      let shakeY = 0;
+      if (shakeIntensity > 0) {
+        shakeX = (Math.random() * 2 - 1) * shakeIntensity;
+        shakeY = (Math.random() * 2 - 1) * shakeIntensity;
+        shakeIntensity = Math.max(0, shakeIntensity - 25 * dt);
+      }
+
+      ctx.clearRect(0, 0, STAGE_WIDTH, STAGE_HEIGHT);
+
+      ctx.save();
+      ctx.translate(shakeX, shakeY);
+
+      // Desenho do Terreno
+      drawTerrain(ctx);
+
+      // Desenho dos Dois Tanques
+      drawTank(ctx, 'alpha');
+      drawTank(ctx, 'omega');
+
+      // Atualização e Desenho dos Projéteis
+      for (let i = state.projectiles.length - 1; i >= 0; i--) {
+        const p = state.projectiles[i];
+        p.update(dt);
+        p.draw(ctx);
+        if (!p.alive) state.projectiles.splice(i, 1);
+      }
+
+      // Atualização e Desenho das Ondas de Choque
+      for (let i = state.shockwaves.length - 1; i >= 0; i--) {
+        const sw = state.shockwaves[i];
+        sw.update(dt);
+        sw.draw(ctx);
+        if (!sw.alive) state.shockwaves.splice(i, 1);
+      }
+
+      // Atualização e Desenho das Partículas
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const pt = state.particles[i];
+        pt.update(dt);
+        pt.draw(ctx);
+        if (pt.life <= 0) state.particles.splice(i, 1);
+      }
+
+      // Desenho de Textos de Dano
+      updateFloatingTexts(dt);
+      drawFloatingTexts(ctx);
+
+      ctx.restore();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // 10. INTEGRAÇÃO COM SDK V5 LIVE & PARSER DE CHAT
+    function handleLiveCommand(payload) {
+      if (!payload) return;
+      const user = payload.user || '@espectador';
+      const comment = (payload.comment || '').toString().toLowerCase().trim();
+      const giftName = payload.giftName || null;
+
+      // 1. Processamento de Presentes / Gifts (Super Ataques)
+      if (payload.type === 'gift' || giftName) {
+        const targetTeam = payload.team === 'B' || comment.includes('2') || comment.includes('vermelho') ? 'omega' : 'alpha';
+        const isDefensive = giftName === 'Lion' || giftName === 'Cap' || comment.includes('escudo');
+
+        if (isDefensive) {
+          state.tanks[targetTeam].hasShield = true;
+          updateShieldUI(targetTeam);
+          sound.playShieldDeflect();
+          showToast(`🛡️ ${user.toUpperCase()} ATIVOU ESCUDO PARA O TIME ${state.tanks[targetTeam].name.toUpperCase()}!`);
+        } else {
+          // Mega Míssil ou Bomba Cluster
+          const isCluster = giftName === 'Galaxy' || giftName === 'Universe' || (payload.value && payload.value >= 100);
+          fireTank(targetTeam, true, isCluster);
+          showToast(`🚀 ${user.toUpperCase()} DISPAROU MEGA MÍSSIL (SUPER GIFT)!`);
+        }
+
+        state.tanks[targetTeam].mvpUser = user;
+        showFeed(`Enviou ${giftName || 'Presente'} para o Esquadrão ${state.tanks[targetTeam].name}!`, user);
+        return;
+      }
+
+      // 2. Processamento de Comentários de Texto e Votação
+      let detectedTeam = null;
+      let detectedAngle = null;
+
+      // Verificação de Time
+      if (comment === '1' || comment.includes('azul') || comment.includes('ciano') || comment.includes('alpha')) {
+        detectedTeam = 'alpha';
+      } else if (comment === '2' || comment.includes('vermelho') || comment.includes('magenta') || comment.includes('laranja') || comment.includes('omega')) {
+        detectedTeam = 'omega';
+      }
+
+      // Verificação de ângulo digitado no chat (ex: "45", "60", "azul 55", "70 graus")
+      const angleMatch = comment.match(/\b([2-8][0-9])\b/);
+      if (angleMatch) {
+        detectedAngle = parseInt(angleMatch[1], 10);
+      }
+
+      // Aplicação dos comandos
+      if (detectedTeam) {
+        const team = state.tanks[detectedTeam];
+        team.scoreVotes++;
+        team.mvpUser = user;
+
+        if (detectedAngle !== null) {
+          setDirectAngle(detectedTeam, detectedAngle);
+          showFeed(`Ajustou mira do Tanque ${team.name} para ${detectedAngle}°!`, user);
+        } else {
+          // Voto simples aumenta levemente a precisão ou ajusta 2 graus
+          adjustAngle(detectedTeam, Math.random() < 0.5 ? 2 : -2);
+          showFeed(`Votou no Esquadrão ${team.name}!`, user);
+        }
+
+        // Se o comentário pedir tiro imediato ("fogo", "tiro", "bang", "pow")
+        if (comment.includes('fogo') || comment.includes('tiro') || comment.includes('pow')) {
+          fireTank(detectedTeam);
+        }
+      }
+    }
+
+    // Inicialização do SDK V5 Broadcaster
+    const sdk = new V5LiveSDK({
+      gameId: '26_guerra_dos_tanques_neon',
+      autoBotEnabled: true,
+      autoBotInterval: 2500,
+      autoBotSilenceThreshold: 3000
+    });
+
+    sdk.on('comment', (data) => handleLiveCommand(data));
+    sdk.on('gift', (data) => handleLiveCommand(data));
+    sdk.on('like', (data) => {
+      // Likes aumentam o vento ou dão micro empurrão
+      if (Math.random() < 0.2) {
+        state.wind = Math.round((state.wind + (Math.random() * 2 - 1)) * 10) / 10;
+        updateWindUI();
+      }
+    });
+
+    // 11. MOTOR ANTI-SILÊNCIO ORGÂNICO (LEI 3)
+    const mockUsers = ['@sniper_neon', '@general_chat', '@artilheiro_v5', '@bomba_patch', '@fogueteiro99', '@soldado_live'];
+    setInterval(() => {
+      if (state.isGameOver) return;
+      const now = Date.now();
+      if (now - sdk.lastEventTime > 2800) {
+        const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+        const team = Math.random() < 0.5 ? '1' : '2';
+        const randomAngle = Math.floor(Math.random() * 45) + 30; // 30 a 75 graus
+
+        handleLiveCommand({
+          type: 'comment',
+          user: randomUser,
+          comment: `${team} ${randomAngle}`
+        });
+      }
+    }, 2500);
+
+    // 12. GAVETA DE DEPURAÇÃO LOCAL (TECLA D OU DUPLO CLIQUE)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        toggleDebugDrawer();
+      }
+    });
+
+    document.getElementById('game-stage').addEventListener('dblclick', () => {
+      toggleDebugDrawer();
+    });
+
+    function toggleDebugDrawer() {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.classList.toggle('open');
+    }
+
+    function testVote(cmd) {
+      sound.initContext();
+      handleLiveCommand({
+        type: 'comment',
+        user: '@streamer_dev',
+        comment: cmd
+      });
+    }
+
+    function testAngle(teamNum, delta) {
+      sound.initContext();
+      const teamKey = teamNum === 1 ? 'alpha' : 'omega';
+      adjustAngle(teamKey, delta);
+    }
+
+    function testGift(giftName, teamNum) {
+      sound.initContext();
+      handleLiveCommand({
+        type: 'gift',
+        user: '@patrocinador_live',
+        giftName: giftName,
+        team: teamNum === 1 ? 'A' : 'B',
+        value: 10
+      });
+    }
+
+    // Inicialização da partida
+    window.addEventListener('DOMContentLoaded', () => {
+      generateTerrain();
+      randomizeWind();
+      requestAnimationFrame(gameLoop);
+    });
+
+  </script>
+</body>
+</html>

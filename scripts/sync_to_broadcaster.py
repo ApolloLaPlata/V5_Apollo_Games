@@ -215,6 +215,14 @@ GAME_METADATA = {
         "commands": ["A1", "B2", "C3", "D4", "fogo", "sonar"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "26_guerra_dos_tanques_neon": {
+        "name": "Guerra dos Tanques Neon",
+        "category": "artilharia_cinematica",
+        "description": "Disputa de artilharia 2D com parábolas de tiro, vento dinâmico, terreno destrutível, mega mísseis de gifts e escudos EMP",
+        "commands": ["1", "2", "azul", "vermelho", "fogo", "30", "45", "60", "75"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 
