@@ -136,4 +136,6 @@ O objetivo financeiro e técnico foi alcançado com um acervo proprietário de a
 - `scripts/test_md5_sync_report_98.py`: Validação criptográfica MD5 e auditoria dos relatórios de despacho JSON e Markdown (8/8 checks aprovados).
 - `scripts/test_general_sync_99.py`: Suíte de homologação da sincronização geral de 41 cartuchos e integração com `games_registry.json` e `v5_games_manifest.json` no Broadcaster (8/8 checks aprovados).
 - `scripts/test_milestone_etapa_100.py`: Suíte de validação do Marco das 100 Etapas e homologação total do catálogo em todos os subsistemas (7/7 checks aprovados).
+- `scripts/stress_test_render_profiling_101.js`: Profiler de 60.000 frames sob estresse multissistema com medição de V8 heap, frametimes e zero frame drops (99.73% headroom).
+- `scripts/test_stress_profiling_101.py`: Validação formal do relatório de estresse de renderização e telemetria V8 (9/9 checks aprovados).
 - `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo industrial com verificação MD5 bit-a-bit, gerador de manifestos espelhados e gerador de `games_registry.json` para o V5 Broadcaster.

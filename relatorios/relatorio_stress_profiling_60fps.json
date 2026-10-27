@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-10-27T12:28:39.492Z",
+  "engine": "V8 (Node.js v24.13.0)",
+  "total_frames_simulated": 60000,
+  "wall_clock_duration_seconds": 2.752,
+  "frametimes_ms": {
+    "min": 0.0107,
+    "avg": 0.04545133666666582,
+    "p50": 0.0347,
+    "p95": 0.0729,
+    "p99": 0.3211,
+    "max": 11.1973
+  },
+  "fps_metrics": {
+    "theoretical_fps": 22002,
+    "target_fps": 60,
+    "headroom_percent": 99.73,
+    "dropped_frames": 0,
+    "frame_drop_rate_percent": 0
+  },
+  "v8_memory_mb": {
+    "initial_heap": 4.72821044921875,
+    "peak_heap": 14.801353454589844,
+    "final_heap": 10.790733337402344,
+    "net_growth_mb": 6.062522888183594
+  },
+  "status": "HOMOLOGADO_60FPS"
+}
