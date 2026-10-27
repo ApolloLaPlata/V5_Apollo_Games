@@ -185,7 +185,7 @@
 - [x] **Etapa 103:** Verificação de isolamento total de rede (garantia de zero chamadas de CDN externa ou fontes externas em todos os 40 jogos).
 - [x] **Etapa 104:** Validação do Sintetizador Web Audio API em todos os cartuchos (ausência de nós de áudio órfãos e memory leaks de AudioContext).
 - [x] **Etapa 105:** Teste do Motor Anti-Silêncio em todos os 40 jogos (verificação de transições naturais sem engasgos na transmissão).
-- [ ] **Etapa 106:** Auditoria da Gaveta de Depuração oculta (tecla `D`) em todos os jogos para testes pré-live do streamer.
+- [x] **Etapa 106:** Auditoria da Gaveta de Depuração oculta (tecla `D`) em todos os jogos para testes pré-live do streamer.
 - [ ] **Etapa 107:** Simulação de fluxo intenso de presentes pagos com cálculo correto de multiplicadores e alertas na tela.
 - [ ] **Etapa 108:** Teste de carregamento instantâneo como Browser Source no OBS Studio (tempo de abertura < 200ms).
 - [ ] **Etapa 109:** Atualização final do `antigravity_hive_bus.md` com anúncio de conclusão da forja dos 40 cartuchos da Capitania V5 Games.

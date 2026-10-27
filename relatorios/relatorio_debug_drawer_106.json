@@ -1,0 +1,423 @@
+{
+  "total_cartridges": 41,
+  "compliant_count": 41,
+  "summary": {
+    "all_drawers_present": true,
+    "hidden_by_default": true,
+    "key_d_shortcut_active": true,
+    "toggle_function_connected": true,
+    "test_buttons_present": true
+  },
+  "details": [
+    {
+      "slug": "01_cabo_de_guerra_neon",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 6,
+      "issues": []
+    },
+    {
+      "slug": "01b_cabo_de_guerra_elementos",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 6,
+      "issues": []
+    },
+    {
+      "slug": "02_plinko_pachinko_fortuna",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 6,
+      "issues": []
+    },
+    {
+      "slug": "03_corrida_avatares_holding",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 9,
+      "issues": []
+    },
+    {
+      "slug": "04_boss_raid_cooperativo",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 4,
+      "issues": []
+    },
+    {
+      "slug": "05_roleta_desafios_live",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 6,
+      "issues": []
+    },
+    {
+      "slug": "06_batalha_dos_baloes",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 6,
+      "issues": []
+    },
+    {
+      "slug": "07_pendulo_destruidor",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 5,
+      "issues": []
+    },
+    {
+      "slug": "08_caca_tesouro_coordenadas",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 8,
+      "issues": []
+    },
+    {
+      "slug": "09_tsunami_de_curtidas",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 8,
+      "issues": []
+    },
+    {
+      "slug": "10_queda_dos_blocos",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 10,
+      "issues": []
+    },
+    {
+      "slug": "11_queda_de_braco_titas",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 6,
+      "issues": []
+    },
+    {
+      "slug": "12_pachinko_pinball_neon",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 6,
+      "issues": []
+    },
+    {
+      "slug": "13_cascata_de_moedas",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 6,
+      "issues": []
+    },
+    {
+      "slug": "14_vortex_gravitacional",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 6,
+      "issues": []
+    },
+    {
+      "slug": "15_corrida_maluca_espacial",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 9,
+      "issues": []
+    },
+    {
+      "slug": "16_arrancada_noturna_neon",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 6,
+      "issues": []
+    },
+    {
+      "slug": "17_caca_niquel_neon_777",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 6,
+      "issues": []
+    },
+    {
+      "slug": "18_roleta_russa_baloes",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 5,
+      "issues": []
+    },
+    {
+      "slug": "19_defesa_da_torre_chat",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 5,
+      "issues": []
+    },
+    {
+      "slug": "20_subida_da_montanha_sagrada",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 5,
+      "issues": []
+    },
+    {
+      "slug": "21_batata_quente_explosiva",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 4,
+      "issues": []
+    },
+    {
+      "slug": "22_ponte_de_vidro_quebradico",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 4,
+      "issues": []
+    },
+    {
+      "slug": "23_sobrevivencia_na_lava",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 8,
+      "issues": []
+    },
+    {
+      "slug": "24_campo_minado_neon",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 8,
+      "issues": []
+    },
+    {
+      "slug": "25_batalha_naval_live",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 8,
+      "issues": []
+    },
+    {
+      "slug": "26_guerra_dos_tanques_neon",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 7,
+      "issues": []
+    },
+    {
+      "slug": "27_meteoro_defensor",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 7,
+      "issues": []
+    },
+    {
+      "slug": "28_labirinto_pacman_neon",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 9,
+      "issues": []
+    },
+    {
+      "slug": "29_basquete_street_neon",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 8,
+      "issues": []
+    },
+    {
+      "slug": "30_gol_de_penalti_live",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 9,
+      "issues": []
+    },
+    {
+      "slug": "31_guitar_hero_neon",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 8,
+      "issues": []
+    },
+    {
+      "slug": "32_corte_de_frutas_neon",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 7,
+      "issues": []
+    },
+    {
+      "slug": "33_corrida_de_cavalos_retro",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 9,
+      "issues": []
+    },
+    {
+      "slug": "34_pinball_galactico",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 9,
+      "issues": []
+    },
+    {
+      "slug": "35_quiz_frenetico_holding",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 9,
+      "issues": []
+    },
+    {
+      "slug": "36_pula_corda_extremo",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 9,
+      "issues": []
+    },
+    {
+      "slug": "37_torre_de_blocos_equilibrada",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 9,
+      "issues": []
+    },
+    {
+      "slug": "38_fuga_da_prisao_espacial",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 9,
+      "issues": []
+    },
+    {
+      "slug": "39_alvo_movel_snipers",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 9,
+      "issues": []
+    },
+    {
+      "slug": "40_duelo_de_magicos_neon",
+      "compliant": true,
+      "has_drawer_html": true,
+      "is_hidden_default": true,
+      "has_key_d": true,
+      "has_toggle_fn": true,
+      "button_count": 9,
+      "issues": []
+    }
+  ]
+}

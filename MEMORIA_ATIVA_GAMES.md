@@ -147,4 +147,7 @@ O objetivo financeiro e técnico foi alcançado com um acervo proprietário de a
 - `scripts/test_web_audio_104.py`: Suíte de validação do sintetizador com simulação headless Mock Web Audio API e verificação de sintaxe de todos os 41 cartuchos (9/9 checks aprovados).
 - `scripts/audit_anti_silence_105.py`: Auditoria completa da Lei 3 (Motor Anti-Silêncio) em todos os 41 cartuchos com relatórios JSON e Markdown (41/41 conformes).
 - `scripts/test_anti_silence_105.py`: Suíte de homologação da Lei 3 com simulação de transições dinâmicas entre silêncio prolongado e chat real (6/6 checks aprovados).
+- `scripts/audit_debug_drawer_106.py`: Auditoria cirúrgica da Gaveta de Depuração pré-live em todos os 41 cartuchos (display: none por padrão, tecla 'D', toggle e >=4 botões).
+- `scripts/upgrade_debug_drawers_106.py`: Padronizador de atalho de teclado e gaveta oculta para os 6 cartuchos restantes.
+- `scripts/test_debug_drawer_106.py`: Suíte de homologação da Gaveta de Depuração com simulação headless do ciclo de alternância da tecla 'D' (6/6 checks aprovados).
 - `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo industrial com verificação MD5 bit-a-bit, gerador de manifestos espelhados e gerador de `games_registry.json` para o V5 Broadcaster.

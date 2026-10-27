@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-10-27T07:52:05.522738",
+  "timestamp": "2026-10-27T07:55:49.384367",
   "holding": "Holding V5 Apollo",
   "captaincy": "Capitania V5 Games",
   "destination": "E:\\MEUS PROGRAMAS\\V5_APOLLO_SITES\\V5_Apollo_Broadcaster\\frontend\\public\\games",
   "total_cartridges": 41,
   "total_files_verified": 82,
-  "total_bytes_transferred": 1790212,
+  "total_bytes_transferred": 1793038,
   "total_megabytes": 1.71,
-  "duration_seconds": 1.92,
+  "duration_seconds": 1.61,
   "md5_match_rate_percent": 100.0,
   "md5_mismatches": 0,
   "status": "HOMOLOGADO_DESPACHADO",
@@ -90,8 +90,8 @@
       "category": "cooperativo_boss",
       "files": {
         "index.html": {
-          "md5": "18f53ab4c48f762092ec5b27e7e8f797",
-          "size_bytes": 43149,
+          "md5": "1afe8d08cf91df53208db809fd82865d",
+          "size_bytes": 43620,
           "verified": true
         },
         "thumbnail.svg": {
@@ -144,8 +144,8 @@
       "category": "tensao_eliminacao",
       "files": {
         "index.html": {
-          "md5": "d6839b25871ccf9450021a0f9beb309f",
-          "size_bytes": 31904,
+          "md5": "06f2d644b4fe279831c34dcf7386cda6",
+          "size_bytes": 32375,
           "verified": true
         },
         "thumbnail.svg": {
@@ -360,8 +360,8 @@
       "category": "cooperativo_boss",
       "files": {
         "index.html": {
-          "md5": "edec4cafc468c295c74e54df7aa8f67e",
-          "size_bytes": 35894,
+          "md5": "0b3c39606d3c388d4a1a1e3b64ca3710",
+          "size_bytes": 36365,
           "verified": true
         },
         "thumbnail.svg": {
@@ -378,8 +378,8 @@
       "category": "cooperativo_boss",
       "files": {
         "index.html": {
-          "md5": "913c75a4e4a69edb4e44e2db932302fa",
-          "size_bytes": 33288,
+          "md5": "ea098a7c6da1e26e212981470f98f0b3",
+          "size_bytes": 33759,
           "verified": true
         },
         "thumbnail.svg": {
@@ -396,8 +396,8 @@
       "category": "tensao_eliminacao",
       "files": {
         "index.html": {
-          "md5": "4fbf35112d229e1aac4382f4eb992dae",
-          "size_bytes": 33356,
+          "md5": "970870bf1f869739ec3001690296da4c",
+          "size_bytes": 33827,
           "verified": true
         },
         "thumbnail.svg": {
@@ -414,8 +414,8 @@
       "category": "tensao_eliminacao",
       "files": {
         "index.html": {
-          "md5": "b34edecbf5096d80952e6bff83c4121e",
-          "size_bytes": 36058,
+          "md5": "e3ee6c7773816e43d42bb4874d2ebe08",
+          "size_bytes": 36529,
           "verified": true
         },
         "thumbnail.svg": {

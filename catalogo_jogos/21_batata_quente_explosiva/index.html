@@ -290,7 +290,7 @@
 
     /* Gaveta de Depuração Local */
     .debug-drawer {
-      display: flex;
+      display: none;
       gap: 6px;
       justify-content: center;
     }
@@ -1075,6 +1075,18 @@
         }
       }
     }
-  </script>
+  
+    // --- GAVETA DE DEPURAÇÃO OCULTA (TECLA 'D') ---
+    function toggleDebug() {
+      const drawer = document.querySelector('.debug-drawer') || document.getElementById('debug-drawer');
+      if (drawer) {
+        drawer.style.display = (drawer.style.display === 'flex' || drawer.style.display === 'block') ? 'none' : 'flex';
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') toggleDebug();
+    });
+</script>
 </body>
 </html>
