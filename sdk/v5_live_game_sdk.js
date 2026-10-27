@@ -200,56 +200,80 @@
     }
 
     /**
-     * Motor Anti-Silêncio Universal Embutido
-     * Se a live ficar sem interação real pelo tempo limite, gera microações autônomas.
+     * Motor Anti-Silêncio Universal Embutido (Etapa 009)
+     * Injeção determinística de microações após 2.5s de inatividade com balanceamento elástico.
      */
     initAutoBot() {
       const mockUsers = [
-        '@lucas_gamer', '@mari_live', '@pedro_stream', '@ana_pro', 
-        '@bruno_tk', '@clara_v5', '@diego_br', '@bia_tok', '@felipe_yt'
+        '@carlos_gamer', '@mari_tiktok', '@lucas_stream', '@renata_pro',
+        '@thiago_live', '@ana_clara99', '@bruno_sp', '@danilo_play',
+        '@julia_v5', '@pedro_fps', '@camila_br', '@felipe_yt'
       ];
       
       const mockGifts = [
-        { name: 'Rosa', coins: 1, weight: 5 },
+        { name: 'Rosa Virtual', coins: 1, weight: 5 },
         { name: 'Moeda V5', coins: 5, weight: 15 },
-        { name: 'Coração', coins: 10, weight: 25 },
-        { name: 'Leão Dourado', coins: 100, weight: 100 }
+        { name: 'Coração', coins: 10, weight: 25 }
       ];
 
-      this.botTimer = setInterval(() => {
-        // Se houve evento real recente, aborta bot
-        if (Date.now() - this.lastEventTime < this.autoBotSilenceThreshold) {
-          return;
-        }
+      this.scoreA = 0;
+      this.scoreB = 0;
 
-        const isGift = Math.random() < 0.20;
-        const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
-        const team = Math.random() < 0.45 ? 'A' : (Math.random() < 0.8 ? 'B' : 'C');
+      const scheduleTick = () => {
+        // Intervalo estocástico variável (1.8s a 3.0s)
+        const delay = 1800 + Math.floor(Math.random() * 1200);
 
-        if (isGift) {
-          const gift = mockGifts[Math.floor(Math.random() * mockGifts.length)];
-          this.dispatch({
-            type: 'gift',
-            action: 'boost',
-            team: team,
-            user: randomUser,
-            giftName: gift.name,
-            coins: gift.coins,
-            weight: gift.weight,
-            isBot: true
-          });
-        } else {
-          this.dispatch({
-            type: 'comment',
-            action: 'vote',
-            team: team,
-            user: randomUser,
-            comment: team === 'A' ? '1' : (team === 'B' ? '2' : '3'),
-            weight: 1,
-            isBot: true
-          });
-        }
-      }, this.autoBotInterval);
+        this.botTimer = setTimeout(() => {
+          // Se houve evento real nos últimos 2.5 segundos, não injeta bot
+          if (Date.now() - this.lastEventTime < 2500) {
+            scheduleTick();
+            return;
+          }
+
+          // Balanceamento elástico: favorece levemente o time que está atrás
+          let team = 'A';
+          const diff = this.scoreA - this.scoreB;
+          if (diff > 40) team = Math.random() < 0.65 ? 'B' : 'A';
+          else if (diff < -40) team = Math.random() < 0.65 ? 'A' : 'B';
+          else team = Math.random() < 0.5 ? 'A' : 'B';
+
+          const isGift = Math.random() < 0.15;
+          const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+
+          if (isGift) {
+            const gift = mockGifts[Math.floor(Math.random() * mockGifts.length)];
+            this.dispatch({
+              type: 'gift',
+              action: 'boost',
+              team: team,
+              user: randomUser,
+              giftName: gift.name,
+              coins: gift.coins,
+              weight: gift.weight,
+              isBot: true
+            });
+          } else {
+            this.dispatch({
+              type: 'comment',
+              action: 'vote',
+              team: team,
+              user: randomUser,
+              comment: team === 'A' ? '1' : '2',
+              weight: 1,
+              isBot: true
+            });
+          }
+
+          scheduleTick();
+        }, delay);
+      };
+
+      scheduleTick();
+    }
+
+    updateScores(scoreA, scoreB) {
+      this.scoreA = scoreA;
+      this.scoreB = scoreB;
     }
 
     /**
