@@ -52,3 +52,12 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 1. **Zero Dependência de CDN Externa:** Tudo (HTML, CSS, JS, sintetizador de som) deve rodar localmente sem travar se a internet oscilar no OBS.
 2. **60 FPS Estáveis em GPU/Canvas:** Renderização ultra otimizada com `requestAnimationFrame` que não consuma mais que 3% a 5% da CPU da máquina de transmissão.
 3. **Painel de Depuração Embutido:** Toda tela tem uma gaveta oculta na base que permite testar votos e presentes manualmente antes de ligar a live (escondida com tecla `D` ou clique duplo no rodapé).
+
+---
+
+## 4. Motores Centrais de Física & Transmissão
+- `src/core/v5_physics_engine.js`: Motor 2D de gravidade vertical e colisões elásticas com Spatial Hash Grid O(N), Object Pooling (zero GC) e suporte a pinos, bumpers, vortex e caçapas (>1100 FPS teóricos com 350 esferas).
+- `src/core/v5_polarization_engine.js`: Motor de física inercial de disputa e tensão de mola (Cabo de Guerra, Tsunami, Queda de Braço).
+- `src/core/v5_round_manager.js`: Ciclo fechado universal de partidas (30-60s com auto-reset de 5s).
+- `src/core/v5_anti_silence.js`: Motor orgânico anti-silêncio que injeta comandos mock a cada 2.5s de inatividade.
+- `src/audio/v5_synth_audio.js`: Sintetizador procedural via Web Audio API com polifonia, ruído branco, síntese FM, micro-ondas de choque e fanfarras.
