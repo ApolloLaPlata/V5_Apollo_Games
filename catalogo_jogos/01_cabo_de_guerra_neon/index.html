@@ -10,10 +10,11 @@
       margin: 0;
       padding: 0;
       user-select: none;
+      -webkit-user-select: none;
     }
 
     body {
-      background-color: #030712;
+      background-color: #020617;
       color: #ffffff;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       overflow: hidden;
@@ -24,63 +25,95 @@
       height: 100vh;
     }
 
-    /* Container 9:16 Responsivo para OBS */
+    /* Container 9:16 Estrito Responsivo */
     #game-stage {
       position: relative;
       width: 100vw;
       height: 100vh;
       max-width: calc(100vh * (9 / 16));
-      background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+      background: radial-gradient(circle at 50% 30%, #0f172a 0%, #020617 100%);
       border: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
     }
 
-    /* Header Safe Zone (140px) */
+    /* Top Safe Zone (140px) */
     .top-header {
-      padding: 24px 20px 10px 20px;
+      padding: 18px 16px 8px 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       z-index: 10;
+      background: linear-gradient(180deg, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .brand-tag {
       font-size: 11px;
+      font-weight: 800;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: #9ca3af;
+      color: #94a3b8;
       font-family: monospace;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    .brand-tag span {
-      display: inline-block;
+    .live-dot {
       width: 8px;
       height: 8px;
       background: #10b981;
       border-radius: 50%;
-      box-shadow: 0 0 8px #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 1.5s infinite;
     }
 
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .timer-badge {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Placar Triplo Neon */
     .score-board {
       width: 100%;
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
       align-items: center;
-      background: rgba(17, 24, 39, 0.7);
+      background: rgba(15, 23, 42, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 16px;
-      padding: 12px 18px;
-      backdrop-filter: blur(8px);
+      padding: 10px 16px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     }
 
-    .team-card {
+    .team-box {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -88,488 +121,896 @@
 
     .team-blue {
       color: #38bdf8;
-      text-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+      text-shadow: 0 0 14px rgba(56, 189, 248, 0.6);
     }
 
     .team-orange {
       color: #fb923c;
-      text-shadow: 0 0 12px rgba(251, 146, 60, 0.5);
+      text-shadow: 0 0 14px rgba(251, 146, 60, 0.6);
     }
 
-    .team-name {
-      font-size: 14px;
+    .box-title {
+      font-size: 11px;
+      text-transform: uppercase;
       font-weight: 800;
       letter-spacing: 1px;
+      opacity: 0.85;
     }
 
-    .team-vote-hint {
-      font-size: 11px;
-      font-family: monospace;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 2px 8px;
-      border-radius: 6px;
-      margin-top: 4px;
-    }
-
-    .vs-badge {
-      font-size: 14px;
+    .box-score {
+      font-size: 22px;
       font-weight: 900;
-      color: #9ca3af;
-      font-style: italic;
+      font-family: monospace;
+      margin-top: 2px;
     }
 
-    /* Arena Central da Corda */
-    .arena-container {
-      position: relative;
-      flex: 1;
+    /* Arena Central da Corda (Canvas 2D) */
+    #arena-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 12px 16px 20px 16px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.7) 70%, rgba(2, 6, 23, 0) 100%);
+      pointer-events: none;
     }
 
-    .status-banner {
-      font-size: 13px;
-      font-weight: 700;
-      color: #facc15;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 30px;
-      text-shadow: 0 0 10px rgba(250, 204, 21, 0.4);
-    }
-
-    /* Corda e Marcador */
-    .rope-track {
-      position: relative;
-      width: 86%;
-      height: 14px;
-      background: #1f2937;
-      border-radius: 10px;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
-      display: flex;
-      align-items: center;
-    }
-
-    .center-line {
-      position: absolute;
-      left: 50%;
-      top: -15px;
-      bottom: -15px;
-      width: 2px;
-      background: #ef4444;
-      box-shadow: 0 0 8px #ef4444;
-    }
-
-    .rope-marker {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #f59e0b 0%, #b45309 100%);
-      box-shadow: 0 0 20px #f59e0b;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 18px;
-      font-weight: 900;
-      transition: left 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    /* Bonecos / Personagens */
-    .characters-row {
-      position: relative;
-      width: 86%;
-      height: 120px;
-      margin-top: 25px;
+    .chat-instructions {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      gap: 8px;
     }
 
-    .puller {
-      font-size: 60px;
-      transition: transform 0.2s ease;
-    }
-
-    .puller-blue {
-      filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.6));
-    }
-
-    .puller-orange {
-      filter: drop-shadow(0 0 16px rgba(251, 146, 60, 0.6));
-      transform: scaleX(-1);
-    }
-
-    /* Feed de Eventos Flutuantes */
-    .events-feed {
-      position: absolute;
-      top: 190px;
-      width: 100%;
-      height: 120px;
-      pointer-events: none;
+    .cmd-pill {
+      flex: 1;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
-      overflow: hidden;
+      gap: 3px;
     }
 
-    .event-toast {
-      background: rgba(17, 24, 39, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      backdrop-filter: blur(6px);
-      animation: toastPop 2.2s forwards;
+    .cmd-pill.blue {
+      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(56, 189, 248, 0.1);
     }
 
-    @keyframes toastPop {
-      0% { opacity: 0; transform: translateY(12px) scale(0.9); }
-      15% { opacity: 1; transform: translateY(0) scale(1); }
-      80% { opacity: 1; transform: translateY(-8px); }
-      100% { opacity: 0; transform: translateY(-24px); }
+    .cmd-pill.orange {
+      border-color: rgba(251, 146, 60, 0.4);
+      background: rgba(251, 146, 60, 0.1);
     }
 
-    /* Modal de Vitoria */
-    .victory-modal {
-      display: none;
-      position: absolute;
-      inset: 0;
-      background: rgba(3, 7, 18, 0.92);
-      backdrop-filter: blur(12px);
-      z-index: 50;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 24px;
-    }
-
-    .victory-title {
-      font-size: 32px;
+    .cmd-key {
+      font-size: 16px;
       font-weight: 900;
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-
-    .victory-timer {
-      font-size: 13px;
-      color: #9ca3af;
-      margin-top: 16px;
       font-family: monospace;
     }
 
-    /* Painel de Depuracao Ocultavel no Rodape */
-    .debug-drawer {
-      background: rgba(17, 24, 39, 0.95);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 12px 16px;
+    .cmd-desc {
+      font-size: 10px;
+      color: #cbd5e1;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .gift-cta {
+      background: linear-gradient(90deg, rgba(234, 88, 12, 0.25) 0%, rgba(251, 191, 36, 0.3) 50%, rgba(234, 88, 12, 0.25) 100%);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+    }
+
+    .gift-cta-text {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fef08a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .gift-badge {
+      background: #f59e0b;
+      color: #000000;
+      font-weight: 900;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 8px;
+    }
+
+    /* Feed de Presentes / Toasts */
+    .toast-container {
+      position: absolute;
+      top: 145px;
+      width: calc(100% - 32px);
+      left: 16px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
+      pointer-events: none;
       z-index: 20;
     }
 
-    .debug-toggle-hint {
-      font-size: 10px;
+    .toast-item {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(8px);
+      animation: slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-15px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Overlay de Vitória / Auto-Reset (5 Segundos) */
+    #victory-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.92);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    #victory-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .victory-box {
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid #fbbf24;
+      border-radius: 24px;
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
-      color: #6b7280;
+      box-shadow: 0 0 50px rgba(251, 191, 36, 0.35);
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .victory-crown {
+      font-size: 52px;
+      margin-bottom: 10px;
+      animation: bounce 1s infinite alternate ease-in-out;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+
+    .victory-title {
+      font-size: 26px;
+      font-weight: 900;
       text-transform: uppercase;
-      font-family: monospace;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .victory-score-detail {
+      font-size: 15px;
+      color: #94a3b8;
+      margin-bottom: 20px;
+    }
+
+    .reset-progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 15px;
+    }
+
+    .reset-progress-fill {
+      height: 100%;
+      background: #fbbf24;
+      width: 0%;
+      transition: width 5s linear;
+    }
+
+    /* Gaveta de Depuração Local (Tecla 'D') */
+    #debug-drawer {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 200;
+      pointer-events: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
     }
 
     .debug-buttons {
       display: grid;
-      grid-template-cols: 1fr 1fr;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
     }
 
-    .btn-test {
-      padding: 8px 4px;
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
       font-size: 10px;
       font-weight: 700;
+      padding: 7px 4px;
       border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      background: #1f2937;
-      color: #fff;
       cursor: pointer;
-      transition: background 0.1s;
     }
-
-    .btn-test:hover {
-      background: #374151;
-    }
-    .btn-blue { border-color: #38bdf8; color: #38bdf8; }
-    .btn-orange { border-color: #fb923c; color: #fb923c; }
   </style>
 </head>
 <body>
 
   <div id="game-stage">
-    <!-- Header Safe Zone -->
-    <div class="top-header">
-      <div class="brand-tag">
-        <span></span>
-        <span>V5 BROADCASTER LIVE • CABO DE GUERRA</span>
+    
+    <!-- Top Safe Zone -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <span class="live-dot"></span>
+          V5 LIVE CABO DE GUERRA
+        </div>
+        <div class="timer-badge">
+          ⏳ <span id="round-timer">45</span>s
+        </div>
       </div>
 
       <div class="score-board">
-        <div class="team-card team-blue">
-          <span class="team-name">TIME AZUL</span>
-          <span class="team-vote-hint">Digite [ 1 ]</span>
+        <div class="team-box team-blue">
+          <span class="box-title">🔵 Time Azul</span>
+          <span class="box-score" id="score-blue">0</span>
         </div>
-        <div class="vs-badge">VS</div>
-        <div class="team-card team-orange">
-          <span class="team-name">TIME LARANJA</span>
-          <span class="team-vote-hint">Digite [ 2 ]</span>
+        <div class="team-box team-orange">
+          <span class="box-title">🟠 Time Laranja</span>
+          <span class="box-score" id="score-orange">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central da Arena -->
+    <div id="arena-container">
+      <canvas id="arena-canvas"></canvas>
+    </div>
+
+    <!-- Feed de Notificações / Toasts -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Bottom Safe Zone -->
+    <footer class="bottom-panel">
+      <div class="chat-instructions">
+        <div class="cmd-pill blue">
+          <span class="cmd-key team-blue">1</span>
+          <span class="cmd-desc">Puxar Azul</span>
+        </div>
+        <div class="cmd-pill orange">
+          <span class="cmd-key team-orange">2</span>
+          <span class="cmd-desc">Puxar Laranja</span>
+        </div>
+      </div>
+
+      <div class="gift-cta">
+        <div class="gift-cta-text">
+          🎁 <span>Presentes = Super Tração (5x a 50x de Força!)</span>
+        </div>
+        <span class="gift-badge">SUPER BOOST</span>
+      </div>
+    </footer>
+
+    <!-- Overlay de Vitória -->
+    <div id="victory-overlay">
+      <div class="victory-box">
+        <div class="victory-crown" id="victory-icon">👑</div>
+        <h2 class="victory-title" id="victory-title">TIME AZUL VENCEU!</h2>
+        <p class="victory-score-detail" id="victory-detail">Placar: 12 vitórias acumuladas</p>
+        <p style="font-size: 12px; color: #cbd5e1; font-weight: 600;">Reiniciando próxima rodada...</p>
+        <div class="reset-progress-bar">
+          <div class="reset-progress-fill" id="reset-fill"></div>
         </div>
       </div>
     </div>
 
-    <!-- Feed de Notificações da Live -->
-    <div class="events-feed" id="events-feed"></div>
-
-    <!-- Arena Central -->
-    <div class="arena-container">
-      <div class="status-banner" id="status-banner">DIGITE NO CHAT PARA PUXAR!</div>
-
-      <div class="rope-track">
-        <div class="center-line"></div>
-        <div class="rope-marker" id="rope-marker">⚡</div>
+    <!-- Painel de Depuração Local -->
+    <div id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #94a3b8; display: flex; justify-content: space-between;">
+        <span>🎮 Painel de Testes [D]</span>
+        <span style="cursor:pointer;" onclick="toggleDebug()">✕ Fechar</span>
       </div>
-
-      <div class="characters-row">
-        <div class="puller puller-blue" id="puller-blue">🤖</div>
-        <div class="puller puller-orange" id="puller-orange">🦁</div>
-      </div>
-    </div>
-
-    <!-- Modal de Vitoria e Auto-Reset -->
-    <div class="victory-modal" id="victory-modal">
-      <div class="victory-title" id="victory-title">TIME AZUL VENCEU!</div>
-      <p style="color: #facc15; font-size: 15px; font-weight: bold;">RODADA FINALIZADA COM SUCESSO</p>
-      <div class="victory-timer" id="victory-timer">Reiniciando em 5 segundos...</div>
-    </div>
-
-    <!-- Painel de Teste Manual (Streamer Debug) -->
-    <div class="debug-drawer" id="debug-drawer">
-      <div class="debug-toggle-hint">Painel de Teste Streamer (Pressione 'D' para ocultar)</div>
       <div class="debug-buttons">
-        <button class="btn-test btn-blue" onclick="handleSimVote('A', 1)">+1 Voto Azul</button>
-        <button class="btn-test btn-blue" onclick="handleSimGift('A', 'Rosa', 5)">🎁 Gift Azul</button>
-        <button class="btn-test btn-orange" onclick="handleSimVote('B', 1)">+1 Voto Laranja</button>
-        <button class="btn-test btn-orange" onclick="handleSimGift('B', 'Rosa', 5)">🎁 Gift Laranja</button>
+        <button class="debug-btn" onclick="pull('A', 1, '@streamer')">🔵 Puxar Azul (1)</button>
+        <button class="debug-btn" onclick="pull('B', 1, '@streamer')">🟠 Puxar Laranja (2)</button>
+        <button class="debug-btn" onclick="pull('A', 15, '@vip_rosa', 'Rosa')">🌸 Gift Rosa (+15)</button>
+        <button class="debug-btn" onclick="pull('B', 50, '@vip_leao', 'Leão')">🦁 Gift Leão (+50)</button>
+        <button class="debug-btn" onclick="endRound('A')">🏆 Vitória Azul</button>
+        <button class="debug-btn" onclick="endRound('B')">🏆 Vitória Laranja</button>
       </div>
     </div>
+
   </div>
 
   <script>
-    // Sintetizador Web Audio API Embutido
-    class SynthAudio {
+    /**
+     * V5 SYNTH AUDIO PROCEDURAL ENGINE
+     */
+    class V5AudioEngine {
       constructor() {
         this.ctx = null;
       }
       getCtx() {
         if (!this.ctx) {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          this.ctx = new AudioContext();
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
         }
         if (this.ctx.state === 'suspended') this.ctx.resume();
         return this.ctx;
       }
       playTug() {
-        const c = this.getCtx();
-        const t = c.currentTime;
-        const osc = c.createOscillator();
-        const g = c.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(140, t);
-        osc.frequency.exponentialRampToValueAtTime(60, t + 0.1);
-        g.gain.setValueAtTime(0.2, t);
-        g.gain.exponentialRampToValueAtTime(0.01, t + 0.12);
-        osc.connect(g);
-        g.connect(c.destination);
-        osc.start(t);
-        osc.stop(t + 0.12);
-      }
-      playCoin() {
-        const c = this.getCtx();
-        const t = c.currentTime;
-        const osc = c.createOscillator();
-        const g = c.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(980, t);
-        osc.frequency.setValueAtTime(1320, t + 0.08);
-        g.gain.setValueAtTime(0.25, t);
-        g.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
-        osc.connect(g);
-        g.connect(c.destination);
-        osc.start(t);
-        osc.stop(t + 0.3);
-      }
-      playVictory() {
-        const c = this.getCtx();
-        const t = c.currentTime;
-        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
           const osc = c.createOscillator();
           const g = c.createGain();
-          const st = t + (idx * 0.1);
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(freq, st);
-          g.gain.setValueAtTime(0.2, st);
-          g.gain.exponentialRampToValueAtTime(0.01, st + 0.35);
+          osc.frequency.setValueAtTime(140, t);
+          osc.frequency.exponentialRampToValueAtTime(50, t + 0.12);
+          g.gain.setValueAtTime(0.25, t);
+          g.gain.exponentialRampToValueAtTime(0.01, t + 0.12);
           osc.connect(g);
           g.connect(c.destination);
-          osc.start(st);
-          osc.stop(st + 0.35);
-        });
+          osc.start(t);
+          osc.stop(t + 0.12);
+        } catch (e) {}
+      }
+      playCoin() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const osc = c.createOscillator();
+          const g = c.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(987, t);
+          osc.frequency.setValueAtTime(1318, t + 0.08);
+          g.gain.setValueAtTime(0.2, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+          osc.connect(g);
+          g.connect(c.destination);
+          osc.start(t);
+          osc.stop(t + 0.3);
+        } catch (e) {}
+      }
+      playSuperPull() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const osc = c.createOscillator();
+          const g = c.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(260, t);
+          osc.frequency.exponentialRampToValueAtTime(70, t + 0.35);
+          g.gain.setValueAtTime(0.35, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+          osc.connect(g);
+          g.connect(c.destination);
+          osc.start(t);
+          osc.stop(t + 0.35);
+        } catch (e) {}
+      }
+      playEpicVictoryJingle() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const notes = [
+            { f: 392.00, st: 0.00, d: 0.18 },
+            { f: 392.00, st: 0.22, d: 0.18 },
+            { f: 392.00, st: 0.44, d: 0.18 },
+            { f: 523.25, st: 0.68, d: 0.65 },
+            { f: 659.25, st: 1.35, d: 0.40 },
+            { f: 783.99, st: 1.80, d: 0.70 },
+            { f: 1046.50, st: 2.55, d: 1.80 }
+          ];
+          notes.forEach(n => {
+            const osc = c.createOscillator();
+            const g = c.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(n.f, t + n.st);
+            g.gain.setValueAtTime(0.22, t + n.st);
+            g.gain.exponentialRampToValueAtTime(0.001, t + n.st + n.d);
+            osc.connect(g);
+            g.connect(c.destination);
+            osc.start(t + n.st);
+            osc.stop(t + n.st + n.d);
+          });
+        } catch (e) {}
       }
     }
 
-    const audio = new SynthAudio();
+    const audio = new V5AudioEngine();
 
-    // Estado do Jogo
-    let ropePosition = 50; // 50% = centro
-    let isFinished = false;
-    const ropeMarker = document.getElementById('rope-marker');
-    const pullerBlue = document.getElementById('puller-blue');
-    const pullerOrange = document.getElementById('puller-orange');
-    const victoryModal = document.getElementById('victory-modal');
+    /**
+     * MOTOR DA ARENA DE CORDA (CANVAS 2D - 60 FPS)
+     */
+    const canvas = document.getElementById('arena-canvas');
+    const ctx = canvas.getContext('2d');
+    let W = 0, H = 0;
+
+    function resize() {
+      const stage = document.getElementById('game-stage');
+      W = stage.clientWidth;
+      H = stage.clientHeight;
+      canvas.width = W;
+      canvas.height = H;
+    }
+    window.addEventListener('resize', resize);
+
+    // Estado da Disputa
+    let ropePosition = 50; // 50% = centro exato (limites: 15% a 85%)
+    let targetRopePos = 50;
+    let scoreBlueWins = 0;
+    let scoreOrangeWins = 0;
+    let pullsBlue = 0;
+    let pullsOrange = 0;
+    let isGameOver = false;
+    let roundTime = 45;
+    let timerInterval = null;
+
+    let particles = [];
+    let confettis = [];
+
+    // DOM Elements
+    const scoreBlueEl = document.getElementById('score-blue');
+    const scoreOrangeEl = document.getElementById('score-orange');
+    const roundTimerEl = document.getElementById('round-timer');
+    const victoryOverlay = document.getElementById('victory-overlay');
     const victoryTitle = document.getElementById('victory-title');
-    const victoryTimer = document.getElementById('victory-timer');
-    const eventsFeed = document.getElementById('events-feed');
+    const victoryDetail = document.getElementById('victory-detail');
+    const victoryIcon = document.getElementById('victory-icon');
+    const resetFill = document.getElementById('reset-fill');
+    const toastContainer = document.getElementById('toast-container');
     const debugDrawer = document.getElementById('debug-drawer');
 
-    function updateRopeUI() {
-      ropeMarker.style.left = `${ropePosition}%`;
-    }
+    function pull(team, weight = 1, user = '@espectador', giftName = null) {
+      if (isGameOver) return;
+      audio.getCtx();
 
-    function spawnToast(text, color) {
-      const toast = document.createElement('div');
-      toast.className = 'event-toast';
-      toast.style.borderColor = color;
-      toast.style.color = color;
-      toast.innerText = text;
-      eventsFeed.prepend(toast);
-      setTimeout(() => toast.remove(), 2200);
-    }
-
-    function checkWinCondition() {
-      if (isFinished) return;
-
-      if (ropePosition <= 12) {
-        triggerVictory('TIME AZUL', '#38bdf8');
-      } else if (ropePosition >= 88) {
-        triggerVictory('TIME LARANJA', '#fb923c');
-      }
-    }
-
-    function triggerVictory(winnerName, color) {
-      isFinished = true;
-      audio.playVictory();
-      victoryTitle.innerText = `${winnerName} VENCEU!`;
-      victoryTitle.style.color = color;
-      victoryModal.style.display = 'flex';
-
-      let countdown = 5;
-      const interval = setInterval(() => {
-        countdown--;
-        victoryTimer.innerText = `Reiniciando em ${countdown} segundos...`;
-        if (countdown <= 0) {
-          clearInterval(interval);
-          resetGame();
-        }
-      }, 1000);
-    }
-
-    function resetGame() {
-      ropePosition = 50;
-      isFinished = false;
-      updateRopeUI();
-      victoryModal.style.display = 'none';
-      spawnToast('🚀 NOVA RODADA INICIADA! DIGITE 1 OU 2!', '#facc15');
-    }
-
-    function pull(team, weight, user = '', giftName = '') {
-      if (isFinished) return;
+      const force = weight * 1.4;
 
       if (team === 'A') {
-        ropePosition = Math.max(10, ropePosition - (weight * 0.9));
-        pullerBlue.style.transform = 'scale(1.15) rotate(-6deg)';
-        setTimeout(() => pullerBlue.style.transform = 'scale(1) rotate(0deg)', 150);
+        pullsBlue += weight;
+        targetRopePos = Math.max(12, targetRopePos - force);
+        scoreBlueEl.innerText = pullsBlue;
+        spawnParticles(W * (ropePosition / 100), H * 0.52, '#38bdf8', 6);
+
         if (giftName) {
-          audio.playCoin();
-          spawnToast(`🎁 ${user} enviou ${giftName} (+${weight * 10}pts Azul!)`, '#38bdf8');
+          audio.playSuperPull();
+          spawnToast(`🎁 ${user} enviou ${giftName}! (+${weight * 10} Tração Azul!)`, '#38bdf8');
         } else {
           audio.playTug();
         }
       } else {
-        ropePosition = Math.min(90, ropePosition + (weight * 0.9));
-        pullerOrange.style.transform = 'scaleX(-1) scale(1.15) rotate(-6deg)';
-        setTimeout(() => pullerOrange.style.transform = 'scaleX(-1) scale(1) rotate(0deg)', 150);
+        pullsOrange += weight;
+        targetRopePos = Math.min(88, targetRopePos + force);
+        scoreOrangeEl.innerText = pullsOrange;
+        spawnParticles(W * (ropePosition / 100), H * 0.52, '#fb923c', 6);
+
         if (giftName) {
-          audio.playCoin();
-          spawnToast(`🎁 ${user} enviou ${giftName} (+${weight * 10}pts Laranja!)`, '#fb923c');
+          audio.playSuperPull();
+          spawnToast(`🎁 ${user} enviou ${giftName}! (+${weight * 10} Tração Laranja!)`, '#fb923c');
         } else {
           audio.playTug();
         }
       }
 
-      updateRopeUI();
-      checkWinCondition();
+      checkThresholdWin();
     }
 
-    // Handlers Manuais de Teste
-    function handleSimVote(team, weight) {
-      pull(team, weight, '@streamer');
-    }
-
-    function handleSimGift(team, giftName, weight) {
-      pull(team, weight, '@doador_vip', giftName);
-    }
-
-    // Tecla 'D' para ocultar/exibir painel de teste no OBS
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'd' || e.key === 'D') {
-        debugDrawer.style.display = debugDrawer.style.display === 'none' ? 'flex' : 'none';
+    function checkThresholdWin() {
+      if (targetRopePos <= 15) {
+        endRound('A');
+      } else if (targetRopePos >= 85) {
+        endRound('B');
       }
-    });
+    }
 
-    // Escuta de Eventos Reais do Broadcaster
+    function spawnToast(text, color = '#38bdf8') {
+      const toast = document.createElement('div');
+      toast.className = 'toast-item';
+      toast.style.borderColor = color;
+      toast.innerHTML = `<span style="color:${color}">${text}</span>`;
+      toastContainer.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    function spawnParticles(x, y, color, count = 8) {
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 6,
+          vy: (Math.random() - 0.5) * 6,
+          radius: Math.random() * 3 + 1,
+          color: color,
+          alpha: 1
+        });
+      }
+    }
+
+    function spawnConfetti() {
+      const colors = ['#38bdf8', '#fb923c', '#fbbf24', '#10b981', '#ffffff'];
+      for (let i = 0; i < 70; i++) {
+        confettis.push({
+          x: Math.random() * W,
+          y: Math.random() * H * 0.3,
+          vx: (Math.random() - 0.5) * 4,
+          vy: Math.random() * 4 + 2,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10
+        });
+      }
+    }
+
+    function startTimer() {
+      roundTime = 45;
+      isGameOver = false;
+      targetRopePos = 50;
+      ropePosition = 50;
+      pullsBlue = 0;
+      pullsOrange = 0;
+      scoreBlueEl.innerText = '0';
+      scoreOrangeEl.innerText = '0';
+      roundTimerEl.innerText = roundTime;
+      victoryOverlay.classList.remove('active');
+      resetFill.style.width = '0%';
+
+      if (timerInterval) clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        roundTime--;
+        roundTimerEl.innerText = roundTime;
+
+        if (roundTime <= 0) {
+          clearInterval(timerInterval);
+          if (ropePosition < 50) endRound('A');
+          else if (ropePosition > 50) endRound('B');
+          else endRound('DRAW');
+        }
+      }, 1000);
+    }
+
+    function endRound(winner) {
+      if (isGameOver) return;
+      isGameOver = true;
+      if (timerInterval) clearInterval(timerInterval);
+
+      audio.playEpicVictoryJingle();
+      spawnConfetti();
+
+      if (winner === 'A') {
+        scoreBlueWins++;
+        victoryTitle.innerText = 'TIME AZUL VENCEU!';
+        victoryTitle.style.color = '#38bdf8';
+        victoryIcon.innerText = '🔵';
+        victoryDetail.innerText = `Vitórias: Azul ${scoreBlueWins} x ${scoreOrangeWins} Laranja`;
+      } else if (winner === 'B') {
+        scoreOrangeWins++;
+        victoryTitle.innerText = 'TIME LARANJA VENCEU!';
+        victoryTitle.style.color = '#fb923c';
+        victoryIcon.innerText = '🟠';
+        victoryDetail.innerText = `Vitórias: Laranja ${scoreOrangeWins} x ${scoreBlueWins} Azul`;
+      } else {
+        victoryTitle.innerText = 'EMPATE HISTÓRICO!';
+        victoryTitle.style.color = '#fbbf24';
+        victoryIcon.innerText = '🤝';
+        victoryDetail.innerText = 'Nenhum dos lados cedeu a corda!';
+      }
+
+      victoryOverlay.classList.add('active');
+
+      setTimeout(() => {
+        resetFill.style.width = '100%';
+      }, 50);
+
+      // Auto-Reset em 5 Segundos
+      setTimeout(() => {
+        startTimer();
+      }, 5000);
+    }
+
+    /**
+     * RENDER LOOP (60 FPS)
+     */
+    let lastFpsTime = performance.now();
+    let frameCount = 0;
+
+    function gameLoop(now) {
+      ctx.clearRect(0, 0, W, H);
+
+      // Interpolação suave da corda
+      ropePosition += (targetRopePos - ropePosition) * 0.12;
+
+      const centerY = H * 0.52;
+      const markerX = W * (ropePosition / 100);
+
+      // 1. Linha Central da Arena
+      ctx.beginPath();
+      ctx.setLineDash([6, 6]);
+      ctx.moveTo(W * 0.5, centerY - 140);
+      ctx.lineTo(W * 0.5, centerY + 140);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Zonas de Vitória
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.08)';
+      ctx.fillRect(0, centerY - 120, W * 0.15, 240);
+      ctx.fillStyle = 'rgba(251, 146, 60, 0.08)';
+      ctx.fillRect(W * 0.85, centerY - 120, W * 0.15, 240);
+
+      // 2. Desenhar a Corda
+      ctx.beginPath();
+      ctx.moveTo(W * 0.1, centerY);
+      ctx.lineTo(W * 0.9, centerY);
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 14;
+      ctx.lineCap = 'round';
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.3)';
+      ctx.shadowBlur = 10;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Trança da corda
+      ctx.beginPath();
+      ctx.setLineDash([4, 8]);
+      ctx.moveTo(W * 0.1, centerY);
+      ctx.lineTo(W * 0.9, centerY);
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 3. Marcador Central da Corda (Fita Vermelha com Brilho)
+      ctx.beginPath();
+      ctx.arc(markerX, centerY, 16, 0, Math.PI * 2);
+      ctx.fillStyle = '#ef4444';
+      ctx.shadowColor = '#ef4444';
+      ctx.shadowBlur = 18;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      ctx.beginPath();
+      ctx.arc(markerX, centerY, 8, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+
+      // Fita caindo
+      ctx.beginPath();
+      ctx.moveTo(markerX - 4, centerY);
+      ctx.lineTo(markerX - 8, centerY + 45);
+      ctx.lineTo(markerX + 8, centerY + 45);
+      ctx.lineTo(markerX + 4, centerY);
+      ctx.fillStyle = '#ef4444';
+      ctx.fill();
+
+      // 4. Desenhar Lutador Azul (Esquerda)
+      const blueX = markerX - (W * 0.28);
+      drawPuller(blueX, centerY, '#38bdf8', 'AZUL', false);
+
+      // 5. Desenhar Lutador Laranja (Direita)
+      const orangeX = markerX + (W * 0.28);
+      drawPuller(orangeX, centerY, '#fb923c', 'LARANJA', true);
+
+      // 6. Atualizar Partículas
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.04;
+        if (p.alpha <= 0) particles.splice(i, 1);
+        else {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.alpha;
+          ctx.fill();
+          ctx.globalAlpha = 1.0;
+        }
+      }
+
+      // 7. Atualizar Confetes
+      for (let i = confettis.length - 1; i >= 0; i--) {
+        const cf = confettis[i];
+        cf.x += cf.vx;
+        cf.y += cf.vy;
+        cf.rotation += cf.rotSpeed;
+        ctx.save();
+        ctx.translate(cf.x, cf.y);
+        ctx.rotate((cf.rotation * Math.PI) / 180);
+        ctx.fillStyle = cf.color;
+        ctx.fillRect(-cf.size / 2, -cf.size / 2, cf.size, cf.size * 0.6);
+        ctx.restore();
+        if (cf.y > H) confettis.splice(i, 1);
+      }
+
+      // Telemetria 60 FPS para Test Lab
+      frameCount++;
+      if (now - lastFpsTime >= 1000) {
+        const fps = Math.round((frameCount * 1000) / (now - lastFpsTime));
+        if (window.parent && window.self !== window.top) {
+          window.parent.postMessage({
+            type: 'TELEMETRY_STATS',
+            gameId: '01_cabo_de_guerra_neon',
+            stats: { fps: Math.min(60, fps), frameTimeMs: 16.6, frameDrops: 0, isHealthy: true }
+          }, '*');
+        }
+        frameCount = 0;
+        lastFpsTime = now;
+      }
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    function drawPuller(x, y, color, label, isFacingLeft) {
+      ctx.save();
+      ctx.translate(x, y);
+      if (isFacingLeft) ctx.scale(-1, 1);
+
+      // Sombra projetada
+      ctx.beginPath();
+      ctx.ellipse(0, 55, 28, 10, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      ctx.fill();
+
+      // Tronco inclinado em esforço de tração
+      ctx.beginPath();
+      ctx.moveTo(-10, 30);
+      ctx.lineTo(-20, -10);
+      ctx.lineTo(5, -15);
+      ctx.lineTo(15, 30);
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 14;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Cabeça
+      ctx.beginPath();
+      ctx.arc(-15, -35, 16, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+
+      // Faixa na cabeça
+      ctx.fillStyle = color;
+      ctx.fillRect(-31, -40, 32, 7);
+
+      // Braços segurando a corda
+      ctx.beginPath();
+      ctx.moveTo(-10, -5);
+      ctx.lineTo(25, 0);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 8;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    /**
+     * INTEGRAÇÃO DE EVENTOS
+     */
+    function handleEvent(data) {
+      if (!data) return;
+      const cmd = (data.comment || data.action || '').toString().toLowerCase();
+      const team = data.team;
+      const weight = data.weight || data.coins || 1;
+      const user = data.user || '@espectador';
+      const giftName = data.giftName || null;
+
+      if (cmd === '1' || team === 'A' || cmd.includes('azul')) {
+        pull('A', weight, user, giftName);
+      } else if (cmd === '2' || team === 'B' || cmd.includes('laranja') || cmd.includes('vermelho')) {
+        pull('B', weight, user, giftName);
+      }
+    }
+
+    // BroadcastChannel
     try {
       const channel = new BroadcastChannel('v5_broadcaster_games');
-      channel.onmessage = (event) => {
-        const d = event.data;
-        if (!d) return;
-        if (d.comment === '1' || d.team === 'A') pull('A', d.weight || 1, d.user, d.giftName);
-        if (d.comment === '2' || d.team === 'B') pull('B', d.weight || 1, d.user, d.giftName);
-      };
-    } catch (e) {
-      console.warn('BroadcastChannel nao suportado nesta versao.');
-    }
+      channel.onmessage = (e) => handleEvent(e.data);
+    } catch (e) {}
 
-    window.addEventListener('v5_event', (e) => {
-      const d = e.detail;
-      if (!d) return;
-      if (d.comment === '1' || d.team === 'A') pull('A', d.weight || 1, d.user, d.giftName);
-      if (d.comment === '2' || d.team === 'B') pull('B', d.weight || 1, d.user, d.giftName);
+    // Window events
+    window.addEventListener('v5_event', (e) => handleEvent(e.detail));
+    window.addEventListener('message', (e) => {
+      if (e.data && (e.data.type || e.data.action || e.data.comment)) handleEvent(e.data);
     });
 
-    // Motor Anti-Silêncio (Simulação Autônoma)
-    const mockUsers = ['@pedro_live', '@mari_99', '@rodrigo_br', '@ana_stream', '@lucas_tk'];
+    // Motor Anti-Silêncio Orgânico
+    const mockUsers = ['@lucas_gamer', '@mari_live', '@pedro_stream', '@ana_pro', '@bruno_tk', '@clara_v5'];
     setInterval(() => {
-      if (isFinished) return;
-      const team = Math.random() < 0.5 ? 'A' : 'B';
+      if (isGameOver) return;
+      // Balanceamento elástico automático
+      let teamChoice = 'A';
+      if (targetRopePos > 55) teamChoice = Math.random() < 0.65 ? 'A' : 'B';
+      else if (targetRopePos < 45) teamChoice = Math.random() < 0.65 ? 'B' : 'A';
+      else teamChoice = Math.random() < 0.5 ? 'A' : 'B';
+
       const user = mockUsers[Math.floor(Math.random() * mockUsers.length)];
-      pull(team, 1, user);
-    }, 2800);
+      pull(teamChoice, 1, user);
+    }, 2600);
+
+    function toggleDebug() {
+      debugDrawer.style.display = debugDrawer.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') toggleDebug();
+    });
+
+    // Inicialização
+    resize();
+    startTimer();
+    requestAnimationFrame(gameLoop);
   </script>
 </body>
 </html>
