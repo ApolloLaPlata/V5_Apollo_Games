@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Plinko da Fortuna (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #020617;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 25%, #0f172a 0%, #020617 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 18px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .timer-badge {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Placar Triplo Neon */
+    .score-board {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr;
+      gap: 8px;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 10px 14px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .team-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .team-blue {
+      color: #38bdf8;
+      text-shadow: 0 0 14px rgba(56, 189, 248, 0.6);
+    }
+
+    .team-red {
+      color: #f87171;
+      text-shadow: 0 0 14px rgba(248, 113, 113, 0.6);
+    }
+
+    .jackpot-box {
+      color: #fbbf24;
+      text-shadow: 0 0 16px rgba(251, 191, 36, 0.7);
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0 6px;
+    }
+
+    .box-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1px;
+      opacity: 0.85;
+    }
+
+    .box-score {
+      font-size: 20px;
+      font-weight: 900;
+      font-family: monospace;
+      margin-top: 2px;
+    }
+
+    /* Canvas Central de Física */
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 12px 16px 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.7) 70%, rgba(2, 6, 23, 0) 100%);
+      pointer-events: none;
+    }
+
+    /* Banner de Comandos do Chat */
+    .chat-instructions {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .cmd-pill {
+      flex: 1;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 8px 6px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .cmd-pill.blue {
+      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(56, 189, 248, 0.1);
+    }
+
+    .cmd-pill.gold {
+      border-color: rgba(251, 191, 36, 0.5);
+      background: rgba(251, 191, 36, 0.12);
+    }
+
+    .cmd-pill.red {
+      border-color: rgba(248, 113, 113, 0.4);
+      background: rgba(248, 113, 113, 0.1);
+    }
+
+    .cmd-key {
+      font-size: 14px;
+      font-weight: 900;
+      font-family: monospace;
+    }
+
+    .cmd-desc {
+      font-size: 10px;
+      color: #cbd5e1;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    /* Gift Multiplier Banner */
+    .gift-cta {
+      background: linear-gradient(90deg, rgba(234, 88, 12, 0.25) 0%, rgba(251, 191, 36, 0.3) 50%, rgba(234, 88, 12, 0.25) 100%);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+    }
+
+    .gift-cta-text {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fef08a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .gift-badge {
+      background: #f59e0b;
+      color: #000000;
+      font-weight: 900;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Toast Feed de Presentes */
+    .toast-container {
+      position: absolute;
+      top: 145px;
+      width: calc(100% - 32px);
+      left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .toast-item {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(8px);
+      animation: slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-15px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Tela de Vitória / Round Over */
+    #victory-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.92);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    #victory-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .victory-box {
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid #fbbf24;
+      border-radius: 24px;
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 0 50px rgba(251, 191, 36, 0.35);
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .victory-crown {
+      font-size: 52px;
+      margin-bottom: 10px;
+      animation: bounce 1s infinite alternate ease-in-out;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+
+    .victory-title {
+      font-size: 26px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .victory-score-detail {
+      font-size: 15px;
+      color: #94a3b8;
+      margin-bottom: 20px;
+    }
+
+    .reset-progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 15px;
+    }
+
+    .reset-progress-fill {
+      height: 100%;
+      background: #fbbf24;
+      width: 100%;
+      transition: width 5s linear;
+    }
+
+    /* Painel de Depuração Local (Tecla 'D') */
+    #debug-drawer {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 200;
+      pointer-events: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    }
+
+    .debug-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .debug-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+    }
+
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 7px 4px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .debug-btn:hover {
+      background: #334155;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    
+    <!-- Top Safe Zone -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <span class="live-dot"></span>
+          V5 LIVE PACHINKO
+        </div>
+        <div class="timer-badge">
+          ⏳ <span id="round-timer">45</span>s
+        </div>
+      </div>
+
+      <div class="score-board">
+        <div class="team-box team-blue">
+          <span class="box-title">🔵 Time Azul</span>
+          <span class="box-score" id="score-blue">0</span>
+        </div>
+        <div class="team-box jackpot-box">
+          <span class="box-title">👑 Jackpot</span>
+          <span class="box-score" id="score-jackpot">0</span>
+        </div>
+        <div class="team-box team-red">
+          <span class="box-title">🔴 Time Vermelho</span>
+          <span class="box-score" id="score-red">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas de Física e Animação -->
+    <div id="canvas-container">
+      <canvas id="plinko-canvas"></canvas>
+    </div>
+
+    <!-- Feed de Notificações / Presentes -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Bottom Safe Zone -->
+    <footer class="bottom-panel">
+      <div class="chat-instructions">
+        <div class="cmd-pill blue">
+          <span class="cmd-key team-blue">1</span>
+          <span class="cmd-desc">Drop Azul</span>
+        </div>
+        <div class="cmd-pill gold">
+          <span class="cmd-key jackpot-box">3</span>
+          <span class="cmd-desc">Drop Jackpot</span>
+        </div>
+        <div class="cmd-pill red">
+          <span class="cmd-key team-red">2</span>
+          <span class="cmd-desc">Drop Vermelho</span>
+        </div>
+      </div>
+
+      <div class="gift-cta">
+        <div class="gift-cta-text">
+          🎁 <span>Presentes = Chuva de Bolas & Mega Meteoro!</span>
+        </div>
+        <span class="gift-badge">50x PONTOS</span>
+      </div>
+    </footer>
+
+    <!-- Overlay de Vitória / Fim de Partida -->
+    <div id="victory-overlay">
+      <div class="victory-box">
+        <div class="victory-crown" id="victory-icon">👑</div>
+        <h2 class="victory-title" id="victory-title">TIME AZUL VENCEU!</h2>
+        <p class="victory-score-detail" id="victory-detail">Placar final: 1.450 pts vs 980 pts</p>
+        <p style="font-size: 12px; color: #cbd5e1; font-weight: 600;">Reiniciando próxima rodada...</p>
+        <div class="reset-progress-bar">
+          <div class="reset-progress-fill" id="reset-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Painel de Depuração (Pressione 'D') -->
+    <div id="debug-drawer">
+      <div class="debug-title">
+        <span>🎮 Painel de Testes (OBS: Oculto)</span>
+        <span style="cursor:pointer;" onclick="toggleDebug()">✕ Fechar [D]</span>
+      </div>
+      <div class="debug-buttons">
+        <button class="debug-btn" onclick="spawnBall('A', 1, '@teste_azul')">🔵 Drop Azul (1)</button>
+        <button class="debug-btn" onclick="spawnBall('C', 1, '@teste_ouro')">👑 Drop Ouro (3)</button>
+        <button class="debug-btn" onclick="spawnBall('B', 1, '@teste_red')">🔴 Drop Red (2)</button>
+        <button class="debug-btn" onclick="spawnGiftRain('A', 'Rosa', 5, '@vip_rosa')">🌸 Chuva Rosa (10x)</button>
+        <button class="debug-btn" onclick="spawnMegaBall('C', 'Leão', 50, '@vip_leao')">🦁 Mega Leão (50x)</button>
+        <button class="debug-btn" onclick="endRound()">⏱️ Forçar Fim</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /**
+     * V5 SYNTH PROCEDURAL AUDIO ENGINE
+     * 100% Nativo via Web Audio API — Zero arquivos externos (.mp3 / .wav)
+     */
+    class V5AudioEngine {
+      constructor() {
+        this.ctx = null;
+        // Escala pentatônica brilhante para os pinos: C5, D5, E5, G5, A5, C6, D6, E6
+        this.notes = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66, 1318.51];
+      }
+
+      getCtx() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+        return this.ctx;
+      }
+
+      // Som musical agudo ao bater no pino (Plink)
+      playPeg(index = 0) {
+        try {
+          const ctx = this.getCtx();
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          const freq = this.notes[index % this.notes.length];
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now);
+
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.12);
+        } catch (e) {}
+      }
+
+      // Som elástico nos Bumpers Centrais
+      playBumper() {
+        try {
+          const ctx = this.getCtx();
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.exponentialRampToValueAtTime(650, now + 0.08);
+          osc.frequency.exponentialRampToValueAtTime(140, now + 0.22);
+
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.22);
+        } catch (e) {}
+      }
+
+      // Som ao pontuar no cesto comum
+      playScore() {
+        try {
+          const ctx = this.getCtx();
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.setValueAtTime(880, now + 0.06);
+
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } catch (e) {}
+      }
+
+      // Som triunfal do JACKPOT DOURADO
+      playJackpot() {
+        try {
+          const ctx = this.getCtx();
+          const now = ctx.currentTime;
+          const arpeggio = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98];
+
+          arpeggio.forEach((f, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            const startT = now + (idx * 0.07);
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, startT);
+
+            gain.gain.setValueAtTime(0.2, startT);
+            gain.gain.exponentialRampToValueAtTime(0.001, startT + 0.35);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start(startT);
+            osc.stop(startT + 0.35);
+          });
+        } catch (e) {}
+      }
+
+      // Som potente de Meteoro / Mega Bola
+      playMegaBall() {
+        try {
+          const ctx = this.getCtx();
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, now);
+          osc.frequency.exponentialRampToValueAtTime(40, now + 0.4);
+
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.4);
+        } catch (e) {}
+      }
+
+      // Fanfarra de fim de rodada
+      playFanfare() {
+        try {
+          const ctx = this.getCtx();
+          const now = ctx.currentTime;
+          const notes = [440, 554.37, 659.25, 880];
+          notes.forEach((f, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            const startT = now + (i * 0.12);
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, startT);
+
+            gain.gain.setValueAtTime(0.22, startT);
+            gain.gain.exponentialRampToValueAtTime(0.001, startT + 0.45);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start(startT);
+            osc.stop(startT + 0.45);
+          });
+        } catch (e) {}
+      }
+    }
+
+    const audio = new V5AudioEngine();
+
+    /**
+     * MOTOR FÍSICO DO PLINKO (CANVAS 2D - 60 FPS)
+     */
+    const canvas = document.getElementById('plinko-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let W = 0;
+    let H = 0;
+
+    function resizeCanvas() {
+      const stage = document.getElementById('game-stage');
+      W = stage.clientWidth;
+      H = stage.clientHeight;
+      canvas.width = W;
+      canvas.height = H;
+      initBoard();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    // Estado Geral da Partida
+    let roundTime = 45;
+    let timerInterval = null;
+    let isGameOver = false;
+
+    let scoreBlue = 0;
+    let scoreRed = 0;
+    let scoreJackpot = 0;
+
+    const scoreBlueEl = document.getElementById('score-blue');
+    const scoreRedEl = document.getElementById('score-red');
+    const scoreJackpotEl = document.getElementById('score-jackpot');
+    const roundTimerEl = document.getElementById('round-timer');
+    const victoryOverlay = document.getElementById('victory-overlay');
+    const victoryTitle = document.getElementById('victory-title');
+    const victoryDetail = document.getElementById('victory-detail');
+    const victoryIcon = document.getElementById('victory-icon');
+    const resetFill = document.getElementById('reset-fill');
+    const debugDrawer = document.getElementById('debug-drawer');
+    const toastContainer = document.getElementById('toast-container');
+
+    // Entidades de Jogo
+    let pegs = [];
+    let bumpers = [];
+    let buckets = [];
+    let balls = [];
+    let particles = [];
+    let confettis = [];
+
+    // Definição da Geometria do Tabuleiro
+    function initBoard() {
+      pegs = [];
+      bumpers = [];
+      buckets = [];
+
+      const topOffset = H * 0.17;
+      const bottomOffset = H * 0.74;
+      const boardHeight = bottomOffset - topOffset;
+
+      // Grade Triangular de Pinos (9 Linhas)
+      const rows = 10;
+      const startPegs = 3;
+      const rowSpacing = boardHeight / rows;
+
+      for (let r = 0; r < rows; r++) {
+        const count = startPegs + r;
+        const y = topOffset + (r * rowSpacing);
+        const rowWidth = W * (0.35 + (r * 0.055));
+        const startX = (W - rowWidth) / 2;
+        const spacingX = count > 1 ? rowWidth / (count - 1) : 0;
+
+        for (let c = 0; c < count; c++) {
+          const x = startX + (c * spacingX);
+          pegs.push({
+            x: x,
+            y: y,
+            radius: 4,
+            glow: 0,
+            noteIndex: r
+          });
+        }
+      }
+
+      // Bumpers Centralizados Dinâmicos
+      bumpers.push({
+        x: W * 0.32,
+        y: topOffset + (boardHeight * 0.48),
+        radius: 16,
+        color: '#38bdf8',
+        hitTimer: 0
+      });
+
+      bumpers.push({
+        x: W * 0.68,
+        y: topOffset + (boardHeight * 0.48),
+        radius: 16,
+        color: '#f87171',
+        hitTimer: 0
+      });
+
+      // Cestos Coletadores na Base (7 Cestos)
+      const bucketCount = 7;
+      const bucketWidth = (W * 0.92) / bucketCount;
+      const bucketStartX = (W - (bucketCount * bucketWidth)) / 2;
+      const bucketY = bottomOffset;
+
+      const multipliers = [
+        { label: '2x', mult: 2, team: 'A', color: '#38bdf8' },
+        { label: '5x', mult: 5, team: 'A', color: '#38bdf8' },
+        { label: '10x', mult: 10, team: 'A', color: '#60a5fa' },
+        { label: '50x', mult: 50, team: 'C', color: '#fbbf24', isJackpot: true },
+        { label: '10x', mult: 10, team: 'B', color: '#f87171' },
+        { label: '5x', mult: 5, team: 'B', color: '#f87171' },
+        { label: '2x', mult: 2, team: 'B', color: '#f87171' }
+      ];
+
+      for (let i = 0; i < bucketCount; i++) {
+        buckets.push({
+          x: bucketStartX + (i * bucketWidth),
+          y: bucketY,
+          width: bucketWidth,
+          height: 38,
+          info: multipliers[i],
+          hitGlow: 0
+        });
+      }
+    }
+
+    // Criação de Bolas
+    function spawnBall(team, weight = 1, user = '@jogador', giftName = null, isMega = false) {
+      if (isGameOver) return;
+
+      audio.getCtx(); // Desperta o áudio no primeiro toque
+
+      let startX = W * 0.5;
+      if (team === 'A') startX = W * 0.28 + (Math.random() * 20 - 10);
+      else if (team === 'B') startX = W * 0.72 + (Math.random() * 20 - 10);
+      else startX = W * 0.5 + (Math.random() * 20 - 10);
+
+      const radius = isMega ? 15 : 7;
+      let color = '#38bdf8';
+      if (team === 'B') color = '#f87171';
+      if (team === 'C' || isMega) color = '#fbbf24';
+
+      balls.push({
+        x: startX,
+        y: H * 0.14,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: Math.random() * 1.5 + 1,
+        radius: radius,
+        color: color,
+        team: team,
+        weight: weight,
+        user: user,
+        giftName: giftName,
+        isMega: isMega,
+        trail: []
+      });
+
+      if (isMega) {
+        audio.playMegaBall();
+        spawnToast(`🦁 ${user} jogou MEGA METEORO DOURADO! (+${weight * 50}x)`, '#fbbf24');
+      } else if (giftName) {
+        audio.playScore();
+      }
+    }
+
+    // Chuva de Presentes (Rosa, Foguete, etc.)
+    function spawnGiftRain(team, giftName, count = 8, user = '@doador_vip') {
+      audio.playScore();
+      spawnToast(`🎁 ${user} enviou ${giftName}! CHUVA DE BOLAS!`, team === 'A' ? '#38bdf8' : (team === 'B' ? '#f87171' : '#fbbf24'));
+
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          spawnBall(team, 3, user, giftName, false);
+        }, i * 90);
+      }
+    }
+
+    function spawnMegaBall(team, giftName, weight = 50, user = '@super_vip') {
+      spawnBall(team, weight, user, giftName, true);
+    }
+
+    // Notificações Flutuantes (Toasts)
+    function spawnToast(text, color = '#38bdf8') {
+      const toast = document.createElement('div');
+      toast.className = 'toast-item';
+      toast.style.borderColor = color;
+      toast.innerHTML = `<span style="color:${color}">${text}</span>`;
+      toastContainer.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 2600);
+    }
+
+    // Explosão de Partículas
+    function spawnParticles(x, y, color, count = 6) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 3 + 1;
+        particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          radius: Math.random() * 2.5 + 1,
+          color: color,
+          alpha: 1,
+          life: 25
+        });
+      }
+    }
+
+    // Confetes da Vitória
+    function spawnConfetti() {
+      const colors = ['#38bdf8', '#f87171', '#fbbf24', '#10b981', '#a855f7'];
+      for (let i = 0; i < 70; i++) {
+        confettis.push({
+          x: Math.random() * W,
+          y: Math.random() * H * 0.3,
+          vx: (Math.random() - 0.5) * 4,
+          vy: Math.random() * 4 + 2,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10
+        });
+      }
+    }
+
+    /**
+     * LOOP PRINCIPAL DE FÍSICA E RENDERIZAÇÃO (requestAnimationFrame 60 FPS)
+     */
+    const gravity = 0.22;
+    const bounceDamping = 0.65;
+    const friction = 0.99;
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, W, H);
+
+      // 1. Desenhar Tubos Lançadores Superiores
+      drawLaunchers();
+
+      // 2. Atualizar e Desenhar Pinos
+      pegs.forEach(peg => {
+        if (peg.glow > 0) peg.glow -= 0.04;
+        ctx.beginPath();
+        ctx.arc(peg.x, peg.y, peg.radius + (peg.glow * 3), 0, Math.PI * 2);
+        ctx.fillStyle = peg.glow > 0.05 ? '#ffffff' : '#64748b';
+        ctx.shadowColor = peg.glow > 0.05 ? '#38bdf8' : 'transparent';
+        ctx.shadowBlur = peg.glow * 15;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      // 3. Atualizar e Desenhar Bumpers Centrais
+      bumpers.forEach(b => {
+        if (b.hitTimer > 0) b.hitTimer -= 0.05;
+        ctx.beginPath();
+        const r = b.radius + (b.hitTimer * 4);
+        ctx.arc(b.x, b.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = b.hitTimer > 0.1 ? '#ffffff' : b.color;
+        ctx.shadowColor = b.color;
+        ctx.shadowBlur = 12 + (b.hitTimer * 20);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Anel Externo
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Rótulo
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('BOUNCE', b.x, b.y);
+      });
+
+      // 4. Desenhar Cestos na Base
+      buckets.forEach(b => {
+        if (b.hitGlow > 0) b.hitGlow -= 0.04;
+        const info = b.info;
+
+        ctx.fillStyle = b.hitGlow > 0.1 ? 'rgba(255,255,255,0.2)' : 'rgba(15, 23, 42, 0.7)';
+        ctx.strokeStyle = info.color;
+        ctx.lineWidth = b.hitGlow > 0.1 ? 3 : 1.5;
+        ctx.shadowColor = info.color;
+        ctx.shadowBlur = b.hitGlow * 15;
+
+        // Caixa do Cesto
+        ctx.beginPath();
+        ctx.roundRect(b.x + 2, b.y, b.width - 4, b.height, 8);
+        ctx.fill();
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Separadores verticais
+        ctx.beginPath();
+        ctx.moveTo(b.x + 2, b.y - 12);
+        ctx.lineTo(b.x + 2, b.y + b.height);
+        ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Texto do Multiplicador
+        ctx.fillStyle = info.color;
+        ctx.font = 'bold 13px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(info.label, b.x + (b.width / 2), b.y + 14);
+
+        // Ícone pequeno de time
+        ctx.font = '10px sans-serif';
+        const teamTag = info.team === 'A' ? '🔵' : (info.team === 'B' ? '🔴' : '👑');
+        ctx.fillText(teamTag, b.x + (b.width / 2), b.y + 27);
+      });
+
+      // 5. Atualizar Bolas e Tratar Colisões
+      for (let i = balls.length - 1; i >= 0; i--) {
+        const ball = balls[i];
+
+        // Gravidade e atrito
+        ball.vy += gravity;
+        ball.vx *= friction;
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+
+        // Histórico de Rastro
+        ball.trail.push({ x: ball.x, y: ball.y });
+        if (ball.trail.length > 5) ball.trail.shift();
+
+        // Render Rastro
+        ctx.beginPath();
+        ctx.moveTo(ball.x, ball.y);
+        for (let t = ball.trail.length - 1; t >= 0; t--) {
+          ctx.lineTo(ball.trail[t].x, ball.trail[t].y);
+        }
+        ctx.strokeStyle = ball.color;
+        ctx.globalAlpha = 0.35;
+        ctx.lineWidth = ball.radius * 0.9;
+        ctx.stroke();
+        ctx.globalAlpha = 1.0;
+
+        // Limites Laterais da Tela
+        if (ball.x - ball.radius < 10) {
+          ball.x = 10 + ball.radius;
+          ball.vx = -ball.vx * bounceDamping;
+        } else if (ball.x + ball.radius > W - 10) {
+          ball.x = W - 10 - ball.radius;
+          ball.vx = -ball.vx * bounceDamping;
+        }
+
+        // Colisão com Pinos
+        pegs.forEach(peg => {
+          const dx = ball.x - peg.x;
+          const dy = ball.y - peg.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const minDist = ball.radius + peg.radius;
+
+          if (dist < minDist) {
+            // Vetor Normal
+            const nx = dx / dist;
+            const ny = dy / dist;
+
+            // Reposicionamento
+            ball.x = peg.x + nx * minDist;
+            ball.y = peg.y + ny * minDist;
+
+            // Reflexão de Velocidade com Impulso Aleatório
+            const dot = ball.vx * nx + ball.vy * ny;
+            ball.vx = (ball.vx - 2 * dot * nx) * bounceDamping + (Math.random() - 0.5) * 0.8;
+            ball.vy = (ball.vy - 2 * dot * ny) * bounceDamping;
+
+            peg.glow = 1.0;
+            spawnParticles(peg.x, peg.y, ball.color, 4);
+            audio.playPeg(peg.noteIndex);
+          }
+        });
+
+        // Colisão com Bumpers Centrais
+        bumpers.forEach(b => {
+          const dx = ball.x - b.x;
+          const dy = ball.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const minDist = ball.radius + b.radius;
+
+          if (dist < minDist) {
+            const nx = dx / dist;
+            const ny = dy / dist;
+
+            ball.x = b.x + nx * minDist;
+            ball.y = b.y + ny * minDist;
+
+            // Super impulso do Bumper
+            const bounceForce = ball.isMega ? 7 : 5;
+            ball.vx = nx * bounceForce;
+            ball.vy = ny * bounceForce;
+
+            b.hitTimer = 1.0;
+            spawnParticles(b.x, b.y, b.color, 8);
+            audio.playBumper();
+          }
+        });
+
+        // Colisão com Cestos na Base
+        buckets.forEach(b => {
+          if (ball.y + ball.radius >= b.y && ball.x >= b.x && ball.x <= b.x + b.width) {
+            // Pontuação computada!
+            const pts = (ball.weight || 1) * b.info.mult;
+            b.hitGlow = 1.0;
+
+            if (b.info.isJackpot) {
+              scoreJackpot += pts;
+              scoreJackpotEl.innerText = scoreJackpot.toLocaleString('pt-BR');
+              audio.playJackpot();
+              spawnToast(`👑 JACKPOT 50x! ${ball.user} garantiu +${pts} pts!`, '#fbbf24');
+              spawnParticles(ball.x, ball.y, '#fbbf24', 16);
+            } else if (ball.team === 'A' || b.info.team === 'A') {
+              scoreBlue += pts;
+              scoreBlueEl.innerText = scoreBlue.toLocaleString('pt-BR');
+              audio.playScore();
+              spawnParticles(ball.x, ball.y, '#38bdf8', 8);
+            } else {
+              scoreRed += pts;
+              scoreRedEl.innerText = scoreRed.toLocaleString('pt-BR');
+              audio.playScore();
+              spawnParticles(ball.x, ball.y, '#f87171', 8);
+            }
+
+            // Remove bola
+            balls.splice(i, 1);
+          }
+        });
+
+        // Remove bolas que caíram além do fundo
+        if (balls[i] && ball.y > H) {
+          balls.splice(i, 1);
+        }
+
+        // Render da Bola
+        if (balls[i]) {
+          ctx.beginPath();
+          ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+          ctx.fillStyle = ball.color;
+          ctx.shadowColor = ball.color;
+          ctx.shadowBlur = ball.isMega ? 25 : 12;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          // Núcleo branco brilhante
+          ctx.beginPath();
+          ctx.arc(ball.x - ball.radius * 0.25, ball.y - ball.radius * 0.25, ball.radius * 0.35, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+        }
+      }
+
+      // 6. Atualizar Partículas
+      for (let p = particles.length - 1; p >= 0; p--) {
+        const pt = particles[p];
+        pt.x += pt.vx;
+        pt.y += pt.vy;
+        pt.alpha -= 0.04;
+
+        if (pt.alpha <= 0) {
+          particles.splice(p, 1);
+        } else {
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
+          ctx.fillStyle = pt.color;
+          ctx.globalAlpha = pt.alpha;
+          ctx.fill();
+          ctx.globalAlpha = 1.0;
+        }
+      }
+
+      // 7. Atualizar Confetes de Vitória
+      for (let c = confettis.length - 1; c >= 0; c--) {
+        const cf = confettis[c];
+        cf.x += cf.vx;
+        cf.y += cf.vy;
+        cf.rotation += cf.rotSpeed;
+
+        ctx.save();
+        ctx.translate(cf.x, cf.y);
+        ctx.rotate((cf.rotation * Math.PI) / 180);
+        ctx.fillStyle = cf.color;
+        ctx.fillRect(-cf.size / 2, -cf.size / 2, cf.size, cf.size * 0.6);
+        ctx.restore();
+
+        if (cf.y > H) {
+          confettis.splice(c, 1);
+        }
+      }
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // Desenho dos Lançadores Superiores
+    function drawLaunchers() {
+      const launchers = [
+        { x: W * 0.28, color: '#38bdf8', label: '1' },
+        { x: W * 0.50, color: '#fbbf24', label: '3' },
+        { x: W * 0.72, color: '#f87171', label: '2' }
+      ];
+
+      launchers.forEach(l => {
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+        ctx.strokeStyle = l.color;
+        ctx.lineWidth = 2;
+        ctx.shadowColor = l.color;
+        ctx.shadowBlur = 8;
+
+        // Funil
+        ctx.beginPath();
+        ctx.moveTo(l.x - 18, H * 0.11);
+        ctx.lineTo(l.x + 18, H * 0.11);
+        ctx.lineTo(l.x + 8, H * 0.15);
+        ctx.lineTo(l.x - 8, H * 0.15);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Letra do Funil
+        ctx.fillStyle = l.color;
+        ctx.font = 'bold 11px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(l.label, l.x, H * 0.125);
+      });
+    }
+
+    /**
+     * CICLO DE PARTIDA & AUTO-RESET (45 SEGUNDOS)
+     */
+    function startTimer() {
+      roundTime = 45;
+      isGameOver = false;
+      roundTimerEl.innerText = roundTime;
+      victoryOverlay.classList.remove('active');
+      resetFill.style.width = '0%';
+
+      if (timerInterval) clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        roundTime--;
+        roundTimerEl.innerText = roundTime;
+
+        if (roundTime <= 0) {
+          clearInterval(timerInterval);
+          endRound();
+        }
+      }, 1000);
+    }
+
+    function endRound() {
+      if (isGameOver) return;
+      isGameOver = true;
+
+      audio.playFanfare();
+      spawnConfetti();
+
+      // Determinar Vencedor
+      let winText = '';
+      let winIcon = '👑';
+      let winColor = '#fbbf24';
+
+      if (scoreBlue > scoreRed) {
+        winText = 'TIME AZUL VENCEU!';
+        winIcon = '🔵';
+        winColor = '#38bdf8';
+      } else if (scoreRed > scoreBlue) {
+        winText = 'TIME VERMELHO VENCEU!';
+        winIcon = '🔴';
+        winColor = '#f87171';
+      } else {
+        winText = 'EMPATE HISTÓRICO!';
+        winIcon = '🤝';
+        winColor = '#fbbf24';
+      }
+
+      victoryTitle.innerText = winText;
+      victoryTitle.style.color = winColor;
+      victoryIcon.innerText = winIcon;
+      victoryDetail.innerText = `Azul: ${scoreBlue.toLocaleString('pt-BR')} pts | Vermelho: ${scoreRed.toLocaleString('pt-BR')} pts | Jackpot: ${scoreJackpot.toLocaleString('pt-BR')} pts`;
+
+      victoryOverlay.classList.add('active');
+
+      // Barra de Auto-Reset (5 Segundos)
+      setTimeout(() => {
+        resetFill.style.width = '100%';
+      }, 50);
+
+      // Reinício 100% Automático
+      setTimeout(() => {
+        scoreBlue = 0;
+        scoreRed = 0;
+        scoreJackpot = 0;
+        scoreBlueEl.innerText = '0';
+        scoreRedEl.innerText = '0';
+        scoreJackpotEl.innerText = '0';
+        balls = [];
+        confettis = [];
+        startTimer();
+      }, 5000);
+    }
+
+    /**
+     * INTEGRAÇÃO COM BROADCASTER & EVENT BUS
+     */
+    function processLiveEvent(payload) {
+      if (!payload) return;
+
+      const comment = (payload.comment || payload.action || '').toString().toLowerCase().trim();
+      const user = payload.user || '@espectador';
+      const giftName = payload.giftName || null;
+      const weight = payload.weight || payload.coins || 1;
+
+      // Evento de Presente (Gift)
+      if (payload.type === 'gift' || giftName) {
+        if (weight >= 50 || giftName.toLowerCase().includes('leão') || giftName.toLowerCase().includes('lion')) {
+          spawnMegaBall(Math.random() < 0.5 ? 'A' : 'B', giftName, weight, user);
+        } else {
+          const team = Math.random() < 0.5 ? 'A' : 'B';
+          spawnGiftRain(team, giftName, Math.min(12, Math.max(5, weight)), user);
+        }
+        return;
+      }
+
+      // Evento de Comentário Comum
+      if (comment === '1' || comment.includes('azul') || payload.team === 'A') {
+        spawnBall('A', weight, user);
+      } else if (comment === '2' || comment.includes('vermelho') || payload.team === 'B') {
+        spawnBall('B', weight, user);
+      } else if (comment === '3' || comment.includes('jackpot') || comment.includes('ouro') || payload.team === 'C') {
+        spawnBall('C', weight, user);
+      }
+    }
+
+    // Escuta via BroadcastChannel
+    try {
+      const channel = new BroadcastChannel('v5_broadcaster_games');
+      channel.onmessage = (e) => {
+        if (e.data) processLiveEvent(e.data);
+      };
+    } catch (e) {
+      console.warn('BroadcastChannel não suportado neste navegador.');
+    }
+
+    // Escuta via CustomEvent de Janela
+    window.addEventListener('v5_event', (e) => {
+      if (e.detail) processLiveEvent(e.detail);
+    });
+
+    // Escuta via window.postMessage
+    window.addEventListener('message', (e) => {
+      if (e.data && (e.data.type || e.data.action || e.data.comment)) {
+        processLiveEvent(e.data);
+      }
+    });
+
+    /**
+     * MOTOR ANTI-SILÊNCIO (SIMULAÇÃO AUTÔNOMA DE LIVE)
+     * Nunca deixa a tela vazia nem o áudio em silêncio se a live estiver calma.
+     */
+    const mockUsers = ['@gamer_sp', '@mari_live', '@diegok_br', '@aline_stream', '@lucas_tk', '@bia_v5', '@rodrigo_pro'];
+    setInterval(() => {
+      if (isGameOver) return;
+
+      const teamChoice = Math.random() < 0.4 ? 'A' : (Math.random() < 0.7 ? 'B' : 'C');
+      const user = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+
+      // 10% de chance de presente simulado
+      if (Math.random() < 0.12) {
+        spawnGiftRain(teamChoice, 'Rosa Virtual', 4, user);
+      } else {
+        spawnBall(teamChoice, 1, user);
+      }
+    }, 2400);
+
+    // Tecla 'D' para alternar painel de depuração
+    function toggleDebug() {
+      debugDrawer.style.display = debugDrawer.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        toggleDebug();
+      }
+    });
+
+    // Inicialização
+    resizeCanvas();
+    startTimer();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>

@@ -1,13 +1,23 @@
 # MEMÓRIA ATIVA — CAPITANIA V5 GAMES (CATÁLOGO DE JOGOS DE LIVE)
 
 **Última Atualização:** 27 de Outubro de 2026  
-**Status do Projeto:** Fase 1 — Fundação da Infraestrutura & Catálogo Inicial (10 a 40 Jogos)  
+**Status do Projeto:** Fase 1 — Fundação da Infraestrutura & Catálogo Inicial (Meta: 30 Jogos Homologados)  
 **Destino de Hospedagem:** `E:\MEUS PROGRAMAS\V5_APOLLO_SITES\V5_Apollo_Broadcaster\frontend\public\games\`  
 **Resolução Padrão:** 1080 x 1920 (Vertical 9:16)
 
 ---
 
-## 1. Visão do Catálogo Exclusivo (10 a 40 Jogos Próprios)
+## 0. O Propósito Sagrado do V5 Games & Aliança com o Broadcaster
+- **Por que esta Capitania Existe:** O **V5 Broadcaster** é o motor de transmissão contínua 24/7 (FFmpeg, NVENC, OBS, Syndication, Rádio). Se o Broadcaster tentasse fabricar jogos, ele perderia o foco de infraestrutura pesada e se corromperia.
+- **A Divisão dos Poderes:**
+  - **V5 Broadcaster:** O Console e Estúdio de Streaming.
+  - **V5 Games:** A Forja Exclusiva de Cartuchos. 
+- **A Tese de Monetização & Dogfooding:** Jogos de live em formato 9:16 são máquinas de retenção e faturamento em presentes (TikTok Gifts, rosas, foguetes, leões, moedas). Nós seremos nossos próprios primeiros clientes (alimentando nossas lives 24/7 e os canais multimodais da holding, como o **Roxingo**).
+- **Meta Primária:** Construir e homologar uma esteira de **~30 jogos ultra-polidos**, leves, sem dependências externas, com física suave (60 FPS), síntese de áudio procedural e psicologia de monetização afiada.
+
+---
+
+## 1. Visão do Catálogo Exclusivo (Meta: 30 Jogos Próprios)
 O objetivo financeiro e técnico é possuir um acervo proprietário de alta qualidade que transforma transmissões de streamers e as nossas próprias lives em pólos de alta retenção e receita com presentes (TikTok Gifts / YouTube SuperChats).
 
 ### Tabela Mestra do Catálogo de Cartuchos:
@@ -15,7 +25,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | # | Slug do Jogo | Nome Comercial | Mecânica Principal | Status |
 |---|---|---|---|---|
 | **01** | `01_cabo_de_guerra_neon` | Cabo de Guerra Neon | Chat vota 1 ou 2 para puxar a corda; Presentes dão super-tração | **HOMOLOGADO** |
-| **02** | `02_plinko_pachinko_fortuna` | Plinko da Fortuna | Comentários e gifts soltam bolinhas físicas que caem em multiplicadores | **PROTÓTIPO** |
+| **02** | `02_plinko_pachinko_fortuna` | Plinko da Fortuna | Comentários e gifts soltam bolinhas físicas que caem em multiplicadores (50x Jackpot) | **HOMOLOGADO** |
 | **03** | `03_corrida_avatares_holding` | Corrida dos Avatares | Roxingo, Baiano e Macaco Driver disputam pista acelerando com votos | Planejado |
 | **04** | `04_boss_raid_cooperativo` | Boss Raid do Chat | Chat inteiro ataca monstro gigante com barra de HP em 45 segundos | Planejado |
 | **05** | `05_roleta_desafios_live` | Roleta dos Desafios | Presentes giram a roleta de desafios cômicos para o streamer ou avatar | Planejado |
