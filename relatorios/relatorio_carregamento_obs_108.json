@@ -1,0 +1,379 @@
+{
+  "total_cartridges": 41,
+  "compliant_count": 41,
+  "average_load_time_ms": 4.16,
+  "target_threshold_ms": 200,
+  "headroom_ms": 195.84,
+  "compliance_rate_percent": 100,
+  "results": [
+    {
+      "slug": "01_cabo_de_guerra_neon",
+      "size_kb": 28.42,
+      "read_time_ms": 0.238,
+      "parse_time_ms": 0.844,
+      "script_exec_ms": 5.133,
+      "total_load_ms": 7.201,
+      "compliant": true
+    },
+    {
+      "slug": "01b_cabo_de_guerra_elementos",
+      "size_kb": 28.65,
+      "read_time_ms": 0.955,
+      "parse_time_ms": 0.041,
+      "script_exec_ms": 2.387,
+      "total_load_ms": 3.478,
+      "compliant": true
+    },
+    {
+      "slug": "02_plinko_pachinko_fortuna",
+      "size_kb": 41.27,
+      "read_time_ms": 0.38,
+      "parse_time_ms": 0.046,
+      "script_exec_ms": 2.937,
+      "total_load_ms": 3.47,
+      "compliant": true
+    },
+    {
+      "slug": "03_corrida_avatares_holding",
+      "size_kb": 39.9,
+      "read_time_ms": 0.26,
+      "parse_time_ms": 0.036,
+      "script_exec_ms": 2.618,
+      "total_load_ms": 2.975,
+      "compliant": true
+    },
+    {
+      "slug": "04_boss_raid_cooperativo",
+      "size_kb": 42.6,
+      "read_time_ms": 0.864,
+      "parse_time_ms": 0.042,
+      "script_exec_ms": 3.299,
+      "total_load_ms": 4.302,
+      "compliant": true
+    },
+    {
+      "slug": "05_roleta_desafios_live",
+      "size_kb": 34.56,
+      "read_time_ms": 0.279,
+      "parse_time_ms": 0.033,
+      "script_exec_ms": 3.132,
+      "total_load_ms": 3.545,
+      "compliant": true
+    },
+    {
+      "slug": "06_batalha_dos_baloes",
+      "size_kb": 31.18,
+      "read_time_ms": 0.291,
+      "parse_time_ms": 0.031,
+      "script_exec_ms": 2.423,
+      "total_load_ms": 2.815,
+      "compliant": true
+    },
+    {
+      "slug": "07_pendulo_destruidor",
+      "size_kb": 31.62,
+      "read_time_ms": 0.212,
+      "parse_time_ms": 0.042,
+      "script_exec_ms": 5.594,
+      "total_load_ms": 5.904,
+      "compliant": true
+    },
+    {
+      "slug": "08_caca_tesouro_coordenadas",
+      "size_kb": 40.68,
+      "read_time_ms": 1.395,
+      "parse_time_ms": 0.066,
+      "script_exec_ms": 4.827,
+      "total_load_ms": 6.401,
+      "compliant": true
+    },
+    {
+      "slug": "09_tsunami_de_curtidas",
+      "size_kb": 40.2,
+      "read_time_ms": 0.329,
+      "parse_time_ms": 0.046,
+      "script_exec_ms": 3.991,
+      "total_load_ms": 4.486,
+      "compliant": true
+    },
+    {
+      "slug": "10_queda_dos_blocos",
+      "size_kb": 39.43,
+      "read_time_ms": 0.241,
+      "parse_time_ms": 0.035,
+      "script_exec_ms": 3.751,
+      "total_load_ms": 4.093,
+      "compliant": true
+    },
+    {
+      "slug": "11_queda_de_braco_titas",
+      "size_kb": 40.41,
+      "read_time_ms": 0.336,
+      "parse_time_ms": 0.041,
+      "script_exec_ms": 3.287,
+      "total_load_ms": 3.747,
+      "compliant": true
+    },
+    {
+      "slug": "12_pachinko_pinball_neon",
+      "size_kb": 42.56,
+      "read_time_ms": 0.301,
+      "parse_time_ms": 0.035,
+      "script_exec_ms": 2.798,
+      "total_load_ms": 3.191,
+      "compliant": true
+    },
+    {
+      "slug": "13_cascata_de_moedas",
+      "size_kb": 35.6,
+      "read_time_ms": 0.22,
+      "parse_time_ms": 0.031,
+      "script_exec_ms": 2.469,
+      "total_load_ms": 2.777,
+      "compliant": true
+    },
+    {
+      "slug": "14_vortex_gravitacional",
+      "size_kb": 33.49,
+      "read_time_ms": 0.294,
+      "parse_time_ms": 0.031,
+      "script_exec_ms": 4.097,
+      "total_load_ms": 4.485,
+      "compliant": true
+    },
+    {
+      "slug": "15_corrida_maluca_espacial",
+      "size_kb": 40.4,
+      "read_time_ms": 1.319,
+      "parse_time_ms": 0.094,
+      "script_exec_ms": 4.93,
+      "total_load_ms": 6.523,
+      "compliant": true
+    },
+    {
+      "slug": "16_arrancada_noturna_neon",
+      "size_kb": 40.07,
+      "read_time_ms": 1.139,
+      "parse_time_ms": 0.077,
+      "script_exec_ms": 3.601,
+      "total_load_ms": 4.898,
+      "compliant": true
+    },
+    {
+      "slug": "17_caca_niquel_neon_777",
+      "size_kb": 31.71,
+      "read_time_ms": 0.414,
+      "parse_time_ms": 0.043,
+      "script_exec_ms": 3.795,
+      "total_load_ms": 4.336,
+      "compliant": true
+    },
+    {
+      "slug": "18_roleta_russa_baloes",
+      "size_kb": 33.48,
+      "read_time_ms": 0.29,
+      "parse_time_ms": 0.031,
+      "script_exec_ms": 2.201,
+      "total_load_ms": 2.567,
+      "compliant": true
+    },
+    {
+      "slug": "19_defesa_da_torre_chat",
+      "size_kb": 35.51,
+      "read_time_ms": 0.241,
+      "parse_time_ms": 0.025,
+      "script_exec_ms": 2.49,
+      "total_load_ms": 2.792,
+      "compliant": true
+    },
+    {
+      "slug": "20_subida_da_montanha_sagrada",
+      "size_kb": 32.97,
+      "read_time_ms": 0.293,
+      "parse_time_ms": 0.024,
+      "script_exec_ms": 2.465,
+      "total_load_ms": 2.82,
+      "compliant": true
+    },
+    {
+      "slug": "21_batata_quente_explosiva",
+      "size_kb": 33.03,
+      "read_time_ms": 0.338,
+      "parse_time_ms": 0.03,
+      "script_exec_ms": 2.804,
+      "total_load_ms": 3.221,
+      "compliant": true
+    },
+    {
+      "slug": "22_ponte_de_vidro_quebradico",
+      "size_kb": 35.67,
+      "read_time_ms": 0.339,
+      "parse_time_ms": 0.035,
+      "script_exec_ms": 6.46,
+      "total_load_ms": 6.899,
+      "compliant": true
+    },
+    {
+      "slug": "23_sobrevivencia_na_lava",
+      "size_kb": 45.48,
+      "read_time_ms": 0.606,
+      "parse_time_ms": 0.049,
+      "script_exec_ms": 4.994,
+      "total_load_ms": 5.74,
+      "compliant": true
+    },
+    {
+      "slug": "24_campo_minado_neon",
+      "size_kb": 40.64,
+      "read_time_ms": 0.321,
+      "parse_time_ms": 0.028,
+      "script_exec_ms": 3.849,
+      "total_load_ms": 4.25,
+      "compliant": true
+    },
+    {
+      "slug": "25_batalha_naval_live",
+      "size_kb": 40.58,
+      "read_time_ms": 0.26,
+      "parse_time_ms": 0.03,
+      "script_exec_ms": 5.096,
+      "total_load_ms": 5.441,
+      "compliant": true
+    },
+    {
+      "slug": "26_guerra_dos_tanques_neon",
+      "size_kb": 52.5,
+      "read_time_ms": 0.285,
+      "parse_time_ms": 0.037,
+      "script_exec_ms": 2.317,
+      "total_load_ms": 2.68,
+      "compliant": true
+    },
+    {
+      "slug": "27_meteoro_defensor",
+      "size_kb": 46.88,
+      "read_time_ms": 0.246,
+      "parse_time_ms": 0.032,
+      "script_exec_ms": 2.387,
+      "total_load_ms": 2.695,
+      "compliant": true
+    },
+    {
+      "slug": "28_labirinto_pacman_neon",
+      "size_kb": 44.8,
+      "read_time_ms": 0.271,
+      "parse_time_ms": 0.029,
+      "script_exec_ms": 2.139,
+      "total_load_ms": 2.471,
+      "compliant": true
+    },
+    {
+      "slug": "29_basquete_street_neon",
+      "size_kb": 40.59,
+      "read_time_ms": 0.301,
+      "parse_time_ms": 0.034,
+      "script_exec_ms": 5.94,
+      "total_load_ms": 6.327,
+      "compliant": true
+    },
+    {
+      "slug": "30_gol_de_penalti_live",
+      "size_kb": 44.9,
+      "read_time_ms": 0.637,
+      "parse_time_ms": 0.054,
+      "script_exec_ms": 3.813,
+      "total_load_ms": 4.603,
+      "compliant": true
+    },
+    {
+      "slug": "31_guitar_hero_neon",
+      "size_kb": 40.54,
+      "read_time_ms": 0.485,
+      "parse_time_ms": 0.032,
+      "script_exec_ms": 2.277,
+      "total_load_ms": 2.844,
+      "compliant": true
+    },
+    {
+      "slug": "32_corte_de_frutas_neon",
+      "size_kb": 42.04,
+      "read_time_ms": 0.279,
+      "parse_time_ms": 0.03,
+      "script_exec_ms": 3.215,
+      "total_load_ms": 3.557,
+      "compliant": true
+    },
+    {
+      "slug": "33_corrida_de_cavalos_retro",
+      "size_kb": 53.49,
+      "read_time_ms": 0.439,
+      "parse_time_ms": 0.044,
+      "script_exec_ms": 4.155,
+      "total_load_ms": 4.685,
+      "compliant": true
+    },
+    {
+      "slug": "34_pinball_galactico",
+      "size_kb": 48.83,
+      "read_time_ms": 0.306,
+      "parse_time_ms": 0.034,
+      "script_exec_ms": 2.968,
+      "total_load_ms": 3.344,
+      "compliant": true
+    },
+    {
+      "slug": "35_quiz_frenetico_holding",
+      "size_kb": 44.13,
+      "read_time_ms": 0.284,
+      "parse_time_ms": 0.029,
+      "script_exec_ms": 2.573,
+      "total_load_ms": 2.916,
+      "compliant": true
+    },
+    {
+      "slug": "36_pula_corda_extremo",
+      "size_kb": 39.43,
+      "read_time_ms": 0.315,
+      "parse_time_ms": 0.035,
+      "script_exec_ms": 3.708,
+      "total_load_ms": 4.108,
+      "compliant": true
+    },
+    {
+      "slug": "37_torre_de_blocos_equilibrada",
+      "size_kb": 41.38,
+      "read_time_ms": 3.145,
+      "parse_time_ms": 0.104,
+      "script_exec_ms": 4.458,
+      "total_load_ms": 7.85,
+      "compliant": true
+    },
+    {
+      "slug": "38_fuga_da_prisao_espacial",
+      "size_kb": 38.83,
+      "read_time_ms": 0.297,
+      "parse_time_ms": 0.029,
+      "script_exec_ms": 2.539,
+      "total_load_ms": 2.903,
+      "compliant": true
+    },
+    {
+      "slug": "39_alvo_movel_snipers",
+      "size_kb": 40.57,
+      "read_time_ms": 0.422,
+      "parse_time_ms": 0.041,
+      "script_exec_ms": 3.06,
+      "total_load_ms": 3.581,
+      "compliant": true
+    },
+    {
+      "slug": "40_duelo_de_magicos_neon",
+      "size_kb": 42.09,
+      "read_time_ms": 0.428,
+      "parse_time_ms": 0.04,
+      "script_exec_ms": 3.151,
+      "total_load_ms": 3.664,
+      "compliant": true
+    }
+  ]
+}

@@ -152,4 +152,6 @@ O objetivo financeiro e técnico foi alcançado com um acervo proprietário de a
 - `scripts/test_debug_drawer_106.py`: Suíte de homologação da Gaveta de Depuração com simulação headless do ciclo de alternância da tecla 'D' (6/6 checks aprovados).
 - `scripts/audit_gift_economy_107.py`: Auditoria cirúrgica da economia de monetização e presentes nos 41 cartuchos (pesos >= 5x, alertas visuais, áudio procedural e resiliência a burst).
 - `scripts/test_gift_economy_107.py`: Suíte de estresse de 10.000 presentes em alta frequência (2M gifts/s simulados) sem engasgos ou memory leaks (6/6 checks aprovados).
+- `scripts/benchmark_loading_obs_108.js`: Benchmark industrial de carregamento no OBS Browser Source com medição de leitura, parse, compilação V8 e primeiro frame (média de 4.16ms, meta < 200ms).
+- `scripts/test_loading_performance_108.py`: Suíte de homologação de carregamento instantâneo com verificação de orçamento de tamanho e zero bloqueios de rede (6/6 checks aprovados).
 - `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo industrial com verificação MD5 bit-a-bit, gerador de manifestos espelhados e gerador de `games_registry.json` para o V5 Broadcaster.

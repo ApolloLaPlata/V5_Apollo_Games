@@ -1,6 +1,6 @@
 # RELATÓRIO DE DESPACHO E SINCRONIZAÇÃO INDUSTRIAL
 **Holding V5 Apollo — Capitania V5 Games -> V5 Broadcaster**  
-*Data de Execução:* 27/10/2026 08:00:11  
+*Data de Execução:* 27/10/2026 08:03:52  
 *Destino de Produção:* `E:\MEUS PROGRAMAS\V5_APOLLO_SITES\V5_Apollo_Broadcaster\frontend\public\games`
 
 ---
@@ -13,7 +13,7 @@
 | **Volume de Dados Transferido** | **1.71 MB (1,793,038 bytes)** |
 | **Taxa de Integridade Criptográfica (MD5 Match)** | **100.0%** |
 | **Erros / Mismatches Detectados** | **0** |
-| **Tempo Total de Processamento** | **1.7 segundos** |
+| **Tempo Total de Processamento** | **2.19 segundos** |
 | **Status da Homologação** | **HOMOLOGADO_DESPACHADO** |
 
 ---
