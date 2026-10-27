@@ -207,6 +207,14 @@ GAME_METADATA = {
         "commands": ["A1", "B3", "C2", "D4", "E5", "coordenadas"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "25_batalha_naval_live": {
+        "name": "Batalha Naval da Live",
+        "category": "tabuleiro_coordenadas",
+        "description": "Disputa naval 4x4 onde o chat dispara salvas de canhões por coordenadas A1-D4, com sonar submarino procedural e torpedos de gifts",
+        "commands": ["A1", "B2", "C3", "D4", "fogo", "sonar"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 
