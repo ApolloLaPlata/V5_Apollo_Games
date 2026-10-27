@@ -1,0 +1,328 @@
+/**
+ * V5 GAME THEME — Design System Neon 9:16 Oficial (1080x1920 px)
+ * Holding V5 Apollo — Capitania V5 Games
+ * Padrão visual unificado para os 40 cartuchos de transmissão ao vivo
+ */
+
+:root {
+  /* Dimensões e Proporção Vertical Estrita */
+  --v5-aspect-ratio: 9 / 16;
+  --v5-base-width: 1080px;
+  --v5-base-height: 1920px;
+  --v5-safe-top: 140px;
+  --v5-safe-bottom: 180px;
+
+  /* Paleta Base Dark Canvas */
+  --v5-bg-deep: #020617;
+  --v5-bg-radial: radial-gradient(circle at 50% 25%, #0f172a 0%, #020617 100%);
+  --v5-bg-card: rgba(15, 23, 42, 0.85);
+  --v5-border-subtle: rgba(255, 255, 255, 0.1);
+  --v5-border-bright: rgba(255, 255, 255, 0.25);
+
+  /* Paleta Neon de Alto Contraste (Cores de Times & Ações) */
+  --v5-neon-blue: #38bdf8;
+  --v5-glow-blue: 0 0 16px rgba(56, 189, 248, 0.6);
+
+  --v5-neon-red: #f87171;
+  --v5-glow-red: 0 0 16px rgba(248, 113, 113, 0.6);
+
+  --v5-neon-orange: #fb923c;
+  --v5-glow-orange: 0 0 16px rgba(251, 146, 60, 0.6);
+
+  --v5-neon-gold: #fbbf24;
+  --v5-glow-gold: 0 0 20px rgba(251, 191, 36, 0.7);
+
+  --v5-neon-purple: #c084fc;
+  --v5-glow-purple: 0 0 16px rgba(192, 132, 252, 0.6);
+
+  --v5-neon-green: #34d399;
+  --v5-glow-green: 0 0 14px rgba(52, 211, 153, 0.6);
+
+  /* Tipografia do Sistema */
+  --v5-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --v5-font-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Reset Universal do Cartucho */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body.v5-game-body {
+  background-color: var(--v5-bg-deep);
+  color: #ffffff;
+  font-family: var(--v5-font-sans);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Container Mestre 9:16 Responsivo para OBS Browser Source */
+.v5-game-stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-width: calc(100vh * (9 / 16));
+  background: var(--v5-bg-radial);
+  border: 1px solid var(--v5-border-subtle);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+}
+
+/* Top Safe Zone (140px) */
+.v5-top-safe-zone {
+  padding: 18px 16px 8px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0) 100%);
+}
+
+.v5-brand-tag {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  font-family: var(--v5-font-mono);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.v5-live-dot {
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ef4444;
+  animation: v5-pulse 1.5s infinite;
+}
+
+@keyframes v5-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.v5-timer-badge {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Placar Neon com Glassmorphism */
+.v5-scoreboard {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 8px;
+  align-items: center;
+  background: var(--v5-bg-card);
+  border: 1px solid var(--v5-border-subtle);
+  border-radius: 16px;
+  padding: 10px 14px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.v5-team-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.v5-team-blue {
+  color: var(--v5-neon-blue);
+  text-shadow: var(--v5-glow-blue);
+}
+
+.v5-team-red {
+  color: var(--v5-neon-red);
+  text-shadow: var(--v5-glow-red);
+}
+
+.v5-team-gold {
+  color: var(--v5-neon-gold);
+  text-shadow: var(--v5-glow-gold);
+}
+
+/* Bottom Safe Zone (180px) */
+.v5-bottom-safe-zone {
+  padding: 12px 16px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+  background: linear-gradient(0deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.7) 70%, rgba(2, 6, 23, 0) 100%);
+  pointer-events: none;
+}
+
+/* Pílulas de Comandos do Chat */
+.v5-cmd-pill {
+  flex: 1;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid var(--v5-border-subtle);
+  border-radius: 12px;
+  padding: 8px 6px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.v5-cmd-pill.blue {
+  border-color: rgba(56, 189, 248, 0.4);
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.v5-cmd-pill.gold {
+  border-color: rgba(251, 191, 36, 0.5);
+  background: rgba(251, 191, 36, 0.12);
+}
+
+.v5-cmd-pill.red {
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.1);
+}
+
+/* Banner de Monetização de Presentes */
+.v5-gift-banner {
+  background: linear-gradient(90deg, rgba(234, 88, 12, 0.25) 0%, rgba(251, 191, 36, 0.3) 50%, rgba(234, 88, 12, 0.25) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  border-radius: 12px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+}
+
+/* Feed Flutuante de Presentes (Toasts) */
+.v5-toast-container {
+  position: absolute;
+  top: calc(var(--v5-safe-top) + 8px);
+  width: calc(100% - 32px);
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.v5-toast-item {
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid var(--v5-border-bright);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(8px);
+  animation: v5-slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes v5-slideDown {
+  from { opacity: 0; transform: translateY(-15px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Overlay Universal de Vitória / Auto-Reset (5 Segundos) */
+.v5-victory-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.92);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.v5-victory-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.v5-victory-box {
+  background: rgba(15, 23, 42, 0.95);
+  border: 2px solid var(--v5-neon-gold);
+  border-radius: 24px;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 0 50px rgba(251, 191, 36, 0.35);
+  animation: v5-popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes v5-popIn {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.v5-reset-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 15px;
+}
+
+.v5-reset-progress-fill {
+  height: 100%;
+  background: var(--v5-neon-gold);
+  width: 0%;
+  transition: width 5s linear;
+}
+
+/* Gaveta de Depuração Local (Tecla 'D') */
+.v5-debug-drawer {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid var(--v5-border-bright);
+  border-radius: 14px;
+  padding: 10px;
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 200;
+  pointer-events: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85);
+}
