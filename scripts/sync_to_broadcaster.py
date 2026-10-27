@@ -303,6 +303,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "pula", "salto", "duplo", "ritmo"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "37_torre_de_blocos_equilibrada": {
+        "name": "Torre de Blocos Equilibrada",
+        "category": "equilibrio_fisica",
+        "description": "Jenga vertical 9:16 com física pendular de oscilação, extração de blocos por chat (1-Esq, 2-Meio, 3-Dir), blocos de aço de titânio e campo Stasis",
+        "commands": ["1", "2", "3", "esq", "meio", "dir", "puxa"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 

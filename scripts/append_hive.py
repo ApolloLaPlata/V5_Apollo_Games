@@ -3,18 +3,17 @@ import os
 bus_path = r"C:\Users\v5est\.gemini\antigravity\brain\9270dd65-160e-47e8-aea2-6a92fd50cfc6\antigravity_hive_bus.md"
 
 entry = """
-### [27/10/2026 - 19:00] CAPITANIA V5 GAMES - ETAPA 091 CONCLUÍDA: CARTUCHO #36 PULA-CORDA EXTREMO (INÍCIO DA FASE 10)
-- **Cartucho Homologado:** `36_pula_corda_extremo` (Pula-Corda Extremo - Ritmo & Física 3D 9:16).
+### [27/10/2026 - 19:20] CAPITANIA V5 GAMES - ETAPA 092 CONCLUÍDA: CARTUCHO #37 TORRE DE BLOCOS EQUILIBRADA
+- **Cartucho Homologado:** `37_torre_de_blocos_equilibrada` (Torre de Blocos Equilibrada - Jenga Vertical 9:16).
 - **Inovações de Engenharia:**
-  1. Física de rotação 3D da corda de plasma com curva de Bézier quadrática oscilante, cálculo de profundidade Z, iluminação e variação de espessura ótica.
-  2. Aceleração progressiva de velocidade angular (RPM) a cada salto bem-sucedido, atingindo níveis extremos de desafio.
-  3. Dois batedores robóticos nas extremidades com braços sincronizados à rotação da corda.
-  4. Saltadores neon no centro pilotados pelo chat (1-Pulo normal, 2-Salto mortal giratório, 3-Sincronia de ritmo) com detecção rigorosa de colisão nos pés.
-  5. Super Gifts Estratégicos: Corda Cósmica Slow-Mo (reduz RPM pela metade por 6s) e Jetpack Pégaso (flutuação e saltos automáticos por 8s).
-  6. Síntese Web Audio API procedural completa: whoosh de ar da corda, boing de salto, acorde de pontuação, estalo de tropeço, slow-mo warp e turbina de jetpack.
-- **Homologação:** 11/11 verificações aprovadas em `scripts/test_cartridge_36.py`.
-- **Sincronização:** Total de 37 jogos homologados e sincronizados no V5 Broadcaster (`v5_games_manifest.json`).
-- **Próxima Etapa:** Etapa 092 — Forjamento do Cartucho #37: Torre de Blocos Equilibrada (Jenga vertical com blocos de aço e madeira).
+  1. Estrutura física de torre com andares de 3 blocos (Madeira Neon e Aço de Titânio), cálculo em tempo real de estabilidade estrutural e centro de massa.
+  2. Física pendular de oscilação com velocidade angular e restauração por mola, rangido acústico de tensão e colapso dinâmico de corpos rígidos.
+  3. Comandos de chat para extrair blocos (1-Esq, 2-Meio, 3-Dir) e reposicionamento no topo para elevar a altura da torre.
+  4. Super Gifts Estratégicos: Bloco de Aço de Titânio (+35% de estabilidade) e Campo Stasis Antigravitacional (gravidade zero por 8s).
+  5. Síntese Web Audio API procedural completa: deslize de bloco, encaixe mecânico no topo, rangido de oscilação, estalo de aço, zumbido de stasis e estrondo de colapso.
+- **Homologação:** 11/11 verificações aprovadas em `scripts/test_cartridge_37.py`.
+- **Sincronização:** Total de 38 jogos homologados e sincronizados no V5 Broadcaster (`v5_games_manifest.json`).
+- **Próxima Etapa:** Etapa 093 — Forjamento do Cartucho #38: Fuga da Prisão Espacial (Astronauta subindo com jetpack desviando de lasers).
 """
 
 if os.path.exists(bus_path):

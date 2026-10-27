@@ -61,6 +61,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | **34** | `34_pinball_galactico` | Pinball Galáctico | Mesa completa 9:16 com flippers duplos de plasma, 3 bumpers estelares harmônicos, buraco negro e multi-ball | **HOMOLOGADO** |
 | **35** | `35_quiz_frenetico_holding` | Quiz Frenético da Holding | Perguntas rápidas com votação (1 a 4 / A a D), barras percentuais em tempo real, dica 50/50 e Oráculo 5x | **HOMOLOGADO** |
 | **36** | `36_pula_corda_extremo` | Pula-Corda Extremo | Física 3D de rotação de corda de plasma com aceleração contínua (RPM), saltadores de live, câmera lenta e Jetpack | **HOMOLOGADO** |
+| **37** | `37_torre_de_blocos_equilibrada` | Torre de Blocos Equilibrada | Jenga vertical com física pendular de oscilação, extração de blocos por chat, blocos de aço e Stasis Shield | **HOMOLOGADO** |
 
 ---
 
@@ -122,4 +123,5 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/test_cartridge_34.py`: Validação automatizada do Cartucho #34 (11/11 checks aprovados, flippers de plasma, 3 bumpers harmônicos, buraco negro e multi-ball cósmico).
 - `scripts/test_cartridge_35.py`: Validação automatizada do Cartucho #35 (11/11 checks aprovados, banco de perguntas, barras percentuais, 50/50, Oráculo 5x e QI coletivo).
 - `scripts/test_cartridge_36.py`: Validação automatizada do Cartucho #36 (11/11 checks aprovados, corda 3D Bézier, RPM progressivo, saltos mortais, Slow-Mo e Jetpack).
-- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 37 cartuchos ativos).
+- `scripts/test_cartridge_37.py`: Validação automatizada do Cartucho #37 (11/11 checks aprovados, Jenga vertical, física pendular, blocos de aço e Stasis Shield).
+- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 38 cartuchos ativos).

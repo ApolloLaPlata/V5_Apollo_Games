@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Torre de Blocos Equilibrada (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container Vertical 9:16 Estrito */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 30%, #0b1329 0%, #030712 90%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+    }
+
+    /* Safe Zone Topo (140px) */
+    .top-safe-zone {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 140px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 16px 8px 16px;
+      background: linear-gradient(180deg, rgba(3, 7, 18, 0.98) 0%, rgba(3, 7, 18, 0.85) 75%, rgba(3, 7, 18, 0) 100%);
+      pointer-events: none;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-pill {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #38bdf8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+      animation: pulseDot 1.5s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .round-timer-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-weight: 800;
+      font-size: 13px;
+      color: #f8fafc;
+    }
+
+    .timer-val {
+      color: #38bdf8;
+    }
+
+    /* Placar de Altura e Estabilidade */
+    .tower-hud-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 10px;
+      padding: 6px 12px;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
+    }
+
+    .score-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .score-title {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+    }
+
+    .tower-height-val {
+      font-size: 20px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #ffd700;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    }
+
+    .stability-gauge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .stability-bar-wrap {
+      width: 120px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .stability-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #ef4444, #f59e0b, #00ff88);
+      transition: width 0.2s ease-out;
+      box-shadow: 0 0 8px #00ff88;
+    }
+
+    .stability-label {
+      font-size: 9px;
+      font-weight: 800;
+      font-family: monospace;
+      color: #00ff88;
+    }
+
+    /* Canvas Central da Torre de Jenga */
+    #game-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+    }
+
+    /* Safe Zone Base (180px) */
+    .bottom-safe-zone {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 180px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 10px 14px;
+      background: linear-gradient(0deg, rgba(3, 7, 18, 0.98) 0%, rgba(3, 7, 18, 0.85) 65%, rgba(3, 7, 18, 0) 100%);
+      pointer-events: none;
+      gap: 8px;
+    }
+
+    /* Comandos do Chat */
+    .chat-commands-box {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      pointer-events: auto;
+    }
+
+    .cmd-btn {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 8px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .cmd-btn:active {
+      transform: scale(0.95);
+    }
+
+    .cmd-btn.c1 { border-color: #00f0ff; color: #00f0ff; }
+    .cmd-btn.c2 { border-color: #ffd700; color: #ffd700; }
+    .cmd-btn.c3 { border-color: #ff0055; color: #ff0055; }
+    .cmd-btn.c4 { border-color: #00ff88; color: #00ff88; }
+
+    .cmd-key {
+      font-size: 13px;
+      font-weight: 900;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    .cmd-label {
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+      white-space: nowrap;
+    }
+
+    /* Barra de Gifts */
+    .gifts-reward-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px dashed rgba(56, 189, 248, 0.4);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 9px;
+      color: #f1f5f9;
+      pointer-events: auto;
+    }
+
+    .gift-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+    }
+
+    .gift-icon {
+      font-size: 13px;
+    }
+
+    .gift-effect {
+      color: #38bdf8;
+      font-weight: 800;
+    }
+
+    /* Modal de Vitória e Fim de Rodada */
+    #victory-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 50;
+      background: rgba(3, 7, 18, 0.94);
+      backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .podium-box {
+      width: 100%;
+      max-width: 340px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid #ffd700;
+      border-radius: 16px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.35);
+      animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .trophy-badge {
+      font-size: 52px;
+      filter: drop-shadow(0 0 16px #ffd700);
+      animation: floatTrophy 2s infinite ease-in-out;
+    }
+
+    @keyframes floatTrophy {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .winner-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffd700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .final-score-val {
+      font-size: 28px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #38bdf8;
+    }
+
+    .mvp-donor-card {
+      width: 100%;
+      background: rgba(255, 215, 0, 0.08);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .reset-countdown {
+      font-size: 12px;
+      color: #94a3b8;
+      font-family: monospace;
+    }
+
+    /* Painel de Depuração Local do Streamer (Tecla D) */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(3, 7, 18, 0.98);
+      border-top: 2px solid #38bdf8;
+      padding: 12px;
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.8);
+    }
+
+    .debug-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #38bdf8;
+      font-family: monospace;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .dbg-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-radius: 4px;
+      padding: 6px 2px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Safe Zone Topo (140px) -->
+    <header class="top-safe-zone">
+      <div class="header-row">
+        <div class="brand-pill">
+          <span class="live-dot"></span>
+          <span>V5 TORRE DE BLOCOS 9:16</span>
+        </div>
+        <div class="round-timer-badge">
+          <span>PARÊO:</span>
+          <span class="timer-val" id="time-display">00:45</span>
+        </div>
+      </div>
+
+      <!-- Placar de Altura e Estabilidade -->
+      <div class="tower-hud-strip">
+        <div class="score-block">
+          <span class="score-title">ALTURA DA TORRE</span>
+          <span class="tower-height-val" id="height-display">12 ANDARES</span>
+        </div>
+
+        <div class="stability-gauge">
+          <span class="score-title">ESTABILIDADE</span>
+          <div class="stability-bar-wrap">
+            <div class="stability-bar-fill" id="stability-fill"></div>
+          </div>
+          <span class="stability-label" id="stability-text">100% ESTÁVEL</span>
+        </div>
+
+        <div class="score-block" style="align-items: flex-end;">
+          <span class="score-title">BLOCOS EXTRAÍDOS</span>
+          <span class="tower-height-val" id="blocks-count-display" style="color:#38bdf8;">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central da Física da Torre -->
+    <canvas id="game-canvas" width="1080" height="1920"></canvas>
+
+    <!-- Safe Zone Base (180px) -->
+    <footer class="bottom-safe-zone">
+      <!-- Comandos do Chat -->
+      <div class="chat-commands-box">
+        <button class="cmd-btn c1" onclick="handleBlockExtraction(0, '@teste')">
+          <span class="cmd-key">1</span>
+          <span class="cmd-label">Bloco Esq</span>
+        </button>
+        <button class="cmd-btn c2" onclick="handleBlockExtraction(1, '@teste')">
+          <span class="cmd-key">2</span>
+          <span class="cmd-label">Bloco Meio</span>
+        </button>
+        <button class="cmd-btn c3" onclick="handleBlockExtraction(2, '@teste')">
+          <span class="cmd-key">3</span>
+          <span class="cmd-label">Bloco Dir</span>
+        </button>
+        <button class="cmd-btn c4" onclick="handleBlockExtraction(Math.floor(Math.random()*3), '@teste')">
+          <span class="cmd-key">PUXA</span>
+          <span class="cmd-label">Empurrar</span>
+        </button>
+      </div>
+
+      <!-- Barra de Gifts -->
+      <div class="gifts-reward-bar">
+        <div class="gift-item">
+          <span class="gift-icon">🌹</span>
+          <span>Rosa (Rose): <span class="gift-effect">Bloco de Aço (+30% Estabilidade)</span></span>
+        </div>
+        <div class="gift-item">
+          <span class="gift-icon">🦁</span>
+          <span>Leão (Lion): <span class="gift-effect">Stasis Antigravitacional (8s)</span></span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Modal de Vitória e Fim de Rodada -->
+    <div id="victory-modal">
+      <div class="podium-box">
+        <div class="trophy-badge">🏗️</div>
+        <div class="winner-title">DESAFIO FINALIZADO!</div>
+        <div class="final-score-val" id="podium-score-val">18 ANDARES</div>
+
+        <div class="mvp-donor-card">
+          <span style="color:#ffd700; font-weight:800;">👑 ARQUITETO SUPREMO:</span>
+          <span id="podium-mvp-user" style="font-weight:900; color:#fff;">@MestreJenga (620 pts)</span>
+        </div>
+
+        <div class="reset-countdown" id="podium-countdown">NOVA TORRE EM 5S...</div>
+      </div>
+    </div>
+
+    <!-- Painel de Depuração Local do Streamer (Tecla D) -->
+    <div id="debug-drawer">
+      <div class="debug-header">
+        <span>GAVETA DE DEPURAÇÃO DO STREAMER (TECLA D)</span>
+        <button onclick="toggleDebugDrawer()" style="background:none; border:none; color:#f43f5e; font-size:12px; cursor:pointer;">FECHAR [X]</button>
+      </div>
+      <div class="debug-grid">
+        <button class="dbg-btn" onclick="handleBlockExtraction(0, '@streamer')">Puxar Esq (1)</button>
+        <button class="dbg-btn" onclick="handleBlockExtraction(1, '@streamer')">Puxar Meio (2)</button>
+        <button class="dbg-btn" onclick="handleBlockExtraction(2, '@streamer')">Puxar Dir (3)</button>
+        <button class="dbg-btn" onclick="triggerCollapse()">Derrubar Torre</button>
+      </div>
+      <div class="debug-grid" style="margin-top:4px;">
+        <button class="dbg-btn" style="background:#0284c7;" onclick="triggerSteelBlock('@streamer')">Bloco de Aço (Rosa)</button>
+        <button class="dbg-btn" style="background:#d97706;" onclick="triggerStasisShield('@streamer')">Stasis Shield (Leão)</button>
+        <button class="dbg-btn" style="background:#e11d48;" onclick="addTowerFloor()">Adicionar Andar</button>
+        <button class="dbg-btn" style="background:#16a34a;" onclick="finalizeRound()">Finalizar Rodada</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE: TORRE DE BLOCOS EQUILIBRADA (9:16 VERTICAL PHYSICS ENGINE)
+       Holding V5 Apollo — Capitania V5 Games
+       Conformidade Estrita com as 5 Leis Absolutas do Cartucho V5
+       ========================================================================== */
+
+    // --- LEI 4: SINTETIZADOR DE ÁUDIO PROCEDURAL (WEB AUDIO API PURA) ---
+    class ProceduralAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.init();
+      }
+
+      init() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
+      }
+
+      ensureContext() {
+        if (!this.ctx) this.init();
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Deslize / Atrito do bloco saindo da torre
+      playBlockSlide() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const bufferSize = this.ctx.sampleRate * 0.15;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(420, now);
+        filter.Q.setValueAtTime(3.0, now);
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        noise.start(now);
+      }
+
+      // Encaixe / Impacto ao colocar bloco no topo
+      playBlockSnap() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(280, now);
+        osc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.1);
+      }
+
+      // Rangido de oscilação / instabilidade da torre
+      playCreakSound() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(65, now);
+        osc.frequency.linearRampToValueAtTime(85, now + 0.15);
+        osc.frequency.linearRampToValueAtTime(50, now + 0.3);
+
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.35);
+      }
+
+      // Colapso estrondoso da torre
+      playCollapseSound() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(120, now);
+        osc.frequency.exponentialRampToValueAtTime(30, now + 0.6);
+
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.75);
+      }
+
+      // Som do Bloco de Aço de Titânio (Rosa)
+      playSteelClank() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(680, now);
+        osc.frequency.exponentialRampToValueAtTime(140, now + 0.25);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+
+      // Som de Stasis Shield Antigravitacional (Leão)
+      playStasisShieldSound() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.linearRampToValueAtTime(900, now + 0.4);
+
+        gain.gain.setValueAtTime(0.28, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.48);
+      }
+
+      // Fanfarra triunfal de conclusão
+      playVictoryFanfare() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const notes = [
+          { f: 523.25, d: 0.15 },
+          { f: 659.25, d: 0.15 },
+          { f: 783.99, d: 0.15 },
+          { f: 1046.50, d: 0.55 }
+        ];
+
+        let currTime = this.ctx.currentTime + 0.05;
+        notes.forEach(n => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(n.f, currTime);
+
+          gain.gain.setValueAtTime(0, currTime);
+          gain.gain.linearRampToValueAtTime(0.3, currTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, currTime + n.d);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(currTime);
+          osc.stop(currTime + n.d + 0.05);
+          currTime += n.d + 0.04;
+        });
+      }
+    }
+
+    const audio = new ProceduralAudioEngine();
+
+    // --- CONFIGURAÇÃO DA FÍSICA DA TORRE (1080 x 1920) ---
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+
+    const ROUND_DURATION_SEC = 45;
+    const BASE_Y = 1580; // Plataforma base da torre
+    const BLOCK_WIDTH = 110;
+    const BLOCK_HEIGHT = 44;
+    const GAP = 8;
+    const INITIAL_FLOORS = 12;
+
+    const state = {
+      roundActive: true,
+      timeRemaining: ROUND_DURATION_SEC,
+      stability: 100, // 0 a 100%
+      extractedCount: 0,
+      stasisTimer: 0,
+      swayAngle: 0,       // Ângulo de oscilação da torre
+      swaySpeed: 0,       // Velocidade angular
+      collapsed: false,   // Torre desmoronou
+      fallingBlocks: [],  // Blocos em queda física
+      particles: [],
+      confetti: [],
+      lastInteractionTime: performance.now(),
+      resetCountdown: 5,
+      donors: {},
+      activeFloorIdx: 4,  // Andar atual sendo explorado
+      floors: []          // Array de andares da torre
+    };
+
+    function initTower() {
+      state.roundActive = true;
+      state.timeRemaining = ROUND_DURATION_SEC;
+      state.stability = 100;
+      state.extractedCount = 0;
+      state.stasisTimer = 0;
+      state.swayAngle = 0;
+      state.swaySpeed = 0;
+      state.collapsed = false;
+      state.fallingBlocks = [];
+      state.particles = [];
+      state.confetti = [];
+      state.activeFloorIdx = 4;
+      state.resetCountdown = 5;
+      state.donors = {};
+      document.getElementById('victory-modal').style.display = 'none';
+
+      state.floors = [];
+      for (let i = 0; i < INITIAL_FLOORS; i++) {
+        state.floors.push({
+          blocks: [
+            { type: 'wood', offset: 0, present: true },
+            { type: 'wood', offset: 0, present: true },
+            { type: 'wood', offset: 0, present: true }
+          ]
+        });
+      }
+
+      updateHUD();
+    }
+
+    // --- PROCESSAMENTO DE EXTRAÇÃO DE BLOCOS PELO CHAT ---
+    function handleBlockExtraction(colIdx, user) {
+      if (!state.roundActive || state.collapsed) return;
+      if (colIdx < 0 || colIdx > 2) return;
+
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@engenheiro";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 15;
+
+      const floor = state.floors[state.activeFloorIdx];
+      if (!floor || !floor.blocks[colIdx].present) {
+        // Tenta achar outro andar com bloco disponível
+        for (let f = 2; f < state.floors.length - 1; f++) {
+          if (state.floors[f].blocks[colIdx].present) {
+            state.activeFloorIdx = f;
+            break;
+          }
+        }
+      }
+
+      const activeFloor = state.floors[state.activeFloorIdx];
+      if (activeFloor && activeFloor.blocks[colIdx].present) {
+        // Extrai o bloco
+        activeFloor.blocks[colIdx].present = false;
+        state.extractedCount++;
+        audio.playBlockSlide();
+
+        // Adiciona bloco extraído ao topo da torre
+        addBlockToTop(activeFloor.blocks[colIdx].type);
+
+        // Se Stasis Shield não estiver ativo, afeta estabilidade
+        if (state.stasisTimer <= 0) {
+          calculateTowerStability(colIdx);
+        } else {
+          audio.playBlockSnap();
+        }
+
+        // Avança andar ativo para cima
+        state.activeFloorIdx = (state.activeFloorIdx + 1) % (state.floors.length - 2) + 2;
+
+        spawnSparks(540 + (colIdx - 1) * (BLOCK_WIDTH + GAP), BASE_Y - state.activeFloorIdx * (BLOCK_HEIGHT + GAP), '#38bdf8', 12);
+        updateHUD();
+      }
+    }
+
+    function addBlockToTop(blockType = 'wood') {
+      const topFloor = state.floors[state.floors.length - 1];
+      let placed = false;
+      for (let i = 0; i < 3; i++) {
+        if (!topFloor.blocks[i].present) {
+          topFloor.blocks[i].present = true;
+          topFloor.blocks[i].type = blockType;
+          placed = true;
+          break;
+        }
+      }
+      if (!placed) {
+        // Cria novo andar no topo
+        state.floors.push({
+          blocks: [
+            { type: blockType, offset: 0, present: true },
+            { type: 'wood', offset: 0, present: false },
+            { type: 'wood', offset: 0, present: false }
+          ]
+        });
+      }
+      audio.playBlockSnap();
+    }
+
+    function addTowerFloor() {
+      state.floors.push({
+        blocks: [
+          { type: 'wood', offset: 0, present: true },
+          { type: 'wood', offset: 0, present: true },
+          { type: 'wood', offset: 0, present: true }
+        ]
+      });
+      updateHUD();
+    }
+
+    // --- CÁLCULO DE ESTABILIDADE E CENTRO DE MASSA ---
+    function calculateTowerStability(removedCol) {
+      // Retirar bloco lateral aumenta oscilação
+      const impact = (removedCol === 1) ? 5 : 14;
+      state.stability = Math.max(0, state.stability - impact);
+
+      // Aplica impulso angular de oscilação
+      const dir = (removedCol === 0) ? 1 : (removedCol === 2 ? -1 : (Math.random() > 0.5 ? 1 : -1));
+      state.swaySpeed += dir * (0.015 + (100 - state.stability) * 0.0004);
+
+      if (state.stability < 35) {
+        audio.playCreakSound();
+      }
+
+      // Colapso se estabilidade zerar
+      if (state.stability <= 0) {
+        triggerCollapse();
+      }
+    }
+
+    // --- SUPER GIFTS: BLOCO DE AÇO & STASIS SHIELD ---
+    function triggerSteelBlock(user) {
+      if (!state.roundActive || state.collapsed) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@super_donor";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 200;
+
+      // Recupera estabilidade e ancora a torre
+      state.stability = Math.min(100, state.stability + 35);
+      state.swaySpeed *= 0.2;
+      state.swayAngle *= 0.2;
+
+      // Adiciona bloco de titânio no andar ativo
+      addBlockToTop('steel');
+      audio.playSteelClank();
+      spawnSparks(540, BASE_Y - 300, '#ffd700', 30);
+      updateHUD();
+    }
+
+    function triggerStasisShield(user) {
+      if (!state.roundActive || state.collapsed) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@leao_vip";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 1000;
+
+      state.stasisTimer = 8.0; // 8 segundos de gravidade zero / estabilidade absoluta
+      state.stability = 100;
+      state.swayAngle = 0;
+      state.swaySpeed = 0;
+
+      audio.playStasisShieldSound();
+      spawnSparks(540, BASE_Y - 400, '#00f0ff', 60);
+      updateHUD();
+    }
+
+    function triggerCollapse() {
+      if (state.collapsed) return;
+      state.collapsed = true;
+      audio.playCollapseSound();
+
+      // Transforma todos os blocos em corpos rígidos em queda livre
+      state.floors.forEach((f, fIdx) => {
+        const floorY = BASE_Y - fIdx * (BLOCK_HEIGHT + GAP);
+        f.blocks.forEach((b, bIdx) => {
+          if (b.present) {
+            const blockX = 540 + (bIdx - 1) * (BLOCK_WIDTH + GAP);
+            state.fallingBlocks.push({
+              x: blockX,
+              y: floorY,
+              vx: (Math.random() - 0.5) * 450 + (bIdx - 1) * 120,
+              vy: -Math.random() * 250 - 50,
+              rot: Math.random() * Math.PI,
+              vRot: (Math.random() - 0.5) * 8,
+              type: b.type
+            });
+          }
+        });
+      });
+
+      // Finaliza rodada após colapso
+      setTimeout(() => {
+        finalizeRound();
+      }, 2500);
+    }
+
+    // --- LEI 3: MOTOR ANTI-SILÊNCIO (< 3s) ---
+    const MOCK_USERS = [
+      "@jenga_pro", "@arquiteto99", "@equilibrio_neon", 
+      "@torre_master", "@holding_vip", "@mestre_blocos"
+    ];
+
+    function runAntiSilence() {
+      const now = performance.now();
+      if (now - state.lastInteractionTime > 2200 && state.roundActive && !state.collapsed) {
+        state.lastInteractionTime = now;
+        const randomUser = MOCK_USERS[Math.floor(Math.random() * MOCK_USERS.length)];
+
+        // Tenta puxar bloco mais seguro (centro com 60% chance)
+        const col = (Math.random() < 0.6) ? 1 : (Math.random() < 0.5 ? 0 : 2);
+        handleBlockExtraction(col, randomUser);
+
+        // 10% de chance de micro-gift espontâneo
+        if (Math.random() < 0.1) {
+          triggerSteelBlock(randomUser);
+        }
+      }
+    }
+
+    // --- PARTÍCULAS & CONFETES ---
+    function spawnSparks(x, y, color, count = 15) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 8 + 3;
+        state.particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * spd,
+          vy: Math.sin(angle) * spd,
+          size: Math.random() * 4 + 2,
+          color: color,
+          alpha: 1.0,
+          decay: Math.random() * 0.03 + 0.02
+        });
+      }
+    }
+
+    function spawnConfetti() {
+      const colors = ['#00f0ff', '#ff0055', '#ffd700', '#00ff88', '#a855f7', '#ffffff'];
+      for (let i = 0; i < 90; i++) {
+        state.confetti.push({
+          x: Math.random() * 1080,
+          y: Math.random() * 600,
+          vx: (Math.random() - 0.5) * 6,
+          vy: Math.random() * 5 + 3,
+          rot: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 12,
+          w: Math.random() * 12 + 8,
+          h: Math.random() * 6 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1.0
+        });
+      }
+    }
+
+    // --- FÍSICA & ATUALIZAÇÃO ---
+    let lastTimestamp = performance.now();
+
+    function updateGame(dt) {
+      runAntiSilence();
+
+      if (state.roundActive) {
+        state.timeRemaining -= dt;
+        if (state.timeRemaining <= 0) {
+          state.timeRemaining = 0;
+          finalizeRound();
+        }
+
+        if (state.stasisTimer > 0) {
+          state.stasisTimer -= dt;
+        }
+
+        // Física pendular de oscilação da torre
+        if (!state.collapsed && state.stasisTimer <= 0) {
+          const spring = -state.swayAngle * 4.5;
+          const damping = -state.swaySpeed * 1.5;
+          state.swaySpeed += (spring + damping) * dt;
+          state.swayAngle += state.swaySpeed * dt;
+
+          // Se inclinação passar do limite crítico (> 0.22 rad)
+          if (Math.abs(state.swayAngle) > 0.22) {
+            triggerCollapse();
+          }
+        }
+
+        // Atualização dos blocos em queda livre
+        if (state.collapsed) {
+          state.fallingBlocks.forEach(b => {
+            b.vy += 1600 * dt; // Gravidade
+            b.x += b.vx * dt;
+            b.y += b.vy * dt;
+            b.rot += b.vRot * dt;
+
+            // Chão
+            if (b.y > 1850) {
+              b.y = 1850;
+              b.vy = -b.vy * 0.35;
+              b.vx *= 0.8;
+            }
+          });
+        }
+
+        updateHUD();
+      } else {
+        // Pós-rodada / Reset
+        state.resetCountdown -= dt;
+        const countdownEl = document.getElementById('podium-countdown');
+        if (countdownEl) {
+          countdownEl.innerText = `NOVA TORRE EM ${Math.ceil(state.resetCountdown)}S...`;
+        }
+        if (state.resetCountdown <= 0) {
+          initTower();
+        }
+      }
+
+      // Atualiza Partículas
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const p = state.particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+        if (p.alpha <= 0) {
+          state.particles.splice(i, 1);
+        }
+      }
+
+      // Atualiza Confetes
+      for (let i = state.confetti.length - 1; i >= 0; i--) {
+        const c = state.confetti[i];
+        c.y += c.vy;
+        c.x += c.vx;
+        c.rot += c.rotSpeed;
+        if (c.y > 1920) c.y = -20;
+      }
+    }
+
+    function updateHUD() {
+      // Timer
+      const min = Math.floor(state.timeRemaining / 60);
+      const sec = Math.floor(state.timeRemaining % 60);
+      document.getElementById('time-display').innerText = 
+        `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+
+      // Altura e Blocos
+      document.getElementById('height-display').innerText = `${state.floors.length} ANDARES`;
+      document.getElementById('blocks-count-display').innerText = state.extractedCount;
+
+      // Estabilidade
+      document.getElementById('stability-fill').style.width = `${Math.round(state.stability)}%`;
+      const stabText = (state.stasisTimer > 0) 
+        ? "🛡️ STASIS ATIVA" 
+        : `${Math.round(state.stability)}% ESTÁVEL`;
+      document.getElementById('stability-text').innerText = stabText;
+    }
+
+    function finalizeRound() {
+      if (!state.roundActive) return;
+      state.roundActive = false;
+
+      audio.playVictoryFanfare();
+      spawnConfetti();
+
+      // Determina MVP do chat
+      let topUser = "@ArquitetoSupremo";
+      let topPts = 150;
+      for (const [u, pts] of Object.entries(state.donors)) {
+        if (pts > topPts) {
+          topPts = pts;
+          topUser = u;
+        }
+      }
+
+      document.getElementById('podium-score-val').innerText = `${state.floors.length} ANDARES (${state.extractedCount} BLOCOS)`;
+      document.getElementById('podium-mvp-user').innerText = `${topUser} (${topPts} pts)`;
+      document.getElementById('victory-modal').style.display = 'flex';
+    }
+
+    // --- RENDERIZAÇÃO CANVAS 2D DA TORRE ---
+    function render() {
+      ctx.clearRect(0, 0, 1080, 1920);
+
+      // 1. Grade Holográfica de Solo e Base de Sustentação
+      drawBase();
+
+      // 2. Feixe de Stasis Shield (se ativo)
+      if (state.stasisTimer > 0) {
+        drawStasisShield();
+      }
+
+      // 3. Torre de Blocos Estrutural (se não colapsada)
+      if (!state.collapsed) {
+        drawIntactTower();
+      } else {
+        drawFallingBlocks();
+      }
+
+      // 4. Partículas e Faíscas
+      drawParticles();
+
+      // 5. Confetes
+      if (!state.roundActive) {
+        drawConfetti();
+      }
+    }
+
+    function drawBase() {
+      // Plataforma de Aço Neon
+      ctx.save();
+      ctx.fillStyle = "#0f172a";
+      ctx.strokeStyle = "#38bdf8";
+      ctx.lineWidth = 4;
+      ctx.shadowColor = "#38bdf8";
+      ctx.shadowBlur = 15;
+
+      ctx.beginPath();
+      ctx.roundRect(320, BASE_Y, 440, 40, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      // Apoios diagonais
+      ctx.beginPath();
+      ctx.moveTo(340, BASE_Y + 40);
+      ctx.lineTo(260, 1720);
+      ctx.moveTo(740, BASE_Y + 40);
+      ctx.lineTo(820, 1720);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawStasisShield() {
+      ctx.save();
+      const grad = ctx.createLinearGradient(400, 300, 680, 300);
+      grad.addColorStop(0, 'rgba(0, 240, 255, 0)');
+      grad.addColorStop(0.5, 'rgba(0, 240, 255, 0.25)');
+      grad.addColorStop(1, 'rgba(0, 240, 255, 0)');
+
+      ctx.fillStyle = grad;
+      ctx.fillRect(360, 200, 360, BASE_Y - 200);
+
+      ctx.strokeStyle = "#00f0ff";
+      ctx.lineWidth = 3;
+      ctx.shadowColor = "#00f0ff";
+      ctx.shadowBlur = 20;
+      ctx.strokeRect(360, 200, 360, BASE_Y - 200);
+
+      ctx.restore();
+    }
+
+    function drawIntactTower() {
+      ctx.save();
+      // Aplica rotação pendular a partir do pivô na base
+      ctx.translate(540, BASE_Y);
+      ctx.rotate(state.swayAngle);
+      ctx.translate(-540, -BASE_Y);
+
+      state.floors.forEach((f, fIdx) => {
+        const floorY = BASE_Y - (fIdx + 1) * (BLOCK_HEIGHT + GAP);
+        const isActiveFloor = (fIdx === state.activeFloorIdx);
+
+        f.blocks.forEach((b, bIdx) => {
+          if (b.present) {
+            const blockX = 540 + (bIdx - 1) * (BLOCK_WIDTH + GAP) - BLOCK_WIDTH / 2;
+            drawBlock(blockX, floorY, b.type, isActiveFloor);
+          }
+        });
+      });
+
+      ctx.restore();
+    }
+
+    function drawBlock(x, y, type, isActive) {
+      ctx.save();
+
+      let mainColor = '#f59e0b'; // Madeira Neon
+      let strokeColor = '#fbbf24';
+      if (type === 'steel') {
+        mainColor = '#0284c7'; // Aço Reforçado
+        strokeColor = '#38bdf8';
+      }
+
+      ctx.fillStyle = mainColor;
+      ctx.strokeStyle = isActive ? '#ffffff' : strokeColor;
+      ctx.lineWidth = isActive ? 3 : 2;
+      ctx.shadowColor = strokeColor;
+      ctx.shadowBlur = isActive ? 18 : 6;
+
+      ctx.beginPath();
+      ctx.roundRect(x, y, BLOCK_WIDTH, BLOCK_HEIGHT, 6);
+      ctx.fill();
+      ctx.stroke();
+
+      // Ranhura decorativa interna do bloco
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.35)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x + 10, y + BLOCK_HEIGHT / 2);
+      ctx.lineTo(x + BLOCK_WIDTH - 10, y + BLOCK_HEIGHT / 2);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawFallingBlocks() {
+      state.fallingBlocks.forEach(b => {
+        ctx.save();
+        ctx.translate(b.x, b.y);
+        ctx.rotate(b.rot);
+        drawBlock(-BLOCK_WIDTH / 2, -BLOCK_HEIGHT / 2, b.type, false);
+        ctx.restore();
+      });
+    }
+
+    function drawParticles() {
+      state.particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1.0;
+      ctx.shadowBlur = 0;
+    }
+
+    function drawConfetti() {
+      state.confetti.forEach(c => {
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate((c.rot * Math.PI) / 180);
+        ctx.fillStyle = c.color;
+        ctx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+        ctx.restore();
+      });
+    }
+
+    // --- LOOP PRINCIPAL DE ANIMAÇÃO ---
+    function gameLoop(timestamp) {
+      const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.1);
+      lastTimestamp = timestamp;
+
+      updateGame(dt);
+      render();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // --- PROTOCOLO DE EVENTOS DO BROADCASTER & SDK ---
+    function initEventBus() {
+      try {
+        const channel = new BroadcastChannel('v5_broadcaster_games');
+        channel.onmessage = (event) => {
+          handleIncomingEvent(event.data);
+        };
+      } catch (e) {
+        console.warn("BroadcastChannel não suportado");
+      }
+
+      window.addEventListener('v5_event', (e) => {
+        if (e.detail) handleIncomingEvent(e.detail);
+      });
+    }
+
+    function handleIncomingEvent(payload) {
+      if (!payload) return;
+
+      const type = payload.type;
+      const comment = (payload.comment || "").toString().toLowerCase().trim();
+      const user = payload.user || "@espectador";
+      const giftName = payload.giftName || null;
+
+      // Parsing de Comentários / Votos
+      if (type === 'comment' || comment) {
+        if (comment === '1' || comment.includes('esq') || comment.includes('esquerda')) {
+          handleBlockExtraction(0, user);
+        } else if (comment === '2' || comment.includes('meio') || comment.includes('centro')) {
+          handleBlockExtraction(1, user);
+        } else if (comment === '3' || comment.includes('dir') || comment.includes('direita')) {
+          handleBlockExtraction(2, user);
+        } else if (comment.includes('puxa') || comment.includes('bloco')) {
+          handleBlockExtraction(Math.floor(Math.random() * 3), user);
+        }
+      }
+
+      // Parsing de Gifts
+      if (type === 'gift' || giftName) {
+        if (giftName === 'Lion' || giftName === 'Foguete') {
+          triggerStasisShield(user);
+        } else {
+          triggerSteelBlock(user);
+        }
+      }
+    }
+
+    // --- GAVETA DE DEPURAÇÃO DO STREAMER ---
+    function toggleDebugDrawer() {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.style.display = (drawer.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        toggleDebugDrawer();
+      }
+    });
+
+    document.querySelector('.bottom-safe-zone').addEventListener('dblclick', () => {
+      toggleDebugDrawer();
+    });
+
+    // Início automático ao carregar
+    window.addEventListener('load', () => {
+      initTower();
+      initEventBus();
+      requestAnimationFrame(gameLoop);
+    });
+  </script>
+</body>
+</html>
