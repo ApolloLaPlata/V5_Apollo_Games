@@ -431,12 +431,15 @@
 
   <script>
     /**
-     * SINTETIZADOR DE BORRACHA E ESTOURO (Web Audio API)
+     * SINTETIZADOR PROCEDURAL DE BORRACHA E ESTOURO HIPER-REALISTA (Web Audio API)
+     * Etapa 015: Enchimento com sopro pneumático, tensão harmônica e estouro 3-estágios.
      */
     class BalloonAudio {
       constructor() {
         this.ctx = null;
+        this.noiseBuffer = null;
       }
+
       getCtx() {
         if (!this.ctx) {
           const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -445,62 +448,178 @@
         if (this.ctx.state === 'suspended') this.ctx.resume();
         return this.ctx;
       }
-      // Som de bomba de ar inflando borracha
-      playInflate(pitchFactor = 1.0) {
+
+      getNoiseBuffer() {
+        if (!this.noiseBuffer) {
+          const c = this.getCtx();
+          const bufferSize = c.sampleRate * 0.5;
+          this.noiseBuffer = c.createBuffer(1, bufferSize, c.sampleRate);
+          const data = this.noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+          }
+        }
+        return this.noiseBuffer;
+      }
+
+      /**
+       * Enchimento Hiper-Realista: Sopro de Ar Pneumático + Elasticidade da Borracha
+       * @param {number} pressureRatio 0.0 a 1.0 (nível de inflagem do balão)
+       */
+      playInflate(pressureRatio = 0.5) {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+
+          // 1. Sopro de ar pressurizado (Ruído Branco Filtrado)
+          const noise = c.createBufferSource();
+          noise.buffer = this.getNoiseBuffer();
+          const noiseFilter = c.createBiquadFilter();
+          noiseFilter.type = 'bandpass';
+          // A frequência do sopro sobe conforme a bexiga fica mais cheia e tensa
+          const filterFreq = 900 + (pressureRatio * 1600);
+          noiseFilter.frequency.setValueAtTime(filterFreq, t);
+          noiseFilter.Q.setValueAtTime(2.5, t);
+
+          const noiseGain = c.createGain();
+          noiseGain.gain.setValueAtTime(0.16, t);
+          noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.11);
+
+          noise.connect(noiseFilter);
+          noiseFilter.connect(noiseGain);
+          noiseGain.connect(c.destination);
+          noise.start(t);
+          noise.stop(t + 0.11);
+
+          // 2. Tensão Harmônica da Borracha Esticando (Chirp ascendente)
+          const osc = c.createOscillator();
+          const oscGain = c.createGain();
+          osc.type = 'triangle';
+          const baseFreq = 160 + (pressureRatio * 240);
+          osc.frequency.setValueAtTime(baseFreq, t);
+          osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, t + 0.09);
+
+          oscGain.gain.setValueAtTime(0.14, t);
+          oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+
+          osc.connect(oscGain);
+          oscGain.connect(c.destination);
+          osc.start(t);
+          osc.stop(t + 0.09);
+
+          // 3. Se estiver acima de 80%, adiciona micro-crepitação de estresse
+          if (pressureRatio > 0.8) {
+            this.playRubberCreak(pressureRatio);
+          }
+        } catch (e) {}
+      }
+
+      /**
+       * Micro-crepitação de estresse da borracha (tensão pré-estouro)
+       */
+      playRubberCreak(pressureRatio = 0.9) {
         try {
           const c = this.getCtx();
           const t = c.currentTime;
           const osc = c.createOscillator();
           const g = c.createGain();
-          osc.type = 'triangle';
-          const startF = 180 * pitchFactor;
-          osc.frequency.setValueAtTime(startF, t);
-          osc.frequency.exponentialRampToValueAtTime(startF * 1.6, t + 0.08);
-          g.gain.setValueAtTime(0.18, t);
-          g.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(1200 + Math.random() * 600, t);
+          osc.frequency.exponentialRampToValueAtTime(300, t + 0.04);
+          g.gain.setValueAtTime(0.08 * pressureRatio, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
           osc.connect(g);
           g.connect(c.destination);
           osc.start(t);
-          osc.stop(t + 0.09);
+          osc.stop(t + 0.04);
         } catch (e) {}
       }
-      // Som de estouro ensurdecedor (Pop & White Noise)
+
+      /**
+       * Super Bomba de Ar (Acionada por Presentes)
+       */
+      playSuperPump() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          // Turbilhão duplo de ar comprimido
+          this.playInflate(0.9);
+          setTimeout(() => this.playInflate(0.95), 60);
+
+          const osc = c.createOscillator();
+          const g = c.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(340, t);
+          osc.frequency.exponentialRampToValueAtTime(780, t + 0.22);
+          g.gain.setValueAtTime(0.25, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+          osc.connect(g);
+          g.connect(c.destination);
+          osc.start(t);
+          osc.stop(t + 0.22);
+        } catch (e) {}
+      }
+
+      /**
+       * Estouro Hiper-Realista 3-Estágios:
+       * 1. Ruptura violenta de alta frequência (Snap de borracha)
+       * 2. Deslocamento de ar sônico (Pressure Shockwave)
+       * 3. Sub-bass boom acústico reverberante (50Hz)
+       */
       playPop() {
         try {
           const c = this.getCtx();
           const t = c.currentTime;
-          // Impacto grave
-          const osc = c.createOscillator();
-          const g = c.createGain();
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(320, t);
-          osc.frequency.exponentialRampToValueAtTime(40, t + 0.3);
-          g.gain.setValueAtTime(0.4, t);
-          g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-          osc.connect(g);
-          g.connect(c.destination);
-          osc.start(t);
-          osc.stop(t + 0.3);
 
-          // Ruído branco do rasgo da borracha
-          const buf = c.createBuffer(1, c.sampleRate * 0.2, c.sampleRate);
-          const data = buf.getChannelData(0);
-          for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
-          const noise = c.createBufferSource();
-          noise.buffer = buf;
-          const filter = c.createBiquadFilter();
-          filter.type = 'bandpass';
-          filter.frequency.setValueAtTime(1800, t);
-          const noiseGain = c.createGain();
-          noiseGain.gain.setValueAtTime(0.3, t);
-          noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-          noise.connect(filter);
-          filter.connect(noiseGain);
-          noiseGain.connect(c.destination);
-          noise.start(t);
-          noise.stop(t + 0.2);
+          // 1. Ruptura Violenta (Snap de alta frequência com ruído filtrado)
+          const snapNoise = c.createBufferSource();
+          snapNoise.buffer = this.getNoiseBuffer();
+          const snapFilter = c.createBiquadFilter();
+          snapFilter.type = 'highpass';
+          snapFilter.frequency.setValueAtTime(1800, t);
+
+          const snapGain = c.createGain();
+          snapGain.gain.setValueAtTime(0.45, t);
+          snapGain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+
+          snapNoise.connect(snapFilter);
+          snapFilter.connect(snapGain);
+          snapGain.connect(c.destination);
+          snapNoise.start(t);
+          snapNoise.stop(t + 0.15);
+
+          // 2. Onda de Choque do Ar Deslocado (Sawtooth descendente agressivo)
+          const shock = c.createOscillator();
+          const shockGain = c.createGain();
+          shock.type = 'sawtooth';
+          shock.frequency.setValueAtTime(450, t);
+          shock.frequency.exponentialRampToValueAtTime(45, t + 0.25);
+
+          shockGain.gain.setValueAtTime(0.4, t);
+          shockGain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+
+          shock.connect(shockGain);
+          shockGain.connect(c.destination);
+          shock.start(t);
+          shock.stop(t + 0.25);
+
+          // 3. Sub-Bass Boom Acústico (50Hz - Peso cinematográfico na live)
+          const boom = c.createOscillator();
+          const boomGain = c.createGain();
+          boom.type = 'sine';
+          boom.frequency.setValueAtTime(65, t);
+          boom.frequency.exponentialRampToValueAtTime(30, t + 0.55);
+
+          boomGain.gain.setValueAtTime(0.5, t);
+          boomGain.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+
+          boom.connect(boomGain);
+          boomGain.connect(c.destination);
+          boom.start(t);
+          boom.stop(t + 0.55);
         } catch (e) {}
       }
+
       playVictory() {
         try {
           const c = this.getCtx();
@@ -578,10 +697,12 @@
       if (team === 'A') {
         targetA = Math.min(100, targetA + weight);
         wobbleA = 1.0;
-        audio.playInflate(1.0 + (targetA / 100));
 
         if (giftName) {
+          audio.playSuperPump();
           spawnToast(`🎁 ${user} mandou ${giftName}! SUPER BOMBA AZUL (+${weight}%)`, '#38bdf8');
+        } else {
+          audio.playInflate(targetA / 100);
         }
 
         if (targetA >= 100) {
@@ -590,10 +711,12 @@
       } else {
         targetB = Math.min(100, targetB + weight);
         wobbleB = 1.0;
-        audio.playInflate(1.0 + (targetB / 100));
 
         if (giftName) {
+          audio.playSuperPump();
           spawnToast(`🎁 ${user} mandou ${giftName}! SUPER BOMBA ROSA (+${weight}%)`, '#f43f5e');
+        } else {
+          audio.playInflate(targetB / 100);
         }
 
         if (targetB >= 100) {

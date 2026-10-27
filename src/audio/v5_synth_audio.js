@@ -172,6 +172,106 @@
     }
 
     /**
+     * Enchimento Hiper-Realista de Balão com Sopro Pneumático e Tensão Harmônica
+     * @param {number} pressureRatio 0.0 a 1.0
+     */
+    playBalloonInflate(pressureRatio = 0.5) {
+      if (this.isMuted) return;
+      const ctx = this.getAudioContext();
+      const now = ctx.currentTime;
+
+      // 1. Sopro de ar pressurizado (ruído com filtro passa-faixa)
+      const noise = ctx.createBufferSource();
+      noise.buffer = this.createNoiseBuffer();
+      const noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.setValueAtTime(900 + (pressureRatio * 1600), now);
+      noiseFilter.Q.setValueAtTime(2.5, now);
+
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.16, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(this.masterGain);
+      noise.start(now);
+      noise.stop(now + 0.11);
+
+      // 2. Tensão harmônica da borracha (chirp ascendente)
+      const osc = ctx.createOscillator();
+      const oscGain = ctx.createGain();
+      osc.type = 'triangle';
+      const baseFreq = 160 + (pressureRatio * 240);
+      osc.frequency.setValueAtTime(baseFreq, now);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, now + 0.09);
+
+      oscGain.gain.setValueAtTime(0.14, now);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+
+      osc.connect(oscGain);
+      oscGain.connect(this.masterGain);
+      osc.start(now);
+      osc.stop(now + 0.09);
+    }
+
+    /**
+     * Estouro de Balão Hiper-Realista em 3 Estágios (Snap + Shockwave + Sub-Bass Boom)
+     */
+    playBalloonPop() {
+      if (this.isMuted) return;
+      const ctx = this.getAudioContext();
+      const now = ctx.currentTime;
+
+      // 1. Snap de alta frequência
+      const snapNoise = ctx.createBufferSource();
+      snapNoise.buffer = this.createNoiseBuffer();
+      const snapFilter = ctx.createBiquadFilter();
+      snapFilter.type = 'highpass';
+      snapFilter.frequency.setValueAtTime(1800, now);
+
+      const snapGain = ctx.createGain();
+      snapGain.gain.setValueAtTime(0.45, now);
+      snapGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+      snapNoise.connect(snapFilter);
+      snapFilter.connect(snapGain);
+      snapGain.connect(this.masterGain);
+      snapNoise.start(now);
+      snapNoise.stop(now + 0.15);
+
+      // 2. Shockwave do deslocamento de ar
+      const shock = ctx.createOscillator();
+      const shockGain = ctx.createGain();
+      shock.type = 'sawtooth';
+      shock.frequency.setValueAtTime(450, now);
+      shock.frequency.exponentialRampToValueAtTime(45, now + 0.25);
+
+      shockGain.gain.setValueAtTime(0.4, now);
+      shockGain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+      shock.connect(shockGain);
+      shockGain.connect(this.masterGain);
+      shock.start(now);
+      shock.stop(now + 0.25);
+
+      // 3. Sub-bass boom acústico (55Hz)
+      const boom = ctx.createOscillator();
+      const boomGain = ctx.createGain();
+      boom.type = 'sine';
+      boom.frequency.setValueAtTime(65, now);
+      boom.frequency.exponentialRampToValueAtTime(30, now + 0.55);
+
+      boomGain.gain.setValueAtTime(0.5, now);
+      boomGain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+
+      boom.connect(boomGain);
+      boomGain.connect(this.masterGain);
+      boom.start(now);
+      boom.stop(now + 0.55);
+    }
+
+    /**
      * Disparo laser arcade retrô
      */
     playLaser() {
