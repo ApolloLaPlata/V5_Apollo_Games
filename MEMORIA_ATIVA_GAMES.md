@@ -63,4 +63,12 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `src/core/v5_polarization_engine.js`: Motor de física inercial de disputa e tensão de mola (Cabo de Guerra, Tsunami, Queda de Braço).
 - `src/core/v5_round_manager.js`: Ciclo fechado universal de partidas (30-60s com auto-reset de 5s).
 - `src/core/v5_anti_silence.js`: Motor orgânico anti-silêncio que injeta comandos mock a cada 2.5s de inatividade.
-- `src/audio/v5_synth_audio.js`: Sintetizador procedural via Web Audio API com polifonia, ruído branco, síntese FM, micro-ondas de choque e fanfarras.
+- `src/audio/v5_synth_audio.js`: Sintetizador procedural via Web Audio API com polifonia, ruído branco, síntese FM, micro-ondas de choque, Doppler espacial, Quasar burst, implosão de buraco negro e fanfarras.
+
+---
+
+## 5. Suítes de Teste Automatizadas & Homologação
+- `scripts/test_polarization_cartridges.py`: Valida 100% das 5 Leis Absolutas para os jogos de polarização (36/36 checks).
+- `scripts/stress_test_physics_particles.js`: Bateria de sobrecarga de 350 esferas a 60 FPS estáveis nos 4 cenários de física (CPU headroom > 92%).
+- `scripts/test_physics_cartridges.py`: Valida 100% das 5 Leis Absolutas para os 4 cartuchos de física (45/45 checks).
+- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 9 cartuchos ativos).

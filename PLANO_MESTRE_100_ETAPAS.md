@@ -76,8 +76,8 @@
 - [x] **Etapa 026:** Implementação da física de atrito e empilhamento 2.5D no Pusher de Moedas.
 - [x] **Etapa 027:** Forjamento do Cartucho #14: Vortex Gravitacional (Buraco negro central sugando esferas lançadas pelo chat com órbitas caóticas).
 - [x] **Etapa 028:** Sonorização de efeito Doppler espacial e distorção sonora procedural para o Vortex Gravitacional.
-- [ ] **Etapa 029:** Bateria de testes de sobrecarga de partículas (300+ esferas simultâneas a 60 FPS estáveis).
-- [ ] **Etapa 030:** Homologação e sincronização dos 4 cartuchos de física com o catálogo do Broadcaster.
+- [x] **Etapa 029:** Bateria de testes de sobrecarga de partículas (300+ esferas simultâneas a 60 FPS estáveis).
+- [x] **Etapa 030:** Homologação e sincronização dos 4 cartuchos de física com o catálogo do Broadcaster.
 
 ---
 
