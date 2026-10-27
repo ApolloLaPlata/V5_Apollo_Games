@@ -223,6 +223,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "azul", "vermelho", "fogo", "30", "45", "60", "75"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "27_meteoro_defensor": {
+        "name": "Meteoro Defensor",
+        "category": "defesa_planetaria",
+        "description": "Planeta Terra central protegido por satélites lasers disparados pelo chat por setores 1 a 4, com feixe 360° e escudo total EMP",
+        "commands": ["1", "2", "3", "4", "fogo", "laser", "tiro"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 

@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Meteoro Defensor (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #02040a;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 65%, #0c1c38 0%, #030816 55%, #010207 100%);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(56, 189, 248, 0.15);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Vinheta e Grade Espacial de Fundo */
+    #ambient-vignette {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.85);
+      z-index: 2;
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 12px 16px 6px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 10;
+      min-height: 140px;
+      background: linear-gradient(180deg, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0.75) 75%, transparent 100%);
+    }
+
+    .badge-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .live-pill {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+
+    .game-title {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #38bdf8;
+      text-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+      text-transform: uppercase;
+    }
+
+    .round-indicator {
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 700;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Placar de Saúde da Terra e Onda */
+    .earth-hud-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 10px;
+      padding: 6px 12px;
+      backdrop-filter: blur(8px);
+    }
+
+    .earth-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .earth-status-label {
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hp-bar-bg {
+      width: 100%;
+      height: 12px;
+      background: rgba(2, 6, 23, 0.9);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      position: relative;
+    }
+
+    .hp-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #10b981, #06b6d4, #3b82f6);
+      box-shadow: 0 0 12px rgba(6, 182, 212, 0.8);
+      transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .earth-subtext {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    /* Canvas Central de Asteroides e Órbita Terrestre */
+    #space-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+    }
+
+    /* Notificação de Ataques Especiais / Presentes */
+    #action-toast {
+      position: absolute;
+      top: 148px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid #f59e0b;
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.6);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    #action-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Safe Zone Inferior (180px) */
+    .bottom-safe-zone {
+      padding: 10px 14px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      min-height: 180px;
+      background: linear-gradient(0deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.8) 75%, transparent 100%);
+    }
+
+    .command-guide-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      backdrop-filter: blur(8px);
+    }
+
+    .guide-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 900;
+      color: #f1f5f9;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .sector-buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .sector-tag {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .gift-benefit-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #fbbf24;
+    }
+
+    .recent-feed {
+      height: 24px;
+      overflow: hidden;
+      font-size: 10px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feed-avatar {
+      font-weight: 800;
+      color: #f8fafc;
+    }
+
+    /* Overlay de Vitória & Auto-Reset */
+    #victory-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(2, 6, 23, 0.92);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    #victory-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .trophy-glow {
+      font-size: 56px;
+      filter: drop-shadow(0 0 30px #38bdf8);
+      animation: floatTrophy 2s infinite ease-in-out;
+    }
+
+    @keyframes floatTrophy {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.05); }
+    }
+
+    .victory-title {
+      font-size: 24px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      text-align: center;
+      color: #38bdf8;
+      text-shadow: 0 0 20px rgba(56, 189, 248, 0.8);
+    }
+
+    .victory-subtitle {
+      font-size: 12px;
+      color: #cbd5e1;
+      font-weight: 600;
+      text-align: center;
+      max-width: 80%;
+    }
+
+    .mvp-card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mvp-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #fbbf24;
+      letter-spacing: 1px;
+    }
+
+    .mvp-name {
+      font-size: 15px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .auto-reset-meter {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    /* Gaveta de Depuração Local */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(15, 23, 42, 0.98);
+      border-top: 2px solid #38bdf8;
+      padding: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    #debug-drawer.open {
+      display: flex;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 6px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .debug-btn:hover {
+      background: #334155;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Vinheta de iluminação cósmica -->
+    <div id="ambient-vignette"></div>
+
+    <!-- Safe Zone Superior (140px) -->
+    <header class="top-header">
+      <div class="badge-bar">
+        <div class="live-pill">
+          <div class="live-dot"></div>
+          AO VIVO
+        </div>
+        <div class="game-title">METEORO DEFENSOR</div>
+        <div class="round-indicator" id="round-number">ONDA #1</div>
+      </div>
+
+      <div class="earth-hud-box">
+        <div class="earth-info-row">
+          <span class="earth-status-label">
+            <span>🌍</span>
+            <span id="earth-status-text">ATMOSFERA TERRESTRE</span>
+          </span>
+          <span id="hp-earth-text">100.000 / 100.000 HP</span>
+        </div>
+        <div class="hp-bar-bg">
+          <div class="hp-bar-fill" id="hp-earth-bar" style="width: 100%;"></div>
+        </div>
+        <div class="earth-subtext">
+          <span id="shield-status-text">Escudo Orbital: 100%</span>
+          <span id="destroyed-counter-text">Asteroides Abatidos: 0</span>
+          <span id="wave-timer-text">Tempo: 45s</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central: Planeta Terra Central, Asteroides e Lasers -->
+    <canvas id="space-canvas" width="1080" height="1920"></canvas>
+
+    <!-- Toast de Notificação de Armas & Presentes -->
+    <div id="action-toast">
+      <span id="toast-icon">⚡</span>
+      <span id="toast-text">RAIO LASER ORBITAL 360° DISPARADO!</span>
+    </div>
+
+    <!-- Safe Zone Inferior (180px) -->
+    <footer class="bottom-safe-zone">
+      <div class="command-guide-card">
+        <div class="guide-title">
+          <span>COMO PROTEGER A TERRA (CHAT PILOTA OS LASERS)</span>
+          <span style="color: #38bdf8;">DIGITE O NÚMERO DO QUADRANTE</span>
+        </div>
+        <div class="sector-buttons-grid">
+          <div class="sector-tag">1: Noroeste ↖</div>
+          <div class="sector-tag">2: Norte ⬆</div>
+          <div class="sector-tag">3: Nordeste ↗</div>
+          <div class="sector-tag">4: Leste/Oeste ↔</div>
+        </div>
+      </div>
+
+      <div class="gift-benefit-bar">
+        <span>🎁 PRESENTES / GIFTS:</span>
+        <span>SUPER FEIXE LASER 360° OU BOMBA EMP ESTELAR!</span>
+      </div>
+
+      <div class="recent-feed" id="recent-feed">
+        <span>🛰️ Radar Espacial:</span>
+        <span class="feed-avatar" id="feed-msg">Chuva de meteoros detectada! Chat, apontem os lasers orbitais!</span>
+      </div>
+    </footer>
+
+    <!-- Overlay de Vitória / Conclusão de Onda -->
+    <div id="victory-overlay">
+      <div class="trophy-glow">🌍</div>
+      <div class="victory-title" id="winner-title">A TERRA FOI SALVA!</div>
+      <div class="victory-subtitle" id="winner-summary">A humanidade sobreviveu graças à precisão cirúrgica dos disparos da live!</div>
+      <div class="mvp-card">
+        <div class="mvp-label">COMANDANTE SUPREMO DE DEFESA (MVP)</div>
+        <div class="mvp-name" id="mvp-user-name">@guardiao_espacial</div>
+      </div>
+      <div class="auto-reset-meter" id="auto-reset-countdown">Próxima onda de meteoros em 5s...</div>
+    </div>
+
+    <!-- Gaveta de Depuração Local -->
+    <div id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #38bdf8; display: flex; justify-content: space-between;">
+        <span>PAINEL DE DEPURAÇÃO DO STREAMER (TECLA D)</span>
+        <button onclick="toggleDebugDrawer()" style="background:none; border:none; color:#fca5a5; cursor:pointer;">✕ Fechar</button>
+      </div>
+      <div class="debug-grid">
+        <button class="debug-btn" onclick="testSector(1)">Laser Setor 1</button>
+        <button class="debug-btn" onclick="testSector(2)">Laser Setor 2</button>
+        <button class="debug-btn" onclick="testSector(3)">Laser Setor 3</button>
+        <button class="debug-btn" onclick="testSector(4)">Laser Setor 4</button>
+        <button class="debug-btn" onclick="testGift('Rose')">Rosa (Feixe 360°)</button>
+        <button class="debug-btn" onclick="testGift('Lion')">Leão (Bomba EMP)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SDK V5 Live Event Bus -->
+  <script src="../../sdk/v5_live_game_sdk.js"></script>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE GAMES: METEORO DEFENSOR (CARTUCHO #27)
+       Proporção: 9:16 Vertical Estrito (1080 x 1920 px)
+       Planeta Terra Central, Satélites Orbitais e Chuva de Meteoros Balística
+       ========================================================================== */
+
+    // 1. SINTETIZADOR PROCEDURAL DE ÁUDIO (WEB AUDIO API PURA - ZERO .MP3/.WAV)
+    class MeteorDefenseAudioSynth {
+      constructor() {
+        this.ctx = null;
+        this.isMuted = false;
+      }
+
+      initContext() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playLaserPulse(isSuper = false) {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        const startFreq = isSuper ? 1800 : 1250;
+        const endFreq = isSuper ? 250 : 320;
+        const duration = isSuper ? 0.35 : 0.18;
+
+        osc.type = isSuper ? 'sawtooth' : 'sine';
+        osc.frequency.setValueAtTime(startFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
+
+        gain.gain.setValueAtTime(isSuper ? 0.8 : 0.45, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + duration);
+      }
+
+      playMeteorExplosion(isGiant = false) {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const duration = isGiant ? 0.75 : 0.4;
+
+        // Sub-grave espacial
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(isGiant ? 90 : 140, now);
+        osc.frequency.exponentialRampToValueAtTime(25, now + duration);
+
+        gain.gain.setValueAtTime(isGiant ? 0.8 : 0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + duration);
+
+        // Ruído branco de fragmentação
+        this.playNoise(duration, isGiant ? 0.7 : 0.4);
+      }
+
+      playNoise(duration, volume) {
+        if (!this.ctx || this.isMuted) return;
+        const bufferSize = Math.floor(this.ctx.sampleRate * duration);
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-2.5 * (i / bufferSize));
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(800, this.ctx.currentTime);
+        filter.Q.setValueAtTime(1.2, this.ctx.currentTime);
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(volume, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        noise.start();
+      }
+
+      playEarthImpact() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(65, now);
+        osc.frequency.exponentialRampToValueAtTime(18, now + 0.8);
+
+        gain.gain.setValueAtTime(0.9, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.8);
+
+        this.playNoise(0.6, 0.8);
+      }
+
+      playEmpBlast() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(2200, now);
+        osc.frequency.exponentialRampToValueAtTime(110, now + 0.9);
+
+        gain.gain.setValueAtTime(0.7, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.9);
+      }
+
+      playVictoryFanfare() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const notes = [329.63, 392.00, 523.25, 659.25, 783.99, 1046.50]; // Mi, Sol, Dó, Mi, Sol, Dó6
+        const now = this.ctx.currentTime;
+
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const startTime = now + idx * 0.12;
+          const dur = 0.5;
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, startTime);
+
+          gain.gain.setValueAtTime(0.3, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + dur);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(startTime);
+          osc.stop(startTime + dur);
+        });
+      }
+    }
+
+    const sound = new MeteorDefenseAudioSynth();
+
+    // 2. CONSTANTES E ESTADO DO JOGO
+    const STAGE_WIDTH = 1080;
+    const STAGE_HEIGHT = 1920;
+
+    const canvas = document.getElementById('space-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Posição central da Terra na tela vertical 9:16
+    const EARTH_X = 540;
+    const EARTH_Y = 1120;
+    const EARTH_RADIUS = 140;
+    const SHIELD_RADIUS = 180;
+
+    const state = {
+      round: 1,
+      isGameOver: false,
+      waveDuration: 45.0, // segundos da rodada
+      waveTimeRemaining: 45.0,
+      autoResetTimer: 5,
+      lastFrameTime: performance.now(),
+      destroyedCount: 0,
+
+      earth: {
+        hp: 100000,
+        maxHp: 100000,
+        shieldHp: 100, // 0 a 100%
+        rotation: 0,
+        atmosphereGlow: 1.0,
+        isShieldActive: false
+      },
+
+      satellites: [
+        { angle: 0, speed: 0.8, color: '#38bdf8', dist: 220 },
+        { angle: Math.PI * 0.66, speed: 0.8, color: '#00f3ff', dist: 220 },
+        { angle: Math.PI * 1.33, speed: 0.8, color: '#a855f7', dist: 220 }
+      ],
+
+      meteors: [],
+      lasers: [],
+      particles: [],
+      shockwaves: [],
+      stars: [],
+
+      topContributors: {},
+      mvpUser: '@guardiao_espacial',
+      spawnTimer: 0
+    };
+
+    // Inicializa Campo Estelar de Fundo (Parallax)
+    for (let i = 0; i < 150; i++) {
+      state.stars.push({
+        x: Math.random() * STAGE_WIDTH,
+        y: Math.random() * STAGE_HEIGHT,
+        radius: Math.random() * 2 + 0.5,
+        alpha: Math.random() * 0.8 + 0.2,
+        speed: Math.random() * 25 + 10
+      });
+    }
+
+    // 3. CLASSES DE ENTIDADES CÓSMICAS
+    class Meteor {
+      constructor(sectorHint = null) {
+        this.alive = true;
+        this.isGiant = Math.random() < 0.15; // 15% de chance de cometa gigante
+        this.radius = this.isGiant ? 34 : Math.random() * 14 + 14;
+        this.hp = this.isGiant ? 500 : 150;
+        this.maxHp = this.hp;
+
+        // Ângulo de aproximação
+        let spawnAngle;
+        if (sectorHint === 1) {
+          spawnAngle = (Math.PI * 1.1) + Math.random() * 0.3; // Noroeste
+        } else if (sectorHint === 2) {
+          spawnAngle = (Math.PI * 1.4) + Math.random() * 0.4; // Norte
+        } else if (sectorHint === 3) {
+          spawnAngle = (Math.PI * 1.8) + Math.random() * 0.3; // Nordeste
+        } else if (sectorHint === 4) {
+          spawnAngle = Math.random() < 0.5 ? Math.PI * 0.9 : Math.PI * 0.1; // Laterais
+        } else {
+          // Espalhamento em leque superior de 220°
+          spawnAngle = Math.PI + (Math.random() - 0.5) * (Math.PI * 0.95);
+        }
+
+        const spawnDistance = 900 + Math.random() * 250;
+        this.x = EARTH_X + Math.cos(spawnAngle) * spawnDistance;
+        this.y = EARTH_Y + Math.sin(spawnAngle) * spawnDistance;
+
+        // Se nascer abaixo da safe zone superior, recua
+        if (this.y < 160) this.y = 160 + Math.random() * 50;
+
+        // Vetor velocidade apontando em direção ao centro da Terra
+        const dx = EARTH_X - this.x;
+        const dy = EARTH_Y - this.y;
+        const dist = Math.hypot(dx, dy);
+
+        const baseSpeed = this.isGiant ? 110 : (170 + Math.random() * 80);
+        this.vx = (dx / dist) * baseSpeed;
+        this.vy = (dy / dist) * baseSpeed;
+
+        this.color = this.isGiant ? '#f97316' : '#e2e8f0';
+        this.tailHistory = [];
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotSpeed = (Math.random() * 2 - 1) * 2;
+
+        // Determina setor (1 a 4) para mira facilitada do chat
+        this.sector = this.calculateSector();
+      }
+
+      calculateSector() {
+        const dx = this.x - EARTH_X;
+        if (dx < -150) return 1; // Noroeste
+        if (dx > 150) return 3;  // Nordeste
+        if (this.y < EARTH_Y - 300) return 2; // Norte
+        return 4; // Leste/Oeste
+      }
+
+      update(dt) {
+        if (!this.alive) return;
+
+        this.tailHistory.push({ x: this.x, y: this.y });
+        if (this.tailHistory.length > 12) this.tailHistory.shift();
+
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        this.rotation += this.rotSpeed * dt;
+        this.sector = this.calculateSector();
+
+        // Colisão com o Escudo ou Superfície da Terra
+        const distToEarth = Math.hypot(this.x - EARTH_X, this.y - EARTH_Y);
+
+        if (state.earth.isShieldActive && distToEarth <= SHIELD_RADIUS + this.radius) {
+          // Escudo defletiu o meteoro
+          this.detonate(false);
+          sound.playEmpBlast();
+          createShockwave(this.x, this.y, 80, '#38bdf8');
+          return;
+        }
+
+        if (distToEarth <= EARTH_RADIUS + this.radius) {
+          // Impacto catastrófico na Terra!
+          this.impactEarth();
+        }
+      }
+
+      impactEarth() {
+        this.alive = false;
+        const damage = this.isGiant ? 12000 : 4500;
+        state.earth.hp = Math.max(0, state.earth.hp - damage);
+        updateHpUI();
+
+        sound.playEarthImpact();
+        shakeScreen(this.isGiant ? 22 : 12);
+        createShockwave(this.x, this.y, 140, '#ef4444');
+        createExplosionParticles(this.x, this.y, 40, '#f97316');
+
+        showToast(`💥 IMPACTO NA TERRA! -${damage.toLocaleString()} HP!`);
+
+        if (state.earth.hp <= 0 && !state.isGameOver) {
+          triggerGameOver(false);
+        }
+      }
+
+      detonate(fromPlayer = true) {
+        this.alive = false;
+        state.destroyedCount++;
+        document.getElementById('destroyed-counter-text').innerText = `Asteroides Abatidos: ${state.destroyedCount}`;
+
+        sound.playMeteorExplosion(this.isGiant);
+        createShockwave(this.x, this.y, this.radius * 2.5, this.color);
+        createExplosionParticles(this.x, this.y, this.isGiant ? 50 : 25, this.color);
+      }
+
+      draw(c) {
+        if (!this.alive) return;
+
+        // Cauda incandescente de reentrada
+        if (this.tailHistory.length > 1) {
+          c.save();
+          c.beginPath();
+          c.moveTo(this.tailHistory[0].x, this.tailHistory[0].y);
+          for (let i = 1; i < this.tailHistory.length; i++) {
+            c.lineTo(this.tailHistory[i].x, this.tailHistory[i].y);
+          }
+          c.strokeStyle = this.isGiant ? '#ea580c' : '#f59e0b';
+          c.lineWidth = this.radius * 0.9;
+          c.lineCap = 'round';
+          c.globalAlpha = 0.35;
+          c.shadowColor = '#f59e0b';
+          c.shadowBlur = 12;
+          c.stroke();
+          c.restore();
+        }
+
+        // Corpo irregular do meteoro
+        c.save();
+        c.translate(this.x, this.y);
+        c.rotate(this.rotation);
+
+        c.beginPath();
+        c.arc(0, 0, this.radius, 0, Math.PI * 2);
+        c.fillStyle = this.color;
+        c.shadowColor = this.isGiant ? '#ef4444' : '#f59e0b';
+        c.shadowBlur = 15;
+        c.fill();
+
+        // Cratera interna
+        c.beginPath();
+        c.arc(this.radius * 0.3, this.radius * 0.2, this.radius * 0.35, 0, Math.PI * 2);
+        c.fillStyle = 'rgba(0, 0, 0, 0.4)';
+        c.fill();
+
+        // Indicador do Setor para o Chat
+        c.rotate(-this.rotation);
+        c.font = '900 16px -apple-system, sans-serif';
+        c.fillStyle = '#ffffff';
+        c.textAlign = 'center';
+        c.shadowColor = '#000000';
+        c.shadowBlur = 6;
+        c.fillText(`[${this.sector}]`, 0, -this.radius - 8);
+
+        c.restore();
+      }
+    }
+
+    class LaserBeam {
+      constructor(startX, startY, targetX, targetY, isSuper = false) {
+        this.startX = startX;
+        this.startY = startY;
+        this.targetX = targetX;
+        this.targetY = targetY;
+        this.isSuper = isSuper;
+        this.life = 1.0;
+        this.decay = isSuper ? 3.0 : 5.5; // Desaparece rapidamente
+        this.color = isSuper ? '#fbbf24' : '#00f3ff';
+      }
+
+      update(dt) {
+        this.life -= this.decay * dt;
+      }
+
+      draw(c) {
+        if (this.life <= 0) return;
+        c.save();
+        c.beginPath();
+        c.moveTo(this.startX, this.startY);
+        c.lineTo(this.targetX, this.targetY);
+        c.strokeStyle = this.color;
+        c.lineWidth = (this.isSuper ? 12 : 5) * this.life;
+        c.lineCap = 'round';
+        c.shadowColor = this.color;
+        c.shadowBlur = this.isSuper ? 30 : 15;
+        c.globalAlpha = Math.max(0, this.life);
+        c.stroke();
+
+        // Núcleo branco no centro do raio laser
+        c.beginPath();
+        c.moveTo(this.startX, this.startY);
+        c.lineTo(this.targetX, this.targetY);
+        c.strokeStyle = '#ffffff';
+        c.lineWidth = (this.isSuper ? 6 : 2) * this.life;
+        c.stroke();
+        c.restore();
+      }
+    }
+
+    class Shockwave {
+      constructor(x, y, maxRadius, color) {
+        this.x = x;
+        this.y = y;
+        this.radius = 4;
+        this.maxRadius = maxRadius;
+        this.color = color;
+        this.alpha = 1.0;
+        this.alive = true;
+      }
+
+      update(dt) {
+        this.radius += (this.maxRadius - this.radius) * 12 * dt;
+        this.alpha -= 2.5 * dt;
+        if (this.alpha <= 0 || this.radius >= this.maxRadius - 2) {
+          this.alive = false;
+        }
+      }
+
+      draw(c) {
+        if (!this.alive) return;
+        c.save();
+        c.beginPath();
+        c.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        c.strokeStyle = this.color;
+        c.lineWidth = 5 * this.alpha;
+        c.globalAlpha = Math.max(0, this.alpha);
+        c.shadowColor = this.color;
+        c.shadowBlur = 15;
+        c.stroke();
+        c.restore();
+      }
+    }
+
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() * 2 - 1) * 280;
+        this.vy = (Math.random() * 2 - 1) * 280;
+        this.color = color;
+        this.radius = Math.random() * 4 + 2;
+        this.life = 1.0;
+        this.decay = Math.random() * 1.8 + 1.0;
+      }
+
+      update(dt) {
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        this.life -= this.decay * dt;
+      }
+
+      draw(c) {
+        if (this.life <= 0) return;
+        c.save();
+        c.beginPath();
+        c.arc(this.x, this.y, this.radius * this.life, 0, Math.PI * 2);
+        c.fillStyle = this.color;
+        c.globalAlpha = this.life;
+        c.shadowColor = this.color;
+        c.shadowBlur = 10;
+        c.fill();
+        c.restore();
+      }
+    }
+
+    function createShockwave(x, y, radius, color) {
+      state.shockwaves.push(new Shockwave(x, y, radius, color));
+    }
+
+    function createExplosionParticles(x, y, count, color) {
+      for (let i = 0; i < count; i++) {
+        state.particles.push(new Particle(x, y, color));
+      }
+    }
+
+    let shakeIntensity = 0;
+    function shakeScreen(amount) {
+      shakeIntensity = amount;
+    }
+
+    // 4. DESENHO DA TERRA, SATÉLITES E CAMPO ESTELAR
+    function drawSpaceBackground(c, dt) {
+      // Estrelas em movimento sutil de velocidade
+      c.save();
+      state.stars.forEach(s => {
+        s.y += s.speed * dt;
+        if (s.y > STAGE_HEIGHT) {
+          s.y = 0;
+          s.x = Math.random() * STAGE_WIDTH;
+        }
+        c.beginPath();
+        c.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        c.fillStyle = '#ffffff';
+        c.globalAlpha = s.alpha;
+        c.fill();
+      });
+      c.restore();
+    }
+
+    function drawEarth(c, dt) {
+      state.earth.rotation += 0.15 * dt;
+
+      c.save();
+      c.translate(EARTH_X, EARTH_Y);
+
+      // 1. Atmosfera Luminosa Neon
+      const glowGrad = c.createRadialGradient(0, 0, EARTH_RADIUS * 0.9, 0, 0, EARTH_RADIUS * 1.35);
+      glowGrad.addColorStop(0, 'rgba(56, 189, 248, 0.4)');
+      glowGrad.addColorStop(0.6, 'rgba(14, 165, 233, 0.15)');
+      glowGrad.addColorStop(1, 'transparent');
+
+      c.beginPath();
+      c.arc(0, 0, EARTH_RADIUS * 1.35, 0, Math.PI * 2);
+      c.fillStyle = glowGrad;
+      c.fill();
+
+      // 2. Escudo Orbital Total (quando ativado por Gifts)
+      if (state.earth.isShieldActive) {
+        c.beginPath();
+        c.arc(0, 0, SHIELD_RADIUS, 0, Math.PI * 2);
+        c.strokeStyle = '#38bdf8';
+        c.lineWidth = 4;
+        c.fillStyle = 'rgba(56, 189, 248, 0.2)';
+        c.shadowColor = '#38bdf8';
+        c.shadowBlur = 25;
+        c.fill();
+        c.stroke();
+      }
+
+      // 3. Globo Terrestre (Oceano Azul Profundo)
+      c.beginPath();
+      c.arc(0, 0, EARTH_RADIUS, 0, Math.PI * 2);
+      const oceanGrad = c.createRadialGradient(-30, -30, 20, 0, 0, EARTH_RADIUS);
+      oceanGrad.addColorStop(0, '#1e40af');
+      oceanGrad.addColorStop(0.7, '#0f172a');
+      oceanGrad.addColorStop(1, '#020617');
+      c.fillStyle = oceanGrad;
+      c.shadowColor = '#38bdf8';
+      c.shadowBlur = 20;
+      c.fill();
+
+      // 4. Continentes Procedurais Neon Giratórios
+      c.save();
+      c.rotate(state.earth.rotation);
+      c.clip(); // Corta para o formato circular da Terra
+
+      c.fillStyle = '#10b981'; // Verde bioluminescente dos continentes
+      c.shadowColor = '#10b981';
+      c.shadowBlur = 10;
+
+      // Forma continental 1
+      c.beginPath();
+      c.ellipse(-40, -20, 60, 35, 0.4, 0, Math.PI * 2);
+      c.fill();
+
+      // Forma continental 2
+      c.beginPath();
+      c.ellipse(50, 40, 50, 28, -0.2, 0, Math.PI * 2);
+      c.fill();
+
+      // Forma continental 3
+      c.beginPath();
+      c.ellipse(10, 80, 40, 20, 0.6, 0, Math.PI * 2);
+      c.fill();
+
+      c.restore();
+
+      // 5. Satélites de Defesa Orbital
+      state.satellites.forEach(sat => {
+        sat.angle += sat.speed * dt;
+        const satX = Math.cos(sat.angle) * sat.dist;
+        const satY = Math.sin(sat.angle) * sat.dist;
+
+        c.beginPath();
+        c.arc(satX, satY, 6, 0, Math.PI * 2);
+        c.fillStyle = sat.color;
+        c.shadowColor = sat.color;
+        c.shadowBlur = 12;
+        c.fill();
+
+        // Painel solar do satélite
+        c.fillStyle = '#ffffff';
+        c.fillRect(satX - 10, satY - 2, 20, 4);
+      });
+
+      c.restore();
+    }
+
+    // 5. DISPAROS DE LASER E INTERCEPTAÇÃO ORBITAL
+    function fireSectorLaser(sectorId, user = '@comandante') {
+      if (state.isGameOver) return;
+
+      sound.playLaserPulse(false);
+
+      // Encontra o meteoro mais próximo da Terra no setor indicado
+      let targetMeteor = null;
+      let minDistance = Infinity;
+
+      state.meteors.forEach(m => {
+        if (m.alive && m.sector === sectorId) {
+          const dist = Math.hypot(m.x - EARTH_X, m.y - EARTH_Y);
+          if (dist < minDistance) {
+            minDistance = dist;
+            targetMeteor = m;
+          }
+        }
+      });
+
+      // Se não houver meteoro no setor exato, atira no meteoro mais perigoso geral
+      if (!targetMeteor) {
+        state.meteors.forEach(m => {
+          if (m.alive) {
+            const dist = Math.hypot(m.x - EARTH_X, m.y - EARTH_Y);
+            if (dist < minDistance) {
+              minDistance = dist;
+              targetMeteor = m;
+            }
+          }
+        });
+      }
+
+      // Origem do laser: um dos satélites mais próximos
+      let sourceX = EARTH_X;
+      let sourceY = EARTH_Y - EARTH_RADIUS;
+
+      if (targetMeteor) {
+        // Causa dano no meteoro alvo
+        targetMeteor.hp -= 200;
+        state.lasers.push(new LaserBeam(sourceX, sourceY, targetMeteor.x, targetMeteor.y, false));
+
+        if (targetMeteor.hp <= 0) {
+          targetMeteor.detonate(true);
+          state.mvpUser = user;
+          showFeed(`Destruiu asteroide no Setor ${sectorId}!`, user);
+        } else {
+          createExplosionParticles(targetMeteor.x, targetMeteor.y, 8, '#38bdf8');
+          showFeed(`Atingiu asteroide no Setor ${sectorId} (${targetMeteor.hp} HP restantes)!`, user);
+        }
+      } else {
+        // Disparo defensivo no vácuo do setor
+        const ang = (sectorId * 0.5 + 2.5) * Math.PI;
+        const fakeTargetX = EARTH_X + Math.cos(ang) * 600;
+        const fakeTargetY = EARTH_Y + Math.sin(ang) * 600;
+        state.lasers.push(new LaserBeam(sourceX, sourceY, fakeTargetX, fakeTargetY, false));
+        showFeed(`Disparou laser de patrulha no Setor ${sectorId}!`, user);
+      }
+    }
+
+    function fireSuperOmniLaser(user = '@general_doador') {
+      if (state.isGameOver) return;
+
+      sound.playLaserPulse(true);
+      shakeScreen(15);
+      showToast(`⚡ RAIO LASER ORBITAL 360° ATIVADO POR ${user.toUpperCase()}!`);
+
+      // Elimina todos os meteoros atualmente na tela!
+      state.meteors.forEach(m => {
+        if (m.alive) {
+          state.lasers.push(new LaserBeam(EARTH_X, EARTH_Y, m.x, m.y, true));
+          m.detonate(true);
+        }
+      });
+
+      state.mvpUser = user;
+      showFeed(`Disparou varredura total de feixe 360°! Todos os asteroides destruídos!`, user);
+    }
+
+    function activateEmpShield(user = '@salvador_live') {
+      state.earth.isShieldActive = true;
+      sound.playEmpBlast();
+      createShockwave(EARTH_X, EARTH_Y, 320, '#38bdf8');
+      showToast(`🛡️ ESCUDO PLANETÁRIO TOTAL ATIVADO POR 6 SEGUNDOS!`);
+
+      setTimeout(() => {
+        state.earth.isShieldActive = false;
+      }, 6000);
+
+      state.mvpUser = user;
+      showFeed(`Ativou barreira de energia planetária total!`, user);
+    }
+
+    function updateHpUI() {
+      const pct = Math.max(0, Math.min(100, (state.earth.hp / state.earth.maxHp) * 100));
+      const bar = document.getElementById('hp-earth-bar');
+      const txt = document.getElementById('hp-earth-text');
+
+      if (bar) bar.style.width = pct + '%';
+      if (txt) txt.innerText = `${state.earth.hp.toLocaleString()} / 100.000 HP`;
+
+      if (pct < 30) {
+        bar.style.background = 'linear-gradient(90deg, #ef4444, #dc2626)';
+      } else if (pct < 60) {
+        bar.style.background = 'linear-gradient(90deg, #f59e0b, #d97706)';
+      } else {
+        bar.style.background = 'linear-gradient(90deg, #10b981, #06b6d4, #3b82f6)';
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('action-toast');
+      const txt = document.getElementById('toast-text');
+      txt.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    function showFeed(msg, user = '') {
+      const feed = document.getElementById('feed-msg');
+      if (feed) {
+        feed.innerHTML = user ? `<strong>${user}</strong>: ${msg}` : msg;
+      }
+    }
+
+    // 6. CICLO FECHADO & AUTO-RESET (LEI 5)
+    function triggerGameOver(isVictory) {
+      state.isGameOver = true;
+      if (isVictory) {
+        sound.playVictoryFanfare();
+      }
+
+      const overlay = document.getElementById('victory-overlay');
+      const title = document.getElementById('winner-title');
+      const summary = document.getElementById('winner-summary');
+      const mvp = document.getElementById('mvp-user-name');
+      const countdown = document.getElementById('auto-reset-countdown');
+
+      if (isVictory) {
+        title.innerText = 'A TERRA FOI SALVA!';
+        title.style.color = '#38bdf8';
+        summary.innerText = `Onda #${state.round} defendida com glória! ${state.destroyedCount} asteroides aniquilados!`;
+      } else {
+        title.innerText = 'COLAPSO PLANETÁRIO!';
+        title.style.color = '#ef4444';
+        summary.innerText = 'A atmosfera terrestre cedeu aos meteoros! O chat deve se unir para reconstruir!';
+      }
+
+      mvp.innerText = state.mvpUser || '@guardiao_espacial';
+      overlay.classList.add('active');
+
+      state.autoResetTimer = 5;
+      const interval = setInterval(() => {
+        state.autoResetTimer--;
+        if (countdown) {
+          countdown.innerText = `Próxima onda de meteoros em ${state.autoResetTimer}s...`;
+        }
+        if (state.autoResetTimer <= 0) {
+          clearInterval(interval);
+          resetMatch();
+        }
+      }, 1000);
+    }
+
+    function resetMatch() {
+      state.round++;
+      document.getElementById('round-number').innerText = `ONDA #${state.round}`;
+
+      state.isGameOver = false;
+      state.waveTimeRemaining = state.waveDuration;
+      state.earth.hp = state.earth.maxHp;
+      state.earth.isShieldActive = false;
+      state.meteors = [];
+      state.lasers = [];
+      state.particles = [];
+      state.shockwaves = [];
+      state.spawnTimer = 0;
+
+      updateHpUI();
+      document.getElementById('victory-overlay').classList.remove('active');
+      showFeed('Nova onda de meteoros detectada! Apontem os canhões!');
+    }
+
+    // 7. LOOP PRINCIPAL DE RENDERIZAÇÃO 60 FPS
+    function gameLoop(now) {
+      const dt = Math.min(0.06, (now - state.lastFrameTime) / 1000);
+      state.lastFrameTime = now;
+
+      // Cronômetro da Onda de Defesa
+      if (!state.isGameOver) {
+        state.waveTimeRemaining -= dt;
+        const waveTimer = document.getElementById('wave-timer-text');
+        if (waveTimer) {
+          waveTimer.innerText = `Tempo: ${Math.max(0, Math.ceil(state.waveTimeRemaining))}s`;
+        }
+
+        // Vitória por sobrevivência dos 45 segundos da onda!
+        if (state.waveTimeRemaining <= 0) {
+          triggerGameOver(true);
+        }
+
+        // Spawn contínuo de asteroides
+        state.spawnTimer += dt;
+        const spawnInterval = Math.max(0.6, 1.4 - state.round * 0.1);
+        if (state.spawnTimer >= spawnInterval) {
+          state.spawnTimer = 0;
+          state.meteors.push(new Meteor());
+        }
+      }
+
+      // Trepidação da tela (Screen Shake)
+      let shakeX = 0;
+      let shakeY = 0;
+      if (shakeIntensity > 0) {
+        shakeX = (Math.random() * 2 - 1) * shakeIntensity;
+        shakeY = (Math.random() * 2 - 1) * shakeIntensity;
+        shakeIntensity = Math.max(0, shakeIntensity - 25 * dt);
+      }
+
+      ctx.clearRect(0, 0, STAGE_WIDTH, STAGE_HEIGHT);
+
+      ctx.save();
+      ctx.translate(shakeX, shakeY);
+
+      // Fundo e Estrelas
+      drawSpaceBackground(ctx, dt);
+
+      // Planeta Terra e Satélites
+      drawEarth(ctx, dt);
+
+      // Atualização e Desenho dos Meteoros
+      for (let i = state.meteors.length - 1; i >= 0; i--) {
+        const m = state.meteors[i];
+        m.update(dt);
+        m.draw(ctx);
+        if (!m.alive) state.meteors.splice(i, 1);
+      }
+
+      // Atualização e Desenho dos Lasers
+      for (let i = state.lasers.length - 1; i >= 0; i--) {
+        const l = state.lasers[i];
+        l.update(dt);
+        l.draw(ctx);
+        if (l.life <= 0) state.lasers.splice(i, 1);
+      }
+
+      // Atualização e Desenho das Ondas de Choque
+      for (let i = state.shockwaves.length - 1; i >= 0; i--) {
+        const sw = state.shockwaves[i];
+        sw.update(dt);
+        sw.draw(ctx);
+        if (!sw.alive) state.shockwaves.splice(i, 1);
+      }
+
+      // Atualização e Desenho das Partículas
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const pt = state.particles[i];
+        pt.update(dt);
+        pt.draw(ctx);
+        if (pt.life <= 0) state.particles.splice(i, 1);
+      }
+
+      ctx.restore();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // 8. INTEGRAÇÃO COM SDK V5 LIVE & PARSER DE CHAT
+    function handleLiveCommand(payload) {
+      if (!payload) return;
+      const user = payload.user || '@espectador';
+      const comment = (payload.comment || '').toString().toLowerCase().trim();
+      const giftName = payload.giftName || null;
+
+      // 1. Processamento de Presentes / Gifts (Super Ataques)
+      if (payload.type === 'gift' || giftName) {
+        if (giftName === 'Lion' || giftName === 'Cap' || comment.includes('escudo') || comment.includes('emp')) {
+          activateEmpShield(user);
+        } else {
+          fireSuperOmniLaser(user);
+        }
+        return;
+      }
+
+      // 2. Comentários de Disparo por Setor (1, 2, 3, 4, fogo, laser)
+      let sectorTarget = null;
+      if (comment.includes('1') || comment.includes('noroeste') || comment.includes('esq')) {
+        sectorTarget = 1;
+      } else if (comment.includes('2') || comment.includes('norte') || comment.includes('cima') || comment.includes('meio')) {
+        sectorTarget = 2;
+      } else if (comment.includes('3') || comment.includes('nordeste') || comment.includes('dir')) {
+        sectorTarget = 3;
+      } else if (comment.includes('4') || comment.includes('lateral')) {
+        sectorTarget = 4;
+      } else if (comment.includes('fogo') || comment.includes('laser') || comment.includes('tiro')) {
+        // Disparo geral no setor mais ameaçado
+        sectorTarget = Math.floor(Math.random() * 4) + 1;
+      }
+
+      if (sectorTarget) {
+        fireSectorLaser(sectorTarget, user);
+      }
+    }
+
+    // Inicialização do SDK V5
+    const sdk = new V5LiveSDK({
+      gameId: '27_meteoro_defensor',
+      autoBotEnabled: true,
+      autoBotInterval: 2500,
+      autoBotSilenceThreshold: 3000
+    });
+
+    sdk.on('comment', (data) => handleLiveCommand(data));
+    sdk.on('gift', (data) => handleLiveCommand(data));
+    sdk.on('like', (data) => {
+      // Likes aumentam sutilmente o escudo ou ativam mini feixe
+      if (Math.random() < 0.25) {
+        fireSectorLaser(Math.floor(Math.random() * 4) + 1, '@curtidor_fiel');
+      }
+    });
+
+    // 9. MOTOR ANTI-SILÊNCIO ORGÂNICO (LEI 3)
+    const mockUsers = ['@astro_sniper', '@guardiao_alpha', '@sentinela_neon', '@piloto_orbital', '@defensor_v5', '@general_laser'];
+    setInterval(() => {
+      if (state.isGameOver) return;
+      const now = Date.now();
+      if (now - sdk.lastEventTime > 2800) {
+        const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+        const randomSector = Math.floor(Math.random() * 4) + 1;
+
+        handleLiveCommand({
+          type: 'comment',
+          user: randomUser,
+          comment: `${randomSector}`
+        });
+      }
+    }, 2500);
+
+    // 10. GAVETA DE DEPURAÇÃO LOCAL
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        toggleDebugDrawer();
+      }
+    });
+
+    document.getElementById('game-stage').addEventListener('dblclick', () => {
+      toggleDebugDrawer();
+    });
+
+    function toggleDebugDrawer() {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.classList.toggle('open');
+    }
+
+    function testSector(sectorId) {
+      sound.initContext();
+      handleLiveCommand({
+        type: 'comment',
+        user: '@streamer_dev',
+        comment: `${sectorId}`
+      });
+    }
+
+    function testGift(giftName) {
+      sound.initContext();
+      handleLiveCommand({
+        type: 'gift',
+        user: '@patrocinador_live',
+        giftName: giftName,
+        value: 10
+      });
+    }
+
+    // Inicialização
+    window.addEventListener('DOMContentLoaded', () => {
+      updateHpUI();
+      requestAnimationFrame(gameLoop);
+    });
+
+  </script>
+</body>
+</html>
