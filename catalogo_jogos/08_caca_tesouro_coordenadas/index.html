@@ -1167,6 +1167,7 @@
 
     function pushActivityFeed(text) {
       const feed = document.getElementById('activity-feed');
+      while (feed && feed.children.length >= 4) { feed.removeChild(feed.firstElementChild); }
       const pill = document.createElement('div');
       pill.className = 'feed-pill';
       pill.textContent = text;
@@ -1215,6 +1216,7 @@
     }
 
     function resetMatch() {
+      particles.length = 0;
       roundTimeRemaining = MATCH_DURATION;
       turnTimeRemaining = TURN_DURATION;
       isGameOver = false;

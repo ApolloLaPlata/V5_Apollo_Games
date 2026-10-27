@@ -1350,6 +1350,7 @@
 
     // 9. INTEGRAÇÃO COM SDK V5 LIVE & PARSER DE CHAT
     function handleLiveCommand(payload) {
+      if (typeof sdk !== "undefined" && sdk) sdk.lastEventTime = Date.now();
       if (!payload) return;
       const user = payload.user || '@espectador';
       const comment = (payload.comment || '').toString().toLowerCase().trim();
@@ -1393,6 +1394,23 @@
     }
 
     // Inicialização do SDK V5
+        // Garantia de Isolamento Autônomo (Fallback In-line caso o script SDK externo não esteja disponível)
+    if (typeof window.V5LiveSDK === 'undefined') {
+      window.V5LiveSDK = class {
+        constructor() {
+          this.lastEventTime = Date.now();
+          this.callbacks = {};
+        }
+        on(evt, cb) {
+          if (!this.callbacks[evt]) this.callbacks[evt] = [];
+          this.callbacks[evt].push(cb);
+        }
+        emit(evt, data) {
+          this.lastEventTime = Date.now();
+          if (this.callbacks[evt]) this.callbacks[evt].forEach(cb => cb(data));
+        }
+      };
+    }
     const sdk = new V5LiveSDK({
       gameId: '28_labirinto_pacman_neon',
       autoBotEnabled: true,

@@ -445,6 +445,26 @@ def sync_games():
 
             print(f"  [OK-MD5] {item:<35} | {len(cartridge_files)} arqs | Status: 100% Verificado")
 
+    # Sincronização do V5 Live Game SDK para o Broadcaster
+    sdk_src = os.path.join(BASE_DIR, "sdk", "v5_live_game_sdk.js")
+    if os.path.isfile(sdk_src):
+        sdk_targets = [
+            os.path.join(os.path.dirname(BROADCASTER_GAMES_DIR), "sdk", "v5_live_game_sdk.js"),
+            os.path.join(BROADCASTER_GAMES_DIR, "sdk", "v5_live_game_sdk.js")
+        ]
+        sdk_md5 = calculate_md5(sdk_src)
+        for target in sdk_targets:
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            shutil.copy2(sdk_src, target)
+            dest_sdk_md5 = calculate_md5(target)
+            if dest_sdk_md5 == sdk_md5:
+                total_files_verified += 1
+                total_bytes_transferred += os.path.getsize(sdk_src)
+                print(f"  [OK-MD5] SDK Sincronizado: {target} (MD5: {sdk_md5[:8]}...)")
+            else:
+                md5_mismatches += 1
+                print(f"  [ERRO MD5] Falha na sincronização do SDK em {target}")
+
     # Salva cópia local no catálogo do repositório
     local_manifest_path = os.path.join(CATALOG_DIR, "v5_games_manifest.json")
     with open(local_manifest_path, "w", encoding="utf-8") as f:

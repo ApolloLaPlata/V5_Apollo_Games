@@ -1154,6 +1154,7 @@
 
     function pushActivityFeed(text) {
       const feed = document.getElementById('activity-feed');
+      while (feed && feed.children.length >= 4) { feed.removeChild(feed.firstElementChild); }
       const pill = document.createElement('div');
       pill.className = 'feed-pill';
       pill.textContent = text;
@@ -1198,6 +1199,7 @@
     }
 
     function resetGame() {
+      particles.length = 0;
       roundTimeRemaining = MATCH_DURATION;
       dropTimeRemaining = DROP_INTERVAL;
       isGameOver = false;

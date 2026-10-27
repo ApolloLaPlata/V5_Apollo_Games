@@ -901,6 +901,7 @@
 
     // Notificações Flutuantes (Toasts)
     function spawnToast(text, color = '#38bdf8') {
+      while (toastContainer && toastContainer.children.length >= 4) { toastContainer.removeChild(toastContainer.firstElementChild); }
       const toast = document.createElement('div');
       toast.className = 'toast-item';
       toast.style.borderColor = color;

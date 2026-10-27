@@ -675,6 +675,7 @@
     }
 
     function addToast(text, color = '#fbbf24') {
+      while (toastFeedEl && toastFeedEl.children.length >= 4) { toastFeedEl.removeChild(toastFeedEl.firstElementChild); }
       const toast = document.createElement('div');
       toast.className = 'toast-item';
       toast.style.borderLeftColor = color;
