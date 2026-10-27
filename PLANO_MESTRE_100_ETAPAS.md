@@ -188,5 +188,5 @@
 - [x] **Etapa 106:** Auditoria da Gaveta de Depuração oculta (tecla `D`) em todos os jogos para testes pré-live do streamer.
 - [x] **Etapa 107:** Simulação de fluxo intenso de presentes pagos com cálculo correto de multiplicadores e alertas na tela.
 - [x] **Etapa 108:** Teste de carregamento instantâneo como Browser Source no OBS Studio (tempo de abertura < 200ms).
-- [ ] **Etapa 109:** Atualização final do `antigravity_hive_bus.md` com anúncio de conclusão da forja dos 40 cartuchos da Capitania V5 Games.
+- [x] **Etapa 109:** Atualização final do `antigravity_hive_bus.md` com anúncio de conclusão da forja dos 40 cartuchos da Capitania V5 Games.
 - [ ] **Etapa 110:** Commit Git mestre com tag de versão final assinada por `Apollo La Plata <v5estudio@hotmail.com>` e homologação concluída.
