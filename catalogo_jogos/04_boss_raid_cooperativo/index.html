@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Boss Raid do Chat (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 40%, #150928 0%, #080314 60%, #030108 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 14px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(8, 3, 20, 0.98) 0%, rgba(8, 3, 20, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #a855f7;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .timer-badge {
+      background: rgba(168, 85, 247, 0.2);
+      border: 1px solid rgba(168, 85, 247, 0.6);
+      color: #e9d5ff;
+      font-size: 13px;
+      font-weight: 900;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .timer-urgent {
+      background: rgba(239, 68, 68, 0.3);
+      border-color: #ef4444;
+      color: #fca5a5;
+      animation: blink 0.8s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Barra Gigante de HP do Boss (1.000.000 HP) */
+    .boss-hud {
+      width: 100%;
+      background: rgba(18, 8, 38, 0.85);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .boss-name-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .boss-name {
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #f3e8ff;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .boss-state-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .state-idle { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8; }
+    .state-enraged { background: rgba(239, 68, 68, 0.3); color: #ef4444; border: 1px solid #ef4444; animation: blink 0.5s infinite; }
+    .state-staggered { background: rgba(234, 179, 8, 0.3); color: #eab308; border: 1px solid #eab308; }
+    .state-defeated { background: rgba(34, 197, 94, 0.3); color: #22c55e; border: 1px solid #22c55e; }
+
+    .hp-numbers {
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: 800;
+      color: #c084fc;
+    }
+
+    .hp-bar-bg {
+      position: relative;
+      width: 100%;
+      height: 18px;
+      background: #090314;
+      border-radius: 9px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .hp-bar-fill-ghost {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: #ef4444;
+      opacity: 0.6;
+      transition: width 0.6s ease-out;
+    }
+
+    .hp-bar-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #ec4899 0%, #a855f7 50%, #6366f1 100%);
+      box-shadow: 0 0 12px rgba(236, 72, 153, 0.6);
+      transition: width 0.15s ease-out;
+    }
+
+    .stagger-bar-bg {
+      position: relative;
+      width: 100%;
+      height: 6px;
+      background: #090314;
+      border-radius: 3px;
+      overflow: hidden;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+    }
+
+    .stagger-bar-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+      box-shadow: 0 0 8px rgba(250, 204, 21, 0.7);
+      transition: width 0.1s linear;
+    }
+
+    /* Combo Banner Flutuante */
+    .combo-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(14, 5, 28, 0.75);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      padding: 3px 12px;
+      border-radius: 20px;
+      margin-top: 2px;
+    }
+
+    .combo-count {
+      font-size: 13px;
+      font-weight: 900;
+      color: #facc15;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .combo-mult {
+      font-size: 11px;
+      font-weight: 800;
+      color: #38bdf8;
+    }
+
+    /* Arena do Titã (Canvas 2D) */
+    #arena-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 10px 14px 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(8, 3, 20, 0.98) 0%, rgba(8, 3, 20, 0) 100%);
+    }
+
+    /* Leaderboard MVP em Tempo Real */
+    .mvp-card {
+      width: 100%;
+      background: rgba(20, 9, 44, 0.85);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+    }
+
+    .mvp-title {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .mvp-list {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
+
+    .mvp-item {
+      flex: 1;
+      background: rgba(30, 14, 60, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 4px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .mvp-rank-1 { border-color: rgba(250, 204, 21, 0.6); background: rgba(250, 204, 21, 0.1); }
+    .mvp-rank-2 { border-color: rgba(226, 232, 240, 0.5); }
+    .mvp-rank-3 { border-color: rgba(217, 119, 6, 0.5); }
+
+    .mvp-badge {
+      font-size: 10px;
+      font-weight: 900;
+      color: #facc15;
+    }
+
+    .mvp-user {
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 85px;
+    }
+
+    .mvp-dmg {
+      font-family: monospace;
+      font-size: 10px;
+      font-weight: 800;
+      color: #a855f7;
+    }
+
+    /* Como Jogar / Banner de Chamada do Chat */
+    .callout-box {
+      background: rgba(14, 5, 28, 0.85);
+      border: 1px dashed rgba(168, 85, 247, 0.4);
+      border-radius: 10px;
+      padding: 6px 10px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .callout-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .key-badge {
+      background: #7c3aed;
+      color: #ffffff;
+      font-weight: 900;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 11px;
+    }
+
+    /* Gaveta de Depuração Local */
+    .debug-drawer {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .debug-btn {
+      background: #1e1b4b;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #e0e7ff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .debug-btn:hover { background: #312e81; }
+
+    /* Overlay de Vitória / Derrota Épica */
+    #victory-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(3, 1, 8, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease-out;
+    }
+
+    #victory-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .victory-badge {
+      font-size: 44px;
+      animation: bounce 0.8s infinite alternate ease-in-out;
+    }
+
+    @keyframes bounce {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.15); }
+    }
+
+    .victory-title {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      background: linear-gradient(135deg, #facc15 0%, #ec4899 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .defeat-title {
+      background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .victory-podium {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 85%;
+      max-width: 320px;
+      background: rgba(20, 9, 44, 0.9);
+      border: 1px solid rgba(250, 204, 21, 0.4);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .podium-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: rgba(30, 14, 60, 0.6);
+    }
+
+    .auto-reset-bar {
+      width: 85%;
+      max-width: 320px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .auto-reset-fill {
+      height: 100%;
+      width: 100%;
+      background: #facc15;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-stage">
+    <!-- Top Safe Zone (140px) -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <div class="live-dot"></div>
+          V5 LIVE RAID
+        </div>
+        <div class="timer-badge" id="timer-badge">
+          ⏳ <span id="timer-val">45.0s</span>
+        </div>
+      </div>
+
+      <!-- Barra de Vida do Titã Neon -->
+      <div class="boss-hud">
+        <div class="boss-name-row">
+          <div class="boss-name">
+            ⚔️ TITÃ CIBERNÉTICO NEON
+          </div>
+          <div class="boss-state-badge state-idle" id="boss-state-badge">NORMAL</div>
+        </div>
+
+        <div class="hp-bar-bg">
+          <div class="hp-bar-fill-ghost" id="hp-ghost"></div>
+          <div class="hp-bar-fill" id="hp-fill"></div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="hp-numbers" id="hp-text">1.000.000 / 1.000.000 HP</div>
+          <div style="font-size: 9px; font-weight: 800; color: #facc15;">STAGGER GAUGE</div>
+        </div>
+
+        <div class="stagger-bar-bg">
+          <div class="stagger-bar-fill" id="stagger-fill"></div>
+        </div>
+      </div>
+
+      <!-- Combo Banner -->
+      <div class="combo-banner">
+        <span class="combo-count" id="combo-count">COMBO 0x</span>
+        <span class="combo-mult" id="combo-mult">1.00x DANO</span>
+      </div>
+    </header>
+
+    <!-- Canvas Principal da Arena -->
+    <canvas id="arena-canvas"></canvas>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <footer class="bottom-panel">
+      <!-- Leaderboard MVP -->
+      <div class="mvp-card">
+        <div class="mvp-title">
+          <span>🏆 MAIORES ATACANTES (MVP)</span>
+          <span style="color: #c084fc;">AO VIVO</span>
+        </div>
+        <div class="mvp-list" id="mvp-list">
+          <div class="mvp-item mvp-rank-1">
+            <span class="mvp-badge">🥇 1º</span>
+            <span class="mvp-user">@aguardando</span>
+            <span class="mvp-dmg">0 HP</span>
+          </div>
+          <div class="mvp-item mvp-rank-2">
+            <span class="mvp-badge">🥈 2º</span>
+            <span class="mvp-user">@aguardando</span>
+            <span class="mvp-dmg">0 HP</span>
+          </div>
+          <div class="mvp-item mvp-rank-3">
+            <span class="mvp-badge">🥉 3º</span>
+            <span class="mvp-user">@aguardando</span>
+            <span class="mvp-dmg">0 HP</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Callout Box -->
+      <div class="callout-box">
+        <div class="callout-item">
+          <span class="key-badge">CHAT</span>
+          <span>Digite 1 ou qualquer msg</span>
+        </div>
+        <div class="callout-item">
+          <span class="key-badge">GIFTS</span>
+          <span>Meteoro Crítico! ☄️</span>
+        </div>
+      </div>
+
+      <!-- Gaveta de Depuração Local -->
+      <div class="debug-drawer">
+        <button class="debug-btn" onclick="triggerDebugAttack('comment')">⚔️ Chat (-150)</button>
+        <button class="debug-btn" onclick="triggerDebugAttack('rose')">🌹 Rosa (-5K)</button>
+        <button class="debug-btn" onclick="triggerDebugAttack('meteor')">☄️ Meteoro (-100K)</button>
+        <button class="debug-btn" onclick="engine.reset()">🔄 Reset</button>
+      </div>
+    </footer>
+
+    <!-- Overlay de Fim de Partida -->
+    <div id="victory-overlay">
+      <div class="victory-badge" id="overlay-badge">👑</div>
+      <div class="victory-title" id="overlay-title">VITÓRIA DO CHAT!</div>
+      <div style="font-size: 13px; color: #cbd5e1;" id="overlay-subtitle">O Titã Cibernético foi aniquilado!</div>
+
+      <div class="victory-podium">
+        <div style="font-size: 11px; font-weight: 800; color: #facc15; text-align: center; letter-spacing: 1px;">
+          ⚔️ PÓDIO DOS GUERREIROS MVP ⚔️
+        </div>
+        <div id="podium-rows"></div>
+      </div>
+
+      <div class="auto-reset-bar">
+        <div class="auto-reset-fill" id="reset-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. SINTETIZADOR DE ÁUDIO PROCEDURAL (Web Audio API - Zero Arquivos Externos)
+    // =========================================================================
+    class ProceduralRaidAudio {
+      constructor() {
+        this.ctx = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Impacto de corte/espada normal
+      playSwordSlash() {
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(800, now);
+        osc.frequency.exponentialRampToValueAtTime(120, now + 0.12);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(2500, now);
+        filter.frequency.linearRampToValueAtTime(400, now + 0.12);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.13);
+      }
+
+      // Queda e explosão de meteoro colossal
+      playMeteorImpact() {
+        this.init();
+        const now = this.ctx.currentTime;
+        
+        // Sub-bass pitch drop
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.exponentialRampToValueAtTime(35, now + 0.45);
+
+        gain.gain.setValueAtTime(0.8, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.52);
+
+        // Ruído de impacto térmico
+        const bufferSize = this.ctx.sampleRate * 0.4;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.08));
+        }
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const noiseGain = this.ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.6, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+
+        noise.connect(noiseGain);
+        noiseGain.connect(this.ctx.destination);
+        noise.start(now);
+      }
+
+      // Rugido colossal do Titã
+      playBossRoar() {
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(65, now);
+        osc.frequency.linearRampToValueAtTime(110, now + 0.3);
+        osc.frequency.exponentialRampToValueAtTime(45, now + 0.8);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(600, now);
+        filter.Q.value = 8;
+
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.86);
+      }
+
+      // Alarme de Enrage do Titã
+      playEnrageAlarm() {
+        this.init();
+        const now = this.ctx.currentTime;
+        [0, 0.15, 0.3].forEach(offset => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(880, now + offset);
+          gain.gain.setValueAtTime(0.25, now + offset);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.1);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + offset);
+          osc.stop(now + offset + 0.11);
+        });
+      }
+
+      // Fanfarra de Vitória Épica
+      playVictoryFanfare() {
+        this.init();
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C
+        notes.forEach((freq, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.12);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.4, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.62);
+        });
+      }
+    }
+
+    const sound = new ProceduralRaidAudio();
+
+    // =========================================================================
+    // 2. MOTOR DO BOSS RAID (V5BossRaidEngine Integrado)
+    // =========================================================================
+    class BossRaidLogic {
+      constructor() {
+        this.maxHp = 1000000;
+        this.currentHp = this.maxHp;
+        this.displayHp = this.maxHp;
+        this.staggerMax = 50000;
+        this.staggerCurrent = 0;
+        this.roundDuration = 45.0;
+        this.timeRemaining = this.roundDuration;
+        this.isRoundActive = true;
+        this.winner = null;
+
+        this.state = 'IDLE';
+        this.stateTimer = 0;
+        this.enrageThreshold = 0.30;
+
+        this.comboCount = 0;
+        this.comboTimer = 0;
+        this.comboMultiplier = 1.0;
+        this.screenShake = 0;
+
+        this.contributors = new Map();
+        this.topMVP = [];
+
+        // Projectiles & Slash Effects
+        this.projectiles = [];
+        this.particles = [];
+        this.damageTexts = [];
+      }
+
+      reset() {
+        this.currentHp = this.maxHp;
+        this.displayHp = this.maxHp;
+        this.staggerCurrent = 0;
+        this.timeRemaining = this.roundDuration;
+        this.isRoundActive = true;
+        this.winner = null;
+        this.state = 'IDLE';
+        this.stateTimer = 0;
+        this.comboCount = 0;
+        this.comboTimer = 0;
+        this.comboMultiplier = 1.0;
+        this.screenShake = 0;
+        this.contributors.clear();
+        this.topMVP = [];
+        this.projectiles = [];
+        this.particles = [];
+        this.damageTexts = [];
+        hideOverlay();
+        updateUI();
+      }
+
+      applyAttack(event = {}) {
+        if (!this.isRoundActive || this.currentHp <= 0) return;
+
+        const user = event.user || '@espectador';
+        const isGift = event.type === 'gift';
+        const giftName = event.giftName || null;
+        const val = Math.max(1, event.value || 1);
+
+        let baseDamage = 150;
+        let isCritical = false;
+        let label = '';
+        let color = '#38bdf8';
+
+        if (isGift) {
+          isCritical = true;
+          if (giftName === 'Lion' || giftName === 'Universe' || val >= 1000) {
+            baseDamage = 100000;
+            label = 'METEORO! -100K';
+            color = '#f59e0b';
+            this.screenShake = 25;
+            sound.playMeteorImpact();
+            spawnMeteorEffect();
+          } else if (giftName === 'Capivara' || val >= 100) {
+            baseDamage = 25000;
+            label = 'SUPER CRÍTICO! -25K';
+            color = '#ec4899';
+            this.screenShake = 15;
+            sound.playSwordSlash();
+          } else {
+            baseDamage = 5000 * Math.max(1, Math.min(val, 20));
+            label = `CRÍTICO! -${(baseDamage/1000).toFixed(0)}K`;
+            color = '#ef4444';
+            this.screenShake = 8;
+            sound.playSwordSlash();
+          }
+        } else {
+          baseDamage = Math.floor(baseDamage * (0.85 + Math.random() * 0.35));
+          label = `-${baseDamage}`;
+          this.screenShake = 2.5;
+          sound.playSwordSlash();
+          spawnChatSlash(event.spawnX, event.spawnY);
+        }
+
+        let finalMultiplier = this.comboMultiplier;
+        if (this.state === 'STAGGERED') {
+          finalMultiplier *= 2.0;
+          label += ' [2X]';
+        }
+
+        const totalDamage = Math.floor(baseDamage * finalMultiplier);
+        this.currentHp = Math.max(0, this.currentHp - totalDamage);
+
+        // Combo
+        this.comboCount++;
+        this.comboTimer = 2.0;
+        this.comboMultiplier = Math.min(3.0, 1.0 + (this.comboCount * 0.02));
+
+        // Stagger
+        if (this.state !== 'STAGGERED' && this.state !== 'DEFEATED') {
+          this.staggerCurrent += isGift ? 8000 : 800;
+          if (this.staggerCurrent >= this.staggerMax) {
+            this.staggerCurrent = 0;
+            this.state = 'STAGGERED';
+            this.stateTimer = 0;
+            this.screenShake = 18;
+          }
+        }
+
+        // Leaderboard
+        let data = this.contributors.get(user);
+        if (!data) {
+          data = { user, damage: 0, hits: 0, gifts: 0 };
+          this.contributors.set(user, data);
+        }
+        data.damage += totalDamage;
+        data.hits += 1;
+        if (isGift) data.gifts += 1;
+
+        this.topMVP = Array.from(this.contributors.values())
+          .sort((a, b) => b.damage - a.damage)
+          .slice(0, 3);
+
+        // Floating Damage Text
+        this.damageTexts.push({
+          text: label,
+          x: (stage.clientWidth * 0.5) + (Math.random() - 0.5) * 160,
+          y: (stage.clientHeight * 0.42) + (Math.random() - 0.5) * 100,
+          vy: isCritical ? -150 : -80,
+          color: color,
+          alpha: 1.0,
+          scale: isCritical ? 1.5 : 1.0,
+          life: 0,
+          maxLife: isCritical ? 1.2 : 0.8
+        });
+
+        // Enrage
+        if (this.state === 'IDLE' && (this.currentHp / this.maxHp) <= this.enrageThreshold) {
+          this.state = 'ENRAGED';
+          sound.playEnrageAlarm();
+        }
+
+        // Derrota
+        if (this.currentHp <= 0) {
+          this.isRoundActive = false;
+          this.winner = 'CHAT';
+          this.state = 'DEFEATED';
+          sound.playVictoryFanfare();
+          showOverlay(true);
+        }
+      }
+
+      step(dt) {
+        // Suavizar barra de vida
+        this.displayHp += (this.currentHp - this.displayHp) * Math.min(1.0, 10.0 * dt);
+
+        // Screen Shake decay
+        if (this.screenShake > 0) {
+          this.screenShake = Math.max(0, this.screenShake - (25 * dt));
+        }
+
+        // Projectiles & Particles
+        for (let i = this.damageTexts.length - 1; i >= 0; i--) {
+          const t = this.damageTexts[i];
+          t.life += dt;
+          t.y += t.vy * dt;
+          t.alpha = Math.max(0, 1.0 - (t.life / t.maxLife));
+          if (t.life >= t.maxLife) this.damageTexts.splice(i, 1);
+        }
+
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+          const p = this.particles[i];
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.life += dt;
+          p.alpha = Math.max(0, 1.0 - (p.life / p.maxLife));
+          if (p.life >= p.maxLife) this.particles.splice(i, 1);
+        }
+
+        if (!this.isRoundActive) return;
+
+        // Cronômetro
+        this.timeRemaining -= dt;
+        if (this.timeRemaining <= 0) {
+          this.timeRemaining = 0;
+          this.isRoundActive = false;
+          this.winner = 'BOSS';
+          this.state = 'VICTORIOUS';
+          sound.playBossRoar();
+          showOverlay(false);
+          return;
+        }
+
+        // Combo decay
+        if (this.comboTimer > 0) {
+          this.comboTimer -= dt;
+          if (this.comboTimer <= 0) {
+            this.comboCount = 0;
+            this.comboMultiplier = 1.0;
+          }
+        }
+
+        // Estados do Boss
+        this.stateTimer += dt;
+        if (this.state === 'STAGGERED' && this.stateTimer >= 4.5) {
+          this.state = (this.currentHp / this.maxHp <= this.enrageThreshold) ? 'ENRAGED' : 'IDLE';
+        } else if (this.state === 'ATTACKING' && this.stateTimer >= 1.2) {
+          this.state = (this.currentHp / this.maxHp <= this.enrageThreshold) ? 'ENRAGED' : 'IDLE';
+        } else if (this.state === 'IDLE' || this.state === 'ENRAGED') {
+          const interval = this.state === 'ENRAGED' ? 4.5 : 7.0;
+          if (this.stateTimer >= interval) {
+            this.state = 'ATTACKING';
+            this.stateTimer = 0;
+            this.screenShake = this.state === 'ENRAGED' ? 18 : 10;
+            sound.playBossRoar();
+          }
+        }
+      }
+    }
+
+    const engine = new BossRaidLogic();
+
+    // =========================================================================
+    // 3. RENDERIZADOR VETORIAL PROCEDURAL DO TITÃ NEON (Canvas 2D)
+    // =========================================================================
+    const stage = document.getElementById('game-stage');
+    const canvas = document.getElementById('arena-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = stage.clientWidth;
+      canvas.height = stage.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    let animTime = 0;
+
+    function renderBoss(time) {
+      const cx = canvas.width * 0.5;
+      const cy = canvas.height * 0.44;
+
+      ctx.save();
+
+      // Flutuação orgânica do Boss
+      const hoverY = Math.sin(time * 2.5) * 12;
+      const breathe = Math.sin(time * 3.5) * 0.04;
+      ctx.translate(cx, cy + hoverY);
+
+      // Efeito de impacto quando atacando
+      if (engine.state === 'ATTACKING') {
+        const attackOffset = Math.sin(engine.stateTimer * 5) * 20;
+        ctx.translate(0, attackOffset);
+      }
+
+      const isEnraged = engine.state === 'ENRAGED';
+      const isStaggered = engine.state === 'STAGGERED';
+      const isDefeated = engine.state === 'DEFEATED';
+
+      const coreColor = isEnraged ? '#ef4444' : (isStaggered ? '#facc15' : '#a855f7');
+      const glowColor = isEnraged ? 'rgba(239, 68, 68, 0.4)' : 'rgba(168, 85, 247, 0.35)';
+
+      // 1. Aura Radiante de Energia
+      const grad = ctx.createRadialGradient(0, 0, 40, 0, 0, 180);
+      grad.addColorStop(0, glowColor);
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(0, 0, 180, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (!isDefeated) {
+        // 2. Chifres Vetoriais de Plasma
+        ctx.strokeStyle = coreColor;
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.shadowColor = coreColor;
+        ctx.shadowBlur = 20;
+
+        // Chifre Esquerdo
+        ctx.beginPath();
+        ctx.moveTo(-45, -70);
+        ctx.quadraticCurveTo(-90, -140, -110, -110);
+        ctx.stroke();
+
+        // Chifre Direito
+        ctx.beginPath();
+        ctx.moveTo(45, -70);
+        ctx.quadraticCurveTo(90, -140, 110, -110);
+        ctx.stroke();
+
+        // 3. Ombros e Armadura Mecha
+        ctx.fillStyle = '#1e1138';
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 4;
+
+        ctx.beginPath();
+        ctx.moveTo(-110, -20);
+        ctx.lineTo(-60, -60);
+        ctx.lineTo(60, -60);
+        ctx.lineTo(110, -20);
+        ctx.lineTo(80, 70);
+        ctx.lineTo(-80, 70);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // 4. Núcleo Cósmico (Core)
+        ctx.save();
+        ctx.scale(1.0 + breathe, 1.0 + breathe);
+        ctx.fillStyle = coreColor;
+        ctx.shadowColor = coreColor;
+        ctx.shadowBlur = 30;
+        ctx.beginPath();
+        ctx.arc(0, 15, 28, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Anel giratório do Core
+        ctx.rotate(time * 2);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(0, 0, 36, 0, Math.PI * 1.4);
+        ctx.stroke();
+        ctx.restore();
+
+        // 5. Olhos de Plasma Incandescentes
+        ctx.fillStyle = isEnraged ? '#ff0000' : '#38bdf8';
+        ctx.shadowColor = ctx.fillStyle;
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.ellipse(-26, -42, 10, 4, -0.2, 0, Math.PI * 2);
+        ctx.ellipse(26, -42, 10, 4, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function spawnChatSlash(sx, sy) {
+      const cx = canvas.width * 0.5;
+      const cy = canvas.height * 0.44;
+      for (let i = 0; i < 8; i++) {
+        engine.particles.push({
+          x: cx + (Math.random() - 0.5) * 80,
+          y: cy + (Math.random() - 0.5) * 80,
+          vx: (Math.random() - 0.5) * 300,
+          vy: (Math.random() - 0.5) * 300,
+          color: '#38bdf8',
+          size: 3 + Math.random() * 3,
+          alpha: 1.0,
+          life: 0,
+          maxLife: 0.4
+        });
+      }
+    }
+
+    function spawnMeteorEffect() {
+      const cx = canvas.width * 0.5;
+      const cy = canvas.height * 0.44;
+      for (let i = 0; i < 40; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const spd = 120 + Math.random() * 400;
+        engine.particles.push({
+          x: cx,
+          y: cy,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd,
+          color: Math.random() > 0.5 ? '#f59e0b' : '#ef4444',
+          size: 5 + Math.random() * 6,
+          alpha: 1.0,
+          life: 0,
+          maxLife: 0.8
+        });
+      }
+    }
+
+    // =========================================================================
+    // 4. LOOP DE ANIMAÇÃO & RENDERIZAÇÃO
+    // =========================================================================
+    let lastTimestamp = performance.now();
+
+    function gameLoop(timestamp) {
+      const dt = Math.min(0.1, (timestamp - lastTimestamp) / 1000);
+      lastTimestamp = timestamp;
+      animTime += dt;
+
+      engine.step(dt);
+
+      // Screen Shake
+      if (engine.screenShake > 0) {
+        const sx = (Math.random() - 0.5) * engine.screenShake;
+        const sy = (Math.random() - 0.5) * engine.screenShake;
+        stage.style.transform = `translate(${sx}px, ${sy}px)`;
+      } else {
+        stage.style.transform = 'none';
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Renderizar Titã
+      renderBoss(animTime);
+
+      // Renderizar Partículas
+      for (let i = 0; i < engine.particles.length; i++) {
+        const p = engine.particles[i];
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Renderizar Números de Dano (Floating Combat Text)
+      for (let i = 0; i < engine.damageTexts.length; i++) {
+        const t = engine.damageTexts[i];
+        ctx.save();
+        ctx.globalAlpha = t.alpha;
+        ctx.font = `900 ${Math.floor(18 * t.scale)}px -apple-system, sans-serif`;
+        ctx.fillStyle = t.color;
+        ctx.shadowColor = t.color;
+        ctx.shadowBlur = 12;
+        ctx.textAlign = 'center';
+        ctx.fillText(t.text, t.x, t.y);
+        ctx.restore();
+      }
+
+      updateUI();
+      requestAnimationFrame(gameLoop);
+    }
+    requestAnimationFrame(gameLoop);
+
+    // =========================================================================
+    // 5. ATUALIZAÇÃO DE INTERFACE (HUD & DOM)
+    // =========================================================================
+    const hpFill = document.getElementById('hp-fill');
+    const hpGhost = document.getElementById('hp-ghost');
+    const hpText = document.getElementById('hp-text');
+    const staggerFill = document.getElementById('stagger-fill');
+    const bossStateBadge = document.getElementById('boss-state-badge');
+    const timerBadge = document.getElementById('timer-badge');
+    const timerVal = document.getElementById('timer-val');
+    const comboCount = document.getElementById('combo-count');
+    const comboMult = document.getElementById('combo-mult');
+    const mvpList = document.getElementById('mvp-list');
+
+    function updateUI() {
+      // HP Bar
+      const pct = Math.max(0, engine.currentHp / engine.maxHp) * 100;
+      const ghostPct = Math.max(0, engine.displayHp / engine.maxHp) * 100;
+      hpFill.style.width = `${pct}%`;
+      hpGhost.style.width = `${ghostPct}%`;
+      hpText.innerText = `${engine.currentHp.toLocaleString('pt-BR')} / ${engine.maxHp.toLocaleString('pt-BR')} HP`;
+
+      // Stagger
+      const stagPct = (engine.staggerCurrent / engine.staggerMax) * 100;
+      staggerFill.style.width = `${stagPct}%`;
+
+      // Estado do Boss
+      bossStateBadge.className = `boss-state-badge state-${engine.state.toLowerCase()}`;
+      bossStateBadge.innerText = engine.state;
+
+      // Timer
+      timerVal.innerText = `${engine.timeRemaining.toFixed(1)}s`;
+      if (engine.timeRemaining <= 10) {
+        timerBadge.classList.add('timer-urgent');
+      } else {
+        timerBadge.classList.remove('timer-urgent');
+      }
+
+      // Combo
+      comboCount.innerText = `COMBO ${engine.comboCount}x`;
+      comboMult.innerText = `${engine.comboMultiplier.toFixed(2)}x DANO`;
+
+      // MVP Top 3
+      const items = mvpList.children;
+      for (let i = 0; i < 3; i++) {
+        const mvp = engine.topMVP[i];
+        if (mvp) {
+          items[i].children[1].innerText = mvp.user;
+          items[i].children[2].innerText = `${(mvp.damage/1000).toFixed(1)}K HP`;
+        } else {
+          items[i].children[1].innerText = '@aguardando';
+          items[i].children[2].innerText = '0 HP';
+        }
+      }
+    }
+
+    // =========================================================================
+    // 6. OVERLAY DE FIM DE PARTIDA & AUTO-RESET (5 Segundos)
+    // =========================================================================
+    const victoryOverlay = document.getElementById('victory-overlay');
+    const overlayBadge = document.getElementById('overlay-badge');
+    const overlayTitle = document.getElementById('overlay-title');
+    const overlaySubtitle = document.getElementById('overlay-subtitle');
+    const podiumRows = document.getElementById('podium-rows');
+    const resetFill = document.getElementById('reset-fill');
+
+    function showOverlay(isVictory) {
+      victoryOverlay.classList.add('active');
+      if (isVictory) {
+        overlayBadge.innerText = '👑';
+        overlayTitle.innerText = 'VITÓRIA DO CHAT!';
+        overlayTitle.className = 'victory-title';
+        overlaySubtitle.innerText = 'O Titã Cibernético Neon foi aniquilado com honra!';
+      } else {
+        overlayBadge.innerText = '💀';
+        overlayTitle.innerText = 'O TITÃ ESMAGOU O CHAT!';
+        overlayTitle.className = 'victory-title defeat-title';
+        overlaySubtitle.innerText = 'O tempo esgotou antes de drenar a vida do monstro!';
+      }
+
+      podiumRows.innerHTML = '';
+      const top3 = engine.topMVP.slice(0, 3);
+      if (top3.length === 0) {
+        podiumRows.innerHTML = '<div style="font-size: 11px; text-align: center; color: #94a3b8;">Nenhum dano registrado</div>';
+      } else {
+        top3.forEach((p, idx) => {
+          const medal = ['🥇', '🥈', '🥉'][idx];
+          podiumRows.innerHTML += `
+            <div class="podium-row">
+              <span style="font-weight: 800; font-size: 12px;">${medal} ${p.user}</span>
+              <span style="font-family: monospace; font-weight: 900; color: #facc15;">${p.damage.toLocaleString('pt-BR')} HP</span>
+            </div>
+          `;
+        });
+      }
+
+      // Barra regressiva de 5 segundos
+      resetFill.style.transition = 'none';
+      resetFill.style.width = '100%';
+      void resetFill.offsetWidth;
+      resetFill.style.transition = 'width 5s linear';
+      resetFill.style.width = '0%';
+
+      setTimeout(() => {
+        engine.reset();
+      }, 5000);
+    }
+
+    function hideOverlay() {
+      victoryOverlay.classList.remove('active');
+    }
+
+    // =========================================================================
+    // 7. MOTOR ANTI-SILÊNCIO (Simulação Autônoma)
+    // =========================================================================
+    const mockUsers = ['@pedro_gamer', '@camila_live', '@lucas_br', '@ana_pro', '@felipe_hero', '@mari_neon'];
+    let lastInteractionTime = Date.now();
+
+    setInterval(() => {
+      if (!engine.isRoundActive) return;
+      if (Date.now() - lastInteractionTime > 2200) {
+        const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+        const isGift = Math.random() < 0.12; // 12% chance de gift autônomo
+        engine.applyAttack({
+          user: randomUser,
+          type: isGift ? 'gift' : 'comment',
+          giftName: isGift ? 'Rose' : null,
+          value: isGift ? 1 : 1
+        });
+      }
+    }, 1800);
+
+    // =========================================================================
+    // 8. V5 BROADCASTER EVENT BUS
+    // =========================================================================
+    const broadcasterChannel = new BroadcastChannel('v5_broadcaster_games');
+    broadcasterChannel.onmessage = (event) => {
+      handleIncomingEvent(event.data);
+    };
+
+    window.addEventListener('v5_event', (e) => {
+      handleIncomingEvent(e.detail);
+    });
+
+    function handleIncomingEvent(data) {
+      if (!data) return;
+      lastInteractionTime = Date.now();
+
+      const user = data.user || '@espectador';
+      const isGift = data.type === 'gift';
+      const giftName = data.giftName || null;
+      const val = data.value || 1;
+
+      engine.applyAttack({
+        user: user,
+        type: isGift ? 'gift' : 'comment',
+        giftName: giftName,
+        value: val
+      });
+    }
+
+    // Depuração Local
+    function triggerDebugAttack(kind) {
+      lastInteractionTime = Date.now();
+      if (kind === 'comment') {
+        engine.applyAttack({ user: '@streamer', type: 'comment' });
+      } else if (kind === 'rose') {
+        engine.applyAttack({ user: '@streamer', type: 'gift', giftName: 'Rose', value: 1 });
+      } else if (kind === 'meteor') {
+        engine.applyAttack({ user: '@whale_boss', type: 'gift', giftName: 'Lion', value: 1000 });
+      }
+    }
+  </script>
+</body>
+</html>

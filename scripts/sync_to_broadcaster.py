@@ -40,6 +40,14 @@ GAME_METADATA = {
         "status": "HOMOLOGADO",
         "version": "1.0.0"
     },
+    "04_boss_raid_cooperativo": {
+        "name": "Boss Raid do Chat",
+        "category": "cooperativo_boss",
+        "description": "Titã Neon com 1.000.000 HP enfrentando o chat inteiro com combos, meteoros de presentes e ranking MVP",
+        "commands": ["1", "atacar", "fogo", "espada"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
+    },
     "05_roleta_desafios_live": {
         "name": "Roleta dos Desafios da Live",
         "category": "sorteios_roletas",
