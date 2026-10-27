@@ -523,6 +523,7 @@
 
       // Pavio queimando contínuo com chiado e estalidos
       startFuseSound() {
+        try {
         this.init();
         if (this.fuseNoiseNode) return;
 
@@ -550,18 +551,24 @@
         filter.connect(this.fuseGainNode);
         this.fuseGainNode.connect(this.ctx.destination);
         this.fuseNoiseNode.start();
-      }
+      
+        } catch (e) {}}
 
       stopFuseSound() {
+
+        try {
         if (this.fuseNoiseNode) {
           try { this.fuseNoiseNode.stop(); } catch(e) {}
           this.fuseNoiseNode.disconnect();
           this.fuseNoiseNode = null;
         }
-      }
+      
+
+        } catch (e) {}}
 
       // Tic-tac cardíaco procedural acelerado (tum-tum)
       playHeartbeatPulse() {
+        try {
         this.init();
         const now = this.ctx.currentTime;
 
@@ -594,10 +601,12 @@
         gain2.connect(this.ctx.destination);
         osc2.start(now + 0.12);
         osc2.stop(now + 0.22);
-      }
+      
+        } catch (e) {}}
 
       // Som de passe rápido (whoosh de ar quente)
       playPassSound() {
+        try {
         this.init();
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
@@ -614,10 +623,12 @@
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.13);
-      }
+      
+        } catch (e) {}}
 
       // Detonação explosiva colossal
       playExplosion() {
+        try {
         this.init();
         this.stopFuseSound();
         const now = this.ctx.currentTime;
@@ -653,7 +664,8 @@
         noise.connect(noiseGain);
         noiseGain.connect(this.ctx.destination);
         noise.start(now);
-      }
+      
+        } catch (e) {}}
     }
 
     const sound = new HotPotatoAudioSynthesizer();

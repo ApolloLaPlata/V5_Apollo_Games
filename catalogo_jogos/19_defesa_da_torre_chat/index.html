@@ -515,6 +515,7 @@
 
       // Disparo de Laser de Canhão
       playLaser(pitch = 880) {
+        try {
         this.init();
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
@@ -531,10 +532,12 @@
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.12);
-      }
+      
+        } catch (e) {}}
 
       // Explosão de Inimigo Destruído
       playEnemyExplosion() {
+        try {
         this.init();
         const now = this.ctx.currentTime;
 
@@ -569,10 +572,12 @@
         noise.connect(noiseGain);
         noiseGain.connect(this.ctx.destination);
         noise.start(now);
-      }
+      
+        } catch (e) {}}
 
       // Bomba Orbital Ativada por Presentes (Wipeout)
       playOrbitalBomb() {
+        try {
         this.init();
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
@@ -589,10 +594,12 @@
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.66);
-      }
+      
+        } catch (e) {}}
 
       // Fanfarra de Vitória
       playVictory() {
+        try {
         this.init();
         const freqs = [440, 554.37, 659.25, 880];
         freqs.forEach((f, idx) => {
@@ -608,7 +615,8 @@
           osc.start(now);
           osc.stop(now + 0.52);
         });
-      }
+      
+        } catch (e) {}}
     }
 
     const sound = new DefenseAudioSynthesizer();

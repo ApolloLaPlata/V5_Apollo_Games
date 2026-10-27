@@ -548,6 +548,7 @@
 
       // Deslize / Atrito do bloco saindo da torre
       playBlockSlide() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -576,10 +577,12 @@
         gain.connect(this.ctx.destination);
 
         noise.start(now);
-      }
+      
+        } catch (e) {}}
 
       // Encaixe / Impacto ao colocar bloco no topo
       playBlockSnap() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -599,10 +602,12 @@
 
         osc.start(now);
         osc.stop(now + 0.1);
-      }
+      
+        } catch (e) {}}
 
       // Rangido de oscilação / instabilidade da torre
       playCreakSound() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -623,10 +628,12 @@
 
         osc.start(now);
         osc.stop(now + 0.35);
-      }
+      
+        } catch (e) {}}
 
       // Colapso estrondoso da torre
       playCollapseSound() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -646,10 +653,12 @@
 
         osc.start(now);
         osc.stop(now + 0.75);
-      }
+      
+        } catch (e) {}}
 
       // Som do Bloco de Aço de Titânio (Rosa)
       playSteelClank() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -669,10 +678,12 @@
 
         osc.start(now);
         osc.stop(now + 0.3);
-      }
+      
+        } catch (e) {}}
 
       // Som de Stasis Shield Antigravitacional (Leão)
       playStasisShieldSound() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -692,10 +703,12 @@
 
         osc.start(now);
         osc.stop(now + 0.48);
-      }
+      
+        } catch (e) {}}
 
       // Fanfarra triunfal de conclusão
       playVictoryFanfare() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -724,7 +737,8 @@
           osc.stop(currTime + n.d + 0.05);
           currTime += n.d + 0.04;
         });
-      }
+      
+        } catch (e) {}}
     }
 
     const audio = new ProceduralAudioEngine();

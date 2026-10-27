@@ -539,6 +539,7 @@
 
       // Disparo de flecha / corda de arco tensionada
       playBowRelease() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -558,10 +559,12 @@
 
         osc.start(now);
         osc.stop(now + 0.15);
-      }
+      
+        } catch (e) {}}
 
       // Impacto normal no alvo (anel externo / médio)
       playTargetHit() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -581,10 +584,12 @@
 
         osc.start(now);
         osc.stop(now + 0.13);
-      }
+      
+        } catch (e) {}}
 
       // Bullseye / Na Mosca (Sineta cristalina e fanfarra aguda)
       playBullseyeDing() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -604,10 +609,12 @@
 
         osc.start(now);
         osc.stop(now + 0.45);
-      }
+      
+        } catch (e) {}}
 
       // Mira Laser Lock-On (Bipes eletrônicos de travamento)
       playLockOnSound() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -629,10 +636,12 @@
           osc.start(t);
           osc.stop(t + 0.07);
         }
-      }
+      
+        } catch (e) {}}
 
       // Chuva Nuclear / Super Gift (Leão)
       playNuclearExplosionSound() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -658,10 +667,12 @@
 
         osc.start(now);
         osc.stop(now + 0.6);
-      }
+      
+        } catch (e) {}}
 
       // Fanfarra triunfal final
       playVictoryFanfare() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -690,7 +701,8 @@
           osc.stop(currTime + n.d + 0.05);
           currTime += n.d + 0.04;
         });
-      }
+      
+        } catch (e) {}}
     }
 
     const audio = new ProceduralAudioEngine();

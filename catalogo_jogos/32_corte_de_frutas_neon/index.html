@@ -561,6 +561,8 @@
       }
 
       playSwordSlash() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -581,9 +583,13 @@
 
         osc.start(now);
         osc.stop(now + 0.15);
-      }
+      
+
+        } catch (e) {}}
 
       playFruitSplatter() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -614,9 +620,13 @@
         gain.connect(this.ctx.destination);
 
         noise.start(now);
-      }
+      
+
+        } catch (e) {}}
 
       playBombExplosion() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -635,9 +645,13 @@
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.6);
-      }
+      
+
+        } catch (e) {}}
 
       playSlowMoSound() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -656,9 +670,13 @@
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.6);
-      }
+      
+
+        } catch (e) {}}
 
       playVictoryFanfare() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -683,7 +701,9 @@
           osc.start(startTime);
           osc.stop(startTime + dur);
         });
-      }
+      
+
+        } catch (e) {}}
     }
 
     const sound = new NeonFruitSlicerAudioSynth();

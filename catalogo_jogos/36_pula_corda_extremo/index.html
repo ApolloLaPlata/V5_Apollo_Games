@@ -529,6 +529,7 @@
 
       // Whoosh rítmico da corda cortando o ar
       playRopeWhoosh(speedFactor = 1.0) {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -553,10 +554,12 @@
 
         osc.start(now);
         osc.stop(now + 0.15);
-      }
+      
+        } catch (e) {}}
 
       // Som do salto / impulso
       playJumpSound(isDouble = false) {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -576,10 +579,12 @@
 
         osc.start(now);
         osc.stop(now + 0.19);
-      }
+      
+        } catch (e) {}}
 
       // Salto bem-sucedido (acorde brilhante)
       playScorePoint() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -599,10 +604,12 @@
 
         osc.start(now);
         osc.stop(now + 0.11);
-      }
+      
+        } catch (e) {}}
 
       // Tropeço na corda (estalo de choque e tropeço)
       playTripSound() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -622,10 +629,12 @@
 
         osc.start(now);
         osc.stop(now + 0.32);
-      }
+      
+        } catch (e) {}}
 
       // Efeito sonoro do Slow-Mo (Rosa)
       playSlowMoSound() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -645,10 +654,12 @@
 
         osc.start(now);
         osc.stop(now + 0.48);
-      }
+      
+        } catch (e) {}}
 
       // Efeito sonoro do Jetpack Pégaso (Leão)
       playJetpackSound() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -668,10 +679,12 @@
 
         osc.start(now);
         osc.stop(now + 0.42);
-      }
+      
+        } catch (e) {}}
 
       // Fanfarra Triunfal de Conclusão da Partida
       playVictoryFanfare() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -700,7 +713,8 @@
           osc.stop(currTime + n.d + 0.05);
           currTime += n.d + 0.04;
         });
-      }
+      
+        } catch (e) {}}
     }
 
     const audio = new ProceduralAudioEngine();

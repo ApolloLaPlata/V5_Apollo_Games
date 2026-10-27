@@ -789,6 +789,7 @@
 
       // Tique-taque tenso de contagem regressiva
       playClockTick(isUrgent = false) {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -807,10 +808,12 @@
 
         osc.start(now);
         osc.stop(now + 0.09);
-      }
+      
+        } catch (e) {}}
 
       // Som de voto registrado
       playVoteBlip() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -830,10 +833,12 @@
 
         osc.start(now);
         osc.stop(now + 0.07);
-      }
+      
+        } catch (e) {}}
 
       // Fanfarra de Resposta Correta (Acorde Maior)
       playCorrectAnswer() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -862,10 +867,12 @@
           osc.stop(currTime + n.d + 0.03);
           currTime += n.d + 0.02;
         });
-      }
+      
+        } catch (e) {}}
 
       // Tom de Resposta Errada (Tom Menor Descendente)
       playWrongAnswer() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -885,10 +892,12 @@
 
         osc.start(now);
         osc.stop(now + 0.42);
-      }
+      
+        } catch (e) {}}
 
       // Super Dica 50/50 (Laser Desintegrador de Erradas)
       playFiftyFiftySound() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -908,10 +917,12 @@
 
         osc.start(now);
         osc.stop(now + 0.3);
-      }
+      
+        } catch (e) {}}
 
       // Oráculo Dourado / Leão 5x
       playGoldenOracleSound() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -940,10 +951,12 @@
           osc.stop(currTime + n.d + 0.03);
           currTime += n.d + 0.02;
         });
-      }
+      
+        } catch (e) {}}
 
       // Fanfarra Final da Bateria
       playVictoryFanfare() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -972,7 +985,8 @@
           osc.stop(currTime + n.d + 0.05);
           currTime += n.d + 0.04;
         });
-      }
+      
+        } catch (e) {}}
     }
 
     const audio = new ProceduralAudioEngine();

@@ -649,6 +649,7 @@
 
       // Toque Clássico de Clarim de Largada do Hipódromo ("First Call")
       playCallToThePost() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
         const notes = [
@@ -685,10 +686,12 @@
           osc.stop(currTime + n.d + 0.05);
           currTime += n.d + 0.04;
         });
-      }
+      
+        } catch (e) {}}
 
       // Galope Rítmico de Cascos Procedural (Clop-Clop)
       playHorsesHoofbeat() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -713,10 +716,12 @@
 
         osc.start(now);
         osc.stop(now + 0.08);
-      }
+      
+        } catch (e) {}}
 
       // Relincho Procedural de Cavalo
       playWhinny() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -749,10 +754,12 @@
         mod.start(now);
         osc.stop(now + 0.8);
         mod.stop(now + 0.8);
-      }
+      
+        } catch (e) {}}
 
       // Som de Chicote / Arrancada Turbo (Faíscas e Impacto)
       playWhipBoost() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -796,10 +803,12 @@
         oscGain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.25);
-      }
+      
+        } catch (e) {}}
 
       // Bipe Sintético de Locução do Narrador
       playNarratorBeep() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -818,10 +827,12 @@
 
         osc.start(now);
         osc.stop(now + 0.07);
-      }
+      
+        } catch (e) {}}
 
       // Fanfarra de Vitória no Final
       playVictoryFanfare() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -850,7 +861,8 @@
           osc.stop(currTime + n.d + 0.05);
           currTime += n.d + 0.04;
         });
-      }
+      
+        } catch (e) {}}
     }
 
     const audio = new ProceduralAudioEngine();

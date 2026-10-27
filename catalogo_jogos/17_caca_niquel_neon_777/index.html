@@ -476,6 +476,8 @@
       }
 
       startReelSpinSound() {
+
+        try {
         if (this.isSpinSoundActive) return;
         try {
           const c = this.getCtx();
@@ -505,9 +507,13 @@
           this.spinNoise.start(t);
           this.isSpinSoundActive = true;
         } catch (e) {}
-      }
+      
+
+        } catch (e) {}}
 
       stopReelSpinSound() {
+
+        try {
         if (!this.isSpinSoundActive) return;
         try {
           if (this.spinGain) {
@@ -522,7 +528,9 @@
             this.isSpinSoundActive = false;
           }, 60);
         } catch (e) {}
-      }
+      
+
+        } catch (e) {}}
 
       playReelLockThud(reelIndex = 0) {
         try {

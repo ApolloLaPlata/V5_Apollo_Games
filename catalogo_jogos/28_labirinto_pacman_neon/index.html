@@ -552,6 +552,8 @@
       }
 
       playWakaWaka() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -574,9 +576,13 @@
 
         osc.start(now);
         osc.stop(now + 0.08);
-      }
+      
+
+        } catch (e) {}}
 
       playPowerPellet() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -596,9 +602,13 @@
 
         osc.start(now);
         osc.stop(now + 0.25);
-      }
+      
+
+        } catch (e) {}}
 
       playEatGhost() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -618,9 +628,13 @@
 
         osc.start(now);
         osc.stop(now + 0.35);
-      }
+      
+
+        } catch (e) {}}
 
       playDeathChime() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -641,9 +655,13 @@
           osc.start(start);
           osc.stop(start + 0.07);
         });
-      }
+      
+
+        } catch (e) {}}
 
       playVictoryFanfare() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -668,7 +686,9 @@
           osc.start(startTime);
           osc.stop(startTime + dur);
         });
-      }
+      
+
+        } catch (e) {}}
     }
 
     const sound = new NeonPacmanAudioSynth();

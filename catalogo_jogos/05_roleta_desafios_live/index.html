@@ -530,6 +530,7 @@
        * Clique mecânico de precisão da palheta (Flapper / Ratchet)
        */
       playRatchetClick(speedRatio = 1.0) {
+        try {
         const now = Date.now();
         if (now - this.lastClickTime < 28) return; // Debounce de alta rotação
         this.lastClickTime = now;
@@ -556,7 +557,8 @@
           osc.start(t);
           osc.stop(t + 0.035);
         } catch (e) {}
-      }
+      
+        } catch (e) {}}
 
       playSpinWhoosh() {
         try {

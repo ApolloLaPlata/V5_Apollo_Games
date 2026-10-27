@@ -553,6 +553,8 @@
       }
 
       playBounce() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -572,9 +574,13 @@
 
         osc.start(now);
         osc.stop(now + 0.12);
-      }
+      
+
+        } catch (e) {}}
 
       playRimClank() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -603,9 +609,13 @@
         osc2.start(now);
         osc.stop(now + 0.18);
         osc2.stop(now + 0.18);
-      }
+      
+
+        } catch (e) {}}
 
       playSwishSound() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -638,9 +648,13 @@
         gain.connect(this.ctx.destination);
 
         noise.start(now);
-      }
+      
+
+        } catch (e) {}}
 
       playFireballWhoosh() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -660,9 +674,13 @@
 
         osc.start(now);
         osc.stop(now + 0.4);
-      }
+      
+
+        } catch (e) {}}
 
       playBuzzer() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -681,9 +699,13 @@
 
         osc.start(now);
         osc.stop(now + 0.6);
-      }
+      
+
+        } catch (e) {}}
 
       playVictoryFanfare() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -708,7 +730,9 @@
           osc.start(startTime);
           osc.stop(startTime + dur);
         });
-      }
+      
+
+        } catch (e) {}}
     }
 
     const sound = new StreetBasketballAudioSynth();

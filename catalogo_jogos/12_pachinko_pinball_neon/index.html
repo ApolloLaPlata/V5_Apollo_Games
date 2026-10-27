@@ -490,6 +490,7 @@
        * Sino / Chime de Pino de Pachinko
        */
       playPeg(index = 0) {
+        try {
         const now = Date.now();
         if (now - this.lastPlinkTime < 45) return;
         this.lastPlinkTime = now;
@@ -513,7 +514,8 @@
           osc.start(t);
           osc.stop(t + 0.10);
         } catch (e) {}
-      }
+      
+        } catch (e) {}}
 
       /**
        * Solenoide Mecânico do Flipper
@@ -544,6 +546,7 @@
        * Bumper Reativo de Pinball
        */
       playBumper() {
+        try {
         const now = Date.now();
         if (now - this.lastBumperTime < 80) return;
         this.lastBumperTime = now;
@@ -568,7 +571,8 @@
           osc.start(t);
           osc.stop(t + 0.18);
         } catch (e) {}
-      }
+      
+        } catch (e) {}}
 
       /**
        * Acelerador Magnético / Zumbido de Indução

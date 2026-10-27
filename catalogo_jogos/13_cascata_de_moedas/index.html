@@ -488,6 +488,7 @@
        * Tilintar Metálico de Moeda (Coin Clink)
        */
       playClink(pitch = 1.0) {
+        try {
         const now = Date.now();
         if (now - this.lastClinkTime < 35) return; // Micro-throttle 35ms
         this.lastClinkTime = now;
@@ -512,7 +513,8 @@
           osc.start(t);
           osc.stop(t + 0.08);
         } catch (e) {}
-      }
+      
+        } catch (e) {}}
 
       /**
        * Impacto Pesado do Lingote de Ouro

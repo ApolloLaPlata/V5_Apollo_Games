@@ -542,6 +542,8 @@
       }
 
       playLaserPulse(isSuper = false) {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -565,9 +567,13 @@
 
         osc.start(now);
         osc.stop(now + duration);
-      }
+      
+
+        } catch (e) {}}
 
       playMeteorExplosion(isGiant = false) {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -591,9 +597,13 @@
 
         // Ruído branco de fragmentação
         this.playNoise(duration, isGiant ? 0.7 : 0.4);
-      }
+      
+
+        } catch (e) {}}
 
       playNoise(duration, volume) {
+
+        try {
         if (!this.ctx || this.isMuted) return;
         const bufferSize = Math.floor(this.ctx.sampleRate * duration);
         const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
@@ -620,9 +630,13 @@
         gain.connect(this.ctx.destination);
 
         noise.start();
-      }
+      
+
+        } catch (e) {}}
 
       playEarthImpact() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -643,9 +657,13 @@
         osc.stop(now + 0.8);
 
         this.playNoise(0.6, 0.8);
-      }
+      
+
+        } catch (e) {}}
 
       playEmpBlast() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -665,9 +683,13 @@
 
         osc.start(now);
         osc.stop(now + 0.9);
-      }
+      
+
+        } catch (e) {}}
 
       playVictoryFanfare() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -692,7 +714,9 @@
           osc.start(startTime);
           osc.stop(startTime + dur);
         });
-      }
+      
+
+        } catch (e) {}}
     }
 
     const sound = new MeteorDefenseAudioSynth();

@@ -506,6 +506,7 @@
 
       // Catraca metálica puxando corrente
       playChainClick() {
+        try {
         this.init();
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
@@ -522,10 +523,12 @@
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.06);
-      }
+      
+        } catch (e) {}}
 
       // Voo da bola cortando o ar
       playWhoosh() {
+        try {
         this.init();
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
@@ -542,10 +545,12 @@
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.26);
-      }
+      
+        } catch (e) {}}
 
       // Impacto estrondoso de demolição
       playImpact(isSuper = false) {
+        try {
         this.init();
         const now = this.ctx.currentTime;
 
@@ -580,10 +585,12 @@
         noise.connect(noiseGain);
         noiseGain.connect(this.ctx.destination);
         noise.start(now);
-      }
+      
+        } catch (e) {}}
 
       // Fanfarra triunfal
       playVictory() {
+        try {
         this.init();
         const freqs = [392, 523.25, 659.25, 783.99]; // G C E G
         freqs.forEach((f, idx) => {
@@ -599,7 +606,8 @@
           osc.start(now);
           osc.stop(now + 0.52);
         });
-      }
+      
+        } catch (e) {}}
     }
 
     const sound = new PendulumAudioSynthesizer();

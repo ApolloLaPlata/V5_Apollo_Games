@@ -603,6 +603,7 @@
 
       // Impacto de corte/espada normal
       playSwordSlash() {
+        try {
         this.init();
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
@@ -626,10 +627,12 @@
 
         osc.start(now);
         osc.stop(now + 0.13);
-      }
+      
+        } catch (e) {}}
 
       // Queda e explosão de meteoro colossal
       playMeteorImpact() {
+        try {
         this.init();
         const now = this.ctx.currentTime;
         
@@ -664,10 +667,12 @@
         noise.connect(noiseGain);
         noiseGain.connect(this.ctx.destination);
         noise.start(now);
-      }
+      
+        } catch (e) {}}
 
       // Rugido colossal do Titã
       playBossRoar() {
+        try {
         this.init();
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
@@ -692,10 +697,12 @@
 
         osc.start(now);
         osc.stop(now + 0.86);
-      }
+      
+        } catch (e) {}}
 
       // Alarme de Enrage do Titã
       playEnrageAlarm() {
+        try {
         this.init();
         const now = this.ctx.currentTime;
         [0, 0.15, 0.3].forEach(offset => {
@@ -710,10 +717,12 @@
           osc.start(now + offset);
           osc.stop(now + offset + 0.11);
         });
-      }
+      
+        } catch (e) {}}
 
       // Fanfarra de Vitória Épica
       playVictoryFanfare() {
+        try {
         this.init();
         const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C
         notes.forEach((freq, idx) => {
@@ -729,7 +738,8 @@
           osc.start(now);
           osc.stop(now + 0.62);
         });
-      }
+      
+        } catch (e) {}}
     }
 
     const sound = new ProceduralRaidAudio();

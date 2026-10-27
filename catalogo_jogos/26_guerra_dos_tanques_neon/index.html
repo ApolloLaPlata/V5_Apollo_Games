@@ -631,6 +631,8 @@
       }
 
       playCannonFire(isSuper = false) {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -658,9 +660,13 @@
 
         // Ruído branco de deflagração
         this.playPowderNoise(isSuper ? 0.35 : 0.2, isSuper ? 0.5 : 0.3);
-      }
+      
+
+        } catch (e) {}}
 
       playPowderNoise(duration, volume) {
+
+        try {
         if (!this.ctx || this.isMuted) return;
         const bufferSize = Math.floor(this.ctx.sampleRate * duration);
         const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
@@ -687,9 +693,13 @@
         gain.connect(this.ctx.destination);
 
         noise.start();
-      }
+      
+
+        } catch (e) {}}
 
       playProjectileWhistle(progress) {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -710,9 +720,13 @@
 
         osc.start(now);
         osc.stop(now + 0.08);
-      }
+      
+
+        } catch (e) {}}
 
       playExplosion(isSuper = false) {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -736,9 +750,13 @@
 
         // Ruído volumétrico de explosão
         this.playPowderNoise(duration, isSuper ? 0.9 : 0.6);
-      }
+      
+
+        } catch (e) {}}
 
       playShieldDeflect() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -759,9 +777,13 @@
 
         osc.start(now);
         osc.stop(now + 0.3);
-      }
+      
+
+        } catch (e) {}}
 
       playVictoryFanfare() {
+
+        try {
         this.initContext();
         if (!this.ctx || this.isMuted) return;
 
@@ -786,7 +808,9 @@
           osc.start(startTime);
           osc.stop(startTime + dur);
         });
-      }
+      
+
+        } catch (e) {}}
     }
 
     const sound = new NeonTankAudioSynth();

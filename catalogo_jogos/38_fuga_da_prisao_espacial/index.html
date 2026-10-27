@@ -533,6 +533,7 @@
 
       // Propulsão do Jetpack (som contínuo/pulsante)
       playJetpackThrust() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -557,10 +558,12 @@
 
         osc.start(now);
         osc.stop(now + 0.13);
-      }
+      
+        } catch (e) {}}
 
       // Disparo de Laser de Contenção
       playLaserFire() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -580,10 +583,12 @@
 
         osc.start(now);
         osc.stop(now + 0.16);
-      }
+      
+        } catch (e) {}}
 
       // Impacto de Laser no Escudo Defletor
       playShieldImpact() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -603,10 +608,12 @@
 
         osc.start(now);
         osc.stop(now + 0.23);
-      }
+      
+        } catch (e) {}}
 
       // Ativação da Hiper-Dobra (Leão)
       playWarpDriveSound() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -635,10 +642,12 @@
           osc.stop(currTime + n.d + 0.02);
           currTime += n.d + 0.01;
         });
-      }
+      
+        } catch (e) {}}
 
       // Fanfarra Triunfal de Conclusão da Fuga
       playVictoryFanfare() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -667,7 +676,8 @@
           osc.stop(currTime + n.d + 0.05);
           currTime += n.d + 0.04;
         });
-      }
+      
+        } catch (e) {}}
     }
 
     const audio = new ProceduralAudioEngine();

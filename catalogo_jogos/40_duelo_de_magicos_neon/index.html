@@ -529,6 +529,7 @@
 
       // Pulso de Magia de Fogo (Rugido com estalo de plasma)
       playFireSurge() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -554,10 +555,12 @@
 
         osc.start(now);
         osc.stop(now + 0.22);
-      }
+      
+        } catch (e) {}}
 
       // Pulso de Magia de Gelo (Estalo cristalino agudo)
       playIceSurge() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -577,10 +580,12 @@
 
         osc.start(now);
         osc.stop(now + 0.16);
-      }
+      
+        } catch (e) {}}
 
       // Colisão contínua / Onda de choque no centro
       playClashImpact() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -600,10 +605,12 @@
 
         osc.start(now);
         osc.stop(now + 0.3);
-      }
+      
+        } catch (e) {}}
 
       // Super Gift (Rosa ou Leão) — Explosão Sísmica
       playSuperGiftRoar() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -624,10 +631,12 @@
 
         osc.start(now);
         osc.stop(now + 0.7);
-      }
+      
+        } catch (e) {}}
 
       // Fanfarra triunfal de encerramento
       playVictoryFanfare() {
+        try {
         this.ensureContext();
         if (!this.ctx) return;
 
@@ -656,7 +665,8 @@
           osc.stop(currTime + n.d + 0.05);
           currTime += n.d + 0.04;
         });
-      }
+      
+        } catch (e) {}}
     }
 
     const audio = new ProceduralAudioEngine();

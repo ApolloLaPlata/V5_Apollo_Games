@@ -539,6 +539,8 @@
       }
 
       playSplash(intensity = 1.0) {
+
+        try {
         const now = Date.now();
         if (now - this.lastSplashTime < 60) return; // Micro-throttle 60ms
         this.lastSplashTime = now;
@@ -559,13 +561,16 @@
           osc.start(t);
           osc.stop(t + 0.12);
         } catch (e) {}
-      }
+      
+
+        } catch (e) {}}
 
       /**
        * Micro-Onda de Choque Subaquática (Underwater Shockwave)
        * Cavitação hidrostática profunda + sub-bass rumble + sonar echo
        */
       playUnderwaterShockwave(intensity = 1.0) {
+        try {
         const now = Date.now();
         if (now - this.lastShockwaveTime < 140) return; // Micro-throttle
         this.lastShockwaveTime = now;
@@ -625,13 +630,15 @@
           echo.start(t + 0.06);
           echo.stop(t + 0.35);
         } catch (e) {}
-      }
+      
+        } catch (e) {}}
 
       /**
        * Alarme Sonoro de Inundação / Sonar Hydro-Pulse
        * Dispara aviso acústico quando maré > 80%
        */
       playFloodAlert(isUrgent = false) {
+        try {
         const now = Date.now();
         if (now - this.lastAlertTime < 2400) return; // Cooldown 2.4s
         this.lastAlertTime = now;
@@ -665,7 +672,8 @@
             osc.stop(t + tone.delay + 0.13);
           });
         } catch (e) {}
-      }
+      
+        } catch (e) {}}
 
       playBubblePop() {
         try {

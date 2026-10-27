@@ -142,4 +142,7 @@ O objetivo financeiro e técnico foi alcançado com um acervo proprietário de a
 - `scripts/test_safe_zones_compliance_102.py`: Suíte de validação formal de conformidade de safe zones para TikTok Live, YouTube Shorts e Twitch (10/10 checks aprovados).
 - `scripts/audit_network_isolation_103.py`: Auditoria de isolamento total de rede (zero CDNs, zero Google Fonts, zero áudio remoto) em todos os 41 cartuchos.
 - `scripts/test_network_isolation_103.py`: Suíte de validação formal de isolamento 100% offline para OBS Studio sem risco de quedas (7/7 checks aprovados).
+- `scripts/audit_web_audio_104.py`: Auditoria cirúrgica da Web Audio API em todos os 41 cartuchos (AudioContext singleton, zero áudio remoto, nós finitos, .resume() e blindagem).
+- `scripts/shield_all_web_audio_methods.py`: Instrumentador industrial que blindou 156 métodos de áudio com try/catch defensivo contra falhas em tempo de execução.
+- `scripts/test_web_audio_104.py`: Suíte de validação do sintetizador com simulação headless Mock Web Audio API e verificação de sintaxe de todos os 41 cartuchos (9/9 checks aprovados).
 - `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo industrial com verificação MD5 bit-a-bit, gerador de manifestos espelhados e gerador de `games_registry.json` para o V5 Broadcaster.

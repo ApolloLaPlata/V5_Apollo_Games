@@ -478,6 +478,7 @@
        * Ronco de Servomotor Hidráulico sob Esforço
        */
       playServo(pitchMod = 1.0) {
+        try {
         const now = Date.now();
         if (now - this.lastServoTime < 70) return; // Micro-throttle 70ms
         this.lastServoTime = now;
@@ -508,12 +509,14 @@
           osc.start(t);
           osc.stop(t + 0.12);
         } catch (e) {}
-      }
+      
+        } catch (e) {}}
 
       /**
        * Faísca Elétrica / Centelha de Solda Metálica
        */
       playSparks() {
+        try {
         const now = Date.now();
         if (now - this.lastSparksTime < 90) return;
         this.lastSparksTime = now;
@@ -537,7 +540,8 @@
           osc.start(t);
           osc.stop(t + 0.05);
         } catch (e) {}
-      }
+      
+        } catch (e) {}}
 
       /**
        * Jato de Vapor Hidráulico Pressurizado (Overdrive)

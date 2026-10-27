@@ -488,6 +488,7 @@
        * Efeito Doppler Espacial ao orbitar em alta velocidade
        */
       playDopplerOrb(speedRatio = 1.0) {
+        try {
         const now = Date.now();
         if (now - this.lastDopplerTime < 60) return;
         this.lastDopplerTime = now;
@@ -513,7 +514,8 @@
           osc.start(t);
           osc.stop(t + 0.18);
         } catch (e) {}
-      }
+      
+        } catch (e) {}}
 
       /**
        * Implosão na Singularidade do Buraco Negro

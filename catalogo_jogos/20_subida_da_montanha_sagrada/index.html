@@ -518,6 +518,7 @@
 
       // Salto de escalada / propulsão
       playJump() {
+        try {
         this.init();
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
@@ -534,10 +535,12 @@
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.13);
-      }
+      
+        } catch (e) {}}
 
       // Impacto de rocha / avalanche no escudo
       playRockHit() {
+        try {
         this.init();
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
@@ -554,10 +557,12 @@
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.31);
-      }
+      
+        } catch (e) {}}
 
       // Voo Místico da Fênix Dourada (Gifts)
       playPhoenixAscend() {
+        try {
         this.init();
         const freqs = [330, 440, 554.37, 659.25, 880, 1108.73];
         freqs.forEach((f, idx) => {
@@ -573,10 +578,12 @@
           osc.start(now);
           osc.stop(now + 0.42);
         });
-      }
+      
+        } catch (e) {}}
 
       // Fanfarra de Cume
       playSummitVictory() {
+        try {
         this.init();
         const chord = [523.25, 659.25, 783.99, 1046.50];
         chord.forEach(f => {
@@ -592,7 +599,8 @@
           osc.start(now);
           osc.stop(now + 0.85);
         });
-      }
+      
+        } catch (e) {}}
     }
 
     const sound = new MountainAudioSynthesizer();
