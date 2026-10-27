@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V5 Games — Laboratório de Testes & Simulador 9:16</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #030712;
+      color: #f3f4f6;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar de Jogos e Controle */
+    .sidebar {
+      width: 380px;
+      background: #0b0f19;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      gap: 20px;
+      overflow-y: auto;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-badge {
+      background: #f59e0b;
+      color: #000;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #9ca3af;
+    }
+
+    .game-selector {
+      width: 100%;
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Simulador de Eventos da Live */
+    .event-panel {
+      background: rgba(17, 24, 39, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-action {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-blue { background: #0284c7; color: #fff; }
+    .btn-blue:hover { background: #0369a1; }
+
+    .btn-orange { background: #ea580c; color: #fff; }
+    .btn-orange:hover { background: #c2410c; }
+
+    .btn-gift { background: #10b981; color: #000; font-weight: 800; }
+    .btn-gift:hover { background: #059669; }
+
+    .btn-sync {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #000;
+      font-weight: 800;
+      margin-top: auto;
+      padding: 12px;
+      border-radius: 10px;
+    }
+
+    /* Área Central com Moldura 9:16 de Celular */
+    .viewport-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+      padding: 20px;
+      position: relative;
+    }
+
+    .phone-mockup {
+      width: 420px;
+      height: 746px; /* 9:16 exato */
+      background: #000;
+      border-radius: 40px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 10px #1f2937;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .phone-mockup iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Painel de Controle e Teste -->
+  <div class="sidebar">
+    <div class="brand-title">
+      <span>V5 GAMES</span>
+      <span class="brand-badge">Test Lab</span>
+    </div>
+
+    <div>
+      <div class="section-label" style="margin-bottom: 8px;">1. Selecionar Cartucho Local</div>
+      <select class="game-selector" id="game-select" onchange="loadSelectedGame()">
+        <option value="catalogo_jogos/01_cabo_de_guerra_neon/index.html">01. Cabo de Guerra Neon (Homologado)</option>
+      </select>
+    </div>
+
+    <div>
+      <div class="section-label" style="margin-bottom: 8px;">2. Injetor de Eventos de Live</div>
+      <div class="event-panel">
+        <button class="btn-action btn-blue" onclick="sendEvent({ comment: '1', team: 'A', weight: 1, user: '@viewer_azul' })">
+          🔵 Simular Comentário "1" (Time A)
+        </button>
+        <button class="btn-action btn-orange" onclick="sendEvent({ comment: '2', team: 'B', weight: 1, user: '@viewer_laranja' })">
+          🟠 Simular Comentário "2" (Time B)
+        </button>
+        <button class="btn-action btn-gift" onclick="sendEvent({ type: 'gift', giftName: 'Rosa', team: 'A', weight: 5, user: '@vip_tipper' })">
+          🎁 Simular Gift Rosa (+5pts A)
+        </button>
+        <button class="btn-action btn-gift" onclick="sendEvent({ type: 'gift', giftName: 'Leão', team: 'B', weight: 20, user: '@whale_tipper' })">
+          🦁 Simular Gift Leão (+20pts B)
+        </button>
+      </div>
+    </div>
+
+    <div style="font-size: 11px; color: #6b7280; line-height: 1.5;">
+      💡 <strong>Isolamento Garantido:</strong> Este ambiente roda 100% offline no workspace local. O jogo só é exportado para o Broadcaster quando aprovado.
+    </div>
+
+    <button class="btn-action btn-sync" onclick="alert('Execute no terminal: python scripts/sync_to_broadcaster.py')">
+      🚀 Sincronizar Catálogo com Broadcaster
+    </button>
+  </div>
+
+  <!-- Viewport de Celular 9:16 -->
+  <div class="viewport-area">
+    <div class="phone-mockup">
+      <iframe id="game-iframe" src="catalogo_jogos/01_cabo_de_guerra_neon/index.html"></iframe>
+    </div>
+  </div>
+
+  <script>
+    const iframe = document.getElementById('game-iframe');
+    const select = document.getElementById('game-select');
+    const channel = new BroadcastChannel('v5_broadcaster_games');
+
+    function loadSelectedGame() {
+      iframe.src = select.value;
+    }
+
+    function sendEvent(data) {
+      // Dispara via BroadcastChannel
+      channel.postMessage(data);
+
+      // Dispara diretamente na janela do iframe se possivel
+      try {
+        iframe.contentWindow.postMessage(data, '*');
+      } catch (e) {}
+    }
+  </script>
+</body>
+</html>
