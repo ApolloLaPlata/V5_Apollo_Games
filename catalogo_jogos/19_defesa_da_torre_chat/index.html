@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Defesa da Torre do Chat (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 30%, #0c182e 0%, #060b18 60%, #020409 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 14px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(6, 11, 24, 0.98) 0%, rgba(6, 11, 24, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #38bdf8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .wave-badge {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.6);
+      color: #7dd3fc;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* HUD da Torre Sagrada */
+    .tower-hud {
+      width: 100%;
+      background: rgba(12, 24, 46, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .tower-status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tower-name {
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #f0f9ff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tower-hp-text {
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: 800;
+      color: #38bdf8;
+    }
+
+    .tower-hp-bg {
+      position: relative;
+      width: 100%;
+      height: 14px;
+      background: #020617;
+      border-radius: 7px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .tower-hp-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #38bdf8 0%, #06b6d4 50%, #10b981 100%);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+      transition: width 0.15s ease-out;
+    }
+
+    .tower-hp-danger {
+      background: linear-gradient(90deg, #ef4444 0%, #f97316 100%);
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
+    }
+
+    /* Canvas da Batalha */
+    #defense-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 10px 14px 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(6, 11, 24, 0.98) 0%, rgba(6, 11, 24, 0) 100%);
+    }
+
+    /* Painel de Votação dos 3 Canhões */
+    .cannon-slots-grid {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .cannon-slot-card {
+      flex: 1;
+      background: rgba(15, 30, 56, 0.85);
+      border: 2px solid rgba(56, 189, 248, 0.3);
+      border-radius: 10px;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      transition: transform 0.1s ease, border-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .slot-firing {
+      transform: scale(1.05);
+      border-color: #facc15 !important;
+      box-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
+    }
+
+    .slot-key {
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 900;
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 8px rgba(2, 132, 199, 0.6);
+    }
+
+    .slot-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: #f0f9ff;
+      text-transform: uppercase;
+    }
+
+    .slot-power {
+      font-size: 9px;
+      font-weight: 700;
+      color: #38bdf8;
+      font-family: monospace;
+    }
+
+    .slot-energy-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .slot-energy-fill {
+      height: 100%;
+      width: 40%;
+      background: #38bdf8;
+      transition: width 0.1s ease-out;
+    }
+
+    /* Leaderboard MVP */
+    .mvp-banner {
+      width: 100%;
+      background: rgba(12, 24, 46, 0.8);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 8px;
+      padding: 5px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .mvp-tag {
+      font-weight: 800;
+      color: #facc15;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mvp-user-name {
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .mvp-score {
+      font-family: monospace;
+      font-weight: 900;
+      color: #38bdf8;
+    }
+
+    /* Gaveta de Depuração Local */
+    .debug-drawer {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .debug-btn {
+      background: #0c182e;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #e0f2fe;
+      padding: 5px 9px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .debug-btn:hover { background: #0369a1; }
+
+    /* Overlay de Fim de Partida */
+    #game-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(2, 6, 18, 0.94);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease-out;
+    }
+
+    #game-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .overlay-badge {
+      font-size: 48px;
+      animation: bounce 0.8s infinite alternate ease-in-out;
+    }
+
+    @keyframes bounce {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.15); }
+    }
+
+    .overlay-title {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      background: linear-gradient(135deg, #38bdf8 0%, #10b981 50%, #facc15 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .defeat-title {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .podium-box {
+      width: 85%;
+      max-width: 320px;
+      background: rgba(15, 30, 56, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .podium-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      background: rgba(2, 6, 23, 0.6);
+      border-radius: 6px;
+      font-size: 11px;
+    }
+
+    .auto-reset-bar {
+      width: 85%;
+      max-width: 320px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .auto-reset-fill {
+      height: 100%;
+      width: 100%;
+      background: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-stage">
+    <!-- Top Safe Zone (140px) -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <div class="live-dot"></div>
+          V5 TOWER DEFENSE
+        </div>
+        <div class="wave-badge" id="wave-badge">
+          🛡️ ONDA <span id="wave-num">1</span>/3 • <span id="wave-timer">45s</span>
+        </div>
+      </div>
+
+      <!-- Barra de Vida da Torre Sagrada -->
+      <div class="tower-hud">
+        <div class="tower-status-row">
+          <div class="tower-name">
+            🏛️ ESCUDO DA BASE NEON
+          </div>
+          <div class="tower-hp-text" id="tower-hp-text">100 / 100 HP</div>
+        </div>
+
+        <div class="tower-hp-bg">
+          <div class="tower-hp-fill" id="tower-hp-fill"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Principal da Batalha (Inimigos descendo em 3 Lanes) -->
+    <canvas id="defense-canvas"></canvas>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <footer class="bottom-panel">
+      <!-- Slots de Canhões (Votação 1, 2, 3) -->
+      <div class="cannon-slots-grid">
+        <div class="cannon-slot-card" id="slot-card-1" onclick="voteLane(1)">
+          <div class="slot-key">1</div>
+          <div class="slot-title">GATLING ESQ</div>
+          <div class="slot-power" id="slot-pwr-1">PWR 1.0x</div>
+          <div class="slot-energy-bar">
+            <div class="slot-energy-fill" id="slot-fill-1" style="width: 50%;"></div>
+          </div>
+        </div>
+
+        <div class="cannon-slot-card" id="slot-card-2" onclick="voteLane(2)">
+          <div class="slot-key">2</div>
+          <div class="slot-title">PLASMA CENTRO</div>
+          <div class="slot-power" id="slot-pwr-2">PWR 1.0x</div>
+          <div class="slot-energy-bar">
+            <div class="slot-energy-fill" id="slot-fill-2" style="width: 75%;"></div>
+          </div>
+        </div>
+
+        <div class="cannon-slot-card" id="slot-card-3" onclick="voteLane(3)">
+          <div class="slot-key">3</div>
+          <div class="slot-title">CRIO DIR</div>
+          <div class="slot-power" id="slot-pwr-3">PWR 1.0x</div>
+          <div class="slot-energy-bar">
+            <div class="slot-energy-fill" id="slot-fill-3" style="width: 30%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard MVP Rápido -->
+      <div class="mvp-banner">
+        <div class="mvp-tag">🏆 DEFENSOR MVP:</div>
+        <div class="mvp-user-name" id="mvp-user">@aguardando_chat</div>
+        <div class="mvp-score" id="mvp-score">0 PTS</div>
+      </div>
+
+      <!-- Gaveta de Depuração Local -->
+      <div class="debug-drawer">
+        <button class="debug-btn" onclick="voteLane(1)">⚡ Lane 1</button>
+        <button class="debug-btn" onclick="voteLane(2)">⚡ Lane 2</button>
+        <button class="debug-btn" onclick="voteLane(3)">⚡ Lane 3</button>
+        <button class="debug-btn" onclick="triggerOrbitalBomb()">☄️ Gift Bomba</button>
+        <button class="debug-btn" onclick="resetDefense()">🔄 Reset</button>
+      </div>
+    </footer>
+
+    <!-- Overlay de Fim de Partida -->
+    <div id="game-overlay">
+      <div class="overlay-badge" id="overlay-badge">🛡️</div>
+      <div class="overlay-title" id="overlay-title">DEFESA TRIUNFAL!</div>
+      <div style="font-size: 13px; color: #94a3b8;" id="overlay-sub">A comunidade protegeu a base sagrada com glória!</div>
+
+      <div class="podium-box">
+        <div style="font-size: 11px; font-weight: 800; color: #38bdf8; text-align: center;">TOP DEFESORES DA LIVE</div>
+        <div id="podium-content"></div>
+      </div>
+
+      <div class="auto-reset-bar">
+        <div class="auto-reset-fill" id="reset-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. SINTETIZADOR DE ÁUDIO PROCEDURAL (Web Audio API - Zero Arquivos Externos)
+    // =========================================================================
+    class DefenseAudioSynthesizer {
+      constructor() {
+        this.ctx = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Disparo de Laser de Canhão
+      playLaser(pitch = 880) {
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(pitch, now);
+        osc.frequency.exponentialRampToValueAtTime(150, now + 0.1);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      }
+
+      // Explosão de Inimigo Destruído
+      playEnemyExplosion() {
+        this.init();
+        const now = this.ctx.currentTime;
+
+        // Sub impacto
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(30, now + 0.25);
+
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.26);
+
+        // Ruído estéreo de estilhaços
+        const bufferSize = this.ctx.sampleRate * 0.2;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.04));
+        }
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const noiseGain = this.ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.4, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+
+        noise.connect(noiseGain);
+        noiseGain.connect(this.ctx.destination);
+        noise.start(now);
+      }
+
+      // Bomba Orbital Ativada por Presentes (Wipeout)
+      playOrbitalBomb() {
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(1200, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 0.6);
+
+        gain.gain.setValueAtTime(0.8, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.66);
+      }
+
+      // Fanfarra de Vitória
+      playVictory() {
+        this.init();
+        const freqs = [440, 554.37, 659.25, 880];
+        freqs.forEach((f, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.1);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.value = f;
+          gain.gain.setValueAtTime(0.35, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.52);
+        });
+      }
+    }
+
+    const sound = new DefenseAudioSynthesizer();
+
+    // =========================================================================
+    // 2. MOTOR DE JOGO TOWER DEFENSE (3 Lanes Verticais)
+    // =========================================================================
+    const stage = document.getElementById('game-stage');
+    const canvas = document.getElementById('defense-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = stage.clientWidth;
+      canvas.height = stage.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Estado Geral da Partida
+    let towerHp = 100;
+    let wave = 1;
+    let waveTimer = 45.0;
+    let isGameOver = false;
+    let winner = null; // 'CHAT' ou 'ALIENS'
+    let shakeIntensity = 0;
+
+    // Estatísticas MVP
+    const defenders = new Map(); // username -> { score, kills, gifts }
+    let topDefenders = [];
+
+    // Estrutura dos 3 Canhões
+    const cannons = [
+      { id: 1, name: 'Gatling', laneX: 0.20, power: 1.0, votes: 0, cooldown: 0, maxCooldown: 0.18, color: '#38bdf8' },
+      { id: 2, name: 'Plasma',  laneX: 0.50, power: 1.0, votes: 0, cooldown: 0, maxCooldown: 0.35, color: '#ec4899' },
+      { id: 3, name: 'Crio',    laneX: 0.80, power: 1.0, votes: 0, cooldown: 0, maxCooldown: 0.25, color: '#10b981' }
+    ];
+
+    // Arrays de Entidades
+    const enemies = [];
+    const projectiles = [];
+    const particles = [];
+
+    // Spawner de Inimigos
+    let spawnTimer = 0;
+
+    function spawnEnemy() {
+      if (isGameOver) return;
+      const laneIdx = Math.floor(Math.random() * 3);
+      const laneX = cannons[laneIdx].laneX * canvas.width;
+
+      // Tipos: 1 = Drone Rápido, 2 = Mecha Blindado, 3 = Nave Quântica
+      const r = Math.random();
+      let type = 1;
+      let hp = 15;
+      let speed = 140;
+      let color = '#facc15';
+      let size = 16;
+
+      if (r > 0.7) {
+        type = 2;
+        hp = 45;
+        speed = 70;
+        color = '#ef4444';
+        size = 24;
+      } else if (r > 0.4) {
+        type = 3;
+        hp = 25;
+        speed = 100;
+        color = '#38bdf8';
+        size = 18;
+      }
+
+      enemies.push({
+        laneIdx,
+        x: laneX + (Math.random() - 0.5) * 30,
+        y: 150, // Top Safe Zone
+        hp: hp,
+        maxHp: hp,
+        speed: speed + (wave * 15),
+        color: color,
+        size: size,
+        type: type
+      });
+    }
+
+    // =========================================================================
+    // 3. AÇÕES DE DISPARO & VOTAÇÃO
+    // =========================================================================
+    function voteLane(laneId, user = '@espectador', isGift = false) {
+      if (isGameOver) return;
+      lastInteractionTime = Date.now();
+
+      const c = cannons[laneId - 1];
+      if (!c) return;
+
+      c.votes++;
+      c.power = Math.min(3.5, 1.0 + (c.votes * 0.05));
+
+      // Visual feedback no card
+      const card = document.getElementById(`slot-card-${laneId}`);
+      if (card) {
+        card.classList.add('slot-firing');
+        setTimeout(() => card.classList.remove('slot-firing'), 150);
+      }
+
+      // Disparar projéteis
+      const cannonY = canvas.height - 190;
+      const cannonX = c.laneX * canvas.width;
+
+      projectiles.push({
+        x: cannonX,
+        y: cannonY,
+        vx: 0,
+        vy: -750,
+        laneIdx: laneId - 1,
+        damage: Math.floor(15 * c.power),
+        color: c.color,
+        user: user,
+        isGift: isGift
+      });
+
+      sound.playLaser(c.id === 1 ? 950 : (c.id === 2 ? 650 : 800));
+
+      // Registrar pontuação MVP
+      recordMvp(user, isGift ? 100 : 10);
+    }
+
+    function triggerOrbitalBomb(user = '@whale_gift') {
+      if (isGameOver) return;
+      lastInteractionTime = Date.now();
+
+      sound.playOrbitalBomb();
+      shakeIntensity = 25;
+
+      // Aniquilar todos os inimigos na tela
+      for (let i = enemies.length - 1; i >= 0; i--) {
+        const e = enemies[i];
+        createExplosion(e.x, e.y, e.color, 25);
+        enemies.splice(i, 1);
+      }
+
+      recordMvp(user, 500);
+    }
+
+    function recordMvp(user, pts) {
+      let d = defenders.get(user);
+      if (!d) {
+        d = { user, score: 0 };
+        defenders.set(user, d);
+      }
+      d.score += pts;
+
+      topDefenders = Array.from(defenders.values())
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3);
+
+      if (topDefenders[0]) {
+        document.getElementById('mvp-user').innerText = topDefenders[0].user;
+        document.getElementById('mvp-score').innerText = `${topDefenders[0].score} PTS`;
+      }
+    }
+
+    function createExplosion(x, y, color, count = 12) {
+      for (let i = 0; i < count; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const spd = 60 + Math.random() * 240;
+        particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd,
+          color: color,
+          size: 3 + Math.random() * 4,
+          alpha: 1.0,
+          life: 0,
+          maxLife: 0.4 + Math.random() * 0.3
+        });
+      }
+    }
+
+    // =========================================================================
+    // 4. LOOP DE FÍSICA & ATUALIZAÇÃO DO JOGO
+    // =========================================================================
+    let lastTime = performance.now();
+
+    function updateGame(timestamp) {
+      const dt = Math.min(0.1, (timestamp - lastTime) / 1000);
+      lastTime = timestamp;
+
+      // Decay do tremor de tela
+      if (shakeIntensity > 0) {
+        shakeIntensity = Math.max(0, shakeIntensity - (30 * dt));
+        const sx = (Math.random() - 0.5) * shakeIntensity;
+        const sy = (Math.random() - 0.5) * shakeIntensity;
+        stage.style.transform = `translate(${sx}px, ${sy}px)`;
+      } else {
+        stage.style.transform = 'none';
+      }
+
+      if (!isGameOver) {
+        // Cronômetro da Onda
+        waveTimer -= dt;
+        if (waveTimer <= 0) {
+          wave++;
+          if (wave > 3) {
+            // Vitória total da comunidade
+            endGame(true);
+          } else {
+            waveTimer = 40.0;
+            sound.playVictory();
+          }
+        }
+
+        // Spawn de inimigos conforme a onda
+        spawnTimer += dt;
+        const interval = Math.max(0.45, 1.2 - (wave * 0.25));
+        if (spawnTimer >= interval) {
+          spawnTimer = 0;
+          spawnEnemy();
+        }
+
+        // Atualizar Projéteis
+        for (let i = projectiles.length - 1; i >= 0; i--) {
+          const p = projectiles[i];
+          p.y += p.vy * dt;
+
+          // Colisão com inimigos
+          let hit = false;
+          for (let j = enemies.length - 1; j >= 0; j--) {
+            const e = enemies[j];
+            const dist = Math.hypot(p.x - e.x, p.y - e.y);
+            if (dist < e.size + 10) {
+              hit = true;
+              e.hp -= p.damage;
+              createExplosion(p.x, p.y, p.color, 4);
+
+              if (e.hp <= 0) {
+                createExplosion(e.x, e.y, e.color, 16);
+                sound.playEnemyExplosion();
+                enemies.splice(j, 1);
+                recordMvp(p.user, 25);
+              }
+              break;
+            }
+          }
+
+          if (hit || p.y < 140) {
+            projectiles.splice(i, 1);
+          }
+        }
+
+        // Atualizar Inimigos
+        const baseThreshold = canvas.height - 180;
+        for (let i = enemies.length - 1; i >= 0; i--) {
+          const e = enemies[i];
+          e.y += e.speed * dt;
+
+          // Inimigo bateu na base
+          if (e.y >= baseThreshold) {
+            towerHp = Math.max(0, towerHp - 10);
+            shakeIntensity = 15;
+            createExplosion(e.x, e.y, '#ef4444', 18);
+            sound.playEnemyExplosion();
+            enemies.splice(i, 1);
+
+            if (towerHp <= 0) {
+              endGame(false);
+              break;
+            }
+          }
+        }
+      }
+
+      // Atualizar Partículas
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const pt = particles[i];
+        pt.life += dt;
+        pt.x += pt.vx * dt;
+        pt.y += pt.vy * dt;
+        pt.alpha = Math.max(0, 1.0 - (pt.life / pt.maxLife));
+        if (pt.life >= pt.maxLife) particles.splice(i, 1);
+      }
+
+      render();
+      updateHUD();
+      requestAnimationFrame(updateGame);
+    }
+    requestAnimationFrame(updateGame);
+
+    // =========================================================================
+    // 5. RENDERIZAÇÃO VETORIAL (Canvas 2D)
+    // =========================================================================
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Linhas Guias das 3 Lanes
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 8]);
+      [0.35, 0.65].forEach(ratio => {
+        ctx.beginPath();
+        ctx.moveTo(canvas.width * ratio, 140);
+        ctx.lineTo(canvas.width * ratio, canvas.height - 180);
+        ctx.stroke();
+      });
+      ctx.setLineDash([]);
+
+      // Desenhar Inimigos
+      enemies.forEach(e => {
+        ctx.save();
+        ctx.fillStyle = e.color;
+        ctx.shadowColor = e.color;
+        ctx.shadowBlur = 12;
+
+        ctx.beginPath();
+        if (e.type === 1) {
+          // Drone Losango
+          ctx.moveTo(e.x, e.y - e.size);
+          ctx.lineTo(e.x + e.size, e.y);
+          ctx.lineTo(e.x, e.y + e.size);
+          ctx.lineTo(e.x - e.size, e.y);
+        } else if (e.type === 2) {
+          // Mecha Quadrado Pesado
+          ctx.rect(e.x - e.size, e.y - e.size, e.size * 2, e.size * 2);
+        } else {
+          // Nave Triangular
+          ctx.moveTo(e.x, e.y + e.size);
+          ctx.lineTo(e.x + e.size, e.y - e.size);
+          ctx.lineTo(e.x - e.size, e.y - e.size);
+        }
+        ctx.closePath();
+        ctx.fill();
+
+        // Barra de Vida do Inimigo
+        const barW = e.size * 2;
+        const hpPct = Math.max(0, e.hp / e.maxHp);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.fillRect(e.x - e.size, e.y - e.size - 8, barW, 4);
+        ctx.fillStyle = '#10b981';
+        ctx.fillRect(e.x - e.size, e.y - e.size - 8, barW * hpPct, 4);
+
+        ctx.restore();
+      });
+
+      // Desenhar Projéteis
+      projectiles.forEach(p => {
+        ctx.save();
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 14;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.isGift ? 8 : 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // Desenhar Partículas
+      particles.forEach(pt => {
+        ctx.save();
+        ctx.globalAlpha = pt.alpha;
+        ctx.fillStyle = pt.color;
+        ctx.shadowColor = pt.color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // Desenhar Canhões na Base
+      cannons.forEach(c => {
+        const cx = c.laneX * canvas.width;
+        const cy = canvas.height - 180;
+        ctx.save();
+        ctx.fillStyle = c.color;
+        ctx.shadowColor = c.color;
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Cano do canhão
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx, cy - 22);
+        ctx.stroke();
+        ctx.restore();
+      });
+    }
+
+    // =========================================================================
+    // 6. ATUALIZAÇÃO DA HUD & DOM
+    // =========================================================================
+    const towerHpFill = document.getElementById('tower-hp-fill');
+    const towerHpText = document.getElementById('tower-hp-text');
+    const waveNum = document.getElementById('wave-num');
+    const waveTimerText = document.getElementById('wave-timer');
+
+    function updateHUD() {
+      // Torre HP
+      towerHpFill.style.width = `${towerHp}%`;
+      towerHpText.innerText = `${towerHp} / 100 HP`;
+      if (towerHp < 35) {
+        towerHpFill.classList.add('tower-hp-danger');
+      } else {
+        towerHpFill.classList.remove('tower-hp-danger');
+      }
+
+      // Onda & Timer
+      waveNum.innerText = Math.min(3, wave);
+      waveTimerText.innerText = `${Math.ceil(waveTimer)}s`;
+
+      // Atualizar Nível dos Canhões
+      cannons.forEach(c => {
+        const pwrLabel = document.getElementById(`slot-pwr-${c.id}`);
+        const fillBar = document.getElementById(`slot-fill-${c.id}`);
+        if (pwrLabel) pwrLabel.innerText = `PWR ${c.power.toFixed(1)}x`;
+        if (fillBar) fillBar.style.width = `${Math.min(100, c.votes * 10)}%`;
+      });
+    }
+
+    // =========================================================================
+    // 7. OVERLAY DE RESULTADO & AUTO-RESET (5 Segundos)
+    // =========================================================================
+    const gameOverlay = document.getElementById('game-overlay');
+    const overlayBadge = document.getElementById('overlay-badge');
+    const overlayTitle = document.getElementById('overlay-title');
+    const overlaySub = document.getElementById('overlay-sub');
+    const podiumContent = document.getElementById('podium-content');
+    const resetFill = document.getElementById('reset-fill');
+
+    function endGame(isVictory) {
+      isGameOver = true;
+      winner = isVictory ? 'CHAT' : 'ALIENS';
+      gameOverlay.classList.add('active');
+
+      if (isVictory) {
+        sound.playVictory();
+        overlayBadge.innerText = '🛡️';
+        overlayTitle.innerText = 'DEFESA TRIUNFAL!';
+        overlayTitle.className = 'overlay-title';
+        overlaySub.innerText = 'O chat protegeu a fortaleza neon até a última horda!';
+      } else {
+        overlayBadge.innerText = '💥';
+        overlayTitle.innerText = 'A BASE COLAPSOU!';
+        overlayTitle.className = 'overlay-title defeat-title';
+        overlaySub.innerText = 'Os inimigos romperam o escudo de força sagrado!';
+      }
+
+      // Preencher Pódio MVP
+      podiumContent.innerHTML = '';
+      if (topDefenders.length === 0) {
+        podiumContent.innerHTML = '<div style="text-align: center; color: #94a3b8;">Nenhum defensor registrado</div>';
+      } else {
+        topDefenders.forEach((d, idx) => {
+          const medal = ['🥇', '🥈', '🥉'][idx];
+          podiumContent.innerHTML += `
+            <div class="podium-item">
+              <span style="font-weight: 800;">${medal} ${d.user}</span>
+              <span style="color: #38bdf8; font-weight: 900;">${d.score} PTS</span>
+            </div>
+          `;
+        });
+      }
+
+      // Barra regressiva de 5s
+      resetFill.style.transition = 'none';
+      resetFill.style.width = '100%';
+      void resetFill.offsetWidth;
+      resetFill.style.transition = 'width 5s linear';
+      resetFill.style.width = '0%';
+
+      setTimeout(() => {
+        resetDefense();
+      }, 5000);
+    }
+
+    function resetDefense() {
+      towerHp = 100;
+      wave = 1;
+      waveTimer = 45.0;
+      isGameOver = false;
+      winner = null;
+      enemies.length = 0;
+      projectiles.length = 0;
+      particles.length = 0;
+      cannons.forEach(c => { c.votes = 0; c.power = 1.0; });
+      defenders.clear();
+      topDefenders = [];
+      gameOverlay.classList.remove('active');
+      document.getElementById('mvp-user').innerText = '@aguardando_chat';
+      document.getElementById('mvp-score').innerText = '0 PTS';
+    }
+
+    // =========================================================================
+    // 8. MOTOR ANTI-SILÊNCIO (Simulação Autônoma)
+    // =========================================================================
+    const mockUsers = ['@defensor_br', '@laser_bot', '@guardiao_neon', '@cyber_sniper', '@shield_hero'];
+    let lastInteractionTime = Date.now();
+
+    setInterval(() => {
+      if (isGameOver) return;
+      if (Date.now() - lastInteractionTime > 2000) {
+        const randomLane = 1 + Math.floor(Math.random() * 3);
+        const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+        voteLane(randomLane, randomUser, false);
+      }
+    }, 1500);
+
+    // =========================================================================
+    // 9. V5 BROADCASTER EVENT BUS
+    // =========================================================================
+    const broadcasterChannel = new BroadcastChannel('v5_broadcaster_games');
+    broadcasterChannel.onmessage = (event) => {
+      handleIncomingEvent(event.data);
+    };
+
+    window.addEventListener('v5_event', (e) => {
+      handleIncomingEvent(e.detail);
+    });
+
+    function handleIncomingEvent(data) {
+      if (!data) return;
+      lastInteractionTime = Date.now();
+
+      const user = data.user || '@espectador';
+      const comment = (data.comment || '').trim().toLowerCase();
+      const isGift = data.type === 'gift';
+
+      if (isGift) {
+        // Presentes ativam a Bomba Orbital
+        triggerOrbitalBomb(user);
+      } else {
+        // Votos de lanes 1, 2, 3
+        if (comment.includes('1') || comment.includes('esq')) {
+          voteLane(1, user, false);
+        } else if (comment.includes('2') || comment.includes('centro') || comment.includes('meio')) {
+          voteLane(2, user, false);
+        } else if (comment.includes('3') || comment.includes('dir')) {
+          voteLane(3, user, false);
+        } else {
+          // Qualquer outro comentário dispara no canhão com menos votos
+          const targetLane = cannons.reduce((min, c) => c.votes < min.votes ? c : min, cannons[0]).id;
+          voteLane(targetLane, user, false);
+        }
+      }
+    }
+  </script>
+</body>
+</html>

@@ -135,6 +135,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "balao", "agulha", "sorteio"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "19_defesa_da_torre_chat": {
+        "name": "Defesa da Torre do Chat",
+        "category": "cooperativo_boss",
+        "description": "Hordas de inimigos descendo em 3 lanes verticais enquanto o chat ativa e aprimora canhões nos slots com bomba orbital de gifts",
+        "commands": ["1", "2", "3", "esq", "centro", "dir"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 
