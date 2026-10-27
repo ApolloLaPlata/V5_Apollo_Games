@@ -59,6 +59,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 ---
 
 ## 4. Motores Centrais de Física & Transmissão
+- `src/core/v5_highway_engine.js`: Motor de pistas verticais pseudo-3D com projeção não-linear de perspectiva, buffer circular de segmentos de asfalto, 3 camadas de parallax, física de ultrapassagem, nitros e telemetria (0.0075ms/passo).
 - `src/core/v5_physics_engine.js`: Motor 2D de gravidade vertical e colisões elásticas com Spatial Hash Grid O(N), Object Pooling (zero GC) e suporte a pinos, bumpers, vortex e caçapas (>1100 FPS teóricos com 350 esferas).
 - `src/core/v5_polarization_engine.js`: Motor de física inercial de disputa e tensão de mola (Cabo de Guerra, Tsunami, Queda de Braço).
 - `src/core/v5_round_manager.js`: Ciclo fechado universal de partidas (30-60s com auto-reset de 5s).

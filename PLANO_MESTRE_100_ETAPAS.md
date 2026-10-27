@@ -82,7 +82,7 @@
 ---
 
 ### FASE 4: CARTUCHOS DE CORRIDA, TRÁFEGO & VELOCIDADE (ETAPAS 031 A 040)
-- [ ] **Etapa 031:** Arquitetura do motor de pistas verticais pseudo-3D com scrolling infinito de asfalto e parallax.
+- [x] **Etapa 031:** Arquitetura do motor de pistas verticais pseudo-3D com scrolling infinito de asfalto e parallax.
 - [ ] **Etapa 032:** Forjamento do Cartucho #03: Corrida dos Avatares da Holding (Roxingo, Baiano e Macaco Driver disputando 3 pistas verticais com boosts do chat).
 - [ ] **Etapa 033:** Implementação dos sprites procedurais vetoriais e animações dinâmicas dos 3 avatares pilotos.
 - [ ] **Etapa 034:** Sistema de turbos de nitro e sons de motor com modulação de pitch proporcional à velocidade dos pilotos.
