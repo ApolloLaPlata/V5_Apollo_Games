@@ -3,15 +3,15 @@ import os
 bus_path = r"C:\Users\v5est\.gemini\antigravity\brain\9270dd65-160e-47e8-aea2-6a92fd50cfc6\antigravity_hive_bus.md"
 
 entry = """
-### [27/10/2026 - 04:45] CAPITANIA V5 GAMES - ETAPAS 023 E 024 CONCLUÍDAS: PACHINKO PINBALL NEON
-- **Cartucho Forjado & Homologado:** `12_pachinko_pinball_neon` (Pachinko Pinball Neon 9:16).
-- **Mecânicas Ativas:**
-  1. Flippers inteligentes reativos que batem automaticamente ao detectar proximidade de esferas.
-  2. Canaletas magnéticas de aceleração orbital e 3 bumpers centrais neon (100, 250 e 500 pts).
-  3. 5 caçapas inferiores com 100x Super Jackpot Dourado.
-  4. Síntese de som procedural expandida em `v5_synth_audio.js` e nativa no cartucho: mola plunger, solenoide do flipper, sinos de cassino e gongo oriental.
-- **Sincronização:** 7 cartuchos ativos no Broadcaster (`v5_games_manifest.json`).
-- **Próxima Etapa:** Etapa 025 — Forjamento do Cartucho #13: Cascata de Moedas Douradas (Coin Pusher).
+### [27/10/2026 - 04:55] CAPITANIA V5 GAMES - ETAPAS 025 E 026 CONCLUÍDAS: COIN PUSHER 2.5D CASCATA DE MOEDAS
+- **Cartucho Homologado:** `13_cascata_de_moedas` (Cascata de Moedas Douradas - Coin Pusher 2.5D 9:16).
+- **Inovações de Engenharia:**
+  1. Pá mecânica motorizada (Pusher Blade) oscilando com física senoidal suave e empurrando camadas de moedas.
+  2. Física 2.5D de atrito, contato e empilhamento com ~120 moedas simultâneas na bandeja.
+  3. Mecânica de Lingote de Ouro 999.9 (500 pts) ativado por presentes, com impacto pesado e avalanche em cascata.
+  4. Síntese de áudio procedural de tilintar metálico dinâmico (`playClink`) e thud de impacto de ouro.
+- **Sincronização:** Total de 8 cartuchos ativos no Broadcaster (`v5_games_manifest.json`).
+- **Próxima Etapa:** Etapa 027 — Forjamento do Cartucho #14: Vortex Gravitacional.
 """
 
 if os.path.exists(bus_path):

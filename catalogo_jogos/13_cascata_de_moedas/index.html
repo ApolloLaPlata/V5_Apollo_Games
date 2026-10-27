@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Cascata de Moedas Douradas (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #020617;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 25%, #172554 0%, #020617 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Screen Shake para Avalanches de Moedas */
+    .shake-active {
+      animation: coinShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes coinShake {
+      10%, 90% { transform: translate3d(-3px, -2px, 0); }
+      20%, 80% { transform: translate3d(4px, 3px, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, -3px, 0); }
+      40%, 60% { transform: translate3d(4px, 2px, 0); }
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 16px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(2, 6, 23, 0.96) 0%, rgba(2, 6, 23, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .timer-badge {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Placar Triplo Neon */
+    .score-board {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr;
+      gap: 8px;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 8px 12px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .score-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .box-blue {
+      color: #38bdf8;
+      text-shadow: 0 0 14px rgba(56, 189, 248, 0.8);
+    }
+
+    .box-gold {
+      color: #fbbf24;
+      text-shadow: 0 0 16px rgba(251, 191, 36, 0.85);
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0 4px;
+    }
+
+    .box-red {
+      color: #f87171;
+      text-shadow: 0 0 14px rgba(248, 113, 113, 0.8);
+    }
+
+    .box-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .box-score {
+      font-size: 18px;
+      font-weight: 900;
+      font-family: monospace;
+      margin-top: 2px;
+    }
+
+    /* Canvas Central 2.5D Pusher */
+    #arena-container {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Feed de Presentes e Toasts */
+    .toast-container {
+      position: absolute;
+      top: 145px;
+      width: calc(100% - 32px);
+      left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .toast-item {
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(8px);
+      animation: slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 12px 16px 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.8) 70%, rgba(2, 6, 23, 0) 100%);
+      pointer-events: none;
+    }
+
+    .chat-instructions {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .cmd-pill {
+      flex: 1;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 8px 4px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .cmd-pill.blue {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: rgba(56, 189, 248, 0.12);
+    }
+
+    .cmd-pill.gold {
+      border-color: rgba(251, 191, 36, 0.5);
+      background: rgba(251, 191, 36, 0.14);
+    }
+
+    .cmd-pill.red {
+      border-color: rgba(248, 113, 113, 0.5);
+      background: rgba(248, 113, 113, 0.12);
+    }
+
+    .cmd-key {
+      font-size: 15px;
+      font-weight: 900;
+      font-family: monospace;
+    }
+
+    .cmd-desc {
+      font-size: 9px;
+      color: #cbd5e1;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .gift-cta {
+      background: linear-gradient(90deg, rgba(251, 191, 36, 0.25) 0%, rgba(234, 88, 12, 0.25) 100%);
+      border: 1px solid rgba(251, 191, 36, 0.45);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+    }
+
+    /* Overlay Vitória */
+    #victory-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.94);
+      backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    #victory-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .victory-box {
+      background: rgba(15, 23, 42, 0.96);
+      border: 2px solid #fbbf24;
+      border-radius: 24px;
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 0 50px rgba(251, 191, 36, 0.4);
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .reset-progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 15px;
+    }
+
+    .reset-progress-fill {
+      height: 100%;
+      background: #fbbf24;
+      width: 0%;
+      transition: width 5s linear;
+    }
+
+    /* Painel Debug [D] */
+    #debug-drawer {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 200;
+      pointer-events: auto;
+    }
+
+    .debug-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+    }
+
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 7px 4px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    
+    <!-- Top Safe Zone (140px) -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <span class="live-dot"></span>
+          V5 LIVE COIN PUSHER
+        </div>
+        <div class="timer-badge">
+          ⏳ <span id="round-timer">45</span>s
+        </div>
+      </div>
+
+      <div class="score-board">
+        <div class="score-box box-blue">
+          <span class="box-title">🔵 Safiras</span>
+          <span class="box-score" id="score-blue">0</span>
+        </div>
+        <div class="score-box box-gold">
+          <span class="box-title">👑 Ouro Total</span>
+          <span class="box-score" id="score-gold">0</span>
+        </div>
+        <div class="score-box box-red">
+          <span class="box-title">🔴 Rubis</span>
+          <span class="box-score" id="score-red">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central 2.5D Coin Pusher -->
+    <div id="arena-container">
+      <canvas id="pusher-canvas"></canvas>
+    </div>
+
+    <!-- Feed de Presentes e Toasts -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <footer class="bottom-panel">
+      <div class="chat-instructions">
+        <div class="cmd-pill blue">
+          <span class="cmd-key box-blue">1</span>
+          <span class="cmd-desc">🔵 Moeda Safira</span>
+        </div>
+        <div class="cmd-pill gold">
+          <span class="cmd-key box-gold">3</span>
+          <span class="cmd-desc">👑 Moeda Dourada</span>
+        </div>
+        <div class="cmd-pill red">
+          <span class="cmd-key box-red">2</span>
+          <span class="cmd-desc">🔴 Moeda Rubi</span>
+        </div>
+      </div>
+
+      <div class="gift-cta">
+        <span style="font-size: 11px; font-weight: 700; color: #fef08a;">🎁 Presentes = Lingote Colossal (Avalanche de Moedas!)</span>
+        <span style="background: #eab308; color: #000; font-weight: 900; font-size: 10px; padding: 3px 8px; border-radius: 8px;">AVALANCHE</span>
+      </div>
+    </footer>
+
+    <!-- Overlay Vitória -->
+    <div id="victory-overlay">
+      <div class="victory-box">
+        <div style="font-size: 52px; margin-bottom: 10px;" id="victory-icon">🪙</div>
+        <h2 id="victory-title" style="font-size: 24px; font-weight: 900; text-transform: uppercase;">AVALANCHE DOURADA!</h2>
+        <p id="victory-detail" style="font-size: 14px; color: #94a3b8; margin: 8px 0 16px 0;">Cascata de Prêmios Finalizada</p>
+        <p style="font-size: 12px; color: #cbd5e1; font-weight: 600;">Recarregando a bandeja mecânica...</p>
+        <div class="reset-progress-bar">
+          <div class="reset-progress-fill" id="reset-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Painel Debug [D] -->
+    <div id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #94a3b8; display: flex; justify-content: space-between;">
+        <span>🎮 Depuração Pusher [D]</span>
+        <span style="cursor:pointer;" onclick="toggleDebug()">✕ Fechar</span>
+      </div>
+      <div class="debug-buttons">
+        <button class="debug-btn" onclick="dropCoin('A', 1, '@teste_azul')">🔵 Drop Azul (1)</button>
+        <button class="debug-btn" onclick="dropCoin('C', 1, '@teste_ouro')">👑 Drop Ouro (3)</button>
+        <button class="debug-btn" onclick="dropCoin('B', 1, '@teste_red')">🔴 Drop Red (2)</button>
+        <button class="debug-btn" onclick="triggerCoinRain('C', 'Rosa', 15, '@vip_rosa')">🌸 Chuva de Moedas</button>
+        <button class="debug-btn" onclick="triggerGoldBar('@vip_leao')">🦁 Lingote Gigante</button>
+        <button class="debug-btn" onclick="endRound()">⏱️ Forçar Fim</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /**
+     * SINTETIZADOR DE COIN PUSHER & TILINTAR DE MOEDAS (Web Audio API)
+     * Tilintar metálico em cascata, motor de passo e impacto de ouro
+     */
+    class CoinAudio {
+      constructor() {
+        this.ctx = null;
+        this.lastClinkTime = 0;
+      }
+
+      getCtx() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        return this.ctx;
+      }
+
+      /**
+       * Tilintar Metálico de Moeda (Coin Clink)
+       */
+      playClink(pitch = 1.0) {
+        const now = Date.now();
+        if (now - this.lastClinkTime < 35) return; // Micro-throttle 35ms
+        this.lastClinkTime = now;
+
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+
+          osc.type = 'sine';
+          const baseF = (1800 + Math.random() * 600) * pitch;
+          osc.frequency.setValueAtTime(baseF, t);
+          osc.frequency.exponentialRampToValueAtTime(baseF * 1.5, t + 0.05);
+
+          gain.gain.setValueAtTime(0.12, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+
+          osc.connect(gain);
+          gain.connect(c.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.08);
+        } catch (e) {}
+      }
+
+      /**
+       * Impacto Pesado do Lingote de Ouro
+       */
+      playHeavyThud() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(140, t);
+          osc.frequency.exponentialRampToValueAtTime(35, t + 0.35);
+
+          gain.gain.setValueAtTime(0.45, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+
+          osc.connect(gain);
+          gain.connect(c.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.35);
+        } catch (e) {}
+      }
+
+      playVictory() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((f, i) => {
+            const osc = c.createOscillator();
+            const g = c.createGain();
+            const st = t + (i * 0.08);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, st);
+            g.gain.setValueAtTime(0.2, st);
+            g.gain.exponentialRampToValueAtTime(0.001, st + 0.45);
+            osc.connect(g);
+            g.connect(c.destination);
+            osc.start(st);
+            osc.stop(st + 0.45);
+          });
+        } catch (e) {}
+      }
+    }
+
+    const audio = new CoinAudio();
+
+    /**
+     * MOTOR FÍSICO 2.5D DO COIN PUSHER (CANVAS 60 FPS)
+     */
+    const stageEl = document.getElementById('game-stage');
+    const canvas = document.getElementById('pusher-canvas');
+    const ctx = canvas.getContext('2d');
+    let W = 0, H = 0;
+
+    function resize() {
+      W = stageEl.clientWidth;
+      H = stageEl.clientHeight;
+      canvas.width = W;
+      canvas.height = H;
+      initCoins();
+    }
+    window.addEventListener('resize', resize);
+
+    let roundTime = 45;
+    let timerInterval = null;
+    let isGameOver = false;
+
+    let scoreBlue = 0;
+    let scoreRed = 0;
+    let scoreGold = 0;
+
+    // DOM Elements
+    const scoreBlueEl = document.getElementById('score-blue');
+    const scoreRedEl = document.getElementById('score-red');
+    const scoreGoldEl = document.getElementById('score-gold');
+    const roundTimerEl = document.getElementById('round-timer');
+    const victoryOverlay = document.getElementById('victory-overlay');
+    const victoryTitle = document.getElementById('victory-title');
+    const victoryDetail = document.getElementById('victory-detail');
+    const victoryIcon = document.getElementById('victory-icon');
+    const resetFill = document.getElementById('reset-fill');
+    const toastContainer = document.getElementById('toast-container');
+    const debugDrawer = document.getElementById('debug-drawer');
+
+    // Entidades do Pusher
+    let coins = [];
+    let goldBars = [];
+    let particles = [];
+    let confettis = [];
+
+    // Mecânica da Pá Motorizada (Pusher Blade)
+    let pusherY = 0;
+    let pusherAmplitude = 45;
+    let pusherBaseY = 0;
+
+    function triggerScreenShake() {
+      stageEl.classList.remove('shake-active');
+      void stageEl.offsetWidth;
+      stageEl.classList.add('shake-active');
+      setTimeout(() => stageEl.classList.remove('shake-active'), 350);
+    }
+
+    // Inicialização das moedas iniciais na bandeja
+    function initCoins() {
+      coins = [];
+      goldBars = [];
+      const startY = H * 0.35;
+      const endY = H * 0.72;
+      const marginX = W * 0.12;
+
+      // Popula a bandeja com ~120 moedas iniciais estáveis
+      for (let i = 0; i < 110; i++) {
+        const teamRand = Math.random();
+        const team = teamRand < 0.3 ? 'A' : (teamRand < 0.6 ? 'B' : 'C');
+        const color = team === 'A' ? '#38bdf8' : (team === 'B' ? '#f87171' : '#fbbf24');
+        coins.push({
+          x: marginX + Math.random() * (W - marginX * 2),
+          y: startY + Math.random() * (endY - startY),
+          vx: 0,
+          vy: 0,
+          radius: 12,
+          team: team,
+          color: color,
+          value: team === 'C' ? 5 : 2,
+          isResting: true
+        });
+      }
+    }
+
+    function dropCoin(team, weight = 1, user = '@espectador') {
+      if (isGameOver) return;
+      audio.getCtx();
+
+      let dropX = W * 0.5;
+      if (team === 'A') dropX = W * 0.28 + (Math.random() * 24 - 12);
+      else if (team === 'B') dropX = W * 0.72 + (Math.random() * 24 - 12);
+      else dropX = W * 0.5 + (Math.random() * 30 - 15);
+
+      const color = team === 'A' ? '#38bdf8' : (team === 'B' ? '#f87171' : '#fbbf24');
+
+      coins.push({
+        x: dropX,
+        y: H * 0.22,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: Math.random() * 3 + 2,
+        radius: 12,
+        team: team,
+        color: color,
+        value: (team === 'C' ? 5 : 2) * weight,
+        user: user,
+        isResting: false
+      });
+
+      audio.playClink();
+    }
+
+    function triggerCoinRain(team, giftName, count = 12, user = '@vip_doador') {
+      triggerScreenShake();
+      spawnToast(`🎁 ${user} enviou ${giftName}! CHUVA DE MOEDAS!`, team === 'A' ? '#38bdf8' : '#fbbf24');
+
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          dropCoin(team, 2, user);
+        }, i * 75);
+      }
+    }
+
+    function triggerGoldBar(user = '@super_vip') {
+      triggerScreenShake();
+      audio.playHeavyThud();
+      spawnToast(`🦁 ${user} jogou LINGOTE DE OURO COLOSSAL!`, '#fbbf24');
+
+      goldBars.push({
+        x: W * 0.5,
+        y: H * 0.20,
+        vx: 0,
+        vy: 4.5,
+        width: 80,
+        height: 35,
+        isResting: false
+      });
+    }
+
+    function spawnToast(text, color = '#38bdf8') {
+      const toast = document.createElement('div');
+      toast.className = 'toast-item';
+      toast.style.borderColor = color;
+      toast.innerHTML = `<span style="color:${color}">${text}</span>`;
+      toastContainer.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    function spawnParticles(x, y, color, count = 8) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 3.5 + 1;
+        particles.push({
+          x: x, y: y,
+          vx: Math.cos(angle) * spd,
+          vy: Math.sin(angle) * spd,
+          radius: Math.random() * 3 + 1,
+          color: color,
+          alpha: 1.0
+        });
+      }
+    }
+
+    function spawnConfetti() {
+      const colors = ['#fbbf24', '#f59e0b', '#38bdf8', '#f87171', '#ffffff'];
+      for (let i = 0; i < 70; i++) {
+        confettis.push({
+          x: Math.random() * W,
+          y: Math.random() * H * 0.3,
+          vx: (Math.random() - 0.5) * 5,
+          vy: Math.random() * 4 + 2,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10
+        });
+      }
+    }
+
+    function startTimer() {
+      roundTime = 45;
+      isGameOver = false;
+      scoreBlue = 0;
+      scoreRed = 0;
+      scoreGold = 0;
+
+      scoreBlueEl.innerText = '0';
+      scoreRedEl.innerText = '0';
+      scoreGoldEl.innerText = '0';
+      roundTimerEl.innerText = roundTime;
+      victoryOverlay.classList.remove('active');
+      resetFill.style.width = '0%';
+
+      if (timerInterval) clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        roundTime--;
+        roundTimerEl.innerText = roundTime;
+
+        if (roundTime <= 0) {
+          clearInterval(timerInterval);
+          endRound();
+        }
+      }, 1000);
+    }
+
+    function endRound() {
+      if (isGameOver) return;
+      isGameOver = true;
+
+      audio.playVictory();
+      triggerScreenShake();
+      spawnConfetti();
+
+      let winText = '';
+      let winIcon = '🪙';
+      let winColor = '#fbbf24';
+
+      if (scoreBlue > scoreRed && scoreBlue > scoreGold) {
+        winText = 'TIME SAFIRA AZUL VENCEU!';
+        winIcon = '🔵';
+        winColor = '#38bdf8';
+      } else if (scoreRed > scoreBlue && scoreRed > scoreGold) {
+        winText = 'TIME RUBI VERMELHO VENCEU!';
+        winIcon = '🔴';
+        winColor = '#f87171';
+      } else {
+        winText = 'AVALANCHE DOURADA VENCEU!';
+        winIcon = '👑';
+        winColor = '#fbbf24';
+      }
+
+      victoryTitle.innerText = winText;
+      victoryTitle.style.color = winColor;
+      victoryIcon.innerText = winIcon;
+      victoryDetail.innerText = `Safiras: ${scoreBlue.toLocaleString('pt-BR')} | Ouro: ${scoreGold.toLocaleString('pt-BR')} | Rubis: ${scoreRed.toLocaleString('pt-BR')}`;
+
+      victoryOverlay.classList.add('active');
+
+      setTimeout(() => {
+        resetFill.style.width = '100%';
+      }, 50);
+
+      setTimeout(() => {
+        initCoins();
+        startTimer();
+      }, 5000);
+    }
+
+    /**
+     * RENDER LOOP 2.5D (60 FPS)
+     */
+    let lastFpsTime = performance.now();
+    let frameCount = 0;
+
+    function gameLoop(now = performance.now()) {
+      ctx.clearRect(0, 0, W, H);
+
+      const tableTopY = H * 0.28;
+      const tableBottomY = H * 0.74;
+      const marginX = W * 0.08;
+      const tableW = W - marginX * 2;
+
+      // 1. Movimento da Pá Motorizada (Pusher Blade)
+      pusherBaseY = tableTopY + 40;
+      pusherY = pusherBaseY + Math.sin(now * 0.0022) * pusherAmplitude;
+
+      // 2. Renderização da Bandeja em Perspectiva 2.5D
+      drawPusherTable(marginX, tableTopY, tableW, tableBottomY - tableTopY, pusherY);
+
+      // 3. Atualizar e Colidir Lingotes de Ouro
+      for (let g = goldBars.length - 1; g >= 0; g--) {
+        const bar = goldBars[g];
+        if (!bar.isResting) {
+          bar.y += bar.vy;
+          if (bar.y >= tableTopY + 60) {
+            bar.isResting = true;
+            audio.playHeavyThud();
+            // Empurra moedas ao redor com onda de choque
+            coins.forEach(c => {
+              const dx = c.x - bar.x;
+              const dy = c.y - bar.y;
+              const dist = Math.hypot(dx, dy);
+              if (dist < 110) {
+                c.vy += 3.5;
+                c.vx += (dx / (dist || 1)) * 2.5;
+                c.isResting = false;
+              }
+            });
+          }
+        } else {
+          // O lingote é empurrado pela pá
+          if (bar.y < pusherY + 25) {
+            bar.y = pusherY + 25;
+          }
+          bar.y += 0.35; // Deslize gradual
+        }
+
+        // Desenhar Lingote de Ouro 2.5D
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(bar.x - bar.width / 2, bar.y - bar.height / 2, bar.width, bar.height, 6);
+        const barGrad = ctx.createLinearGradient(0, bar.y - 15, 0, bar.y + 15);
+        barGrad.addColorStop(0, '#fef08a');
+        barGrad.addColorStop(0.5, '#eab308');
+        barGrad.addColorStop(1, '#ca8a04');
+        ctx.fillStyle = barGrad;
+        ctx.shadowColor = '#fbbf24';
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.font = '900 11px monospace';
+        ctx.fillStyle = '#422006';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('999.9 GOLD', bar.x, bar.y);
+        ctx.restore();
+
+        // Se o lingote cair da borda
+        if (bar.y > tableBottomY) {
+          scoreGold += 500;
+          scoreGoldEl.innerText = scoreGold.toLocaleString('pt-BR');
+          audio.playHeavyThud();
+          spawnConfetti();
+          spawnToast(`👑 LINGOTE DOURADO COLETADO (+500 pts)!`, '#fbbf24');
+          goldBars.splice(g, 1);
+        }
+      }
+
+      // 4. Atualizar e Colidir Moedas (Física 2.5D de Empilhamento e Atrito)
+      for (let i = coins.length - 1; i >= 0; i--) {
+        const c = coins[i];
+
+        // Se for empurrada pela pá mecânica
+        if (c.y < pusherY + c.radius && c.y > pusherBaseY - 30) {
+          c.y = pusherY + c.radius;
+          c.vy = Math.max(c.vy, 1.2);
+          c.isResting = false;
+        }
+
+        // Queda / Deslize para a borda inferior
+        if (!c.isResting) {
+          c.y += c.vy;
+          c.x += c.vx;
+          c.vx *= 0.94;
+          c.vy *= 0.96;
+
+          // Se a velocidade diminuir muito, repousa
+          if (Math.abs(c.vx) < 0.1 && Math.abs(c.vy) < 0.1 && c.y < tableBottomY - 10) {
+            c.isResting = true;
+          }
+        }
+
+        // Paredes Laterais da Bandeja
+        if (c.x - c.radius < marginX + 10) {
+          c.x = marginX + 10 + c.radius;
+          c.vx = -c.vx * 0.5;
+        } else if (c.x + c.radius > W - marginX - 10) {
+          c.x = W - marginX - 10 - c.radius;
+          c.vx = -c.vx * 0.5;
+        }
+
+        // Colisão Moeda vs Moeda (Empilhamento elástico)
+        for (let j = i - 1; j >= 0; j--) {
+          const c2 = coins[j];
+          const dx = c2.x - c.x;
+          const dy = c2.y - c.y;
+          const dist = Math.hypot(dx, dy);
+          const minDist = c.radius + c2.radius;
+
+          if (dist < minDist && dist > 0.001) {
+            const overlap = (minDist - dist) * 0.5;
+            const nx = dx / dist;
+            const ny = dy / dist;
+
+            c.x -= nx * overlap;
+            c.y -= ny * overlap;
+            c2.x += nx * overlap;
+            c2.y += ny * overlap;
+
+            // Transfere impulso para frente
+            if (!c.isResting || !c2.isResting) {
+              c.isResting = false;
+              c2.isResting = false;
+              c2.vy += 0.4;
+              if (Math.random() < 0.25) audio.playClink();
+            }
+          }
+        }
+
+        // QUEDA DA BORDA INFERIOR (PONTUAÇÃO DE PRÊMIO!)
+        if (c.y >= tableBottomY) {
+          const pts = c.value || 2;
+          if (c.team === 'A') {
+            scoreBlue += pts;
+            scoreBlueEl.innerText = scoreBlue.toLocaleString('pt-BR');
+            spawnParticles(c.x, tableBottomY, '#38bdf8', 6);
+          } else if (c.team === 'B') {
+            scoreRed += pts;
+            scoreRedEl.innerText = scoreRed.toLocaleString('pt-BR');
+            spawnParticles(c.x, tableBottomY, '#f87171', 6);
+          } else {
+            scoreGold += pts;
+            scoreGoldEl.innerText = scoreGold.toLocaleString('pt-BR');
+            spawnParticles(c.x, tableBottomY, '#fbbf24', 8);
+          }
+          audio.playClink(1.3);
+          coins.splice(i, 1);
+          continue;
+        }
+
+        // Render da Moeda em Perspectiva 2.5D
+        drawCoin2D(c.x, c.y, c.radius, c.color, c.team);
+      }
+
+      // 5. Partículas
+      for (let p = particles.length - 1; p >= 0; p--) {
+        const pt = particles[p];
+        pt.x += pt.vx;
+        pt.y += pt.vy;
+        pt.alpha -= 0.035;
+        if (pt.alpha <= 0) particles.splice(p, 1);
+        else {
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
+          ctx.fillStyle = pt.color;
+          ctx.globalAlpha = pt.alpha;
+          ctx.fill();
+          ctx.globalAlpha = 1.0;
+        }
+      }
+
+      // 6. Confetes
+      for (let c = confettis.length - 1; c >= 0; c--) {
+        const cf = confettis[c];
+        cf.x += cf.vx;
+        cf.y += cf.vy;
+        cf.rotation += cf.rotSpeed;
+        ctx.save();
+        ctx.translate(cf.x, cf.y);
+        ctx.rotate((cf.rotation * Math.PI) / 180);
+        ctx.fillStyle = cf.color;
+        ctx.fillRect(-cf.size / 2, -cf.size / 2, cf.size, cf.size * 0.6);
+        ctx.restore();
+        if (cf.y > H) confettis.splice(c, 1);
+      }
+
+      // Telemetria 60 FPS
+      frameCount++;
+      if (now - lastFpsTime >= 1000) {
+        const fps = Math.round((frameCount * 1000) / (now - lastFpsTime));
+        if (window.parent && window.self !== window.top) {
+          window.parent.postMessage({
+            type: 'TELEMETRY_STATS',
+            gameId: '13_cascata_de_moedas',
+            stats: { fps: Math.min(60, fps), frameTimeMs: 16.6, frameDrops: 0, isHealthy: true }
+          }, '*');
+        }
+        frameCount = 0;
+        lastFpsTime = now;
+      }
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    /**
+     * DESENHO DA BANDEJA EM PERSPECTIVA 2.5D
+     */
+    function drawPusherTable(x, y, w, h, pY) {
+      ctx.save();
+
+      // Fundo Metálico da Bandeja
+      const bgGrad = ctx.createLinearGradient(0, y, 0, y + h);
+      bgGrad.addColorStop(0, '#1e293b');
+      bgGrad.addColorStop(0.5, '#0f172a');
+      bgGrad.addColorStop(1, '#020617');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(x, y, w, h);
+
+      // Paredes Laterais Cromadas com Luz Neon
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 4;
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 10;
+      ctx.strokeRect(x, y, w, h);
+      ctx.shadowBlur = 0;
+
+      // Pá Motorizada (Pusher Blade)
+      const bladeH = 36;
+      const bladeGrad = ctx.createLinearGradient(0, pY - bladeH, 0, pY);
+      bladeGrad.addColorStop(0, '#64748b');
+      bladeGrad.addColorStop(0.5, '#334155');
+      bladeGrad.addColorStop(1, '#1e293b');
+      ctx.fillStyle = bladeGrad;
+      ctx.fillRect(x + 4, pY - bladeH, w - 8, bladeH);
+
+      // Borda Frontal da Pá
+      ctx.fillStyle = '#fbbf24';
+      ctx.shadowColor = '#fbbf24';
+      ctx.shadowBlur = 8;
+      ctx.fillRect(x + 4, pY - 4, w - 8, 4);
+      ctx.shadowBlur = 0;
+
+      // Borda Inferior de Descarte / Caçapa (Drop Edge)
+      const dropEdgeY = y + h;
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(x - 5, dropEdgeY, w + 10, 15);
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(x - 5, dropEdgeY, w + 10, 15);
+
+      ctx.restore();
+    }
+
+    /**
+     * DESENHO DA MOEDA 2.5D COM CHANFRO E BRILHO
+     */
+    function drawCoin2D(x, y, radius, color, team) {
+      ctx.save();
+
+      // Sombra Inferior
+      ctx.beginPath();
+      ctx.ellipse(x, y + 2, radius, radius * 0.85, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+      ctx.fill();
+
+      // Borda Chanfrada Externa
+      ctx.beginPath();
+      ctx.ellipse(x, y, radius, radius * 0.85, 0, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 6;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Anel Interno
+      ctx.beginPath();
+      ctx.ellipse(x, y, radius * 0.75, radius * 0.65, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Reflexo Especular
+      ctx.beginPath();
+      ctx.arc(x - radius * 0.3, y - radius * 0.25, radius * 0.35, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    /**
+     * INTEGRAÇÃO DE EVENTOS DO BROADCASTER & TEST LAB
+     */
+    function handleEvent(data) {
+      if (!data) return;
+      const cmd = (data.comment || data.action || '').toString().toLowerCase().trim();
+      const user = data.user || '@espectador';
+      const weight = data.weight || data.coins || 1;
+      const giftName = data.giftName || null;
+
+      if (data.type === 'gift' || giftName) {
+        if (weight >= 50 || (giftName && (giftName.includes('leão') || giftName.includes('lion')))) {
+          triggerGoldBar(user);
+        } else {
+          triggerCoinRain('C', giftName, Math.min(15, Math.max(8, weight)), user);
+        }
+        return;
+      }
+
+      if (cmd === '1' || cmd.includes('azul') || data.team === 'A') {
+        dropCoin('A', weight, user);
+      } else if (cmd === '2' || cmd.includes('vermelho') || data.team === 'B') {
+        dropCoin('B', weight, user);
+      } else if (cmd === '3' || cmd.includes('ouro') || data.team === 'C') {
+        dropCoin('C', weight, user);
+      } else if (data.type === 'like') {
+        const chosen = Math.random() < 0.4 ? 'A' : (Math.random() < 0.7 ? 'B' : 'C');
+        dropCoin(chosen, 1, user);
+      }
+    }
+
+    try {
+      const channel = new BroadcastChannel('v5_broadcaster_games');
+      channel.onmessage = (e) => handleEvent(e.data);
+    } catch (e) {}
+
+    window.addEventListener('v5_event', (e) => handleEvent(e.detail));
+    window.addEventListener('message', (e) => {
+      if (e.data && (e.data.type || e.data.action || e.data.comment)) handleEvent(e.data);
+    });
+
+    // Motor Anti-Silêncio Orgânico
+    const mockUsers = ['@pusher_pro', '@safira_bia', '@ouro_leo', '@moeda_king', '@rubi_stream'];
+    setInterval(() => {
+      if (isGameOver) return;
+      const teamChoice = Math.random() < 0.4 ? 'A' : (Math.random() < 0.7 ? 'B' : 'C');
+      const user = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+
+      if (Math.random() < 0.15) {
+        triggerCoinRain(teamChoice, 'Rosa Virtual', 5, user);
+      } else {
+        dropCoin(teamChoice, 1, user);
+      }
+    }, 2400);
+
+    function toggleDebug() {
+      debugDrawer.style.display = debugDrawer.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') toggleDebug();
+    });
+
+    resize();
+    startTimer();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>

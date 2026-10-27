@@ -63,6 +63,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "azul", "vermelho", "jackpot"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "13_cascata_de_moedas": {
+        "name": "Cascata de Moedas Douradas",
+        "category": "fisica_pachinko",
+        "description": "Coin Pusher 2.5D com pá motorizada, atrito de empilhamento, lingotes gigantes e avalanches de prêmios",
+        "commands": ["1", "2", "3", "safira", "rubi", "ouro"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 

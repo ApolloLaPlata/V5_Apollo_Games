@@ -72,8 +72,8 @@
 - [x] **Etapa 022:** Homologação definitiva do Cartucho #02: Plinko da Fortuna no Test Lab local com multiplicadores 50x Jackpot.
 - [x] **Etapa 023:** Forjamento do Cartucho #12: Pachinko Pinball Neon (Flippers automáticos e canaletas magnéticas que redirecionam moedas da audiência).
 - [x] **Etapa 024:** Síntese de som procedural de molas, sinos de cassino e gongos no Pachinko Pinball.
-- [ ] **Etapa 025:** Forjamento do Cartucho #13: Cascata de Moedas Douradas (Pusher estilo fliperama onde presentes empurram pilhas de prêmios para fora da borda).
-- [ ] **Etapa 026:** Implementação da física de atrito e empilhamento 2.5D no Pusher de Moedas.
+- [x] **Etapa 025:** Forjamento do Cartucho #13: Cascata de Moedas Douradas (Pusher estilo fliperama onde presentes empurram pilhas de prêmios para fora da borda).
+- [x] **Etapa 026:** Implementação da física de atrito e empilhamento 2.5D no Pusher de Moedas.
 - [ ] **Etapa 027:** Forjamento do Cartucho #14: Vortex Gravitacional (Buraco negro central sugando esferas lançadas pelo chat com órbitas caóticas).
 - [ ] **Etapa 028:** Sonorização de efeito Doppler espacial e distorção sonora procedural para o Vortex Gravitacional.
 - [ ] **Etapa 029:** Bateria de testes de sobrecarga de partículas (300+ esferas simultâneas a 60 FPS estáveis).
