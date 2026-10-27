@@ -1086,7 +1086,7 @@
     let lastTime = performance.now();
 
     function gameLoop(now) {
-      const dt = (now - lastTime) / 1000;
+      const dt = Math.min(0.1, (now - lastTime) / 1000);
       lastTime = now;
       wavePhase += dt * 3.5;
 
@@ -1094,9 +1094,15 @@
       if (screenShake > 0) {
         screenShake = Math.max(0, screenShake - dt * 25);
         const stage = document.getElementById('game-stage');
-        const offsetX = (Math.random() - 0.5) * screenShake;
-        const offsetY = (Math.random() - 0.5) * screenShake;
-        stage.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+        if (stage) {
+          if (screenShake > 0) {
+            const offsetX = (Math.random() - 0.5) * screenShake;
+            const offsetY = (Math.random() - 0.5) * screenShake;
+            stage.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+          } else {
+            stage.style.transform = 'none';
+          }
+        }
       }
 
       if (!isGameOver) {
@@ -1314,6 +1320,8 @@
     }
 
     function resetRound() {
+      const stageEl = document.getElementById('game-stage');
+      if (stageEl) stageEl.style.transform = 'none';
       particles.length = 0;
       roundTimeRemaining = ROUND_DURATION;
       lavaLevelProgress = 0;

@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-10-27T08:33:23.525484",
+  "timestamp": "2026-10-27T08:39:32.378876",
   "holding": "Holding V5 Apollo",
   "captaincy": "Capitania V5 Games",
   "destination": "E:\\MEUS PROGRAMAS\\V5_APOLLO_SITES\\V5_Apollo_Broadcaster\\frontend\\public\\games",
   "total_cartridges": 41,
   "total_files_verified": 84,
-  "total_bytes_transferred": 1848792,
+  "total_bytes_transferred": 1850232,
   "total_megabytes": 1.76,
-  "duration_seconds": 2.49,
+  "duration_seconds": 1.78,
   "md5_match_rate_percent": 100.0,
   "md5_mismatches": 0,
   "status": "HOMOLOGADO_DESPACHADO",
@@ -162,8 +162,8 @@
       "category": "tabuleiro_coordenadas",
       "files": {
         "index.html": {
-          "md5": "573252c6232e0fe0be48fe6bf90909aa",
-          "size_bytes": 42188,
+          "md5": "5bae86f4fbc16c6748da809feb786642",
+          "size_bytes": 42476,
           "verified": true
         },
         "thumbnail.svg": {
@@ -198,8 +198,8 @@
       "category": "tabuleiro_coordenadas",
       "files": {
         "index.html": {
-          "md5": "e26ff779dce4c1aea83694c14e4e6aad",
-          "size_bytes": 40904,
+          "md5": "2077131ed3f242e3b7b8a17a6f9b3a85",
+          "size_bytes": 41192,
           "verified": true
         },
         "thumbnail.svg": {
@@ -432,8 +432,8 @@
       "category": "tensao_eliminacao",
       "files": {
         "index.html": {
-          "md5": "ebf08738a2b86a8448563259da34e23a",
-          "size_bytes": 47142,
+          "md5": "899d79e85dadf8e8780988b61bb7fe65",
+          "size_bytes": 47430,
           "verified": true
         },
         "thumbnail.svg": {
@@ -450,8 +450,8 @@
       "category": "tabuleiro_coordenadas",
       "files": {
         "index.html": {
-          "md5": "8c7b90d3afee58ad6ebbe5bdb90309e6",
-          "size_bytes": 42141,
+          "md5": "8ee4367fddf4ce0e1db6b4c5be94340d",
+          "size_bytes": 42429,
           "verified": true
         },
         "thumbnail.svg": {
@@ -468,8 +468,8 @@
       "category": "tabuleiro_coordenadas",
       "files": {
         "index.html": {
-          "md5": "616e5e2ba352a6230cebb6034949933d",
-          "size_bytes": 42087,
+          "md5": "eb16bc6c69ef65bb49f9147394114578",
+          "size_bytes": 42375,
           "verified": true
         },
         "thumbnail.svg": {

@@ -996,7 +996,7 @@
     let lastTime = performance.now();
 
     function gameLoop(now) {
-      const dt = (now - lastTime) / 1000;
+      const dt = Math.min(0.1, (now - lastTime) / 1000);
       lastTime = now;
       sonarAngle += dt * 1.5;
 
@@ -1004,9 +1004,15 @@
       if (screenShake > 0) {
         screenShake = Math.max(0, screenShake - dt * 25);
         const stage = document.getElementById('game-stage');
-        const ox = (Math.random() - 0.5) * screenShake;
-        const oy = (Math.random() - 0.5) * screenShake;
-        stage.style.transform = `translate(${ox}px, ${oy}px)`;
+        if (stage) {
+          if (screenShake > 0) {
+            const ox = (Math.random() - 0.5) * screenShake;
+            const oy = (Math.random() - 0.5) * screenShake;
+            stage.style.transform = `translate(${ox}px, ${oy}px)`;
+          } else {
+            stage.style.transform = 'none';
+          }
+        }
       }
 
       if (!isGameOver) {
@@ -1221,6 +1227,8 @@
     }
 
     function resetRound() {
+      const stageEl = document.getElementById('game-stage');
+      if (stageEl) stageEl.style.transform = 'none';
       particles.length = 0;
       roundTimeRemaining = MATCH_DURATION;
       salvoTimeRemaining = SALVO_INTERVAL;
