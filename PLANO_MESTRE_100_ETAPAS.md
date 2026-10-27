@@ -141,7 +141,7 @@
 - [x] **Etapa 071:** Arquitetura de grids interativos 4x4 e 6x6 mapeados para digitação natural no chat do celular (A1 a D4).
 - [x] **Etapa 072:** Forjamento do Cartucho #08: Caça ao Baú do Tesouro (Grade de 16 baús; o chat vota nas coordenadas para desarmar armadilhas e achar o tesouro real).
 - [x] **Etapa 073:** Sistema de abertura de baús com efeitos de brilho dourado e revelação de chaves colecionáveis.
-- [ ] **Etapa 074:** Forjamento do Cartucho #10: Tetris da Discórdia (Queda de blocos pesados onde o chat decide onde soltar peças para fechar linhas ou esmagar o rival).
+- [x] **Etapa 074:** Forjamento do Cartucho #10: Tetris da Discórdia (Queda de blocos pesados onde o chat decide onde soltar peças para fechar linhas ou esmagar o rival).
 - [ ] **Etapa 075:** Forjamento do Cartucho #24: Campo Minado Neon (Desarmamento cooperativo onde presentes revelam sensores de raio-X que mostram as bombas).
 - [ ] **Etapa 076:** Forjamento do Cartucho #25: Batalha Naval da Live (Dois esquadrões afundando navios adversários com tiros de canhões disparados por comentários).
 - [ ] **Etapa 077:** Síntese de sonoplastia naval: sonar submarino procedural, canhões e explosões de água.

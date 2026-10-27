@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Tetris da Discórdia (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #03030a;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 30%, #160a2b 0%, #0c0418 60%, #04010a 100%);
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(168, 85, 247, 0.25);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Vinheta de Tensão */
+    #ambient-vignette {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.85);
+      z-index: 2;
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 14px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(12, 4, 24, 0.98) 0%, rgba(12, 4, 24, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #a855f7;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #a855f7;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #a855f7;
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .score-badge {
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.6);
+      color: #e9d5ff;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* HUD de Queda e Temporizador */
+    .tetris-hud {
+      width: 100%;
+      background: rgba(30, 12, 54, 0.85);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .hud-status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hud-title {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #f3e8ff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .round-timer {
+      font-size: 13px;
+      font-weight: 900;
+      color: #c084fc;
+      font-family: monospace;
+    }
+
+    .drop-bar-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 3px;
+      overflow: hidden;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      position: relative;
+    }
+
+    .drop-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #9333ea, #c084fc, #f472b6);
+      box-shadow: 0 0 10px #c084fc;
+      transition: width 0.1s linear;
+    }
+
+    /* Canvas Central 9:16 */
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 10px 14px 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(8, 2, 16, 0.98) 0%, rgba(8, 2, 16, 0.85) 75%, rgba(8, 2, 16, 0) 100%);
+    }
+
+    /* Painel de Colunas 1 a 6 */
+    .columns-helper-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 5px;
+      width: 100%;
+    }
+
+    .col-vote-card {
+      background: rgba(26, 12, 46, 0.7);
+      border: 1.5px solid rgba(168, 85, 247, 0.3);
+      border-radius: 8px;
+      padding: 4px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      transition: transform 0.15s ease, border-color 0.2s ease;
+    }
+
+    .col-vote-card.leading {
+      border-color: #f472b6 !important;
+      background: rgba(244, 114, 182, 0.25);
+      transform: scale(1.05);
+      box-shadow: 0 0 12px rgba(244, 114, 182, 0.4);
+    }
+
+    .col-num {
+      font-size: 13px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #fff;
+    }
+
+    .col-votes {
+      font-size: 9px;
+      font-weight: 800;
+      color: #c084fc;
+      font-family: monospace;
+    }
+
+    /* Banner de Presentes / Gift CTA */
+    .gift-cta-banner {
+      background: linear-gradient(90deg, rgba(168, 85, 247, 0.2) 0%, rgba(244, 114, 182, 0.25) 50%, rgba(168, 85, 247, 0.2) 100%);
+      border: 1px solid rgba(244, 114, 182, 0.5);
+      border-radius: 10px;
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+    }
+
+    .gift-info {
+      font-size: 11px;
+      font-weight: 800;
+      color: #fae8ff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .gift-badge {
+      background: #f472b6;
+      color: #000;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Feed Flutuante de Comentários */
+    .activity-feed {
+      position: absolute;
+      top: 155px;
+      left: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      z-index: 5;
+      pointer-events: none;
+      max-width: 240px;
+    }
+
+    .feed-pill {
+      background: rgba(18, 6, 32, 0.9);
+      border: 1px solid rgba(168, 85, 247, 0.5);
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+      animation: fadeSlide 3.5s forwards;
+    }
+
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(-10px); }
+      10% { opacity: 1; transform: translateY(0); }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
+
+    /* Overlay de Vitória & Fim de Rodada (5s) */
+    #victory-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(8, 2, 16, 0.94);
+      backdrop-filter: blur(12px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      z-index: 100;
+      text-align: center;
+      padding: 24px;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .victory-badge {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #f472b6;
+      text-transform: uppercase;
+    }
+
+    .victory-title {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #ffffff;
+      text-shadow: 0 0 25px rgba(168, 85, 247, 0.8);
+    }
+
+    .victory-podium {
+      width: 100%;
+      background: rgba(28, 12, 48, 0.7);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .podium-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .podium-gold { border-left: 4px solid #eab308; color: #fde047; }
+    .podium-silver { border-left: 4px solid #94a3b8; color: #e2e8f0; }
+    .podium-bronze { border-left: 4px solid #b45309; color: #fdba74; }
+
+    .victory-countdown {
+      font-size: 12px;
+      color: #c084fc;
+      font-weight: 700;
+      font-family: monospace;
+    }
+
+    /* Gaveta de Testes / Debug Panel */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(14, 4, 28, 0.95);
+      border-top: 1px solid #a855f7;
+      padding: 10px 14px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 200;
+      backdrop-filter: blur(8px);
+    }
+
+    .debug-title {
+      font-size: 11px;
+      font-weight: 900;
+      color: #a855f7;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .debug-buttons {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+    }
+
+    .debug-btn {
+      background: rgba(168, 85, 247, 0.2);
+      border: 1px solid rgba(168, 85, 247, 0.5);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .debug-btn:active {
+      transform: scale(0.95);
+      background: rgba(168, 85, 247, 0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Vinheta de Atmosfera -->
+    <div id="ambient-vignette"></div>
+
+    <!-- Feed Flutuante de Eventos -->
+    <div class="activity-feed" id="activity-feed"></div>
+
+    <!-- Top Safe Zone (140px) -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <span class="live-dot"></span>
+          V5 LIVE TETRIS MATRIX
+        </div>
+        <div class="score-badge">
+          ✨ LINHAS: <span id="lines-count">0</span> | PTS: <span id="score-pts">0</span>
+        </div>
+      </div>
+
+      <div class="tetris-hud">
+        <div class="hud-status-row">
+          <span class="hud-title">🧱 TETRIS DA DISCÓRDIA</span>
+          <span class="round-timer" id="round-timer">45.0s</span>
+        </div>
+        <div class="drop-bar-track">
+          <div class="drop-bar-fill" id="drop-bar-fill"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central 9:16 -->
+    <div id="canvas-container">
+      <canvas id="game-canvas"></canvas>
+    </div>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <footer class="bottom-panel" id="bottom-panel" onclick="toggleDebugOnClick(event)">
+      <div class="columns-helper-grid">
+        <div class="col-vote-card" id="col-card-1"><span class="col-num">1</span><span class="col-votes" id="votes-1">0</span></div>
+        <div class="col-vote-card" id="col-card-2"><span class="col-num">2</span><span class="col-votes" id="votes-2">0</span></div>
+        <div class="col-vote-card" id="col-card-3"><span class="col-num">3</span><span class="col-votes" id="votes-3">0</span></div>
+        <div class="col-vote-card" id="col-card-4"><span class="col-num">4</span><span class="col-votes" id="votes-4">0</span></div>
+        <div class="col-vote-card" id="col-card-5"><span class="col-num">5</span><span class="col-votes" id="votes-5">0</span></div>
+        <div class="col-vote-card" id="col-card-6"><span class="col-num">6</span><span class="col-votes" id="votes-6">0</span></div>
+      </div>
+
+      <div class="gift-cta-banner">
+        <div class="gift-info">
+          <span class="gift-badge">GIFT</span>
+          <span>ROSA (Broca Laser) | LEÃO (Megabloco 3x3)</span>
+        </div>
+        <div style="font-size: 11px; font-weight: 800; color: #f472b6; font-family: monospace;">
+          'D' (Debug)
+        </div>
+      </div>
+    </footer>
+
+    <!-- Overlay de Vitória & Ciclo Fechado 5s -->
+    <div id="victory-overlay">
+      <span class="victory-badge">BATALHA CONCLUÍDA!</span>
+      <h1 class="victory-title" id="winner-title">PARTIDA ENCERRADA!</h1>
+      <div class="victory-podium">
+        <div class="podium-row podium-gold">
+          <span>🥇 1º Lugar</span>
+          <span id="mvp-1">@arquiteto_tetris (+1800)</span>
+        </div>
+        <div class="podium-row podium-silver">
+          <span>🥈 2º Lugar</span>
+          <span id="mvp-2">@mestre_das_linhas (+1100)</span>
+        </div>
+        <div class="podium-row podium-bronze">
+          <span>🥉 3º Lugar</span>
+          <span id="mvp-3">@sabotador_neon (+650)</span>
+        </div>
+      </div>
+      <span class="victory-countdown">REINICIANDO NOVA PARTIDA EM <span id="reset-counter">5</span>s...</span>
+    </div>
+
+    <!-- Gaveta de Testes / Debug Panel -->
+    <div id="debug-drawer">
+      <div class="debug-title">
+        <span>SIMULAÇÃO DE COMANDOS (TECLA D)</span>
+        <span onclick="toggleDebug(false)" style="cursor: pointer;">✕</span>
+      </div>
+      <div class="debug-buttons">
+        <button class="debug-btn" onclick="sendMockColumn(1)">Col 1</button>
+        <button class="debug-btn" onclick="sendMockColumn(2)">Col 2</button>
+        <button class="debug-btn" onclick="sendMockColumn(3)">Col 3</button>
+        <button class="debug-btn" onclick="sendMockColumn(4)">Col 4</button>
+        <button class="debug-btn" onclick="sendMockColumn(5)">Col 5</button>
+        <button class="debug-btn" onclick="sendMockColumn(6)">Col 6</button>
+      </div>
+      <div class="debug-buttons" style="margin-top: 4px; grid-template-columns: repeat(4, 1fr);">
+        <button class="debug-btn" style="border-color: #38bdf8; color: #7dd3fc;" onclick="sendRotate()">Girar (R)</button>
+        <button class="debug-btn" style="border-color: #f472b6; color: #fbcfe8;" onclick="sendMockGift('Rose', 10)">Gift Rosa</button>
+        <button class="debug-btn" style="border-color: #eab308; color: #fef08a;" onclick="sendMockGift('Lion', 500)">Gift Leão</button>
+        <button class="debug-btn" style="border-color: #ef4444; color: #fca5a5;" onclick="resetGame()">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE GAMES — CARTUCHO #10: TETRIS DA DISCÓRDIA (9:16 VERTICAL)
+       Arquitetura: Web Audio Procedural + Matriz 6x11 + Votação de Colunas
+       ========================================================================== */
+
+    // --------------------------------------------------------------------------
+    // 1. Sintetizador de Áudio Procedural (Web Audio API)
+    // --------------------------------------------------------------------------
+    class TetrisAudioSynth {
+      constructor() {
+        this.ctx = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playBlockMove() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(480, now);
+        osc.frequency.exponentialRampToValueAtTime(720, now + 0.05);
+
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.055);
+      }
+
+      playBlockRotate() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(420, now);
+        osc.frequency.exponentialRampToValueAtTime(840, now + 0.08);
+
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.085);
+      }
+
+      playBlockLock() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 0.12);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.125);
+      }
+
+      playLineClear() {
+        if (!this.ctx) return;
+        const freqs = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+        freqs.forEach((f, i) => {
+          const now = this.ctx.currentTime + (i * 0.06);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, now);
+
+          gain.gain.setValueAtTime(0.22, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.45);
+        });
+      }
+
+      playTetrisCrush() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(80, now);
+        osc.frequency.exponentialRampToValueAtTime(25, now + 0.6);
+
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.66);
+      }
+
+      playVictoryFanfare() {
+        if (!this.ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.12);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.85);
+        });
+      }
+    }
+
+    const audio = new TetrisAudioSynth();
+
+    // --------------------------------------------------------------------------
+    // 2. Parâmetros e Matriz do Tetris (6 Colunas x 11 Linhas)
+    // --------------------------------------------------------------------------
+    const COLS = 6;
+    const ROWS = 11;
+    const DROP_INTERVAL = 3.5; // segundos para soltar a peça na coluna líder
+    const MATCH_DURATION = 45.0;
+
+    let roundTimeRemaining = MATCH_DURATION;
+    let dropTimeRemaining = DROP_INTERVAL;
+    let isGameOver = false;
+    let totalScore = 0;
+    let linesCleared = 0;
+    let screenShake = 0;
+
+    // Matriz de Blocos Fixados (ROWS x COLS)
+    let grid = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+
+    // Formatos de Peças (Tetraminós)
+    const PIECES = [
+      { name: 'I', shape: [[1, 1, 1, 1]], color: '#06b6d4' }, // Ciano
+      { name: 'O', shape: [[1, 1], [1, 1]], color: '#eab308' }, // Amarelo
+      { name: 'T', shape: [[0, 1, 0], [1, 1, 1]], color: '#a855f7' }, // Roxo
+      { name: 'L', shape: [[1, 0], [1, 0], [1, 1]], color: '#f97316' }, // Laranja
+      { name: 'S', shape: [[0, 1, 1], [1, 1, 0]], color: '#22c55e' }  // Verde
+    ];
+
+    let currentPiece = null;
+    let pieceCol = 2; // Coluna atual da peça
+    let pieceRotation = 0;
+
+    // Votos por coluna (1 a 6)
+    const columnVotes = [0, 0, 0, 0, 0, 0];
+    const participants = new Map();
+
+    function spawnNextPiece() {
+      const p = PIECES[Math.floor(Math.random() * PIECES.length)];
+      currentPiece = {
+        name: p.name,
+        shape: JSON.parse(JSON.stringify(p.shape)),
+        color: p.color
+      };
+      pieceRotation = 0;
+      updateLeadingColumn();
+    }
+
+    spawnNextPiece();
+
+    // --------------------------------------------------------------------------
+    // 3. Sistema de Partículas e Explosões Neon
+    // --------------------------------------------------------------------------
+    const particles = [];
+    const MAX_PARTICLES = 160;
+
+    function spawnClearParticles(y, color = '#f472b6') {
+      for (let i = 0; i < 40; i++) {
+        if (particles.length >= MAX_PARTICLES) particles.shift();
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2 + Math.random() * 6;
+        particles.push({
+          x: Math.random() * width,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: 2.5 + Math.random() * 4,
+          alpha: 1.0,
+          decay: 0.015 + Math.random() * 0.02,
+          color: color
+        });
+      }
+    }
+
+    // --------------------------------------------------------------------------
+    // 4. Renderização Canvas 2D
+    // --------------------------------------------------------------------------
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+    let width = 0, height = 0;
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      width = rect.width;
+      height = rect.height;
+      canvas.width = width * window.devicePixelRatio;
+      canvas.height = height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function getGridGeometry() {
+      const safeTop = 140;
+      const safeBottom = 180;
+      const availW = width * 0.88;
+      const availH = height - safeTop - safeBottom;
+
+      const cellSize = Math.min(availW / COLS, availH / ROWS);
+      const totalW = COLS * cellSize;
+      const totalH = ROWS * cellSize;
+
+      const startX = (width - totalW) / 2;
+      const startY = safeTop + (availH - totalH) / 2;
+
+      return { startX, startY, cellSize, totalW, totalH };
+    }
+
+    function drawTetrisMatrix() {
+      const geo = getGridGeometry();
+
+      // Fundo do Poço
+      ctx.fillStyle = '#080312';
+      ctx.fillRect(geo.startX, geo.startY, geo.totalW, geo.totalH);
+
+      // Linhas da grade e colunas
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(168, 85, 247, 0.15)';
+      for (let c = 0; c <= COLS; c++) {
+        ctx.beginPath();
+        ctx.moveTo(geo.startX + c * geo.cellSize, geo.startY);
+        ctx.lineTo(geo.startX + c * geo.cellSize, geo.startY + geo.totalH);
+        ctx.stroke();
+      }
+      for (let r = 0; r <= ROWS; r++) {
+        ctx.beginPath();
+        ctx.moveTo(geo.startX, geo.startY + r * geo.cellSize);
+        ctx.lineTo(geo.startX + geo.totalW, geo.startY + r * geo.cellSize);
+        ctx.stroke();
+      }
+
+      // Moldura Neon do Poço
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = 'rgba(168, 85, 247, 0.6)';
+      ctx.strokeRect(geo.startX, geo.startY, geo.totalW, geo.totalH);
+
+      // Destaque da Coluna Líder
+      const leadingCol = getLeadingCol();
+      ctx.fillStyle = 'rgba(244, 114, 182, 0.08)';
+      ctx.fillRect(geo.startX + leadingCol * geo.cellSize, geo.startY, geo.cellSize, geo.totalH);
+
+      // Desenhar Blocos Fixados
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          if (grid[r][c]) {
+            drawBlock(
+              geo.startX + c * geo.cellSize,
+              geo.startY + r * geo.cellSize,
+              geo.cellSize,
+              grid[r][c]
+            );
+          }
+        }
+      }
+
+      // Desenhar Peça Ativa Flutuante no Topo
+      if (currentPiece && !isGameOver) {
+        const shape = currentPiece.shape;
+        const colOffset = Math.min(pieceCol, COLS - shape[0].length);
+
+        for (let pr = 0; pr < shape.length; pr++) {
+          for (let pc = 0; pc < shape[pr].length; pc++) {
+            if (shape[pr][pc]) {
+              const bx = geo.startX + (colOffset + pc) * geo.cellSize;
+              const by = geo.startY + pr * geo.cellSize;
+              drawBlock(bx, by, geo.cellSize, currentPiece.color, true);
+            }
+          }
+        }
+      }
+    }
+
+    function drawBlock(x, y, size, color, isGhost = false) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(x + 2, y + 2, size - 4, size - 4, 4);
+
+      if (isGhost) {
+        ctx.fillStyle = color;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 12;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      } else {
+        const grad = ctx.createLinearGradient(x, y, x, y + size);
+        grad.addColorStop(0, color);
+        grad.addColorStop(1, '#0f051d');
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = color;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawParticles() {
+      ctx.save();
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 10;
+        ctx.fill();
+      }
+      ctx.restore();
+      ctx.globalAlpha = 1.0;
+      ctx.shadowBlur = 0;
+    }
+
+    // --------------------------------------------------------------------------
+    // 5. Loop Principal de Jogo & Queda de Peças
+    // --------------------------------------------------------------------------
+    let lastTime = performance.now();
+
+    function gameLoop(now) {
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+
+      // Tremor de tela
+      if (screenShake > 0) {
+        screenShake = Math.max(0, screenShake - dt * 25);
+        const stage = document.getElementById('game-stage');
+        const ox = (Math.random() - 0.5) * screenShake;
+        const oy = (Math.random() - 0.5) * screenShake;
+        stage.style.transform = `translate(${ox}px, ${oy}px)`;
+      }
+
+      if (!isGameOver) {
+        // Cronômetro da Partida
+        roundTimeRemaining = Math.max(0, roundTimeRemaining - dt);
+        document.getElementById('round-timer').textContent = roundTimeRemaining.toFixed(1) + 's';
+
+        // Cronômetro de Queda do Bloco
+        dropTimeRemaining = Math.max(0, dropTimeRemaining - dt);
+        const dropPct = (dropTimeRemaining / DROP_INTERVAL) * 100;
+        document.getElementById('drop-bar-fill').style.width = dropPct + '%';
+
+        if (dropTimeRemaining <= 0) {
+          dropPiece();
+          dropTimeRemaining = DROP_INTERVAL;
+        }
+
+        if (roundTimeRemaining <= 0) {
+          triggerVictory();
+        }
+      }
+
+      drawTetrisMatrix();
+      drawParticles();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // --------------------------------------------------------------------------
+    // 6. Mecânica de Soltura de Peça, Gravidade e Linhas
+    // --------------------------------------------------------------------------
+    function dropPiece() {
+      if (!currentPiece) return;
+
+      const shape = currentPiece.shape;
+      const targetCol = Math.min(pieceCol, COLS - shape[0].length);
+
+      // Calcular linha de aterissagem mais baixa
+      let landingRow = -1;
+      for (let r = 0; r <= ROWS - shape.length; r++) {
+        let fits = true;
+        for (let pr = 0; pr < shape.length; pr++) {
+          for (let pc = 0; pc < shape[pr].length; pc++) {
+            if (shape[pr][pc] && grid[r + pr][targetCol + pc] !== null) {
+              fits = false;
+              break;
+            }
+          }
+          if (!fits) break;
+        }
+        if (fits) {
+          landingRow = r;
+        } else {
+          break;
+        }
+      }
+
+      // Se transbordou no teto -> Fim de Partida
+      if (landingRow <= 1) {
+        audio.playTetrisCrush();
+        screenShake = 20;
+        pushActivityFeed('💥 MATRIZ TRANSBORDOU! Pilha de blocos atingiu o teto!');
+        triggerVictory();
+        return;
+      }
+
+      // Fixar blocos na matriz
+      for (let pr = 0; pr < shape.length; pr++) {
+        for (let pc = 0; pc < shape[pr].length; pc++) {
+          if (shape[pr][pc]) {
+            grid[landingRow + pr][targetCol + pc] = currentPiece.color;
+          }
+        }
+      }
+
+      audio.playBlockLock();
+      checkLineClears();
+
+      // Reset de votos das colunas
+      for (let i = 0; i < 6; i++) {
+        columnVotes[i] = 0;
+        document.getElementById(`votes-${i + 1}`).textContent = '0';
+        document.getElementById(`col-card-${i + 1}`).classList.remove('leading');
+      }
+
+      spawnNextPiece();
+    }
+
+    function checkLineClears() {
+      let cleared = 0;
+      const geo = getGridGeometry();
+
+      for (let r = ROWS - 1; r >= 0; r--) {
+        const isFull = grid[r].every(c => c !== null);
+        if (isFull) {
+          cleared++;
+          // Remover linha e descer linhas superiores
+          grid.splice(r, 1);
+          grid.unshift(Array(COLS).fill(null));
+
+          const rowY = geo.startY + r * geo.cellSize;
+          spawnClearParticles(rowY);
+          r++; // Reavaliar mesma linha
+        }
+      }
+
+      if (cleared > 0) {
+        linesCleared += cleared;
+        const pts = cleared * 1000 * cleared; // Bônus exponencial por combos
+        totalScore += pts;
+
+        document.getElementById('lines-count').textContent = linesCleared;
+        document.getElementById('score-pts').textContent = totalScore;
+
+        audio.playLineClear();
+        screenShake = 8 + cleared * 4;
+        pushActivityFeed(`🔥 LINHA ELIMINADA! +${pts} PTS!`);
+      }
+    }
+
+    function getLeadingCol() {
+      let maxV = -1;
+      let lead = 2; // padrão centro
+      for (let i = 0; i < 6; i++) {
+        if (columnVotes[i] > maxV) {
+          maxV = columnVotes[i];
+          lead = i;
+        }
+      }
+      return lead;
+    }
+
+    function updateLeadingColumn() {
+      const lead = getLeadingCol();
+      pieceCol = lead;
+
+      for (let i = 0; i < 6; i++) {
+        const card = document.getElementById(`col-card-${i + 1}`);
+        if (i === lead && columnVotes[i] > 0) {
+          card.classList.add('leading');
+        } else {
+          card.classList.remove('leading');
+        }
+      }
+    }
+
+    function rotatePiece() {
+      if (!currentPiece) return;
+      const shape = currentPiece.shape;
+      const newShape = [];
+      for (let c = 0; c < shape[0].length; c++) {
+        newShape.push([]);
+        for (let r = shape.length - 1; r >= 0; r--) {
+          newShape[c].push(shape[r][c]);
+        }
+      }
+      currentPiece.shape = newShape;
+      audio.playBlockRotate();
+      updateLeadingColumn();
+    }
+
+    // --------------------------------------------------------------------------
+    // 7. Processamento de Eventos de Chat & Gifts
+    // --------------------------------------------------------------------------
+    function handleGameEvent(data) {
+      if (isGameOver) return;
+      audio.init();
+
+      const user = data.user || '@espectador';
+      const comment = (data.comment || '').trim().toLowerCase();
+      const type = data.type || 'comment';
+      const giftName = data.giftName || null;
+      const value = data.value || 1;
+
+      // Presentes
+      if (type === 'gift') {
+        const isSuper = (giftName && giftName.toLowerCase().includes('lion')) || value >= 500;
+        if (isSuper) {
+          // Megabloco 3x3 que limpa as 3 colunas centrais
+          for (let r = 0; r < ROWS; r++) {
+            grid[r][2] = null;
+            grid[r][3] = null;
+          }
+          audio.playTetrisCrush();
+          screenShake = 18;
+          pushActivityFeed(`🦁 ${user} ENVIOU LEÃO! MEGABLOCO LIMPOU O CENTRO!`);
+        } else {
+          // Broca Laser: remove os 2 blocos mais altos da coluna líder
+          const lead = getLeadingCol();
+          let count = 0;
+          for (let r = 0; r < ROWS && count < 2; r++) {
+            if (grid[r][lead] !== null) {
+              grid[r][lead] = null;
+              count++;
+            }
+          }
+          audio.playLineClear();
+          pushActivityFeed(`✨ ${user} usou BROCA LASER na coluna ${lead + 1}!`);
+        }
+
+        const pts = participants.get(user) || 0;
+        participants.set(user, pts + (isSuper ? 1000 : 300));
+        return;
+      }
+
+      // Rotação
+      if (comment === 'r' || comment === 'girar' || comment === 'rotacionar') {
+        rotatePiece();
+        return;
+      }
+
+      // Voto de Coluna 1 a 6
+      const colNum = parseInt(comment, 10);
+      if (colNum >= 1 && colNum <= 6) {
+        const idx = colNum - 1;
+        columnVotes[idx] += 1;
+        document.getElementById(`votes-${colNum}`).textContent = columnVotes[idx];
+
+        const pts = participants.get(user) || 0;
+        participants.set(user, pts + 50);
+
+        audio.playBlockMove();
+        updateLeadingColumn();
+      }
+    }
+
+    function pushActivityFeed(text) {
+      const feed = document.getElementById('activity-feed');
+      const pill = document.createElement('div');
+      pill.className = 'feed-pill';
+      pill.textContent = text;
+      feed.appendChild(pill);
+      setTimeout(() => {
+        if (pill.parentNode) pill.parentNode.removeChild(pill);
+      }, 3500);
+    }
+
+    // --------------------------------------------------------------------------
+    // 8. Ciclo Fechado & Auto-Reset (5 Segundos)
+    // --------------------------------------------------------------------------
+    function triggerVictory() {
+      isGameOver = true;
+      audio.playVictoryFanfare();
+
+      const overlay = document.getElementById('victory-overlay');
+      const title = document.getElementById('winner-title');
+
+      title.textContent = `PONTUAÇÃO: ${totalScore} PTS (${linesCleared} Linhas)`;
+
+      // Ranking MVP
+      const sorted = Array.from(participants.entries()).map(([u, s]) => ({ user: u, score: s }));
+      sorted.sort((a, b) => b.score - a.score);
+
+      document.getElementById('mvp-1').textContent = sorted[0] ? `${sorted[0].user} (+${sorted[0].score} pts)` : '@mestre_tetris (+1800)';
+      document.getElementById('mvp-2').textContent = sorted[1] ? `${sorted[1].user} (+${sorted[1].score} pts)` : '@estrategista_neon (+1100)';
+      document.getElementById('mvp-3').textContent = sorted[2] ? `${sorted[2].user} (+${sorted[2].score} pts)` : '@sabotador_live (+650)';
+
+      overlay.style.display = 'flex';
+
+      let count = 5;
+      const counterEl = document.getElementById('reset-counter');
+      const timerInterval = setInterval(() => {
+        count--;
+        if (counterEl) counterEl.textContent = count;
+        if (count <= 0) {
+          clearInterval(timerInterval);
+          resetGame();
+        }
+      }, 1000);
+    }
+
+    function resetGame() {
+      roundTimeRemaining = MATCH_DURATION;
+      dropTimeRemaining = DROP_INTERVAL;
+      isGameOver = false;
+      screenShake = 0;
+      totalScore = 0;
+      linesCleared = 0;
+      grid = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+      participants.clear();
+
+      document.getElementById('lines-count').textContent = '0';
+      document.getElementById('score-pts').textContent = '0';
+      document.getElementById('victory-overlay').style.display = 'none';
+      document.getElementById('activity-feed').innerHTML = '';
+
+      for (let i = 0; i < 6; i++) {
+        columnVotes[i] = 0;
+        document.getElementById(`votes-${i + 1}`).textContent = '0';
+        document.getElementById(`col-card-${i + 1}`).classList.remove('leading');
+      }
+
+      spawnNextPiece();
+    }
+
+    // --------------------------------------------------------------------------
+    // 9. Motor Anti-Silêncio Orgânico
+    // --------------------------------------------------------------------------
+    const mockUsers = ['@tetris_god', '@block_dropper', '@speed_builder', '@saboteur_x', '@arcade_pro'];
+    setInterval(() => {
+      if (isGameOver) return;
+      const randomCol = Math.floor(Math.random() * 6) + 1;
+      const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+      handleGameEvent({
+        type: 'comment',
+        comment: randomCol.toString(),
+        user: randomUser
+      });
+    }, 2200);
+
+    // --------------------------------------------------------------------------
+    // 10. Integração V5 Broadcaster & Debug Controls
+    // --------------------------------------------------------------------------
+    try {
+      const channel = new BroadcastChannel('v5_broadcaster_games');
+      channel.onmessage = (e) => handleGameEvent(e.data);
+    } catch (e) {
+      console.warn('BroadcastChannel offline:', e);
+    }
+
+    window.addEventListener('v5_event', (e) => {
+      if (e.detail) handleGameEvent(e.detail);
+    });
+
+    function toggleDebug(show) {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.style.display = (show !== undefined) ? (show ? 'flex' : 'none') : (drawer.style.display === 'flex' ? 'none' : 'flex');
+    }
+
+    function toggleDebugOnClick(e) {
+      if (e.detail === 3) toggleDebug();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') toggleDebug();
+    });
+
+    function sendMockColumn(col) {
+      handleGameEvent({ type: 'comment', comment: col.toString(), user: '@debug_player' });
+    }
+
+    function sendRotate() {
+      handleGameEvent({ type: 'comment', comment: 'girar', user: '@debug_player' });
+    }
+
+    function sendMockGift(giftName, val) {
+      handleGameEvent({ type: 'gift', giftName: giftName, value: val, user: '@doador_ouro' });
+    }
+
+    // Iniciar loop
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>

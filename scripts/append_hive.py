@@ -3,17 +3,17 @@ import os
 bus_path = r"C:\Users\v5est\.gemini\antigravity\brain\9270dd65-160e-47e8-aea2-6a92fd50cfc6\antigravity_hive_bus.md"
 
 entry = """
-### [27/10/2026 - 13:00] CAPITANIA V5 GAMES - ETAPAS 072 E 073 CONCLUÍDAS: CARTUCHO #08 CAÇA AO BAÚ DO TESOURO
-- **Cartucho Homologado:** `08_caca_tesouro_coordenadas` (Caça ao Baú do Tesouro - Grade 4x4 A1-D4 & Chaves 9:16).
+### [27/10/2026 - 13:15] CAPITANIA V5 GAMES - ETAPA 074 CONCLUÍDA: CARTUCHO #10 TETRIS DA DISCÓRDIA
+- **Cartucho Homologado:** `10_queda_dos_blocos` (Tetris da Discórdia - Matriz 6x11, Votação de Colunas & Broca Laser 9:16).
 - **Inovações de Engenharia:**
-  1. Grade 4x4 interativa com 16 baús mecânicos de pirata espacial, mapeados para coordenadas naturais de chat móvel (A1 a D4).
-  2. Sistema de abertura vetorial procedural de baús com arpejo de brilho dourado e partículas reluzentes (Etapa 073).
-  3. Mecânica de coleção de 3 chaves douradas para destravar a expedição antes do término dos 45 segundos.
-  4. Síntese Web Audio API procedural: destrancamento de catraca mecânica (620Hz->180Hz), arpejo místico em E Maior, tilintar metálico cristalino de chave (1480Hz->1975Hz) e explosão venenosa de armadilhas.
-  5. Presentes ativam Raio-X individual e Chave Mestra com feixe orbital e revelação em cruz.
-- **Homologação:** 11/11 verificações aprovadas em `scripts/test_cartridge_08.py`.
-- **Sincronização:** Total de 23 jogos homologados e sincronizados no V5 Broadcaster (`v5_games_manifest.json`).
-- **Próximas Etapas:** Etapa 074 — Forjamento do Cartucho #10: Tetris da Discórdia (Queda de blocos pesados onde o chat decide onde soltar peças).
+  1. Poço vertical neon 6x11 com Tetraminós (I, O, T, L, S) soltos na coluna líder votada pelo chat (`1` a `6`).
+  2. Mecânica de rotação interativa por comandos de texto (`r`, `girar`, `rotacionar`).
+  3. Eliminação de linhas cheias com combos exponenciais, arpejos lasers e partículas polifônicas.
+  4. Síntese procedural Web Audio API: clique mecânico de deslocamento (480Hz->720Hz), swoosh tonal de rotação (420Hz->840Hz), travamento pesado com sub-grave de 40Hz e alarme de transbordamento.
+  5. Presentes ativam Broca Laser (elimina blocos do topo da coluna) e Megabloco 3x3 (limpa colunas centrais com tremor sísmico).
+- **Homologação:** 11/11 verificações aprovadas em `scripts/test_cartridge_10.py`.
+- **Sincronização:** Total de 24 jogos homologados e sincronizados no V5 Broadcaster (`v5_games_manifest.json`).
+- **Próximas Etapas:** Etapa 075 — Forjamento do Cartucho #24: Campo Minado Neon (Desarmamento cooperativo e sensores de raio-X por gifts).
 """
 
 if os.path.exists(bus_path):

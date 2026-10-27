@@ -88,6 +88,14 @@ GAME_METADATA = {
         "status": "HOMOLOGADO",
         "version": "1.0.0"
     },
+    "10_queda_dos_blocos": {
+        "name": "Tetris da Discórdia",
+        "category": "tabuleiro_coordenadas",
+        "description": "Matriz 6x11 de blocos pesados onde o chat vota em colunas 1 a 6 e gira peças para fechar linhas com lasers ou sobrecarregar a matriz",
+        "commands": ["1", "2", "3", "4", "5", "6", "r", "girar"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
+    },
     "11_queda_de_braco_titas": {
         "name": "Queda de Braço dos Titãs",
         "category": "polarizacao",
