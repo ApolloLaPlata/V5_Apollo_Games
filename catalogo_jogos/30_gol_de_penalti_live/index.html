@@ -1464,6 +1464,19 @@
       }
     });
 
+    // Redundant direct bridges for standalone testing
+    window.addEventListener('v5_event', (e) => {
+      const d = e.detail || e.data;
+      if (d) handleLiveCommand(d);
+    });
+    window.addEventListener('message', (e) => {
+      let d = e.data;
+      if (typeof d === 'string') {
+        try { d = JSON.parse(d); } catch (err) {}
+      }
+      if (d && (d.type || d.action || d.comment)) handleLiveCommand(d);
+    });
+
     // 8. MOTOR ANTI-SILÊNCIO ORGÂNICO (LEI 3)
     const mockUsers = ['@artilheiro_9', '@camisa10_v5', '@neymar_neon', '@craque_live', '@batedor_ouro', '@torcedor_fiel'];
     setInterval(() => {

@@ -880,9 +880,30 @@
     }
 
     // Listener do Broadcaster
-    const broadcasterChannel = new BroadcastChannel('v5_broadcaster_games');
-    broadcasterChannel.onmessage = (event) => handleLivePayload(event.data);
-    window.addEventListener('v5_event', (e) => handleLivePayload(e.detail));
+    // --- PROTOCOLO DE EVENTOS UNIFICADO (V5 LIVE EVENT BUS) ---
+    try {
+      const broadcasterChannel = new BroadcastChannel('v5_broadcaster_games');
+      broadcasterChannel.onmessage = (event) => {
+        if (event && event.data) handleLivePayload(event.data);
+      };
+    } catch (err) {
+      console.warn('[V5Games] BroadcastChannel offline ou restrito:', err);
+    }
+
+    window.addEventListener('v5_event', (e) => {
+      const data = e.detail || e.data;
+      if (data) handleLivePayload(data);
+    });
+
+    window.addEventListener('message', (e) => {
+      let data = e.data;
+      if (typeof data === 'string') {
+        try { data = JSON.parse(data); } catch (err) {}
+      }
+      if (data && (data.type || data.action || data.comment)) {
+        handleLivePayload(data);
+      }
+    });
 
     function handleLivePayload(payload) {
       if (!payload) return;
@@ -947,6 +968,7 @@
     }
 
     setInterval(() => {
+      if (isGameOver) return;
       if (Math.random() < 0.65) spawnMeteor();
     }, 1200);
 

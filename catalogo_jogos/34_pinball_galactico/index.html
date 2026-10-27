@@ -1574,6 +1574,17 @@
       window.addEventListener('v5_event', (e) => {
         if (e.detail) handleIncomingEvent(e.detail);
       });
+
+      // 3. PostMessage (Iframe / Preview Dock / Broadcaster Cockpit)
+      window.addEventListener('message', (e) => {
+        let data = e.data;
+        if (typeof data === 'string') {
+          try { data = JSON.parse(data); } catch (err) {}
+        }
+        if (data && (data.type || data.action || data.comment)) {
+          handleIncomingEvent(data);
+        }
+      });
     }
 
     function handleIncomingEvent(payload) {

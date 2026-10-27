@@ -1105,6 +1105,7 @@
     }
 
     function handleGameEvent(data) {
+      if (!data || typeof data !== "object") return;
       if (isGameOver) return;
       audio.init();
 
@@ -1262,6 +1263,17 @@
 
     window.addEventListener('v5_event', (e) => {
       if (e.detail) handleGameEvent(e.detail);
+    });
+
+    // 3. PostMessage (Iframe / Broadcaster Cockpit)
+    window.addEventListener('message', (e) => {
+      let data = e.data;
+      if (typeof data === 'string') {
+        try { data = JSON.parse(data); } catch (err) {}
+      }
+      if (data && (data.type || data.action || data.comment)) {
+        handleGameEvent(data);
+      }
     });
 
     function toggleDebug(show) {

@@ -1358,12 +1358,13 @@
 
       const comment = (payload.comment || payload.action || '').toString().toLowerCase().trim();
       const user = payload.user || '@espectador';
-      const giftName = payload.giftName || null;
+      const giftName = payload.giftName || 'Presente';
       const weight = payload.weight || payload.coins || 1;
 
       // Evento de Presente (Gift)
       if (payload.type === 'gift' || giftName) {
-        if (weight >= 50 || giftName.toLowerCase().includes('leão') || giftName.toLowerCase().includes('lion')) {
+        const gStr = (giftName || '').toLowerCase();
+      if (weight >= 50 || gStr.includes('leão') || gStr.includes('lion')) {
           spawnMegaBall(Math.random() < 0.5 ? 'A' : 'B', giftName, weight, user);
         } else {
           const team = Math.random() < 0.5 ? 'A' : 'B';

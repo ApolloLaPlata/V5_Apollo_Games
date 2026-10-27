@@ -1170,6 +1170,7 @@
     // 5. Mecânica de Votos, Presentes & Event Bus
     // --------------------------------------------------------------------------
     function handleGameEvent(data) {
+      if (!data || typeof data !== "object") return;
       if (isGameOver) return;
       audio.init();
 
@@ -1192,7 +1193,8 @@
       } else if (type === "gift") {
         // Se o gift veio sem time definido, aplica na plataforma com menor estabilidade ou no time do payload
         const targetTeam = teamId || getPlatformNeedingHelp();
-        const boostVal = (giftName.toLowerCase().includes("lion") || value >= 500) ? 50 : 25;
+        const gName = (giftName || "").toLowerCase();
+        const boostVal = (gName.includes("lion") || value >= 500) ? 50 : 25;
         applyGiftBoost(targetTeam, user, giftName, boostVal);
       }
     }
@@ -1363,6 +1365,17 @@
 
     window.addEventListener('v5_event', (e) => {
       if (e.detail) handleGameEvent(e.detail);
+    });
+
+    // 3. PostMessage (Iframe / Broadcaster Cockpit)
+    window.addEventListener('message', (e) => {
+      let data = e.data;
+      if (typeof data === 'string') {
+        try { data = JSON.parse(data); } catch (err) {}
+      }
+      if (data && (data.type || data.action || data.comment)) {
+        handleGameEvent(data);
+      }
     });
 
     function toggleDebug(show) {
