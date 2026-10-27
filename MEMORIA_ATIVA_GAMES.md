@@ -48,6 +48,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | **21** | `21_batata_quente_explosiva` | Batata Quente Explosiva | Bomba relógio com pavio aceso passando entre avatares, BPM cardíaco acelerado (75 a 180 BPM) e eliminação | **HOMOLOGADO** |
 | **22** | `22_ponte_de_vidro_quebradico` | Ponte de Vidro Quebradiço | Travessia de 8 degraus no abismo de 200m; chat vota 1 (Esq) ou 2 (Dir); estilhaçamento e raio-X de gifts | **HOMOLOGADO** |
 | **23** | `23_sobrevivencia_na_lava` | Sobrevivência na Lava | 4 plataformas flutuantes de obsidiana afundando na lava neon; erupção de partículas e borbulhamento procedural | **HOMOLOGADO** |
+| **24** | `24_campo_minado_neon` | Campo Minado Neon | Matriz tática 5x5; chat vota coordenadas A1-E5 para desarme de minas, com flood-fill e escudos de vida | **HOMOLOGADO** |
 
 ---
 
@@ -90,8 +91,9 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/test_cartridge_22.py`: Validação automatizada do Cartucho #22 (11/11 checks aprovados).
 - `scripts/test_cartridge_08.py`: Validação automatizada do Cartucho #08 (11/11 checks aprovados).
 - `scripts/test_cartridge_10.py`: Validação automatizada do Cartucho #10 (11/11 checks aprovados).
+- `scripts/test_cartridge_24.py`: Validação automatizada do Cartucho #24 (11/11 checks aprovados).
 - `scripts/test_cartridge_23.py`: Validação automatizada do Cartucho #23 (11/11 checks aprovados).
 - `scripts/test_tension_balance.js`: Simulação Monte Carlo (10.000 rodadas) de balanceamento da curva de adrenalina e tempo dos 4 cartuchos de eliminação (100% aprovado).
 - `scripts/test_elimination_cartridges.py`: Suíte de homologação formal das 5 Leis Absolutas para os 4 cartuchos de eliminação (33/33 checks aprovados).
 - `scripts/test_grid_coordinates_engine.js`: Validação de parsing tolerante, grids 4x4/6x6, Raio-X de Gifts e benchmark de performance (31/31 checks aprovados, 580k ops/s).
-- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 24 cartuchos ativos).
+- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 25 cartuchos ativos).

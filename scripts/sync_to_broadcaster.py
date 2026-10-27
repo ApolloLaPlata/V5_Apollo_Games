@@ -199,6 +199,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "4", "ciano", "roxo", "ouro", "verde"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "24_campo_minado_neon": {
+        "name": "Campo Minado Neon",
+        "category": "tabuleiro_coordenadas",
+        "description": "Matriz tática 5x5 de desarme de minas; chat vota coordenadas A1-E5 com flood-fill de vazios, escudos de vida e sensores raio-X",
+        "commands": ["A1", "B3", "C2", "D4", "E5", "coordenadas"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 

@@ -142,7 +142,7 @@
 - [x] **Etapa 072:** Forjamento do Cartucho #08: Caça ao Baú do Tesouro (Grade de 16 baús; o chat vota nas coordenadas para desarmar armadilhas e achar o tesouro real).
 - [x] **Etapa 073:** Sistema de abertura de baús com efeitos de brilho dourado e revelação de chaves colecionáveis.
 - [x] **Etapa 074:** Forjamento do Cartucho #10: Tetris da Discórdia (Queda de blocos pesados onde o chat decide onde soltar peças para fechar linhas ou esmagar o rival).
-- [ ] **Etapa 075:** Forjamento do Cartucho #24: Campo Minado Neon (Desarmamento cooperativo onde presentes revelam sensores de raio-X que mostram as bombas).
+- [x] **Etapa 075:** Forjamento do Cartucho #24: Campo Minado Neon (Desarmamento cooperativo onde presentes revelam sensores de raio-X que mostram as bombas).
 - [ ] **Etapa 076:** Forjamento do Cartucho #25: Batalha Naval da Live (Dois esquadrões afundando navios adversários com tiros de canhões disparados por comentários).
 - [ ] **Etapa 077:** Síntese de sonoplastia naval: sonar submarino procedural, canhões e explosões de água.
 - [ ] **Etapa 078:** Mecânica de recompensa rápida por acerto de coordenadas e feedback tátil na tela.

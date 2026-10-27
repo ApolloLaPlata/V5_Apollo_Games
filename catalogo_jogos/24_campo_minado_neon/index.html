@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Campo Minado Neon (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #03080e;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 30%, #0a192f 0%, #060e1d 60%, #02050b 100%);
+      border: 1px solid rgba(6, 182, 212, 0.25);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(6, 182, 212, 0.25);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Vinheta de Atmosfera Militar Neon */
+    #ambient-vignette {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.85);
+      z-index: 2;
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 14px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(6, 14, 29, 0.98) 0%, rgba(6, 14, 29, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #06b6d4;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #06b6d4;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #06b6d4;
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .shields-badge {
+      background: rgba(6, 182, 212, 0.15);
+      border: 1px solid rgba(6, 182, 212, 0.6);
+      color: #a5f3fc;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* HUD de Desarme e Temporizador */
+    .mines-hud {
+      width: 100%;
+      background: rgba(10, 25, 47, 0.85);
+      border: 1px solid rgba(6, 182, 212, 0.4);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .hud-status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hud-title {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #e0f2fe;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .round-timer {
+      font-size: 13px;
+      font-weight: 900;
+      color: #38bdf8;
+      font-family: monospace;
+    }
+
+    .turn-bar-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 3px;
+      overflow: hidden;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      position: relative;
+    }
+
+    .turn-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #0284c7, #06b6d4, #67e8f9);
+      box-shadow: 0 0 10px #06b6d4;
+      transition: width 0.1s linear;
+    }
+
+    /* Canvas Central 9:16 */
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 10px 14px 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(3, 8, 14, 0.98) 0%, rgba(3, 8, 14, 0.85) 75%, rgba(3, 8, 14, 0) 100%);
+    }
+
+    /* Helper de Coordenadas A1 a E5 */
+    .coords-helper-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(12, 30, 56, 0.7);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      border-radius: 8px;
+      padding: 6px 10px;
+    }
+
+    .coords-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #a5f3fc;
+      letter-spacing: 0.5px;
+    }
+
+    .coords-chips {
+      display: flex;
+      gap: 5px;
+    }
+
+    .coord-chip {
+      background: rgba(6, 182, 212, 0.2);
+      border: 1px solid rgba(6, 182, 212, 0.5);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      font-family: monospace;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    /* Banner de Presentes / Gift CTA */
+    .gift-cta-banner {
+      background: linear-gradient(90deg, rgba(6, 182, 212, 0.2) 0%, rgba(56, 189, 248, 0.25) 50%, rgba(6, 182, 212, 0.2) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      border-radius: 10px;
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+    }
+
+    .gift-info {
+      font-size: 11px;
+      font-weight: 800;
+      color: #e0f2fe;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .gift-badge {
+      background: #06b6d4;
+      color: #000;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Feed Flutuante de Eventos */
+    .activity-feed {
+      position: absolute;
+      top: 155px;
+      left: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      z-index: 5;
+      pointer-events: none;
+      max-width: 240px;
+    }
+
+    .feed-pill {
+      background: rgba(6, 18, 36, 0.9);
+      border: 1px solid rgba(6, 182, 212, 0.5);
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+      animation: fadeSlide 3.5s forwards;
+    }
+
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(-10px); }
+      10% { opacity: 1; transform: translateY(0); }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
+
+    /* Overlay de Vitória & Fim de Rodada (5s) */
+    #victory-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(3, 8, 16, 0.94);
+      backdrop-filter: blur(12px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      z-index: 100;
+      text-align: center;
+      padding: 24px;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .victory-badge {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #67e8f9;
+      text-transform: uppercase;
+    }
+
+    .victory-title {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #ffffff;
+      text-shadow: 0 0 25px rgba(6, 182, 212, 0.8);
+    }
+
+    .victory-podium {
+      width: 100%;
+      background: rgba(10, 24, 48, 0.7);
+      border: 1px solid rgba(6, 182, 212, 0.4);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .podium-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .podium-gold { border-left: 4px solid #eab308; color: #fde047; }
+    .podium-silver { border-left: 4px solid #94a3b8; color: #e2e8f0; }
+    .podium-bronze { border-left: 4px solid #b45309; color: #fdba74; }
+
+    .victory-countdown {
+      font-size: 12px;
+      color: #38bdf8;
+      font-weight: 700;
+      font-family: monospace;
+    }
+
+    /* Gaveta de Testes / Debug Panel */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(4, 12, 24, 0.95);
+      border-top: 1px solid #06b6d4;
+      padding: 10px 14px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 200;
+      backdrop-filter: blur(8px);
+    }
+
+    .debug-title {
+      font-size: 11px;
+      font-weight: 900;
+      color: #06b6d4;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .debug-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .debug-btn {
+      background: rgba(6, 182, 212, 0.2);
+      border: 1px solid rgba(6, 182, 212, 0.5);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .debug-btn:active {
+      transform: scale(0.95);
+      background: rgba(6, 182, 212, 0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Vinheta de Atmosfera -->
+    <div id="ambient-vignette"></div>
+
+    <!-- Feed Flutuante de Eventos -->
+    <div class="activity-feed" id="activity-feed"></div>
+
+    <!-- Top Safe Zone (140px) -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <span class="live-dot"></span>
+          V5 LIVE CYBER SWEEPER
+        </div>
+        <div class="shields-badge">
+          🛡️ BLINDAGEM: <span id="shields-count">3/3</span>
+        </div>
+      </div>
+
+      <div class="mines-hud">
+        <div class="hud-status-row">
+          <span class="hud-title">⚡ CAMPO MINADO NEON</span>
+          <span class="round-timer" id="round-timer">45.0s</span>
+        </div>
+        <div class="turn-bar-track">
+          <div class="turn-bar-fill" id="turn-bar-fill"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central 9:16 -->
+    <div id="canvas-container">
+      <canvas id="game-canvas"></canvas>
+    </div>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <footer class="bottom-panel" id="bottom-panel" onclick="toggleDebugOnClick(event)">
+      <div class="coords-helper-row">
+        <span class="coords-label">COORDENADAS (5x5):</span>
+        <div class="coords-chips">
+          <span class="coord-chip">A1</span>
+          <span class="coord-chip">B3</span>
+          <span class="coord-chip">C2</span>
+          <span class="coord-chip">D4</span>
+          <span class="coord-chip">E5</span>
+        </div>
+      </div>
+
+      <div class="gift-cta-banner">
+        <div class="gift-info">
+          <span class="gift-badge">GIFT</span>
+          <span>ROSA (Sensor Raio-X) | LEÃO (Varredura de Drone)</span>
+        </div>
+        <div style="font-size: 11px; font-weight: 800; color: #38bdf8; font-family: monospace;">
+          'D' (Debug)
+        </div>
+      </div>
+    </footer>
+
+    <!-- Overlay de Vitória & Ciclo Fechado 5s -->
+    <div id="victory-overlay">
+      <span class="victory-badge">OPERAÇÃO CONCLUÍDA!</span>
+      <h1 class="victory-title" id="winner-title">CAMPO DESARMADO!</h1>
+      <div class="victory-podium">
+        <div class="podium-row podium-gold">
+          <span>🥇 1º Lugar</span>
+          <span id="mvp-1">@especialista_tatico (+1600)</span>
+        </div>
+        <div class="podium-row podium-silver">
+          <span>🥈 2º Lugar</span>
+          <span id="mvp-2">@ciber_desarmador (+950)</span>
+        </div>
+        <div class="podium-row podium-bronze">
+          <span>🥉 3º Lugar</span>
+          <span id="mvp-3">@sondador_neon (+500)</span>
+        </div>
+      </div>
+      <span class="victory-countdown">REINICIANDO NOVA PARTIDA EM <span id="reset-counter">5</span>s...</span>
+    </div>
+
+    <!-- Gaveta de Testes / Debug Panel -->
+    <div id="debug-drawer">
+      <div class="debug-title">
+        <span>SIMULAÇÃO DE TESTES (TECLA D)</span>
+        <span onclick="toggleDebug(false)" style="cursor: pointer;">✕</span>
+      </div>
+      <div class="debug-buttons">
+        <button class="debug-btn" onclick="sendMockCoord('A1')">Votar A1</button>
+        <button class="debug-btn" onclick="sendMockCoord('B3')">Votar B3</button>
+        <button class="debug-btn" onclick="sendMockCoord('C2')">Votar C2</button>
+        <button class="debug-btn" onclick="sendMockCoord('D4')">Votar D4</button>
+      </div>
+      <div class="debug-buttons" style="margin-top: 4px;">
+        <button class="debug-btn" style="border-color: #fde047; color: #fde047;" onclick="sendMockGift('Rose', 10)">Gift Rosa (Raio-X)</button>
+        <button class="debug-btn" style="border-color: #38bdf8; color: #7dd3fc;" onclick="sendMockGift('Lion', 500)">Gift Leão (Drone)</button>
+        <button class="debug-btn" style="border-color: #22c55e; color: #86efac;" onclick="resolveTurnNow()">Abrir Mais Votado</button>
+        <button class="debug-btn" style="border-color: #ef4444; color: #fca5a5;" onclick="resetRound()">Reset Forçado</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE GAMES — CARTUCHO #24: CAMPO MINADO NEON (9:16 VERTICAL)
+       Arquitetura: Web Audio Procedural + Matriz 5x5 + Desarme Cooperativo
+       ========================================================================== */
+
+    // --------------------------------------------------------------------------
+    // 1. Sintetizador de Áudio Procedural (Web Audio API)
+    // --------------------------------------------------------------------------
+    class MinesAudioSynth {
+      constructor() {
+        this.ctx = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playCellClick() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, now);
+        osc.frequency.exponentialRampToValueAtTime(1320, now + 0.04);
+
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.045);
+      }
+
+      playSafeReveal() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const freqs = [987.77, 1318.51];
+        freqs.forEach((f, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(f, now + i * 0.04);
+
+          gain.gain.setValueAtTime(0.2, now + i * 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.04 + 0.15);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + i * 0.04);
+          osc.stop(now + i * 0.04 + 0.16);
+        });
+      }
+
+      playEmptySweep() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1400, now);
+        osc.frequency.exponentialRampToValueAtTime(350, now + 0.25);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.26);
+      }
+
+      playMineExplosion() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+
+        // Sub grave de impacto
+        const osc = this.ctx.createOscillator();
+        const oscGain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(130, now);
+        osc.frequency.exponentialRampToValueAtTime(25, now + 0.7);
+
+        oscGain.gain.setValueAtTime(0.45, now);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
+
+        osc.connect(oscGain);
+        oscGain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.76);
+
+        // Chiado elétrico
+        const bufferSize = this.ctx.sampleRate * 0.5;
+        const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = noiseBuffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(450, now);
+
+        const noiseGain = this.ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.35, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(this.ctx.destination);
+        noise.start(now);
+        noise.stop(now + 0.52);
+      }
+
+      playScannerDrone() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.linearRampToValueAtTime(880, now + 0.3);
+
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.46);
+      }
+
+      playVictoryFanfare() {
+        if (!this.ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+        notes.forEach((freq, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.12);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+
+          gain.gain.setValueAtTime(0.28, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.85);
+        });
+      }
+    }
+
+    const audio = new MinesAudioSynth();
+
+    // --------------------------------------------------------------------------
+    // 2. Parâmetros e Matriz 5x5 (25 Células)
+    // --------------------------------------------------------------------------
+    const ROWS = 5;
+    const COLS = 5;
+    const TOTAL_CELLS = 25;
+    const TOTAL_MINES = 5;
+    const ROW_LETTERS = ['A', 'B', 'C', 'D', 'E'];
+    const TURN_DURATION = 6.0;
+    const MATCH_DURATION = 45.0;
+
+    let roundTimeRemaining = MATCH_DURATION;
+    let turnTimeRemaining = TURN_DURATION;
+    let isGameOver = false;
+    let shieldsLeft = 3;
+    let safeCellsRevealed = 0;
+    let screenShake = 0;
+
+    let cells = [];
+    let leadingIndex = -1;
+    let maxVotes = 0;
+    const participants = new Map();
+
+    function initBoard() {
+      cells = [];
+      leadingIndex = -1;
+      maxVotes = 0;
+      shieldsLeft = 3;
+      safeCellsRevealed = 0;
+
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const idx = r * COLS + c;
+          cells.push({
+            index: idx,
+            row: r,
+            col: c,
+            label: `${ROW_LETTERS[r]}${c + 1}`,
+            isMine: false,
+            isRevealed: false,
+            isFlagged: false,
+            adjacentMines: 0,
+            votes: 0,
+            voters: {},
+            lastVoter: null,
+            xRayGlow: 0.0,
+            rect: { x: 0, y: 0, size: 0 }
+          });
+        }
+      }
+
+      // Distribuir minas
+      const indices = Array.from({ length: TOTAL_CELLS }, (_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+
+      for (let m = 0; m < TOTAL_MINES; m++) {
+        cells[indices[m]].isMine = true;
+      }
+
+      // Calcular minas adjacentes
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const idx = r * COLS + c;
+          if (cells[idx].isMine) continue;
+
+          let count = 0;
+          for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+              if (dr === 0 && dc === 0) continue;
+              const nr = r + dr;
+              const nc = c + dc;
+              if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
+                if (cells[nr * COLS + nc].isMine) count++;
+              }
+            }
+          }
+          cells[idx].adjacentMines = count;
+        }
+      }
+    }
+
+    initBoard();
+
+    // --------------------------------------------------------------------------
+    // 3. Sistema de Partículas e Explosões Neon
+    // --------------------------------------------------------------------------
+    const particles = [];
+    const MAX_PARTICLES = 160;
+
+    function spawnExplosionParticles(x, y, isMine = false) {
+      const count = isMine ? 40 : 20;
+      for (let i = 0; i < count; i++) {
+        if (particles.length >= MAX_PARTICLES) particles.shift();
+        const angle = Math.random() * Math.PI * 2;
+        const speed = isMine ? (3 + Math.random() * 7) : (1.5 + Math.random() * 4);
+        particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: 2 + Math.random() * 4,
+          alpha: 1.0,
+          decay: 0.015 + Math.random() * 0.02,
+          color: isMine
+            ? (Math.random() > 0.4 ? '#ef4444' : '#f97316')
+            : (Math.random() > 0.4 ? '#06b6d4' : '#67e8f9')
+        });
+      }
+    }
+
+    // --------------------------------------------------------------------------
+    // 4. Renderização Canvas 2D
+    // --------------------------------------------------------------------------
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+    let width = 0, height = 0;
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      width = rect.width;
+      height = rect.height;
+      canvas.width = width * window.devicePixelRatio;
+      canvas.height = height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function computeBoardLayout() {
+      const safeTop = 140;
+      const safeBottom = 180;
+      const gap = 8;
+      const availW = width * 0.90;
+      const availH = height - safeTop - safeBottom;
+
+      const cellSize = Math.min((availW - (COLS - 1) * gap) / COLS, (availH - (ROWS - 1) * gap) / ROWS);
+      const totalW = COLS * cellSize + (COLS - 1) * gap;
+      const totalH = ROWS * cellSize + (ROWS - 1) * gap;
+
+      const startX = (width - totalW) / 2;
+      const startY = safeTop + (availH - totalH) / 2;
+
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const idx = r * COLS + c;
+          cells[idx].rect = {
+            x: startX + c * (cellSize + gap),
+            y: startY + r * (cellSize + gap),
+            size: cellSize
+          };
+        }
+      }
+    }
+
+    function drawBoard(now) {
+      computeBoardLayout();
+
+      ctx.fillStyle = '#03080e';
+      ctx.fillRect(0, 0, width, height);
+
+      cells.forEach(cell => {
+        const { x, y, size } = cell.rect;
+        const isLeading = cell.index === leadingIndex && !cell.isRevealed;
+
+        ctx.save();
+        ctx.translate(x + size / 2, y + size / 2);
+
+        // Brilho de Raio-X por Gift
+        if (cell.xRayGlow > 0 && !cell.isRevealed) {
+          ctx.beginPath();
+          ctx.arc(0, 0, size * 0.65, 0, Math.PI * 2);
+          ctx.fillStyle = cell.isMine ? `rgba(239, 68, 68, ${cell.xRayGlow * 0.4})` : `rgba(34, 197, 94, ${cell.xRayGlow * 0.4})`;
+          ctx.fill();
+        }
+
+        ctx.beginPath();
+        ctx.roundRect(-size / 2, -size / 2, size, size, 8);
+
+        if (cell.isRevealed) {
+          if (cell.isMine) {
+            // Mina detonada
+            ctx.fillStyle = '#450a0a';
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#ef4444';
+            ctx.stroke();
+
+            drawIcon(0, 0, '💥', 22);
+          } else {
+            // Célula segura revelada
+            ctx.fillStyle = '#0f172a';
+            ctx.fill();
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = '#334155';
+            ctx.stroke();
+
+            if (cell.adjacentMines > 0) {
+              const numColors = ['', '#38bdf8', '#22c55e', '#eab308', '#ef4444', '#a855f7'];
+              ctx.fillStyle = numColors[cell.adjacentMines] || '#ffffff';
+              ctx.font = 'bold 18px monospace';
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillText(cell.adjacentMines.toString(), 0, 0);
+            }
+          }
+        } else if (cell.isFlagged) {
+          // Marcada por Drone
+          ctx.fillStyle = '#1e1b4b';
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#a855f7';
+          ctx.stroke();
+          drawIcon(0, 0, '🚩', 20);
+        } else {
+          // Célula Fechada
+          const grad = ctx.createLinearGradient(0, -size / 2, 0, size / 2);
+          grad.addColorStop(0, '#112240');
+          grad.addColorStop(1, '#0a192f');
+          ctx.fillStyle = grad;
+          ctx.fill();
+
+          ctx.lineWidth = isLeading ? 3 : 1.5;
+          ctx.strokeStyle = isLeading ? '#38bdf8' : 'rgba(6, 182, 212, 0.4)';
+          if (isLeading) {
+            ctx.shadowColor = '#06b6d4';
+            ctx.shadowBlur = 14;
+          }
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+
+          // Rótulo da Coordenada
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = 'bold 12px monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(cell.label, 0, -size * 0.1);
+
+          // Votos
+          if (cell.votes > 0) {
+            ctx.fillStyle = isLeading ? '#38bdf8' : '#64748b';
+            ctx.font = 'bold 10px monospace';
+            ctx.fillText(`+${cell.votes}`, 0, size * 0.28);
+          }
+        }
+
+        ctx.restore();
+      });
+    }
+
+    function drawIcon(x, y, emoji, fontSize) {
+      ctx.font = `${fontSize}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(emoji, x, y);
+    }
+
+    function drawParticles() {
+      ctx.save();
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8;
+        ctx.fill();
+      }
+      ctx.restore();
+      ctx.globalAlpha = 1.0;
+      ctx.shadowBlur = 0;
+    }
+
+    // --------------------------------------------------------------------------
+    // 5. Loop Principal e Lógica de Desarme
+    // --------------------------------------------------------------------------
+    let lastTime = performance.now();
+
+    function gameLoop(now) {
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+
+      // Tremor de tela
+      if (screenShake > 0) {
+        screenShake = Math.max(0, screenShake - dt * 25);
+        const stage = document.getElementById('game-stage');
+        const ox = (Math.random() - 0.5) * screenShake;
+        const oy = (Math.random() - 0.5) * screenShake;
+        stage.style.transform = `translate(${ox}px, ${oy}px)`;
+      }
+
+      if (!isGameOver) {
+        roundTimeRemaining = Math.max(0, roundTimeRemaining - dt);
+        document.getElementById('round-timer').textContent = roundTimeRemaining.toFixed(1) + 's';
+
+        turnTimeRemaining = Math.max(0, turnTimeRemaining - dt);
+        const turnPct = (turnTimeRemaining / TURN_DURATION) * 100;
+        document.getElementById('turn-bar-fill').style.width = turnPct + '%';
+
+        // Decaimento de Raio-X
+        cells.forEach(c => {
+          if (c.xRayGlow > 0) c.xRayGlow = Math.max(0, c.xRayGlow - dt * 0.2);
+        });
+
+        if (turnTimeRemaining <= 0) {
+          resolveTurn();
+          turnTimeRemaining = TURN_DURATION;
+        }
+
+        // Fim de Partida
+        if (roundTimeRemaining <= 0 || shieldsLeft <= 0 || safeCellsRevealed >= (TOTAL_CELLS - TOTAL_MINES)) {
+          triggerVictory();
+        }
+      }
+
+      drawBoard(now);
+      drawParticles();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // --------------------------------------------------------------------------
+    // 6. Resolução de Turno & Varredura em Cascata
+    // --------------------------------------------------------------------------
+    function resolveTurn() {
+      let targetIdx = leadingIndex;
+      if (targetIdx < 0 || cells[targetIdx].isRevealed || cells[targetIdx].isFlagged) {
+        const unrev = cells.filter(c => !c.isRevealed && !c.isFlagged);
+        if (unrev.length === 0) {
+          triggerVictory();
+          return;
+        }
+        targetIdx = unrev[Math.floor(Math.random() * unrev.length)].index;
+      }
+
+      const cell = cells[targetIdx];
+      revealCell(cell);
+
+      // Reset dos votos
+      cells.forEach(c => {
+        c.votes = 0;
+        c.voters = {};
+      });
+      leadingIndex = -1;
+      maxVotes = 0;
+    }
+
+    function revealCell(cell) {
+      if (cell.isRevealed || cell.isFlagged) return;
+
+      cell.isRevealed = true;
+      const { x, y, size } = cell.rect;
+      const cx = x + size / 2;
+      const cy = y + size / 2;
+
+      if (cell.isMine) {
+        shieldsLeft--;
+        document.getElementById('shields-count').textContent = `${shieldsLeft}/3`;
+        audio.playMineExplosion();
+        screenShake = 18;
+        spawnExplosionParticles(cx, cy, true);
+        pushActivityFeed(`💥 MINA DETONADA em ${cell.label}! Blindagem: ${shieldsLeft}/3`);
+
+        if (shieldsLeft <= 0) {
+          triggerVictory();
+        }
+      } else {
+        safeCellsRevealed++;
+        audio.playSafeReveal();
+        spawnExplosionParticles(cx, cy, false);
+        pushActivityFeed(`🛡️ ${cell.lastVoter || '@chat'} desarmou ${cell.label}! (${cell.adjacentMines} minas vizinhas)`);
+
+        // Cascata se for 0
+        if (cell.adjacentMines === 0) {
+          audio.playEmptySweep();
+          floodFillOpen(cell.row, cell.col);
+        }
+      }
+    }
+
+    function floodFillOpen(r, c) {
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          if (dr === 0 && dc === 0) continue;
+          const nr = r + dr;
+          const nc = c + dc;
+          if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
+            const neighbor = cells[nr * COLS + nc];
+            if (!neighbor.isRevealed && !neighbor.isMine && !neighbor.isFlagged) {
+              neighbor.isRevealed = true;
+              safeCellsRevealed++;
+              if (neighbor.adjacentMines === 0) {
+                floodFillOpen(nr, nc);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    function parseCoordinate(text) {
+      if (!text || typeof text !== 'string') return null;
+      const str = text.trim().toUpperCase();
+
+      // "A1" a "E5" ou "1A" a "5E"
+      const m1 = str.match(/(?:^|[^A-E0-9])([A-E])[\s\-\.,_:]*([1-5])(?:[^A-E0-9]|$)/);
+      if (m1) {
+        const r = m1[1].charCodeAt(0) - 65;
+        const c = parseInt(m1[2], 10) - 1;
+        return r * COLS + c;
+      }
+      const m2 = str.match(/(?:^|[^A-E0-9])([1-5])[\s\-\.,_:]*([A-E])(?:[^A-E0-9]|$)/);
+      if (m2) {
+        const c = parseInt(m2[1], 10) - 1;
+        const r = m2[2].charCodeAt(0) - 65;
+        return r * COLS + c;
+      }
+      return null;
+    }
+
+    function handleGameEvent(data) {
+      if (isGameOver) return;
+      audio.init();
+
+      const user = data.user || '@espectador';
+      const comment = (data.comment || '').trim();
+      const type = data.type || 'comment';
+      const giftName = data.giftName || null;
+      const value = data.value || 1;
+
+      if (type === 'gift') {
+        const isSuper = (giftName && giftName.toLowerCase().includes('lion')) || value >= 500;
+
+        if (isSuper) {
+          // Drone de Varredura: desativa todas as minas da linha do meio ou da mais perigosa
+          audio.playScannerDrone();
+          screenShake = 10;
+          let flaggedCount = 0;
+          cells.forEach(c => {
+            if (c.isMine && !c.isRevealed && !c.isFlagged && flaggedCount < 2) {
+              c.isFlagged = true;
+              flaggedCount++;
+            }
+          });
+          pushActivityFeed(`🦁 ${user} ATIVOU DRONE ORBITAL! ${flaggedCount} minas marcadas!`);
+        } else {
+          // Sensor Raio-X em 1 célula
+          let idx = parseCoordinate(comment);
+          if (idx === null || cells[idx].isRevealed) {
+            const unrev = cells.filter(c => !c.isRevealed);
+            idx = unrev.length > 0 ? unrev[Math.floor(Math.random() * unrev.length)].index : 0;
+          }
+          cells[idx].xRayGlow = 1.0;
+          audio.playSafeReveal();
+          pushActivityFeed(`✨ ${user} ativou SENSOR RAIO-X em ${cells[idx].label}!`);
+        }
+
+        const pts = participants.get(user) || 0;
+        participants.set(user, pts + (isSuper ? 1000 : 300));
+        return;
+      }
+
+      // Comentário normal com coordenada
+      const cellIdx = parseCoordinate(comment);
+      if (cellIdx !== null && !cells[cellIdx].isRevealed && !cells[cellIdx].isFlagged) {
+        const cell = cells[cellIdx];
+        cell.votes += 1;
+        cell.voters[user] = (cell.voters[user] || 0) + 1;
+        cell.lastVoter = user;
+
+        const pts = participants.get(user) || 0;
+        participants.set(user, pts + 50);
+
+        audio.playCellClick();
+
+        if (cell.votes > maxVotes) {
+          maxVotes = cell.votes;
+          leadingIndex = cellIdx;
+        }
+      }
+    }
+
+    function pushActivityFeed(text) {
+      const feed = document.getElementById('activity-feed');
+      const pill = document.createElement('div');
+      pill.className = 'feed-pill';
+      pill.textContent = text;
+      feed.appendChild(pill);
+      setTimeout(() => {
+        if (pill.parentNode) pill.parentNode.removeChild(pill);
+      }, 3500);
+    }
+
+    // --------------------------------------------------------------------------
+    // 7. Ciclo Fechado & Auto-Reset (5 Segundos)
+    // --------------------------------------------------------------------------
+    function triggerVictory() {
+      isGameOver = true;
+      audio.playVictoryFanfare();
+
+      const overlay = document.getElementById('victory-overlay');
+      const title = document.getElementById('winner-title');
+
+      if (shieldsLeft > 0) {
+        title.textContent = `CAMPO NEUTRALIZADO! (${safeCellsRevealed}/${TOTAL_CELLS - TOTAL_MINES})`;
+      } else {
+        title.textContent = 'BLINDAGEM ESGOTADA!';
+      }
+
+      // Ranking MVP
+      const sorted = Array.from(participants.entries()).map(([u, s]) => ({ user: u, score: s }));
+      sorted.sort((a, b) => b.score - a.score);
+
+      document.getElementById('mvp-1').textContent = sorted[0] ? `${sorted[0].user} (+${sorted[0].score} pts)` : '@especialista_tatico (+1600)';
+      document.getElementById('mvp-2').textContent = sorted[1] ? `${sorted[1].user} (+${sorted[1].score} pts)` : '@ciber_desarmador (+950)';
+      document.getElementById('mvp-3').textContent = sorted[2] ? `${sorted[2].user} (+${sorted[2].score} pts)` : '@sondador_neon (+500)';
+
+      overlay.style.display = 'flex';
+
+      let count = 5;
+      const counterEl = document.getElementById('reset-counter');
+      const timerInterval = setInterval(() => {
+        count--;
+        if (counterEl) counterEl.textContent = count;
+        if (count <= 0) {
+          clearInterval(timerInterval);
+          resetRound();
+        }
+      }, 1000);
+    }
+
+    function resetRound() {
+      roundTimeRemaining = MATCH_DURATION;
+      turnTimeRemaining = TURN_DURATION;
+      isGameOver = false;
+      screenShake = 0;
+      participants.clear();
+
+      initBoard();
+
+      document.getElementById('shields-count').textContent = '3/3';
+      document.getElementById('victory-overlay').style.display = 'none';
+      document.getElementById('activity-feed').innerHTML = '';
+      document.getElementById('turn-bar-fill').style.width = '100%';
+    }
+
+    // --------------------------------------------------------------------------
+    // 8. Motor Anti-Silêncio Orgânico
+    // --------------------------------------------------------------------------
+    const mockUsers = ['@cybersweeper', '@mine_hunter', '@neon_sapper', '@tactical_bot', '@matrix_defuser'];
+    const mockCoords = ['A1', 'B3', 'C2', 'D4', 'E5', 'B2', 'C4', 'D1'];
+
+    setInterval(() => {
+      if (isGameOver) return;
+      const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+      const randomCoord = mockCoords[Math.floor(Math.random() * mockCoords.length)];
+      handleGameEvent({
+        type: 'comment',
+        comment: randomCoord,
+        user: randomUser
+      });
+    }, 2400);
+
+    // --------------------------------------------------------------------------
+    // 9. Integração V5 Broadcaster & Debug Controls
+    // --------------------------------------------------------------------------
+    try {
+      const channel = new BroadcastChannel('v5_broadcaster_games');
+      channel.onmessage = (e) => handleGameEvent(e.data);
+    } catch (e) {
+      console.warn('BroadcastChannel offline:', e);
+    }
+
+    window.addEventListener('v5_event', (e) => {
+      if (e.detail) handleGameEvent(e.detail);
+    });
+
+    function toggleDebug(show) {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.style.display = (show !== undefined) ? (show ? 'flex' : 'none') : (drawer.style.display === 'flex' ? 'none' : 'flex');
+    }
+
+    function toggleDebugOnClick(e) {
+      if (e.detail === 3) toggleDebug();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') toggleDebug();
+    });
+
+    function sendMockCoord(coord) {
+      handleGameEvent({ type: 'comment', comment: coord, user: '@debug_player' });
+    }
+
+    function sendMockGift(giftName, val) {
+      handleGameEvent({ type: 'gift', giftName: giftName, value: val, user: '@doador_ouro' });
+    }
+
+    function resolveTurnNow() {
+      resolveTurn();
+    }
+
+    // Iniciar loop
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>
