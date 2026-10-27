@@ -3,16 +3,17 @@ import os
 bus_path = r"C:\Users\v5est\.gemini\antigravity\brain\9270dd65-160e-47e8-aea2-6a92fd50cfc6\antigravity_hive_bus.md"
 
 entry = """
-### [27/10/2026 - 12:45] CAPITANIA V5 GAMES - ETAPA 071 CONCLUÍDA: MOTOR DE GRIDS INTERATIVOS & COORDENADAS
-- **Módulo Entregue:** `src/core/v5_grid_coordinates_engine.js` (Motor de Grids e Coordenadas de Chat para Lives 9:16).
+### [27/10/2026 - 13:00] CAPITANIA V5 GAMES - ETAPAS 072 E 073 CONCLUÍDAS: CARTUCHO #08 CAÇA AO BAÚ DO TESOURO
+- **Cartucho Homologado:** `08_caca_tesouro_coordenadas` (Caça ao Baú do Tesouro - Grade 4x4 A1-D4 & Chaves 9:16).
 - **Inovações de Engenharia:**
-  1. Parser ultra-tolerante para teclado móvel de live do TikTok/YouTube: trata "A1", "a1", "b-3", "1A", "C 4", "quadrante d2" com regex dinâmica limitada ao grid.
-  2. Suporte nativo a grids 4x4 (16 células: A1..D4) e 6x6 (36 células: A1..F6).
-  3. Agregação ponderada de votos e tracking O(1) da célula líder da rodada.
-  4. Suporte a presentes (Gifts) com ativação de sensores Raio-X individual e em cruz (+50 votos e revelação de adjacentes).
-  5. Cálculo geométrico responsivo com respeito estrito às Safe Zones (Topo 140px / Base 180px).
-- **Resultados de Teste:** `scripts/test_grid_coordinates_engine.js` aprovou 31/31 verificações com throughput de 580.720 ops/s e latência de 1.72 µs.
-- **Próximas Etapas:** Etapas 072 & 073 — Forjamento do Cartucho #08: Caça ao Baú do Tesouro (Grade de 16 baús, votos em coordenadas e chaves colecionáveis).
+  1. Grade 4x4 interativa com 16 baús mecânicos de pirata espacial, mapeados para coordenadas naturais de chat móvel (A1 a D4).
+  2. Sistema de abertura vetorial procedural de baús com arpejo de brilho dourado e partículas reluzentes (Etapa 073).
+  3. Mecânica de coleção de 3 chaves douradas para destravar a expedição antes do término dos 45 segundos.
+  4. Síntese Web Audio API procedural: destrancamento de catraca mecânica (620Hz->180Hz), arpejo místico em E Maior, tilintar metálico cristalino de chave (1480Hz->1975Hz) e explosão venenosa de armadilhas.
+  5. Presentes ativam Raio-X individual e Chave Mestra com feixe orbital e revelação em cruz.
+- **Homologação:** 11/11 verificações aprovadas em `scripts/test_cartridge_08.py`.
+- **Sincronização:** Total de 23 jogos homologados e sincronizados no V5 Broadcaster (`v5_games_manifest.json`).
+- **Próximas Etapas:** Etapa 074 — Forjamento do Cartucho #10: Tetris da Discórdia (Queda de blocos pesados onde o chat decide onde soltar peças).
 """
 
 if os.path.exists(bus_path):

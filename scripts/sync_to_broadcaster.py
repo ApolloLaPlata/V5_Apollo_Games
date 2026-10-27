@@ -72,6 +72,14 @@ GAME_METADATA = {
         "status": "HOMOLOGADO",
         "version": "1.0.0"
     },
+    "08_caca_tesouro_coordenadas": {
+        "name": "Caça ao Baú do Tesouro",
+        "category": "tabuleiro_coordenadas",
+        "description": "Grade 4x4 de 16 baús mecânicos; o chat vota em coordenadas A1-D4 para desarmar armadilhas, coletar 3 chaves douradas e achar o grande tesouro",
+        "commands": ["A1", "B2", "C3", "D4", "coordenadas"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
+    },
     "09_tsunami_de_curtidas": {
         "name": "Tsunami de Curtidas",
         "category": "polarizacao",

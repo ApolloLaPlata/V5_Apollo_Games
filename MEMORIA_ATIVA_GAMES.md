@@ -32,7 +32,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | **05** | `05_roleta_desafios_live` | Roleta dos Desafios da Live | Roleta determinística com palheta mecânica clicante, customizador de fatias e super-giros | **HOMOLOGADO** |
 | **06** | `06_batalha_dos_baloes` | Estouro de Balão | Dois lados inflando balões colossais com física elástica até o estouro | **HOMOLOGADO** |
 | **07** | `07_pendulo_destruidor` | Pêndulo da Demolição | Chat ajusta o ângulo do pêndulo para derrubar a torre adversária com física pendular e super gifts | **HOMOLOGADO** |
-| **08** | `08_caca_tesouro_coordenadas` | Caça ao Baú de Ouro | Chat escolhe quadrantes (A1 a D4) para desarmar bombas e achar o baú | Planejado |
+| **08** | `08_caca_tesouro_coordenadas` | Caça ao Baú de Ouro | Grade 4x4 de 16 baús (A1-D4); chat vota coordenadas, coleta 3 chaves douradas e desvia de armadilhas | **HOMOLOGADO** |
 | **09** | `09_tsunami_de_curtidas` | Tsunami de Likes | Disputa frenética de maré e pressão hidráulica, micro-ondas de choque e alarme de inundação | **HOMOLOGADO** |
 | **10** | `10_queda_dos_blocos` | Tetris da Discórdia | Chat decide onde soltar blocos pesados para esmagar os inimigos | Planejado |
 | **11** | `11_queda_de_braco_titas` | Queda de Braço dos Titãs | Braços cibernéticos com indicador de torque pilotados por votos e overdrive de gifts | **HOMOLOGADO** |
@@ -88,8 +88,9 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/test_racing_cartridges.py`: Valida 100% das 5 Leis Absolutas para os 3 cartuchos de corrida (34/34 checks).
 - `scripts/test_cartridge_21.py`: Validação automatizada do Cartucho #21 (11/11 checks aprovados).
 - `scripts/test_cartridge_22.py`: Validação automatizada do Cartucho #22 (11/11 checks aprovados).
+- `scripts/test_cartridge_08.py`: Validação automatizada do Cartucho #08 (11/11 checks aprovados).
 - `scripts/test_cartridge_23.py`: Validação automatizada do Cartucho #23 (11/11 checks aprovados).
 - `scripts/test_tension_balance.js`: Simulação Monte Carlo (10.000 rodadas) de balanceamento da curva de adrenalina e tempo dos 4 cartuchos de eliminação (100% aprovado).
 - `scripts/test_elimination_cartridges.py`: Suíte de homologação formal das 5 Leis Absolutas para os 4 cartuchos de eliminação (33/33 checks aprovados).
 - `scripts/test_grid_coordinates_engine.js`: Validação de parsing tolerante, grids 4x4/6x6, Raio-X de Gifts e benchmark de performance (31/31 checks aprovados, 580k ops/s).
-- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 22 cartuchos ativos).
+- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 23 cartuchos ativos).

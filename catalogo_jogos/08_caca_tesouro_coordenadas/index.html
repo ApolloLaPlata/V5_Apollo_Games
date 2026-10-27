@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Caça ao Baú do Tesouro (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #040810;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 30%, #151025 0%, #0a0614 60%, #030206 100%);
+      border: 1px solid rgba(234, 179, 8, 0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(234, 179, 8, 0.2);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Vinheta de Atmosfera Mística */
+    #ambient-vignette {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.85);
+      z-index: 2;
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 14px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(10, 6, 20, 0.98) 0%, rgba(10, 6, 20, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #eab308;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #eab308;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #eab308;
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .keys-hud-badge {
+      background: rgba(234, 179, 8, 0.15);
+      border: 1px solid rgba(234, 179, 8, 0.6);
+      color: #fef08a;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* HUD de Status e Temporizador */
+    .treasure-hud {
+      width: 100%;
+      background: rgba(26, 16, 44, 0.85);
+      border: 1px solid rgba(234, 179, 8, 0.4);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .hud-status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hud-title {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #fef9c3;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .round-timer {
+      font-size: 13px;
+      font-weight: 900;
+      color: #fbbf24;
+      font-family: monospace;
+    }
+
+    .turn-bar-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 3px;
+      overflow: hidden;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      position: relative;
+    }
+
+    .turn-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #ca8a04, #eab308, #fef08a);
+      box-shadow: 0 0 10px #eab308;
+      transition: width 0.1s linear;
+    }
+
+    /* Canvas Central 9:16 */
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 10px 14px 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(8, 4, 16, 0.98) 0%, rgba(8, 4, 16, 0.85) 75%, rgba(8, 4, 16, 0) 100%);
+    }
+
+    /* Painel de Coordenadas de Digitação Rápida */
+    .coords-helper-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(22, 14, 38, 0.7);
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      border-radius: 8px;
+      padding: 6px 10px;
+    }
+
+    .coords-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #fef08a;
+      letter-spacing: 0.5px;
+    }
+
+    .coords-chips {
+      display: flex;
+      gap: 5px;
+    }
+
+    .coord-chip {
+      background: rgba(234, 179, 8, 0.2);
+      border: 1px solid rgba(234, 179, 8, 0.5);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      font-family: monospace;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    /* Banner de Presentes / Gift CTA */
+    .gift-cta-banner {
+      background: linear-gradient(90deg, rgba(234, 179, 8, 0.2) 0%, rgba(168, 85, 247, 0.25) 50%, rgba(234, 179, 8, 0.2) 100%);
+      border: 1px solid rgba(234, 179, 8, 0.5);
+      border-radius: 10px;
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 15px rgba(234, 179, 8, 0.2);
+    }
+
+    .gift-info {
+      font-size: 11px;
+      font-weight: 800;
+      color: #fef9c3;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .gift-badge {
+      background: #eab308;
+      color: #000;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Feed Flutuante de Descobertas */
+    .activity-feed {
+      position: absolute;
+      top: 155px;
+      left: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      z-index: 5;
+      pointer-events: none;
+      max-width: 240px;
+    }
+
+    .feed-pill {
+      background: rgba(14, 8, 26, 0.9);
+      border: 1px solid rgba(234, 179, 8, 0.5);
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+      animation: fadeSlide 3.5s forwards;
+    }
+
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(-10px); }
+      10% { opacity: 1; transform: translateY(0); }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
+
+    /* Overlay de Vitória & Fim de Rodada (5s) */
+    #victory-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(8, 4, 18, 0.94);
+      backdrop-filter: blur(12px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      z-index: 100;
+      text-align: center;
+      padding: 24px;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .victory-badge {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #fde047;
+      text-transform: uppercase;
+    }
+
+    .victory-title {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #ffffff;
+      text-shadow: 0 0 25px rgba(234, 179, 8, 0.8);
+    }
+
+    .victory-podium {
+      width: 100%;
+      background: rgba(28, 18, 48, 0.7);
+      border: 1px solid rgba(234, 179, 8, 0.4);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .podium-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .podium-gold { border-left: 4px solid #eab308; color: #fde047; }
+    .podium-silver { border-left: 4px solid #94a3b8; color: #e2e8f0; }
+    .podium-bronze { border-left: 4px solid #b45309; color: #fdba74; }
+
+    .victory-countdown {
+      font-size: 12px;
+      color: #fbbf24;
+      font-weight: 700;
+      font-family: monospace;
+    }
+
+    /* Gaveta de Testes / Debug Panel */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(12, 6, 24, 0.95);
+      border-top: 1px solid #eab308;
+      padding: 10px 14px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 200;
+      backdrop-filter: blur(8px);
+    }
+
+    .debug-title {
+      font-size: 11px;
+      font-weight: 900;
+      color: #eab308;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .debug-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .debug-btn {
+      background: rgba(234, 179, 8, 0.2);
+      border: 1px solid rgba(234, 179, 8, 0.5);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .debug-btn:active {
+      transform: scale(0.95);
+      background: rgba(234, 179, 8, 0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Vinheta de Atmosfera -->
+    <div id="ambient-vignette"></div>
+
+    <!-- Feed Flutuante de Descobertas -->
+    <div class="activity-feed" id="activity-feed"></div>
+
+    <!-- Top Safe Zone (140px) -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <span class="live-dot"></span>
+          V5 LIVE PIRATE TEMPLE
+        </div>
+        <div class="keys-hud-badge">
+          🔑 CHAVES: <span id="keys-count">0/3</span>
+        </div>
+      </div>
+
+      <div class="treasure-hud">
+        <div class="hud-status-row">
+          <span class="hud-title">🏆 CAÇA AO BAÚ DO TESOURO</span>
+          <span class="round-timer" id="round-timer">45.0s</span>
+        </div>
+        <div class="turn-bar-track">
+          <div class="turn-bar-fill" id="turn-bar-fill"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central de Física & Renderização (Canvas 2D) -->
+    <div id="canvas-container">
+      <canvas id="game-canvas"></canvas>
+    </div>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <footer class="bottom-panel" id="bottom-panel" onclick="toggleDebugOnClick(event)">
+      <div class="coords-helper-row">
+        <span class="coords-label">DIGITE A COORDENADA:</span>
+        <div class="coords-chips">
+          <span class="coord-chip">A1</span>
+          <span class="coord-chip">B2</span>
+          <span class="coord-chip">C3</span>
+          <span class="coord-chip">D4</span>
+        </div>
+      </div>
+
+      <div class="gift-cta-banner">
+        <div class="gift-info">
+          <span class="gift-badge">GIFT</span>
+          <span>ROSA (Raio-X Dourado) | LEÃO (Chave Mestra Orbital)</span>
+        </div>
+        <div style="font-size: 11px; font-weight: 800; color: #fbbf24; font-family: monospace;">
+          'D' (Debug)
+        </div>
+      </div>
+    </footer>
+
+    <!-- Overlay de Vitória & Ciclo Fechado 5s -->
+    <div id="victory-overlay">
+      <span class="victory-badge">TEMPLO CONQUISTADO!</span>
+      <h1 class="victory-title" id="winner-title">TESOURO REVELADO!</h1>
+      <div class="victory-podium">
+        <div class="podium-row podium-gold">
+          <span>🥇 1º Lugar</span>
+          <span id="mvp-1">@explorador_ouro (+1500)</span>
+        </div>
+        <div class="podium-row podium-silver">
+          <span>🥈 2º Lugar</span>
+          <span id="mvp-2">@mestre_das_chaves (+900)</span>
+        </div>
+        <div class="podium-row podium-bronze">
+          <span>🥉 3º Lugar</span>
+          <span id="mvp-3">@cacador_neon (+450)</span>
+        </div>
+      </div>
+      <span class="victory-countdown">REINICIANDO NOVA PARTIDA EM <span id="reset-counter">5</span>s...</span>
+    </div>
+
+    <!-- Gaveta de Teste Local / Debug Drawer -->
+    <div id="debug-drawer">
+      <div class="debug-title">
+        <span>PAINEL DE TESTES DE COORDENADAS (TECLA D)</span>
+        <span onclick="toggleDebug(false)" style="cursor: pointer;">✕</span>
+      </div>
+      <div class="debug-buttons">
+        <button class="debug-btn" onclick="sendMockCoord('A1')">Votar A1</button>
+        <button class="debug-btn" onclick="sendMockCoord('B2')">Votar B2</button>
+        <button class="debug-btn" onclick="sendMockCoord('C3')">Votar C3</button>
+        <button class="debug-btn" onclick="sendMockCoord('D4')">Votar D4</button>
+      </div>
+      <div class="debug-buttons" style="margin-top: 4px;">
+        <button class="debug-btn" style="border-color: #fde047; color: #fde047;" onclick="sendMockGift('Rose', 10)">Gift Rosa (Raio-X)</button>
+        <button class="debug-btn" style="border-color: #a855f7; color: #d8b4fe;" onclick="sendMockGift('Lion', 500)">Gift Leão (Chave Mestra)</button>
+        <button class="debug-btn" style="border-color: #38bdf8; color: #7dd3fc;" onclick="resolveTurnNow()">Abrir Mais Votado</button>
+        <button class="debug-btn" style="border-color: #ef4444; color: #fca5a5;" onclick="resetMatch()">Reset Forçado</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE GAMES — CARTUCHO #08: CAÇA AO BAÚ DO TESOURO (9:16 VERTICAL)
+       Arquitetura: Web Audio Procedural + Grade 4x4 + Brilho Dourado e Chaves
+       ========================================================================== */
+
+    // --------------------------------------------------------------------------
+    // 1. Sintetizador de Áudio Procedural (Web Audio API - Etapa 073)
+    // --------------------------------------------------------------------------
+    class TreasureAudioSynth {
+      constructor() {
+        this.ctx = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Som mecânico de catraca e fechadura girando ao destrancar o baú
+      playChestUnlock() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const clicks = [0, 0.06, 0.12];
+
+        clicks.forEach(dt => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(620 + Math.random() * 80, now + dt);
+          osc.frequency.exponentialRampToValueAtTime(180, now + dt + 0.04);
+
+          gain.gain.setValueAtTime(0.25, now + dt);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + dt + 0.04);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + dt);
+          osc.stop(now + dt + 0.045);
+        });
+      }
+
+      // Efeito sonoro procedural de brilho dourado e revelação mística (Etapa 073)
+      playGoldenShine() {
+        if (!this.ctx) return;
+        const notes = [659.25, 880.00, 1046.50, 1318.51, 1567.98]; // Arpejo cintilante em E Maior
+        notes.forEach((freq, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.07);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now);
+
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.55);
+        });
+      }
+
+      // Tilintar metálico brilhante de chave colecionável encontrada
+      playKeyCollect() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1480, now);
+        osc.frequency.exponentialRampToValueAtTime(1975, now + 0.22);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.36);
+      }
+
+      // Detonação de armadilha venenosa / fumaça roxa
+      playTrapPoison() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+
+        // Sub grave de estouro
+        const osc = this.ctx.createOscillator();
+        const oscGain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(120, now);
+        osc.frequency.exponentialRampToValueAtTime(35, now + 0.4);
+
+        oscGain.gain.setValueAtTime(0.35, now);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+        osc.connect(oscGain);
+        oscGain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.46);
+
+        // Chiado sufocante de veneno
+        const bufferSize = this.ctx.sampleRate * 0.35;
+        const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = noiseBuffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(800, now);
+        filter.Q.setValueAtTime(2.0, now);
+
+        const noiseGain = this.ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.25, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(this.ctx.destination);
+        noise.start(now);
+        noise.stop(now + 0.36);
+      }
+
+      // Fanfarra triunfante de conclusão
+      playVictoryFanfare() {
+        if (!this.ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+        notes.forEach((freq, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.12);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+
+          gain.gain.setValueAtTime(0.28, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.85);
+        });
+      }
+    }
+
+    const audio = new TreasureAudioSynth();
+
+    // --------------------------------------------------------------------------
+    // 2. Parâmetros e Estado da Grade 4x4 (16 Baús)
+    // --------------------------------------------------------------------------
+    const ROWS = 4;
+    const COLS = 4;
+    const TOTAL_CELLS = 16;
+    const ROW_LETTERS = ['A', 'B', 'C', 'D'];
+    const TURN_DURATION = 7.0; // 7 segundos para acumular votos por baú
+    const MATCH_DURATION = 45.0;
+
+    let roundTimeRemaining = MATCH_DURATION;
+    let turnTimeRemaining = TURN_DURATION;
+    let isGameOver = false;
+    let keysFound = 0;
+    let treasuresFound = 0;
+    let screenShake = 0;
+
+    // Tipos de Conteúdo
+    const CONTENT_TYPE = {
+      EMPTY: 0,
+      TREASURE: 1,
+      TRAP: 2,
+      KEY: 3
+    };
+
+    // Estrutura de Células
+    let cells = [];
+    let leadingIndex = -1;
+    let maxVotes = 0;
+    const participants = new Map();
+
+    function initChests() {
+      cells = [];
+      leadingIndex = -1;
+      maxVotes = 0;
+      keysFound = 0;
+      treasuresFound = 0;
+
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const index = r * COLS + c;
+          const label = `${ROW_LETTERS[r]}${c + 1}`;
+          cells.push({
+            index: index,
+            row: r,
+            col: c,
+            label: label,
+            isRevealed: false,
+            content: CONTENT_TYPE.EMPTY,
+            votes: 0,
+            voters: {},
+            lastVoter: null,
+            openProgress: 0.0, // Animação de tampa (0.0 a 1.0)
+            xRayGlow: 0.0,     // Brilho de Raio-X por presente
+            rect: { x: 0, y: 0, width: 0, height: 0 }
+          });
+        }
+      }
+
+      // Distribuição aleatória de conteúdos nos 16 baús:
+      // 3 Chaves Douradas (Etapa 073), 2 Grandes Tesouros, 3 Armadilhas, 8 Baús Comuns
+      const indices = Array.from({ length: TOTAL_CELLS }, (_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+
+      for (let k = 0; k < 3; k++) cells[indices[k]].content = CONTENT_TYPE.KEY;
+      for (let t = 3; t < 5; t++) cells[indices[t]].content = CONTENT_TYPE.TREASURE;
+      for (let tr = 5; tr < 8; tr++) cells[indices[tr]].content = CONTENT_TYPE.TRAP;
+    }
+
+    initChests();
+
+    // --------------------------------------------------------------------------
+    // 3. Sistema de Partículas de Brilho Dourado (Etapa 073)
+    // --------------------------------------------------------------------------
+    const particles = [];
+    const MAX_PARTICLES = 140;
+
+    function spawnGoldenShineParticles(x, y, isTreasure = true) {
+      const count = isTreasure ? 35 : 18;
+      for (let i = 0; i < count; i++) {
+        if (particles.length >= MAX_PARTICLES) particles.shift();
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1.5 + Math.random() * 4.5;
+        particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 1.2,
+          size: 2 + Math.random() * 4,
+          alpha: 1.0,
+          decay: 0.012 + Math.random() * 0.018,
+          color: isTreasure
+            ? (Math.random() > 0.3 ? '#fde047' : '#f59e0b')
+            : (Math.random() > 0.4 ? '#c084fc' : '#a855f7') // Fumaça venenosa de armadilha
+        });
+      }
+    }
+
+    // --------------------------------------------------------------------------
+    // 4. Renderização Canvas 2D da Grade e Animações de Baús
+    // --------------------------------------------------------------------------
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+    let width = 0, height = 0;
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      width = rect.width;
+      height = rect.height;
+      canvas.width = width * window.devicePixelRatio;
+      canvas.height = height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function computeGridLayout() {
+      const safeTop = 140;
+      const safeBottom = 180;
+      const gap = 10;
+      const availW = width * 0.90;
+      const availH = height - safeTop - safeBottom;
+
+      const cellSize = Math.min((availW - (COLS - 1) * gap) / COLS, (availH - (ROWS - 1) * gap) / ROWS);
+      const totalW = COLS * cellSize + (COLS - 1) * gap;
+      const totalH = ROWS * cellSize + (ROWS - 1) * gap;
+
+      const startX = (width - totalW) / 2;
+      const startY = safeTop + (availH - totalH) / 2;
+
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const idx = r * COLS + c;
+          cells[idx].rect = {
+            x: startX + c * (cellSize + gap),
+            y: startY + r * (cellSize + gap),
+            size: cellSize
+          };
+        }
+      }
+    }
+
+    function drawGrid(now) {
+      computeGridLayout();
+
+      // Fundo sutil com runas cibernéticas
+      ctx.fillStyle = '#06030c';
+      ctx.fillRect(0, 0, width, height);
+
+      cells.forEach(cell => {
+        const { x, y, size } = cell.rect;
+        const isLeading = cell.index === leadingIndex && !cell.isRevealed;
+
+        ctx.save();
+        ctx.translate(x + size / 2, y + size / 2);
+
+        // Brilho de Raio-X de Gift
+        if (cell.xRayGlow > 0 && !cell.isRevealed) {
+          ctx.beginPath();
+          ctx.arc(0, 0, size * 0.65, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(234, 179, 8, ${cell.xRayGlow * 0.35})`;
+          ctx.fill();
+        }
+
+        // Borda e Corpo do Baú
+        ctx.beginPath();
+        ctx.roundRect(-size / 2, -size / 2, size, size, 12);
+
+        if (cell.isRevealed) {
+          // Baú já aberto
+          ctx.fillStyle = '#171123';
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#475569';
+          ctx.stroke();
+
+          // Desenho do Conteúdo Revelado
+          if (cell.content === CONTENT_TYPE.TREASURE) {
+            drawIcon(0, 0, '💎', 26);
+            ctx.fillStyle = '#fde047';
+            ctx.font = 'bold 11px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('TESOURO!', 0, size * 0.34);
+          } else if (cell.content === CONTENT_TYPE.KEY) {
+            drawIcon(0, 0, '🔑', 26);
+            ctx.fillStyle = '#fef08a';
+            ctx.font = 'bold 11px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('CHAVE!', 0, size * 0.34);
+          } else if (cell.content === CONTENT_TYPE.TRAP) {
+            drawIcon(0, 0, '💣', 26);
+            ctx.fillStyle = '#ef4444';
+            ctx.font = 'bold 11px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('ARMADILHA', 0, size * 0.34);
+          } else {
+            drawIcon(0, 0, '🪙', 22);
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = 'bold 10px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('VAZIO', 0, size * 0.34);
+          }
+        } else {
+          // Baú Fechado
+          const grad = ctx.createLinearGradient(0, -size / 2, 0, size / 2);
+          grad.addColorStop(0, '#2e1e48');
+          grad.addColorStop(1, '#160c24');
+          ctx.fillStyle = grad;
+          ctx.fill();
+
+          ctx.lineWidth = isLeading ? 3.5 : 2;
+          ctx.strokeStyle = isLeading ? '#fde047' : 'rgba(234, 179, 8, 0.4)';
+          if (isLeading) {
+            ctx.shadowColor = '#eab308';
+            ctx.shadowBlur = 16;
+          }
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+
+          // Desenho do Ícone do Baú Fechado
+          drawIcon(0, -size * 0.1, '📦', 26);
+
+          // Rótulo da Coordenada (ex: A1, B3)
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 14px monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(cell.label, 0, size * 0.3);
+
+          // Badge de Votos Acumulados
+          if (cell.votes > 0) {
+            ctx.fillStyle = isLeading ? '#eab308' : '#cbd5e1';
+            ctx.font = 'bold 11px monospace';
+            ctx.fillText(`+${cell.votes}`, 0, size * 0.45);
+          }
+        }
+
+        ctx.restore();
+      });
+    }
+
+    function drawIcon(x, y, emoji, fontSize) {
+      ctx.font = `${fontSize}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(emoji, x, y);
+    }
+
+    function drawParticles() {
+      ctx.save();
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 10;
+        ctx.fill();
+      }
+      ctx.restore();
+      ctx.globalAlpha = 1.0;
+      ctx.shadowBlur = 0;
+    }
+
+    // --------------------------------------------------------------------------
+    // 5. Loop Principal de Física e Resolução de Turnos
+    // --------------------------------------------------------------------------
+    let lastTime = performance.now();
+
+    function gameLoop(now) {
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+
+      // Tremor de tela
+      if (screenShake > 0) {
+        screenShake = Math.max(0, screenShake - dt * 25);
+        const stage = document.getElementById('game-stage');
+        const ox = (Math.random() - 0.5) * screenShake;
+        const oy = (Math.random() - 0.5) * screenShake;
+        stage.style.transform = `translate(${ox}px, ${oy}px)`;
+      }
+
+      if (!isGameOver) {
+        // Cronômetro da Partida
+        roundTimeRemaining = Math.max(0, roundTimeRemaining - dt);
+        document.getElementById('round-timer').textContent = roundTimeRemaining.toFixed(1) + 's';
+
+        // Cronômetro do Turno de Votos
+        turnTimeRemaining = Math.max(0, turnTimeRemaining - dt);
+        const turnPct = (turnTimeRemaining / TURN_DURATION) * 100;
+        document.getElementById('turn-bar-fill').style.width = turnPct + '%';
+
+        // Decaimento de Raio-X
+        cells.forEach(c => {
+          if (c.xRayGlow > 0) c.xRayGlow = Math.max(0, c.xRayGlow - dt * 0.2);
+        });
+
+        // Quando o cronômetro do turno atinge 0, abre o baú líder
+        if (turnTimeRemaining <= 0) {
+          resolveTurn();
+          turnTimeRemaining = TURN_DURATION;
+        }
+
+        // Fim de Partida
+        if (roundTimeRemaining <= 0 || keysFound >= 3) {
+          triggerVictory();
+        }
+      }
+
+      drawGrid(now);
+      drawParticles();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // --------------------------------------------------------------------------
+    // 6. Resolução de Baús e Processamento de Votos
+    // --------------------------------------------------------------------------
+    function resolveTurn() {
+      // Se ninguém votou, escolhe um baú fechado aleatório
+      let targetIdx = leadingIndex;
+      if (targetIdx < 0 || cells[targetIdx].isRevealed) {
+        const unrevealed = cells.filter(c => !c.isRevealed);
+        if (unrevealed.length === 0) {
+          triggerVictory();
+          return;
+        }
+        targetIdx = unrevealed[Math.floor(Math.random() * unrevealed.length)].index;
+      }
+
+      const cell = cells[targetIdx];
+      cell.isRevealed = true;
+      audio.init();
+      audio.playChestUnlock();
+
+      const { x, y, size } = cell.rect;
+      const centerX = x + size / 2;
+      const centerY = y + size / 2;
+
+      // Revelação e efeitos
+      if (cell.content === CONTENT_TYPE.TREASURE) {
+        treasuresFound++;
+        audio.playGoldenShine();
+        screenShake = 12;
+        spawnGoldenShineParticles(centerX, centerY, true);
+        pushActivityFeed(`💎 ${cell.lastVoter || '@chat'} ACHOU O GRANDE TESOURO em ${cell.label}!`);
+      } else if (cell.content === CONTENT_TYPE.KEY) {
+        keysFound++;
+        document.getElementById('keys-count').textContent = `${keysFound}/3`;
+        audio.playKeyCollect();
+        spawnGoldenShineParticles(centerX, centerY, true);
+        pushActivityFeed(`🔑 ${cell.lastVoter || '@chat'} ENCONTROU UMA CHAVE em ${cell.label}!`);
+      } else if (cell.content === CONTENT_TYPE.TRAP) {
+        audio.playTrapPoison();
+        screenShake = 15;
+        spawnGoldenShineParticles(centerX, centerY, false);
+        pushActivityFeed(`💣 ${cell.lastVoter || '@chat'} ATIVOU UMA ARMADILHA em ${cell.label}!`);
+      } else {
+        pushActivityFeed(`📦 Baú ${cell.label} continha apenas relíquias vazias.`);
+      }
+
+      // Reset dos votos para a próxima rodada
+      cells.forEach(c => {
+        c.votes = 0;
+        c.voters = {};
+      });
+      leadingIndex = -1;
+      maxVotes = 0;
+    }
+
+    function parseCoordinate(text) {
+      if (!text || typeof text !== 'string') return null;
+      const str = text.trim().toUpperCase();
+
+      // "A1" a "D4" ou "1A" a "4D"
+      const m1 = str.match(/(?:^|[^A-D0-9])([A-D])[\s\-\.,_:]*([1-4])(?:[^A-D0-9]|$)/);
+      if (m1) {
+        const r = m1[1].charCodeAt(0) - 65;
+        const c = parseInt(m1[2], 10) - 1;
+        return r * COLS + c;
+      }
+      const m2 = str.match(/(?:^|[^A-D0-9])([1-4])[\s\-\.,_:]*([A-D])(?:[^A-D0-9]|$)/);
+      if (m2) {
+        const c = parseInt(m2[1], 10) - 1;
+        const r = m2[2].charCodeAt(0) - 65;
+        return r * COLS + c;
+      }
+      return null;
+    }
+
+    function handleGameEvent(data) {
+      if (isGameOver) return;
+      audio.init();
+
+      const user = data.user || '@espectador';
+      const comment = (data.comment || '').trim();
+      const type = data.type || 'comment';
+      const giftName = data.giftName || null;
+      const value = data.value || 1;
+
+      if (type === 'gift') {
+        const isSuper = (giftName && giftName.toLowerCase().includes('lion')) || value >= 500;
+        const weight = isSuper ? 50 : 15;
+
+        // Se tem coordenada no comment
+        let idx = parseCoordinate(comment);
+        if (idx === null || cells[idx].isRevealed) {
+          idx = leadingIndex >= 0 ? leadingIndex : getUnrevealedRandomIndex();
+        }
+
+        if (idx !== null) {
+          applyVote(idx, user, weight);
+          cells[idx].xRayGlow = 1.0;
+          if (isSuper) {
+            // Raio-X em cruz
+            applyCrossXRay(idx);
+          }
+          pushActivityFeed(`✨ ${user} enviou ${giftName || 'Gift'}! RAIO-X ativado em ${cells[idx].label}!`);
+        }
+        return;
+      }
+
+      // Comentário
+      const cellIdx = parseCoordinate(comment);
+      if (cellIdx !== null && !cells[cellIdx].isRevealed) {
+        applyVote(cellIdx, user, 1);
+      }
+    }
+
+    function applyVote(idx, user, weight) {
+      const cell = cells[idx];
+      cell.votes += weight;
+      cell.voters[user] = (cell.voters[user] || 0) + weight;
+      cell.lastVoter = user;
+
+      // Ranking
+      const pts = participants.get(user) || 0;
+      participants.set(user, pts + weight * 20);
+
+      // Líder
+      if (cell.votes > maxVotes) {
+        maxVotes = cell.votes;
+        leadingIndex = idx;
+      }
+    }
+
+    function applyCrossXRay(idx) {
+      const r = Math.floor(idx / COLS);
+      const c = idx % COLS;
+      const neighbors = [
+        { r: r - 1, c: c }, { r: r + 1, c: c },
+        { r: r, c: c - 1 }, { r: r, c: c + 1 }
+      ];
+      neighbors.forEach(n => {
+        if (n.r >= 0 && n.r < ROWS && n.c >= 0 && n.c < COLS) {
+          const neighborIdx = n.r * COLS + n.c;
+          cells[neighborIdx].xRayGlow = Math.max(cells[neighborIdx].xRayGlow, 0.7);
+        }
+      });
+    }
+
+    function getUnrevealedRandomIndex() {
+      const unrevealed = cells.filter(c => !c.isRevealed);
+      if (unrevealed.length === 0) return 0;
+      return unrevealed[Math.floor(Math.random() * unrevealed.length)].index;
+    }
+
+    function pushActivityFeed(text) {
+      const feed = document.getElementById('activity-feed');
+      const pill = document.createElement('div');
+      pill.className = 'feed-pill';
+      pill.textContent = text;
+      feed.appendChild(pill);
+      setTimeout(() => {
+        if (pill.parentNode) pill.parentNode.removeChild(pill);
+      }, 3500);
+    }
+
+    // --------------------------------------------------------------------------
+    // 7. Ciclo Fechado & Auto-Reset (5 Segundos)
+    // --------------------------------------------------------------------------
+    function triggerVictory() {
+      isGameOver = true;
+      audio.playVictoryFanfare();
+
+      const overlay = document.getElementById('victory-overlay');
+      const title = document.getElementById('winner-title');
+
+      if (keysFound >= 3) {
+        title.textContent = 'TODAS AS 3 CHAVES COLETADAS!';
+      } else {
+        title.textContent = `EXPEDIÇÃO FINALIZADA! (${keysFound} Chaves)`;
+      }
+
+      // Ranking MVP
+      const sorted = Array.from(participants.entries()).map(([u, s]) => ({ user: u, score: s }));
+      sorted.sort((a, b) => b.score - a.score);
+
+      document.getElementById('mvp-1').textContent = sorted[0] ? `${sorted[0].user} (+${sorted[0].score} pts)` : '@mestre_ouro (+1500)';
+      document.getElementById('mvp-2').textContent = sorted[1] ? `${sorted[1].user} (+${sorted[1].score} pts)` : '@cacador_chaves (+900)';
+      document.getElementById('mvp-3').textContent = sorted[2] ? `${sorted[2].user} (+${sorted[2].score} pts)` : '@explorador_neon (+450)';
+
+      overlay.style.display = 'flex';
+
+      let count = 5;
+      const counterEl = document.getElementById('reset-counter');
+      const timerInterval = setInterval(() => {
+        count--;
+        if (counterEl) counterEl.textContent = count;
+        if (count <= 0) {
+          clearInterval(timerInterval);
+          resetMatch();
+        }
+      }, 1000);
+    }
+
+    function resetMatch() {
+      roundTimeRemaining = MATCH_DURATION;
+      turnTimeRemaining = TURN_DURATION;
+      isGameOver = false;
+      screenShake = 0;
+      participants.clear();
+
+      initChests();
+
+      document.getElementById('keys-count').textContent = '0/3';
+      document.getElementById('victory-overlay').style.display = 'none';
+      document.getElementById('activity-feed').innerHTML = '';
+      document.getElementById('turn-bar-fill').style.width = '100%';
+    }
+
+    // --------------------------------------------------------------------------
+    // 8. Motor Anti-Silêncio Orgânico
+    // --------------------------------------------------------------------------
+    const mockUsers = ['@pirata_neon', '@cacador_tesouros', '@cyber_gold', '@mapa_vivo', '@arqueologo_live'];
+    const mockCoords = ['A1', 'B2', 'C3', 'D4', 'A4', 'B1', 'C2', 'D3'];
+
+    setInterval(() => {
+      if (isGameOver) return;
+      const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+      const randomCoord = mockCoords[Math.floor(Math.random() * mockCoords.length)];
+      handleGameEvent({
+        type: 'comment',
+        comment: randomCoord,
+        user: randomUser
+      });
+    }, 2500);
+
+    // --------------------------------------------------------------------------
+    // 9. Integração V5 Broadcaster & Debug Controls
+    // --------------------------------------------------------------------------
+    try {
+      const channel = new BroadcastChannel('v5_broadcaster_games');
+      channel.onmessage = (e) => handleGameEvent(e.data);
+    } catch (e) {
+      console.warn('BroadcastChannel offline:', e);
+    }
+
+    window.addEventListener('v5_event', (e) => {
+      if (e.detail) handleGameEvent(e.detail);
+    });
+
+    function toggleDebug(show) {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.style.display = (show !== undefined) ? (show ? 'flex' : 'none') : (drawer.style.display === 'flex' ? 'none' : 'flex');
+    }
+
+    function toggleDebugOnClick(e) {
+      if (e.detail === 3) toggleDebug();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') toggleDebug();
+    });
+
+    function sendMockCoord(coord) {
+      handleGameEvent({ type: 'comment', comment: coord, user: '@debug_player' });
+    }
+
+    function sendMockGift(giftName, val) {
+      handleGameEvent({ type: 'gift', giftName: giftName, value: val, user: '@doador_ouro' });
+    }
+
+    function resolveTurnNow() {
+      resolveTurn();
+    }
+
+    // Iniciar loop
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>
