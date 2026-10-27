@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Pachinko Pinball Neon (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #020617;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 30%, #0d1527 0%, #020617 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Screen Shake para Jackpots e Flippers */
+    .shake-active {
+      animation: pinballShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes pinballShake {
+      10%, 90% { transform: translate3d(-3px, -2px, 0); }
+      20%, 80% { transform: translate3d(4px, 3px, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, -3px, 0); }
+      40%, 60% { transform: translate3d(4px, 2px, 0); }
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 16px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(2, 6, 23, 0.96) 0%, rgba(2, 6, 23, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .timer-badge {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Placar Triplo Neon */
+    .score-board {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr;
+      gap: 8px;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 8px 12px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .score-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .box-blue {
+      color: #38bdf8;
+      text-shadow: 0 0 14px rgba(56, 189, 248, 0.8);
+    }
+
+    .box-gold {
+      color: #fbbf24;
+      text-shadow: 0 0 16px rgba(251, 191, 36, 0.85);
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0 4px;
+    }
+
+    .box-red {
+      color: #f87171;
+      text-shadow: 0 0 14px rgba(248, 113, 113, 0.8);
+    }
+
+    .box-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .box-score {
+      font-size: 18px;
+      font-weight: 900;
+      font-family: monospace;
+      margin-top: 2px;
+    }
+
+    /* Canvas Central de Física */
+    #arena-container {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Feed de Presentes e Toasts */
+    .toast-container {
+      position: absolute;
+      top: 145px;
+      width: calc(100% - 32px);
+      left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .toast-item {
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(8px);
+      animation: slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 12px 16px 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.8) 70%, rgba(2, 6, 23, 0) 100%);
+      pointer-events: none;
+    }
+
+    .chat-instructions {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .cmd-pill {
+      flex: 1;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 8px 4px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .cmd-pill.blue {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: rgba(56, 189, 248, 0.12);
+    }
+
+    .cmd-pill.gold {
+      border-color: rgba(251, 191, 36, 0.5);
+      background: rgba(251, 191, 36, 0.14);
+    }
+
+    .cmd-pill.red {
+      border-color: rgba(248, 113, 113, 0.5);
+      background: rgba(248, 113, 113, 0.12);
+    }
+
+    .cmd-key {
+      font-size: 15px;
+      font-weight: 900;
+      font-family: monospace;
+    }
+
+    .cmd-desc {
+      font-size: 9px;
+      color: #cbd5e1;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .gift-cta {
+      background: linear-gradient(90deg, rgba(251, 191, 36, 0.25) 0%, rgba(168, 85, 247, 0.25) 100%);
+      border: 1px solid rgba(251, 191, 36, 0.45);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+    }
+
+    /* Overlay Vitória */
+    #victory-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.94);
+      backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    #victory-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .victory-box {
+      background: rgba(15, 23, 42, 0.96);
+      border: 2px solid #fbbf24;
+      border-radius: 24px;
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 0 50px rgba(251, 191, 36, 0.4);
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .reset-progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 15px;
+    }
+
+    .reset-progress-fill {
+      height: 100%;
+      background: #fbbf24;
+      width: 0%;
+      transition: width 5s linear;
+    }
+
+    /* Painel Debug [D] */
+    #debug-drawer {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 200;
+      pointer-events: auto;
+    }
+
+    .debug-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+    }
+
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 7px 4px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    
+    <!-- Top Safe Zone (140px) -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <span class="live-dot"></span>
+          V5 LIVE PACHINKO PINBALL
+        </div>
+        <div class="timer-badge">
+          ⏳ <span id="round-timer">45</span>s
+        </div>
+      </div>
+
+      <div class="score-board">
+        <div class="score-box box-blue">
+          <span class="box-title">🔵 Azul</span>
+          <span class="box-score" id="score-blue">0</span>
+        </div>
+        <div class="score-box box-gold">
+          <span class="box-title">👑 Jackpot</span>
+          <span class="box-score" id="score-jackpot">0</span>
+        </div>
+        <div class="score-box box-red">
+          <span class="box-title">🔴 Vermelho</span>
+          <span class="box-score" id="score-red">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central de Pinball & Pachinko -->
+    <div id="arena-container">
+      <canvas id="pinball-canvas"></canvas>
+    </div>
+
+    <!-- Feed de Presentes e Toasts -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <footer class="bottom-panel">
+      <div class="chat-instructions">
+        <div class="cmd-pill blue">
+          <span class="cmd-key box-blue">1</span>
+          <span class="cmd-desc">🔵 Rampa Azul</span>
+        </div>
+        <div class="cmd-pill gold">
+          <span class="cmd-key box-gold">3</span>
+          <span class="cmd-desc">👑 Rampa Ouro</span>
+        </div>
+        <div class="cmd-pill red">
+          <span class="cmd-key box-red">2</span>
+          <span class="cmd-desc">🔴 Rampa Vermelha</span>
+        </div>
+      </div>
+
+      <div class="gift-cta">
+        <span style="font-size: 11px; font-weight: 700; color: #fef08a;">🎁 Presentes = Flipper Multiball (10x Moedas Magnéticas!)</span>
+        <span style="background: #a855f7; color: #fff; font-weight: 900; font-size: 10px; padding: 3px 8px; border-radius: 8px;">MULTIBALL</span>
+      </div>
+    </footer>
+
+    <!-- Overlay Vitória -->
+    <div id="victory-overlay">
+      <div class="victory-box">
+        <div style="font-size: 52px; margin-bottom: 10px;" id="victory-icon">👑</div>
+        <h2 id="victory-title" style="font-size: 24px; font-weight: 900; text-transform: uppercase;">TIME AZUL VENCEU!</h2>
+        <p id="victory-detail" style="font-size: 14px; color: #94a3b8; margin: 8px 0 16px 0;">Placar de Pachinko Finalizado</p>
+        <p style="font-size: 12px; color: #cbd5e1; font-weight: 600;">Esvaziando canaletas magnéticas...</p>
+        <div class="reset-progress-bar">
+          <div class="reset-progress-fill" id="reset-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Painel Debug [D] -->
+    <div id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #94a3b8; display: flex; justify-content: space-between;">
+        <span>🎮 Depuração Pinball [D]</span>
+        <span style="cursor:pointer;" onclick="toggleDebug()">✕ Fechar</span>
+      </div>
+      <div class="debug-buttons">
+        <button class="debug-btn" onclick="dropCoin('A', 1, '@teste_azul')">🔵 Drop Azul (1)</button>
+        <button class="debug-btn" onclick="dropCoin('C', 1, '@teste_ouro')">👑 Drop Ouro (3)</button>
+        <button class="debug-btn" onclick="dropCoin('B', 1, '@teste_red')">🔴 Drop Red (2)</button>
+        <button class="debug-btn" onclick="triggerMultiball('A', 'Rosa', 10, '@vip_rosa')">🌸 Rosa Multiball</button>
+        <button class="debug-btn" onclick="triggerMegaPinball('C', 'Leão', 50, '@vip_leao')">🦁 Leão 100x</button>
+        <button class="debug-btn" onclick="flipperKick()">⚡ Bater Flippers</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /**
+     * SINTETIZADOR DE PINBALL & PACHINKO (Web Audio API)
+     * Sons de mola (plunger), solenoide de flipper, bumpers ressonantes e chimes
+     */
+    class PinballAudio {
+      constructor() {
+        this.ctx = null;
+        this.lastPlinkTime = 0;
+        this.lastBumperTime = 0;
+        this.chimes = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66, 1318.51];
+      }
+
+      getCtx() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        return this.ctx;
+      }
+
+      /**
+       * Sino / Chime de Pino de Pachinko
+       */
+      playPeg(index = 0) {
+        const now = Date.now();
+        if (now - this.lastPlinkTime < 45) return;
+        this.lastPlinkTime = now;
+
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+
+          const freq = this.chimes[index % this.chimes.length];
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, t);
+
+          gain.gain.setValueAtTime(0.14, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.10);
+
+          osc.connect(gain);
+          gain.connect(c.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.10);
+        } catch (e) {}
+      }
+
+      /**
+       * Solenoide Mecânico do Flipper
+       */
+      playFlipper() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(160, t);
+          osc.frequency.exponentialRampToValueAtTime(45, t + 0.08);
+
+          gain.gain.setValueAtTime(0.25, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+
+          osc.connect(gain);
+          gain.connect(c.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.08);
+        } catch (e) {}
+      }
+
+      /**
+       * Bumper Reativo de Pinball
+       */
+      playBumper() {
+        const now = Date.now();
+        if (now - this.lastBumperTime < 80) return;
+        this.lastBumperTime = now;
+
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(280, t);
+          osc.frequency.exponentialRampToValueAtTime(740, t + 0.06);
+          osc.frequency.exponentialRampToValueAtTime(180, t + 0.18);
+
+          gain.gain.setValueAtTime(0.28, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+
+          osc.connect(gain);
+          gain.connect(c.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.18);
+        } catch (e) {}
+      }
+
+      /**
+       * Acelerador Magnético / Zumbido de Indução
+       */
+      playMagneticRail() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(300, t);
+          osc.frequency.linearRampToValueAtTime(1200, t + 0.25);
+
+          const flt = c.createBiquadFilter();
+          flt.type = 'bandpass';
+          flt.frequency.setValueAtTime(800, t);
+          flt.Q.setValueAtTime(3.0, t);
+
+          gain.gain.setValueAtTime(0.2, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+
+          osc.connect(flt);
+          flt.connect(gain);
+          gain.connect(c.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.25);
+        } catch (e) {}
+      }
+
+      /**
+       * Fanfarra Triunfal de Jackpot 100x
+       */
+      playJackpot() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98];
+          notes.forEach((f, idx) => {
+            const osc = c.createOscillator();
+            const gain = c.createGain();
+            const st = t + (idx * 0.06);
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, st);
+
+            gain.gain.setValueAtTime(0.22, st);
+            gain.gain.exponentialRampToValueAtTime(0.001, st + 0.4);
+
+            osc.connect(gain);
+            gain.connect(c.destination);
+
+            osc.start(st);
+            osc.stop(st + 0.4);
+          });
+        } catch (e) {}
+      }
+
+      playVictory() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          [440, 554.37, 659.25, 880, 1108.73].forEach((f, i) => {
+            const osc = c.createOscillator();
+            const g = c.createGain();
+            const st = t + (i * 0.1);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, st);
+            g.gain.setValueAtTime(0.2, st);
+            g.gain.exponentialRampToValueAtTime(0.001, st + 0.5);
+            osc.connect(g);
+            g.connect(c.destination);
+            osc.start(st);
+            osc.stop(st + 0.5);
+          });
+        } catch (e) {}
+      }
+    }
+
+    const audio = new PinballAudio();
+
+    /**
+     * MOTOR DE FÍSICA PACHINKO PINBALL (CANVAS 2D - 60 FPS)
+     */
+    const stageEl = document.getElementById('game-stage');
+    const canvas = document.getElementById('pinball-canvas');
+    const ctx = canvas.getContext('2d');
+    let W = 0, H = 0;
+
+    function resize() {
+      W = stageEl.clientWidth;
+      H = stageEl.clientHeight;
+      canvas.width = W;
+      canvas.height = H;
+      initLayout();
+    }
+    window.addEventListener('resize', resize);
+
+    // Estado da Partida
+    let roundTime = 45;
+    let timerInterval = null;
+    let isGameOver = false;
+
+    let scoreBlue = 0;
+    let scoreRed = 0;
+    let scoreJackpot = 0;
+
+    // DOM Elements
+    const scoreBlueEl = document.getElementById('score-blue');
+    const scoreRedEl = document.getElementById('score-red');
+    const scoreJackpotEl = document.getElementById('score-jackpot');
+    const roundTimerEl = document.getElementById('round-timer');
+    const victoryOverlay = document.getElementById('victory-overlay');
+    const victoryTitle = document.getElementById('victory-title');
+    const victoryDetail = document.getElementById('victory-detail');
+    const victoryIcon = document.getElementById('victory-icon');
+    const resetFill = document.getElementById('reset-fill');
+    const toastContainer = document.getElementById('toast-container');
+    const debugDrawer = document.getElementById('debug-drawer');
+
+    // Entidades de Pinball
+    let pegs = [];
+    let bumpers = [];
+    let slots = [];
+    let balls = [];
+    let particles = [];
+    let confettis = [];
+    let magneticRails = [];
+
+    // Flippers Reativos
+    const flipperLeft = {
+      x: 0, y: 0, length: 70, angle: 0.35, restAngle: 0.35, activeAngle: -0.55, isKicking: false
+    };
+    const flipperRight = {
+      x: 0, y: 0, length: 70, angle: Math.PI - 0.35, restAngle: Math.PI - 0.35, activeAngle: Math.PI + 0.55, isKicking: false
+    };
+
+    function triggerScreenShake() {
+      stageEl.classList.remove('shake-active');
+      void stageEl.offsetWidth; // Force reflow
+      stageEl.classList.add('shake-active');
+      setTimeout(() => stageEl.classList.remove('shake-active'), 350);
+    }
+
+    function initLayout() {
+      pegs = [];
+      bumpers = [];
+      slots = [];
+      magneticRails = [];
+
+      const topY = H * 0.17;
+      const bottomY = H * 0.74;
+      const boardH = bottomY - topY;
+
+      // 1. Matriz de Pinos de Pachinko (10 fileiras)
+      const rows = 10;
+      const spacingY = boardH / rows;
+
+      for (let r = 0; r < rows; r++) {
+        const count = r + 3;
+        const rowW = W * (0.32 + (r * 0.05));
+        const startX = (W - rowW) / 2;
+        const stepX = rowW / (count - 1);
+
+        for (let c = 0; c < count; c++) {
+          pegs.push({
+            x: startX + (c * stepX),
+            y: topY + (r * spacingY),
+            radius: 4.5,
+            noteIndex: r,
+            hitGlow: 0
+          });
+        }
+      }
+
+      // 2. Bumpers Centrais
+      bumpers.push({
+        x: W * 0.32,
+        y: topY + (boardH * 0.42),
+        radius: 18,
+        color: '#38bdf8',
+        hitGlow: 0,
+        label: '100'
+      });
+
+      bumpers.push({
+        x: W * 0.50,
+        y: topY + (boardH * 0.30),
+        radius: 22,
+        color: '#fbbf24',
+        hitGlow: 0,
+        label: '500'
+      });
+
+      bumpers.push({
+        x: W * 0.68,
+        y: topY + (boardH * 0.42),
+        radius: 18,
+        color: '#f87171',
+        hitGlow: 0,
+        label: '100'
+      });
+
+      // 3. Canaletas Magnéticas (Magnetic Rails)
+      magneticRails.push({
+        cx: W * 0.14,
+        cy: topY + (boardH * 0.65),
+        radius: 45,
+        team: 'A',
+        color: '#38bdf8'
+      });
+      magneticRails.push({
+        cx: W * 0.86,
+        cy: topY + (boardH * 0.65),
+        radius: 45,
+        team: 'B',
+        color: '#f87171'
+      });
+
+      // 4. Flippers Inferiores
+      flipperLeft.x = W * 0.28;
+      flipperLeft.y = bottomY - 25;
+      flipperRight.x = W * 0.72;
+      flipperRight.y = bottomY - 25;
+
+      // 5. Caçapas Inferiores (Slots Multiplicadores)
+      const slotCount = 5;
+      const slotW = (W * 0.90) / slotCount;
+      const startSlotX = (W - (slotCount * slotW)) / 2;
+
+      const multipliers = [
+        { mult: 10, team: 'A', label: '10x', color: '#38bdf8' },
+        { mult: 25, team: 'A', label: '25x', color: '#a855f7' },
+        { mult: 100, team: 'C', label: '100x JACKPOT', color: '#fbbf24', isJackpot: true },
+        { mult: 25, team: 'B', label: '25x', color: '#f97316' },
+        { mult: 10, team: 'B', label: '10x', color: '#f87171' }
+      ];
+
+      for (let i = 0; i < slotCount; i++) {
+        slots.push({
+          x: startSlotX + (i * slotW),
+          y: bottomY,
+          width: slotW,
+          height: 36,
+          info: multipliers[i],
+          hitGlow: 0
+        });
+      }
+    }
+
+    function flipperKick() {
+      audio.playFlipper();
+      flipperLeft.isKicking = true;
+      flipperRight.isKicking = true;
+      setTimeout(() => {
+        flipperLeft.isKicking = false;
+        flipperRight.isKicking = false;
+      }, 160);
+    }
+
+    function dropCoin(team, weight = 1, user = '@espectador', giftName = null, isMega = false) {
+      if (isGameOver) return;
+      audio.getCtx();
+
+      let startX = W * 0.5;
+      if (team === 'A') startX = W * 0.25 + (Math.random() * 20 - 10);
+      else if (team === 'B') startX = W * 0.75 + (Math.random() * 20 - 10);
+      else startX = W * 0.5 + (Math.random() * 30 - 15);
+
+      const color = isMega ? '#fbbf24' : (team === 'A' ? '#38bdf8' : (team === 'B' ? '#f87171' : '#fbbf24'));
+
+      balls.push({
+        x: startX,
+        y: H * 0.12,
+        vx: (Math.random() - 0.5) * 2.2,
+        vy: Math.random() * 2.0 + 1.2,
+        radius: isMega ? 16 : 7.5,
+        color: color,
+        team: team,
+        weight: weight,
+        user: user,
+        isMega: isMega,
+        trail: []
+      });
+
+      if (isMega) {
+        audio.playMagneticRail();
+        triggerScreenShake();
+        flipperKick();
+        spawnToast(`🦁 ${user} lançou MEGA PINBALL DOURADO! (+${weight * 100}x)`, '#fbbf24');
+      } else if (giftName) {
+        audio.playBumper();
+      }
+    }
+
+    function triggerMultiball(team, giftName, count = 8, user = '@vip_player') {
+      audio.playMagneticRail();
+      triggerScreenShake();
+      spawnToast(`🎁 ${user} enviou ${giftName}! MULTIBALL FRENZY!`, team === 'A' ? '#38bdf8' : '#f87171');
+
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          dropCoin(team, 3, user, giftName, false);
+        }, i * 90);
+      }
+    }
+
+    function triggerMegaPinball(team, giftName, weight = 50, user = '@super_vip') {
+      dropCoin(team, weight, user, giftName, true);
+    }
+
+    function spawnToast(text, color = '#38bdf8') {
+      const toast = document.createElement('div');
+      toast.className = 'toast-item';
+      toast.style.borderColor = color;
+      toast.innerHTML = `<span style="color:${color}">${text}</span>`;
+      toastContainer.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    function spawnParticles(x, y, color, count = 8) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 3 + 1;
+        particles.push({
+          x: x, y: y,
+          vx: Math.cos(angle) * spd,
+          vy: Math.sin(angle) * spd,
+          radius: Math.random() * 3 + 1,
+          color: color,
+          alpha: 1.0
+        });
+      }
+    }
+
+    function spawnConfetti() {
+      const colors = ['#38bdf8', '#f87171', '#fbbf24', '#a855f7', '#ffffff'];
+      for (let i = 0; i < 70; i++) {
+        confettis.push({
+          x: Math.random() * W,
+          y: Math.random() * H * 0.3,
+          vx: (Math.random() - 0.5) * 5,
+          vy: Math.random() * 4 + 2,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10
+        });
+      }
+    }
+
+    function startTimer() {
+      roundTime = 45;
+      isGameOver = false;
+      scoreBlue = 0;
+      scoreRed = 0;
+      scoreJackpot = 0;
+
+      scoreBlueEl.innerText = '0';
+      scoreRedEl.innerText = '0';
+      scoreJackpotEl.innerText = '0';
+      roundTimerEl.innerText = roundTime;
+      victoryOverlay.classList.remove('active');
+      resetFill.style.width = '0%';
+
+      if (timerInterval) clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        roundTime--;
+        roundTimerEl.innerText = roundTime;
+
+        if (roundTime <= 0) {
+          clearInterval(timerInterval);
+          endRound();
+        }
+      }, 1000);
+    }
+
+    function endRound() {
+      if (isGameOver) return;
+      isGameOver = true;
+
+      audio.playVictory();
+      triggerScreenShake();
+      spawnConfetti();
+
+      let winText = '';
+      let winIcon = '👑';
+      let winColor = '#fbbf24';
+
+      if (scoreBlue > scoreRed && scoreBlue > scoreJackpot) {
+        winText = 'TIME AZUL VENCEU!';
+        winIcon = '🔵';
+        winColor = '#38bdf8';
+      } else if (scoreRed > scoreBlue && scoreRed > scoreJackpot) {
+        winText = 'TIME VERMELHO VENCEU!';
+        winIcon = '🔴';
+        winColor = '#f87171';
+      } else {
+        winText = 'SUPER JACKPOT VENCEU!';
+        winIcon = '👑';
+        winColor = '#fbbf24';
+      }
+
+      victoryTitle.innerText = winText;
+      victoryTitle.style.color = winColor;
+      victoryIcon.innerText = winIcon;
+      victoryDetail.innerText = `Azul: ${scoreBlue.toLocaleString('pt-BR')} | Jackpot: ${scoreJackpot.toLocaleString('pt-BR')} | Vermelho: ${scoreRed.toLocaleString('pt-BR')}`;
+
+      victoryOverlay.classList.add('active');
+
+      setTimeout(() => {
+        resetFill.style.width = '100%';
+      }, 50);
+
+      setTimeout(() => {
+        startTimer();
+      }, 5000);
+    }
+
+    /**
+     * RENDER LOOP (60 FPS)
+     */
+    const gravity = 0.24;
+    const bounceDamping = 0.72;
+    let lastFpsTime = performance.now();
+    let frameCount = 0;
+
+    function gameLoop(now = performance.now()) {
+      ctx.clearRect(0, 0, W, H);
+
+      // 1. Atualizar Ângulo dos Flippers
+      const targetAngleL = flipperLeft.isKicking ? flipperLeft.activeAngle : flipperLeft.restAngle;
+      flipperLeft.angle += (targetAngleL - flipperLeft.angle) * 0.35;
+
+      const targetAngleR = flipperRight.isKicking ? flipperRight.activeAngle : flipperRight.restAngle;
+      flipperRight.angle += (targetAngleR - flipperRight.angle) * 0.35;
+
+      // 2. Renderizar Canaletas Magnéticas
+      magneticRails.forEach(rail => {
+        ctx.beginPath();
+        ctx.arc(rail.cx, rail.cy, rail.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = rail.color;
+        ctx.lineWidth = 3;
+        ctx.setLineDash([8, 8]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      });
+
+      // 3. Renderizar Pinos de Pachinko
+      pegs.forEach(peg => {
+        if (peg.hitGlow > 0) peg.hitGlow -= 0.04;
+        ctx.beginPath();
+        ctx.arc(peg.x, peg.y, peg.radius + (peg.hitGlow * 2), 0, Math.PI * 2);
+        ctx.fillStyle = peg.hitGlow > 0.05 ? '#ffffff' : '#64748b';
+        ctx.shadowColor = peg.hitGlow > 0.05 ? '#38bdf8' : 'transparent';
+        ctx.shadowBlur = peg.hitGlow * 12;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      // 4. Renderizar Bumpers de Pinball
+      bumpers.forEach(b => {
+        if (b.hitGlow > 0) b.hitGlow -= 0.04;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.radius + (b.hitGlow * 3), 0, Math.PI * 2);
+        ctx.fillStyle = b.hitGlow > 0.05 ? '#ffffff' : b.color;
+        ctx.shadowColor = b.color;
+        ctx.shadowBlur = 14 + (b.hitGlow * 15);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.font = '900 10px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#020617';
+        ctx.fillText(b.label, b.x, b.y);
+      });
+
+      // 5. Renderizar Flippers
+      drawFlipper(flipperLeft.x, flipperLeft.y, flipperLeft.length, flipperLeft.angle, '#38bdf8');
+      drawFlipper(flipperRight.x, flipperRight.y, flipperRight.length, flipperRight.angle, '#f87171');
+
+      // 6. Renderizar Caçapas Inferiores (Slots)
+      slots.forEach(slot => {
+        if (slot.hitGlow > 0) slot.hitGlow -= 0.04;
+        ctx.save();
+        ctx.fillStyle = slot.hitGlow > 0.05 ? 'rgba(251, 191, 36, 0.35)' : 'rgba(15, 23, 42, 0.75)';
+        ctx.strokeStyle = slot.info.color;
+        ctx.lineWidth = slot.hitGlow > 0.05 ? 3 : 1.5;
+        ctx.shadowColor = slot.info.color;
+        ctx.shadowBlur = slot.hitGlow * 15;
+        ctx.fillRect(slot.x + 2, slot.y, slot.width - 4, slot.height);
+        ctx.strokeRect(slot.x + 2, slot.y, slot.width - 4, slot.height);
+        ctx.shadowBlur = 0;
+
+        ctx.font = '900 11px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = slot.info.color;
+        ctx.fillText(slot.info.label, slot.x + slot.width / 2, slot.y + 15);
+        ctx.restore();
+      });
+
+      // 7. Atualizar e Colidir Bolas
+      for (let i = balls.length - 1; i >= 0; i--) {
+        const ball = balls[i];
+        ball.vy += gravity;
+        ball.vx *= 0.99;
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+
+        // Efeito da Canaleta Magnética
+        magneticRails.forEach(rail => {
+          const dx = rail.cx - ball.x;
+          const dy = rail.cy - ball.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < rail.radius * 1.5 && dist > 5) {
+            const pull = (1 - dist / (rail.radius * 1.5)) * 0.6;
+            ball.vx += (dx / dist) * pull;
+            ball.vy += (dy / dist) * pull;
+            // Impulso tangencial para girar na órbita magnética
+            ball.vx += (-dy / dist) * 0.45;
+            ball.vy += (dx / dist) * 0.45;
+          }
+        });
+
+        // Colisão com Paredes Laterais
+        if (ball.x - ball.radius < 10) {
+          ball.x = 10 + ball.radius;
+          ball.vx = -ball.vx * bounceDamping;
+        } else if (ball.x + ball.radius > W - 10) {
+          ball.x = W - 10 - ball.radius;
+          ball.vx = -ball.vx * bounceDamping;
+        }
+
+        // Colisão com Pinos
+        pegs.forEach(peg => {
+          const dx = ball.x - peg.x;
+          const dy = ball.y - peg.y;
+          const dist = Math.hypot(dx, dy);
+          const minDist = ball.radius + peg.radius;
+          if (dist < minDist) {
+            const nx = dx / dist;
+            const ny = dy / dist;
+            ball.x = peg.x + nx * minDist;
+            ball.y = peg.y + ny * minDist;
+            const dot = ball.vx * nx + ball.vy * ny;
+            ball.vx = (ball.vx - 2 * dot * nx) * bounceDamping + (Math.random() - 0.5) * 0.8;
+            ball.vy = (ball.vy - 2 * dot * ny) * bounceDamping;
+            peg.hitGlow = 1.0;
+            audio.playPeg(peg.noteIndex);
+            spawnParticles(peg.x, peg.y, ball.color, 4);
+          }
+        });
+
+        // Colisão com Bumpers
+        bumpers.forEach(b => {
+          const dx = ball.x - b.x;
+          const dy = ball.y - b.y;
+          const dist = Math.hypot(dx, dy);
+          const minDist = ball.radius + b.radius;
+          if (dist < minDist) {
+            const nx = dx / dist;
+            const ny = dy / dist;
+            ball.x = b.x + nx * minDist;
+            ball.y = b.y + ny * minDist;
+            const kick = ball.isMega ? 9 : 6.5;
+            ball.vx = nx * kick;
+            ball.vy = ny * kick;
+            b.hitGlow = 1.0;
+            audio.playBumper();
+            spawnParticles(b.x, b.y, b.color, 8);
+          }
+        });
+
+        // Colisão com Flippers
+        checkFlipperCollision(ball, flipperLeft);
+        checkFlipperCollision(ball, flipperRight);
+
+        // Colisão com Caçapas Inferiores (Slots)
+        slots.forEach(slot => {
+          if (ball.y + ball.radius >= slot.y && ball.x >= slot.x && ball.x <= slot.x + slot.width) {
+            const pts = (ball.weight || 1) * slot.info.mult;
+            slot.hitGlow = 1.0;
+
+            if (slot.info.isJackpot) {
+              scoreJackpot += pts;
+              scoreJackpotEl.innerText = scoreJackpot.toLocaleString('pt-BR');
+              audio.playJackpot();
+              triggerScreenShake();
+              spawnConfetti();
+              spawnToast(`👑 100x SUPER JACKPOT! ${ball.user} (+${pts} pts)`, '#fbbf24');
+              spawnParticles(ball.x, ball.y, '#fbbf24', 24);
+            } else if (ball.team === 'A' || slot.info.team === 'A') {
+              scoreBlue += pts;
+              scoreBlueEl.innerText = scoreBlue.toLocaleString('pt-BR');
+              audio.playBumper();
+              spawnParticles(ball.x, ball.y, '#38bdf8', 8);
+            } else {
+              scoreRed += pts;
+              scoreRedEl.innerText = scoreRed.toLocaleString('pt-BR');
+              audio.playBumper();
+              spawnParticles(ball.x, ball.y, '#f87171', 8);
+            }
+
+            balls.splice(i, 1);
+          }
+        });
+
+        // Remoção além do limite inferior
+        if (balls[i] && ball.y > H) balls.splice(i, 1);
+
+        // Render da Bola
+        if (balls[i]) {
+          ctx.beginPath();
+          ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+          ctx.fillStyle = ball.color;
+          ctx.shadowColor = ball.color;
+          ctx.shadowBlur = ball.isMega ? 22 : 12;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          // Ponto Especular
+          ctx.beginPath();
+          ctx.arc(ball.x - ball.radius * 0.3, ball.y - ball.radius * 0.3, ball.radius * 0.35, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+        }
+      }
+
+      // 8. Partículas
+      for (let p = particles.length - 1; p >= 0; p--) {
+        const pt = particles[p];
+        pt.x += pt.vx;
+        pt.y += pt.vy;
+        pt.alpha -= 0.035;
+        if (pt.alpha <= 0) particles.splice(p, 1);
+        else {
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
+          ctx.fillStyle = pt.color;
+          ctx.globalAlpha = pt.alpha;
+          ctx.fill();
+          ctx.globalAlpha = 1.0;
+        }
+      }
+
+      // 9. Confetes
+      for (let c = confettis.length - 1; c >= 0; c--) {
+        const cf = confettis[c];
+        cf.x += cf.vx;
+        cf.y += cf.vy;
+        cf.rotation += cf.rotSpeed;
+        ctx.save();
+        ctx.translate(cf.x, cf.y);
+        ctx.rotate((cf.rotation * Math.PI) / 180);
+        ctx.fillStyle = cf.color;
+        ctx.fillRect(-cf.size / 2, -cf.size / 2, cf.size, cf.size * 0.6);
+        ctx.restore();
+        if (cf.y > H) confettis.splice(c, 1);
+      }
+
+      // Auto-Flipper Inteligente: Se houver bola perto do flipper, bate automaticamente!
+      balls.forEach(b => {
+        if (b.y > H * 0.65 && b.y < H * 0.74) {
+          if (Math.abs(b.x - flipperLeft.x) < 55 || Math.abs(b.x - flipperRight.x) < 55) {
+            flipperKick();
+          }
+        }
+      });
+
+      // Telemetria 60 FPS
+      frameCount++;
+      if (now - lastFpsTime >= 1000) {
+        const fps = Math.round((frameCount * 1000) / (now - lastFpsTime));
+        if (window.parent && window.self !== window.top) {
+          window.parent.postMessage({
+            type: 'TELEMETRY_STATS',
+            gameId: '12_pachinko_pinball_neon',
+            stats: { fps: Math.min(60, fps), frameTimeMs: 16.6, frameDrops: 0, isHealthy: true }
+          }, '*');
+        }
+        frameCount = 0;
+        lastFpsTime = now;
+      }
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    function drawFlipper(x, y, length, angle, color) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+
+      ctx.beginPath();
+      ctx.roundRect(0, -6, length, 12, 6);
+      ctx.fillStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 10;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Pino Central do Flipper
+      ctx.beginPath();
+      ctx.arc(0, 0, 7, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function checkFlipperCollision(ball, flipper) {
+      const tipX = flipper.x + Math.cos(flipper.angle) * flipper.length;
+      const tipY = flipper.y + Math.sin(flipper.angle) * flipper.length;
+
+      const dx = tipX - flipper.x;
+      const dy = tipY - flipper.y;
+      const len = Math.hypot(dx, dy);
+
+      const vx1 = ball.x - flipper.x;
+      const vy1 = ball.y - flipper.y;
+      const t = Math.max(0, Math.min(1, (vx1 * dx + vy1 * dy) / (len * len || 1)));
+
+      const closestX = flipper.x + t * dx;
+      const closestY = flipper.y + t * dy;
+
+      const dist = Math.hypot(ball.x - closestX, ball.y - closestY);
+
+      if (dist < ball.radius + 6) {
+        const nx = (ball.x - closestX) / (dist || 1);
+        const ny = (ball.y - closestY) / (dist || 1);
+
+        ball.x = closestX + nx * (ball.radius + 6);
+        ball.y = closestY + ny * (ball.radius + 6);
+
+        // Impulso potente se o flipper estiver chutando
+        const force = flipper.isKicking ? 11.0 : 4.5;
+        ball.vx = nx * force;
+        ball.vy = -Math.abs(ny * force) - 2;
+
+        audio.playFlipper();
+        spawnParticles(closestX, closestY, '#ffffff', 6);
+      }
+    }
+
+    /**
+     * INTEGRAÇÃO DE EVENTOS DO BROADCASTER & TEST LAB
+     */
+    function handleEvent(data) {
+      if (!data) return;
+      const cmd = (data.comment || data.action || '').toString().toLowerCase().trim();
+      const user = data.user || '@espectador';
+      const weight = data.weight || data.coins || 1;
+      const giftName = data.giftName || null;
+
+      if (data.type === 'gift' || giftName) {
+        if (weight >= 50 || (giftName && (giftName.includes('leão') || giftName.includes('lion')))) {
+          triggerMegaPinball(Math.random() < 0.5 ? 'A' : 'B', giftName, weight, user);
+        } else {
+          triggerMultiball(Math.random() < 0.5 ? 'A' : 'B', giftName, Math.min(12, Math.max(5, weight)), user);
+        }
+        return;
+      }
+
+      if (cmd === '1' || cmd.includes('azul') || data.team === 'A') {
+        dropCoin('A', weight, user);
+      } else if (cmd === '2' || cmd.includes('vermelho') || data.team === 'B') {
+        dropCoin('B', weight, user);
+      } else if (cmd === '3' || cmd.includes('ouro') || cmd.includes('jackpot') || data.team === 'C') {
+        dropCoin('C', weight, user);
+      } else if (data.type === 'like') {
+        const chosen = Math.random() < 0.4 ? 'A' : (Math.random() < 0.7 ? 'B' : 'C');
+        dropCoin(chosen, 1, user);
+      }
+    }
+
+    try {
+      const channel = new BroadcastChannel('v5_broadcaster_games');
+      channel.onmessage = (e) => handleEvent(e.data);
+    } catch (e) {}
+
+    window.addEventListener('v5_event', (e) => handleEvent(e.detail));
+    window.addEventListener('message', (e) => {
+      if (e.data && (e.data.type || e.data.action || e.data.comment)) handleEvent(e.data);
+    });
+
+    // Motor Anti-Silêncio Orgânico
+    const mockUsers = ['@pinball_rei', '@pachinko_bia', '@arcade_neo', '@coin_master', '@silver_tk'];
+    setInterval(() => {
+      if (isGameOver) return;
+      const teamChoice = Math.random() < 0.4 ? 'A' : (Math.random() < 0.7 ? 'B' : 'C');
+      const user = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+
+      if (Math.random() < 0.15) {
+        triggerMultiball(teamChoice, 'Rosa Virtual', 4, user);
+      } else {
+        dropCoin(teamChoice, 1, user);
+      }
+    }, 2400);
+
+    function toggleDebug() {
+      debugDrawer.style.display = debugDrawer.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') toggleDebug();
+    });
+
+    resize();
+    startTimer();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>

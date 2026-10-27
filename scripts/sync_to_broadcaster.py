@@ -55,6 +55,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "azul", "vermelho"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "12_pachinko_pinball_neon": {
+        "name": "Pachinko Pinball Neon",
+        "category": "fisica_pachinko",
+        "description": "Flippers automáticos, canaletas magnéticas e 100x Super Jackpot ativado por moedas do chat",
+        "commands": ["1", "2", "3", "azul", "vermelho", "jackpot"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 

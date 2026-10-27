@@ -420,6 +420,122 @@
       osc.stop(now + 0.06);
     }
 
+    /**
+     * Mola do Lançador de Pinball (Spring Plunger)
+     */
+    playSpringPlunger() {
+      if (this.isMuted) return;
+      const ctx = this.getAudioContext();
+      const now = ctx.currentTime;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(80, now);
+      osc.frequency.exponentialRampToValueAtTime(450, now + 0.05);
+      osc.frequency.exponentialRampToValueAtTime(120, now + 0.2);
+
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(now);
+      osc.stop(now + 0.2);
+    }
+
+    /**
+     * Sino de Cassino / Pachinko Chime
+     */
+    playCasinoChime(noteIndex = 0) {
+      if (this.isMuted) return;
+      const ctx = this.getAudioContext();
+      const now = ctx.currentTime;
+
+      const scale = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66, 1318.51];
+      const freq = scale[noteIndex % scale.length];
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(now);
+      osc.stop(now + 0.12);
+    }
+
+    /**
+     * Gongo Ressonante de Pachinko (Oriental Jackpot Gong)
+     */
+    playGong() {
+      if (this.isMuted) return;
+      const ctx = this.getAudioContext();
+      const now = ctx.currentTime;
+
+      // Componente fundamental grave
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(110, now); // A2
+      gain1.gain.setValueAtTime(0.4, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+
+      osc1.connect(gain1);
+      gain1.connect(this.masterGain);
+      osc1.start(now);
+      osc1.stop(now + 1.2);
+
+      // Harmônicos metálicos ressonantes
+      [220, 311.13, 440, 622.25].forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now);
+
+        gain.gain.setValueAtTime(0.15 / (idx + 1), now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+        osc.start(now);
+        osc.stop(now + 0.8);
+      });
+    }
+
+    /**
+     * Solenoide Mecânico do Flipper
+     */
+    playFlipperSolenoid() {
+      if (this.isMuted) return;
+      const ctx = this.getAudioContext();
+      const now = ctx.currentTime;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(180, now);
+      osc.frequency.exponentialRampToValueAtTime(40, now + 0.07);
+
+      gain.gain.setValueAtTime(0.28, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(now);
+      osc.stop(now + 0.07);
+    }
+
     // =========================================================================
     // 3. GERADOR DE ACORDES POLIFÔNICOS (Triunfo, Vitória, Mudança de Fase)
     // =========================================================================

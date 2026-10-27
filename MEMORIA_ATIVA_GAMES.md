@@ -36,6 +36,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | **09** | `09_tsunami_de_curtidas` | Tsunami de Likes | Disputa frenética de maré e pressão hidráulica, micro-ondas de choque e alarme de inundação | **HOMOLOGADO** |
 | **10** | `10_queda_dos_blocos` | Tetris da Discórdia | Chat decide onde soltar blocos pesados para esmagar os inimigos | Planejado |
 | **11** | `11_queda_de_braco_titas` | Queda de Braço dos Titãs | Braços cibernéticos com indicador de torque pilotados por votos e overdrive de gifts | **HOMOLOGADO** |
+| **12** | `12_pachinko_pinball_neon` | Pachinko Pinball Neon | Flippers automáticos, canaletas magnéticas e 100x Super Jackpot por moedas do chat | **HOMOLOGADO** |
 
 ---
 
