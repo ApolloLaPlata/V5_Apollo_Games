@@ -47,7 +47,7 @@
 - [x] **Etapa 005:** Expansão do Sintetizador `src/audio/v5_synth_audio.js` com gerador de acordes polifônicos, ruído branco para explosões/confetes e síntese FM para sintetizadores retrô.
 - [x] **Etapa 006:** Criação da biblioteca procedural de jingles e fanfarras de vitória no sintetizador de áudio (marchas comemorativas de 5 segundos).
 - [x] **Etapa 007:** Padronização do Design System Neon 9:16: paleta oficial de alto contraste (`#020617`, azuis elétricos, laranjas, roxos, dourados e safe zones de 140px topo / 180px base).
-- [ ] **Etapa 008:** Implementação do módulo universal de Auto-Reset e Ciclo Fechado de Partidas (30-60s com contagem regressiva e transição suave sem recarregar página).
+- [x] **Etapa 008:** Implementação do módulo universal de Auto-Reset e Ciclo Fechado de Partidas (30-60s com contagem regressiva e transição suave sem recarregar página).
 - [ ] **Etapa 009:** Aperfeiçoamento do Motor Anti-Silêncio Universal (injeção determinística de microações após 2.5s de inatividade para engajamento contínuo).
 - [ ] **Etapa 010:** Integração e Homologação do Cartucho #01 (Cabo de Guerra Neon) na nova infraestrutura do Test Lab local.
 
