@@ -1399,6 +1399,7 @@
     window.addEventListener('keydown', (e) => {
       if (e.key === 'd' || e.key === 'D') toggleDebug();
     });
-</script>
+    window.addEventListener('contextmenu', (e) => e.preventDefault());
+  </script>
 </body>
 </html>

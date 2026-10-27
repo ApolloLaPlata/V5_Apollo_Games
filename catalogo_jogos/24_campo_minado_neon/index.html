@@ -1155,7 +1155,7 @@
       audio.init();
 
       const user = data.user || '@espectador';
-      const comment = (data.comment || '').trim();
+      const comment = String((data || payload || {}).comment || "").trim();
       const type = data.type || 'comment';
       const giftName = data.giftName || null;
       const value = data.value || 1;
@@ -1350,6 +1350,7 @@
 
     // Iniciar loop
     requestAnimationFrame(gameLoop);
+      window.addEventListener('contextmenu', (e) => e.preventDefault());
   </script>
 </body>
 </html>

@@ -1174,7 +1174,7 @@
       lastInteractionTime = Date.now();
 
       const user = data.user || '@espectador';
-      const comment = (data.comment || '').trim().toLowerCase();
+      const comment = String((data || payload || {}).comment || "").trim().toLowerCase();
       const isGift = data.type === 'gift';
 
       if (isGift) {
@@ -1202,6 +1202,7 @@
     window.addEventListener('keydown', (e) => {
       if (e.key === 'd' || e.key === 'D') toggleDebug();
     });
-</script>
+    window.addEventListener('contextmenu', (e) => e.preventDefault());
+  </script>
 </body>
 </html>
