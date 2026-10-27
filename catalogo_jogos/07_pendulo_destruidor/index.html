@@ -1006,8 +1006,8 @@
       const broadcasterChannel = new BroadcastChannel('v5_broadcaster_games');
       broadcasterChannel.onmessage = (event) => {
         if (event && event.data) handleIncomingEvent(event.data);
-      window.addEventListener('beforeunload', () => { try { broadcasterChannel.close(); } catch(e) {} });
       };
+      window.addEventListener('beforeunload', () => { try { broadcasterChannel.close(); } catch(e) {} });
     } catch (err) {
       console.warn('[V5Games] BroadcastChannel offline ou restrito:', err);
     }

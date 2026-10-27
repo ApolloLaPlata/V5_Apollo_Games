@@ -41,6 +41,8 @@
       this.botTimer = null;
       this.telemetryAnimId = null;
       this.lastEventTime = Date.now();
+      this.seenEventIds = new Set();
+      this.seenEventList = [];
 
       // Métricas de Telemetria e Desempenho (Etapa 004)
       this.telemetryEnabled = options.telemetryEnabled !== undefined ? options.telemetryEnabled : true;
@@ -172,6 +174,7 @@
       }
 
       return {
+        id: raw.id || raw.eventId || raw.msgId || null,
         type: type,
         action: raw.action || (type === 'gift' ? 'boost' : (type === 'like' ? 'tap' : 'vote')),
         comment: comment,
@@ -190,6 +193,16 @@
     dispatch(rawData) {
       const data = this.normalizePayload(rawData);
       if (!data) return;
+
+      // Desduplicação LRU (previne duplo processamento em bridges redundantes)
+      if (data.id) {
+        if (this.seenEventIds.has(data.id)) return;
+        this.seenEventIds.add(data.id);
+        this.seenEventList.push(data.id);
+        if (this.seenEventList.length > 200) {
+          this.seenEventIds.delete(this.seenEventList.shift());
+        }
+      }
 
       this.lastEventTime = Date.now();
 

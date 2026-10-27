@@ -752,6 +752,18 @@
       state.confetti = [];
       state.resetCountdown = 5;
       state.donors = {};
+      state.targets = [
+        {
+          x: 540,
+          y: 620,
+          radius: 90,
+          vx: 320,
+          minX: 180,
+          maxX: 900,
+          color: '#ff0055',
+          isMain: true
+        }
+      ];
       document.getElementById('victory-modal').style.display = 'none';
 
       updateHUD();
@@ -1341,8 +1353,8 @@
         const channel = new BroadcastChannel('v5_broadcaster_games');
         channel.onmessage = (event) => {
           handleIncomingEvent(event.data);
-      window.addEventListener('beforeunload', () => { try { channel.close(); } catch(e) {} });
         };
+        window.addEventListener('beforeunload', () => { try { channel.close(); } catch(e) {} });
       } catch (e) {
         console.warn("BroadcastChannel não suportado");
       }

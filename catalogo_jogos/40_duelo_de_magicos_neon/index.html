@@ -1351,8 +1351,8 @@
         const channel = new BroadcastChannel('v5_broadcaster_games');
         channel.onmessage = (event) => {
           handleIncomingEvent(event.data);
-      window.addEventListener('beforeunload', () => { try { channel.close(); } catch(e) {} });
         };
+        window.addEventListener('beforeunload', () => { try { channel.close(); } catch(e) {} });
       } catch (e) {
         console.warn("BroadcastChannel não suportado");
       }

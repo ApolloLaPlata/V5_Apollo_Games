@@ -1196,7 +1196,7 @@
       else if (comment === "2" || comment === "roxo") teamId = 2;
       else if (comment === "3" || comment === "ouro" || comment === "amarelo") teamId = 3;
       else if (comment === "4" || comment === "verde") teamId = 4;
-      else if (data.team) teamId = parseInt(data.team);
+      else if (data.team) teamId = parseInt(data.team, 10);
 
       if (type === "comment" && teamId) {
         applyVote(teamId, user, 1);
