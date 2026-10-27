@@ -116,7 +116,7 @@
 - [x] **Etapa 054:** Animações vetoriais procedurais do Boss: estados Idle, Ataque, Dano Crítico e Morte Épica com dissolução em partículas.
 - [x] **Etapa 055:** Síntese de rugidos procedurais, impactos de espada e explosões elementais via osciladores modulados.
 - [x] **Etapa 056:** Forjamento do Cartucho #19: Defesa da Torre do Chat (Hordas de inimigos descendo verticalmente enquanto o chat monta canhões nos slots).
-- [ ] **Etapa 057:** Forjamento do Cartucho #20: Subida da Montanha Sagrada (O chat empurra um guerreiro montanha acima desviando de avalanches com votos).
+- [x] **Etapa 057:** Forjamento do Cartucho #20: Subida da Montanha Sagrada (O chat empurra um guerreiro montanha acima desviando de avalanches com votos).
 - [ ] **Etapa 058:** Sistema de Ranking MVP da rodada (destacando os 3 maiores doadores e atacantes que mais tiraram vida do monstro).
 - [ ] **Etapa 059:** Testes de stress com simulação de ataques em massa de alta densidade no Test Lab.
 - [ ] **Etapa 060:** Homologação e despacho dos cartuchos cooperativos para o Broadcaster.

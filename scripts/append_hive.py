@@ -3,16 +3,17 @@ import os
 bus_path = r"C:\Users\v5est\.gemini\antigravity\brain\9270dd65-160e-47e8-aea2-6a92fd50cfc6\antigravity_hive_bus.md"
 
 entry = """
-### [27/10/2026 - 10:50] CAPITANIA V5 GAMES - ETAPA 056 CONCLUÍDA: CARTUCHO #19 DEFESA DA TORRE DO CHAT
-- **Cartucho Homologado:** `19_defesa_da_torre_chat` (Defesa da Torre do Chat - 3 Lanes Verticais 9:16).
+### [27/10/2026 - 11:00] CAPITANIA V5 GAMES - ETAPA 057 CONCLUÍDA: CARTUCHO #20 SUBIDA DA MONTANHA SAGRADA
+- **Cartucho Homologado:** `20_subida_da_montanha_sagrada` (Subida da Montanha Sagrada - Cume & Avalanches 9:16).
 - **Inovações de Engenharia:**
-  1. Hordas alienígenas descendo em 3 lanes (Drones Rápidos, Mechas Pesados e Naves Stealth com barras de vida individuais).
-  2. Slots de Canhões na base (Gatling Laser `1`, Plasma Pesado `2`, Canhão Criogênico `3`) com upgrade contínuo de poder via votos no chat.
-  3. Super Ataque de Presentes: Bomba Orbital Quântica ativada por gifts que limpa a tela em wipeout completo com mega-tremor.
-  4. Síntese procedural de áudio (Web Audio API): lasers polifônicos, explosões de impacto com estilhaços, bomba orbital e fanfarra triunfal.
-  5. Ciclo de 3 ondas progressivas com 45s por onda, banner de defensor MVP em tempo real e auto-reset em 5s.
-- **Sincronização:** Total de 17 cartuchos ativos no Broadcaster (`v5_games_manifest.json`).
-- **Próxima Etapa:** Etapa 057 — Forjamento do Cartucho #20: Subida da Montanha Sagrada (Chat empurra guerreiro desviando de avalanches).
+  1. Escalada vertical procedural até 1.000m com 3 trilhas dinâmicas e parallax de paredão místico e runas cósmicas.
+  2. Sistema de física de avalanches: pedregulhos caindo com rotação e detecção de colisão contra os 3 escudos do guerreiro.
+  3. Comandos do chat: `1` (Desvio Esq), `2` (Salto Vertical +5m), `3` (Desvio Dir).
+  4. Super Habilidade de Presentes: Voo Místico da Fênix Dourada (+150m em hiper-velocidade imune por 3.5s com trilha de faíscas).
+  5. Síntese procedural de áudio (Web Audio API): saltos de impulso, impactos de pedregulhos, ascensão harmônica da fênix e fanfarra de cume.
+  6. Banner MVP de escaladores em tempo real e auto-reset em 5s.
+- **Sincronização:** Total de 18 cartuchos ativos no Broadcaster (`v5_games_manifest.json`).
+- **Próximas Etapas:** Etapas 058 a 060 — Sistema de ranking MVP global da Fase 6, testes de stress de alta densidade e despacho homologatório.
 """
 
 if os.path.exists(bus_path):

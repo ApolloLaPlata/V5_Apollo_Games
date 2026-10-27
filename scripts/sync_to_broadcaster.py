@@ -143,6 +143,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "esq", "centro", "dir"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "20_subida_da_montanha_sagrada": {
+        "name": "Subida da Montanha Sagrada",
+        "category": "cooperativo_boss",
+        "description": "Chat empurra guerreiro montanha acima até 1000m desviando de avalanches e pedregulhos com voo da fênix de gifts",
+        "commands": ["1", "2", "3", "subir", "esq", "dir"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 
