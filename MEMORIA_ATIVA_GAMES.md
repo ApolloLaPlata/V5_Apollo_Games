@@ -156,3 +156,4 @@ O objetivo financeiro e técnico foi alcançado com um acervo proprietário de a
 - `scripts/test_loading_performance_108.py`: Suíte de homologação de carregamento instantâneo com verificação de orçamento de tamanho e zero bloqueios de rede (6/6 checks aprovados).
 - `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo industrial com verificação MD5 bit-a-bit, gerador de manifestos espelhados e gerador de `games_registry.json` para o V5 Broadcaster.
 - `scripts/update_hive_bus_109.py`: Registrador de conclusão e homologação oficial da Capitania V5 Games no barramento central `antigravity_hive_bus.md`.
+- `scripts/test_round_8_hardening.py`: Suíte de hardening cirúrgico (7/7 checks) validando beforeunload sem vazamento em 21 jogos, try/catch em BroadcastChannel nos jogos 26-32, radix 10 em parseInt, resets de entidades nos jogos 28 e 39 e desduplicação LRU no V5LiveGameSDK.
