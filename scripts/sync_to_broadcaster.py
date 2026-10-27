@@ -32,6 +32,14 @@ GAME_METADATA = {
         "status": "HOMOLOGADO",
         "version": "2.0.0"
     },
+    "03_corrida_avatares_holding": {
+        "name": "Corrida dos Avatares da Holding",
+        "category": "corrida_velocidade",
+        "description": "Roxingo, Baiano e Macaco Driver disputando circuito pseudo-3D com nitros acionados pelo chat",
+        "commands": ["1", "2", "3", "roxingo", "baiano", "macaco"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
+    },
     "06_batalha_dos_baloes": {
         "name": "Batalha dos Balões Gigantes",
         "category": "polarizacao",

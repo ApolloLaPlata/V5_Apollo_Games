@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Corrida dos Avatares (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #020617;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: #020617;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Screen Shake de Nitro / Colisão */
+    .shake-active {
+      animation: trackShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes trackShake {
+      10%, 90% { transform: translate3d(-3px, -2px, 0); }
+      20%, 80% { transform: translate3d(4px, 3px, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, -3px, 0); }
+      40%, 60% { transform: translate3d(4px, 2px, 0); }
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 16px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(2, 6, 23, 0.96) 0%, rgba(2, 6, 23, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #38bdf8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .timer-badge {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Placar de Telemetria dos 3 Pilotos */
+    .racer-telemetry-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 8px 6px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .racer-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 4px;
+      border-radius: 10px;
+      position: relative;
+      transition: transform 0.2s, border-color 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .racer-card.leader {
+      border-color: #fbbf24;
+      background: rgba(251, 191, 36, 0.1);
+      box-shadow: 0 0 12px rgba(251, 191, 36, 0.25);
+    }
+
+    .racer-badge {
+      font-size: 10px;
+      font-weight: 900;
+      padding: 1px 6px;
+      border-radius: 10px;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+    }
+
+    .racer-card.roxingo .racer-badge { background: #9333ea; color: #fff; }
+    .racer-card.baiano .racer-badge { background: #ea580c; color: #fff; }
+    .racer-card.macaco .racer-badge { background: #16a34a; color: #fff; }
+
+    .racer-name {
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .racer-speed {
+      font-size: 15px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      margin: 2px 0;
+    }
+
+    .racer-card.roxingo .racer-speed { color: #c084fc; text-shadow: 0 0 8px #c084fc; }
+    .racer-card.baiano .racer-speed { color: #fbbf24; text-shadow: 0 0 8px #fbbf24; }
+    .racer-card.macaco .racer-speed { color: #4ade80; text-shadow: 0 0 8px #4ade80; }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 3px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 4px;
+      transition: width 0.1s linear;
+    }
+
+    .racer-card.roxingo .progress-fill { background: #a855f7; }
+    .racer-card.baiano .progress-fill { background: #f97316; }
+    .racer-card.macaco .progress-fill { background: #22c55e; }
+
+    /* Canvas Central do Jogo */
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Feed de Boosts e Notificações */
+    .toast-feed {
+      position: absolute;
+      top: 145px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+      z-index: 8;
+    }
+
+    .toast-item {
+      background: rgba(15, 23, 42, 0.88);
+      border-left: 4px solid #38bdf8;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      animation: slideInToast 0.25s ease-out forwards;
+    }
+
+    @keyframes slideInToast {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 12px 16px 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.7) 70%, rgba(2, 6, 23, 0) 100%);
+    }
+
+    .instructions-card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .inst-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .vote-chips {
+      display: flex;
+      gap: 6px;
+    }
+
+    .vote-chip {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .chip-roxingo { background: rgba(168, 85, 247, 0.25); border: 1px solid #a855f7; color: #d8b4fe; }
+    .chip-baiano { background: rgba(249, 115, 22, 0.25); border: 1px solid #f97316; color: #fdba74; }
+    .chip-macaco { background: rgba(34, 197, 94, 0.25); border: 1px solid #22c55e; color: #86efac; }
+
+    .gift-info {
+      font-size: 11px;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Gaveta de Depuração Oculta */
+    .debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(3, 7, 18, 0.98);
+      border-top: 2px solid #38bdf8;
+      padding: 12px 16px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 100;
+    }
+
+    .debug-drawer.open {
+      display: flex;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: #ffffff;
+      padding: 8px 4px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .debug-btn:active {
+      transform: scale(0.96);
+      background: #334155;
+    }
+
+    /* Tela de Vitória / Pódio */
+    .victory-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(2, 6, 23, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .victory-overlay.active {
+      display: flex;
+      animation: victoryFadeIn 0.4s ease-out forwards;
+    }
+
+    @keyframes victoryFadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .victory-crown {
+      font-size: 64px;
+      filter: drop-shadow(0 0 20px #fbbf24);
+      animation: bounce 1s infinite alternate;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-12px); }
+    }
+
+    .victory-title {
+      font-size: 32px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .victory-subtitle {
+      font-size: 16px;
+      color: #94a3b8;
+      max-width: 320px;
+    }
+
+    .podium-box {
+      width: 100%;
+      max-width: 320px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .podium-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .auto-reset-bar {
+      width: 100%;
+      max-width: 280px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .auto-reset-fill {
+      width: 100%;
+      height: 100%;
+      background: #38bdf8;
+      border-radius: 6px;
+      transition: width 5s linear;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Top Safe Zone (140px) -->
+    <div class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <span class="live-dot"></span>
+          V5 APEX CIRCUIT 9:16
+        </div>
+        <div class="timer-badge">
+          ⏱️ <span id="round-timer">45s</span>
+        </div>
+      </div>
+
+      <!-- Placar dos 3 Pilotos -->
+      <div class="racer-telemetry-grid">
+        <div id="card-roxingo" class="racer-card roxingo">
+          <span class="racer-badge">#1 • VOTE 1</span>
+          <span class="racer-name">ROXINGO</span>
+          <span id="speed-roxingo" class="racer-speed">120 km/h</span>
+          <div class="progress-bar-bg">
+            <div id="prog-roxingo" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <div id="card-baiano" class="racer-card baiano">
+          <span class="racer-badge">#2 • VOTE 2</span>
+          <span class="racer-name">BAIANO</span>
+          <span id="speed-baiano" class="racer-speed">120 km/h</span>
+          <div class="progress-bar-bg">
+            <div id="prog-baiano" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <div id="card-macaco" class="racer-card macaco">
+          <span class="racer-badge">#3 • VOTE 3</span>
+          <span class="racer-name">MACACO</span>
+          <span id="speed-macaco" class="racer-speed">120 km/h</span>
+          <div class="progress-bar-bg">
+            <div id="prog-macaco" class="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feed de Notificações / Toasts -->
+    <div id="toast-feed" class="toast-feed"></div>
+
+    <!-- Canvas Central Pseudo-3D -->
+    <div id="canvas-container">
+      <canvas id="race-canvas"></canvas>
+    </div>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <div class="bottom-panel" id="bottom-panel">
+      <div class="instructions-card">
+        <div class="inst-row">
+          <span>🎮 PILOTE PELO CHAT:</span>
+          <div class="vote-chips">
+            <span class="vote-chip chip-roxingo" onclick="vote('roxingo')">1 ROXINGO</span>
+            <span class="vote-chip chip-baiano" onclick="vote('baiano')">2 BAIANO</span>
+            <span class="vote-chip chip-macaco" onclick="vote('macaco')">3 MACACO</span>
+          </div>
+        </div>
+        <div class="gift-info">
+          <span>🎁 Envie Presente/Gift = 🚀 <b>SUPER NITRO +120 km/h</b></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gaveta de Depuração Local -->
+    <div class="debug-drawer" id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #94a3b8; display: flex; justify-content: space-between;">
+        <span>PAINEL DE DEPURAÇÃO LOCAL (TECLA 'D')</span>
+        <span style="cursor: pointer;" onclick="toggleDebug()">[FECHAR]</span>
+      </div>
+      <div class="debug-grid">
+        <button class="debug-btn" onclick="vote('roxingo')">+1 Voto Roxingo</button>
+        <button class="debug-btn" onclick="vote('baiano')">+1 Voto Baiano</button>
+        <button class="debug-btn" onclick="vote('macaco')">+1 Voto Macaco</button>
+        <button class="debug-btn" onclick="triggerGift('roxingo', 'Rose')">🌹 Nitro Roxingo</button>
+        <button class="debug-btn" onclick="triggerGift('baiano', 'Rose')">🌹 Nitro Baiano</button>
+        <button class="debug-btn" onclick="triggerGift('macaco', 'Rose')">🌹 Nitro Macaco</button>
+        <button class="debug-btn" onclick="triggerGift('roxingo', 'Lion')">🦁 Hyper Roxingo</button>
+        <button class="debug-btn" onclick="triggerGift('baiano', 'Lion')">🦁 Hyper Baiano</button>
+        <button class="debug-btn" onclick="triggerGift('macaco', 'Lion')">🦁 Hyper Macaco</button>
+      </div>
+    </div>
+
+    <!-- Tela de Vitória e Pódio -->
+    <div class="victory-overlay" id="victory-overlay">
+      <div class="victory-crown" id="victory-crown">🏆</div>
+      <div class="victory-title" id="victory-title">ROXINGO VENCEU!</div>
+      <div class="victory-subtitle" id="victory-subtitle">Dominou o circuito Apex com a maior velocidade média!</div>
+      
+      <div class="podium-box">
+        <div class="podium-row" id="podium-1">🥇 1º Lugar: Roxingo (1500m)</div>
+        <div class="podium-row" id="podium-2">🥈 2º Lugar: Baiano (+42m)</div>
+        <div class="podium-row" id="podium-3">🥉 3º Lugar: Macaco (+88m)</div>
+      </div>
+
+      <div class="auto-reset-bar">
+        <div class="auto-reset-fill" id="reset-fill"></div>
+      </div>
+      <span style="font-size: 11px; color: #94a3b8;">Próxima largada em instantes...</span>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * V5 RACING PROCEDURAL AUDIO SYNTHESIZER (Web Audio API)
+     * Síntese de motor acelerando, sopro de nitro, derrapagem e fanfarra
+     */
+    class RacingAudio {
+      constructor() {
+        this.ctx = null;
+        this.engineOsc = null;
+        this.engineGain = null;
+        this.engineSub = null;
+        this.isPlayingEngine = false;
+        this.lastTireTime = 0;
+      }
+
+      getCtx() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        return this.ctx;
+      }
+
+      initEngineSound() {
+        if (this.isPlayingEngine) return;
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+
+          // Oscilador principal de rotação (RPM)
+          this.engineOsc = c.createOscillator();
+          this.engineOsc.type = 'sawtooth';
+          this.engineOsc.frequency.setValueAtTime(55, t);
+
+          // Sub-oscilador para peso grave de escapamento
+          this.engineSub = c.createOscillator();
+          this.engineSub.type = 'triangle';
+          this.engineSub.frequency.setValueAtTime(27.5, t);
+
+          // Filtro passa-baixas para simular o bloco de cilindros
+          this.engineFilter = c.createBiquadFilter();
+          this.engineFilter.type = 'lowpass';
+          this.engineFilter.frequency.setValueAtTime(280, t);
+
+          this.engineGain = c.createGain();
+          this.engineGain.gain.setValueAtTime(0.08, t);
+
+          this.engineOsc.connect(this.engineFilter);
+          this.engineSub.connect(this.engineFilter);
+          this.engineFilter.connect(this.engineGain);
+          this.engineGain.connect(c.destination);
+
+          this.engineOsc.start(t);
+          this.engineSub.start(t);
+          this.isPlayingEngine = true;
+        } catch (e) {}
+      }
+
+      updateEngineRPM(speedKmH = 120) {
+        if (!this.isPlayingEngine || !this.ctx) return;
+        try {
+          const t = this.ctx.currentTime;
+          // Normalizar RPM entre 55Hz (marcha lenta) e 190Hz (velocidade máxima)
+          const targetFreq = 50 + (speedKmH / 280) * 130;
+          this.engineOsc.frequency.setTargetAtTime(targetFreq, t, 0.1);
+          this.engineSub.frequency.setTargetAtTime(targetFreq * 0.5, t, 0.1);
+          this.engineFilter.frequency.setTargetAtTime(220 + (speedKmH / 280) * 450, t, 0.1);
+        } catch (e) {}
+      }
+
+      playNitroRush() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+
+          // Ruído de ar pressurizado / turbina
+          const bufferSize = c.sampleRate * 0.5;
+          const noiseBuffer = c.createBuffer(1, bufferSize, c.sampleRate);
+          const data = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+          const noise = c.createBufferSource();
+          noise.buffer = noiseBuffer;
+
+          const flt = c.createBiquadFilter();
+          flt.type = 'bandpass';
+          flt.frequency.setValueAtTime(400, t);
+          flt.frequency.exponentialRampToValueAtTime(3200, t + 0.35);
+          flt.Q.setValueAtTime(3.0, t);
+
+          const gain = c.createGain();
+          gain.gain.setValueAtTime(0.3, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+
+          noise.connect(flt);
+          flt.connect(gain);
+          gain.connect(c.destination);
+
+          noise.start(t);
+          noise.stop(t + 0.45);
+        } catch (e) {}
+      }
+
+      playOvertakeHorn() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          [440, 554.37].forEach(f => {
+            const osc = c.createOscillator();
+            const g = c.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, t);
+            g.gain.setValueAtTime(0.12, t);
+            g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+            osc.connect(g);
+            g.connect(c.destination);
+            osc.start(t);
+            osc.stop(t + 0.25);
+          });
+        } catch (e) {}
+      }
+
+      playVictoryFanfare() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const melody = [
+            { f: 261.63, d: 0.12, st: 0.0 }, // C4
+            { f: 329.63, d: 0.12, st: 0.12 }, // E4
+            { f: 392.00, d: 0.12, st: 0.24 }, // G4
+            { f: 523.25, d: 0.45, st: 0.36 }  // C5
+          ];
+
+          melody.forEach(n => {
+            const osc = c.createOscillator();
+            const g = c.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(n.f, t + n.st);
+            g.gain.setValueAtTime(0.25, t + n.st);
+            g.gain.exponentialRampToValueAtTime(0.001, t + n.st + n.d);
+            osc.connect(g);
+            g.connect(c.destination);
+            osc.start(t + n.st);
+            osc.stop(t + n.st + n.d);
+          });
+        } catch (e) {}
+      }
+    }
+
+    // =========================================================================
+    // INICIALIZAÇÃO DO ESTÁGIO & CANVASES
+    // =========================================================================
+    const stageEl = document.getElementById('game-stage');
+    const canvas = document.getElementById('race-canvas');
+    const ctx = canvas.getContext('2d');
+    const audio = new RacingAudio();
+
+    let W = 0, H = 0;
+    function resize() {
+      W = stageEl.clientWidth;
+      H = stageEl.clientHeight;
+      canvas.width = W;
+      canvas.height = H;
+    }
+    window.addEventListener('resize', resize);
+
+    // Estado da Partida
+    let roundTime = 45;
+    let timerInterval = null;
+    let isGameOver = false;
+    const TARGET_DISTANCE = 1500; // metros para vitória
+
+    // DOM Elements
+    const roundTimerEl = document.getElementById('round-timer');
+    const toastFeedEl = document.getElementById('toast-feed');
+    const debugDrawer = document.getElementById('debug-drawer');
+    const victoryOverlay = document.getElementById('victory-overlay');
+    const victoryTitle = document.getElementById('victory-title');
+    const victorySubtitle = document.getElementById('victory-subtitle');
+    const resetFill = document.getElementById('reset-fill');
+    const podium1 = document.getElementById('podium-1');
+    const podium2 = document.getElementById('podium-2');
+    const podium3 = document.getElementById('podium-3');
+
+    // Confetes de vitória
+    let confettis = [];
+
+    // =========================================================================
+    // PILOTOS DA HOLDING
+    // =========================================================================
+    const RACERS = {
+      roxingo: {
+        id: 'roxingo',
+        name: 'Roxingo Neon',
+        color: '#a855f7',
+        accentColor: '#c084fc',
+        lane: 0,
+        x: -0.55,
+        targetX: -0.55,
+        z: 0,
+        speed: 120,
+        baseSpeed: 120,
+        maxSpeed: 280,
+        acceleration: 30,
+        nitroTimer: 0,
+        rank: 1,
+        cardEl: document.getElementById('card-roxingo'),
+        speedEl: document.getElementById('speed-roxingo'),
+        progEl: document.getElementById('prog-roxingo')
+      },
+      baiano: {
+        id: 'baiano',
+        name: 'Baiano Turbo',
+        color: '#f97316',
+        accentColor: '#fbbf24',
+        lane: 1,
+        x: 0.0,
+        targetX: 0.0,
+        z: 0,
+        speed: 120,
+        baseSpeed: 120,
+        maxSpeed: 280,
+        acceleration: 30,
+        nitroTimer: 0,
+        rank: 2,
+        cardEl: document.getElementById('card-baiano'),
+        speedEl: document.getElementById('speed-baiano'),
+        progEl: document.getElementById('prog-baiano')
+      },
+      macaco: {
+        id: 'macaco',
+        name: 'Macaco Driver',
+        color: '#22c55e',
+        accentColor: '#4ade80',
+        lane: 2,
+        x: 0.55,
+        targetX: 0.55,
+        z: 0,
+        speed: 120,
+        baseSpeed: 120,
+        maxSpeed: 280,
+        acceleration: 30,
+        nitroTimer: 0,
+        rank: 3,
+        cardEl: document.getElementById('card-macaco'),
+        speedEl: document.getElementById('speed-macaco'),
+        progEl: document.getElementById('prog-macaco')
+      }
+    };
+
+    // Parâmetros da Câmera Pseudo-3D
+    const camera = {
+      x: 0,
+      y: 750,
+      z: 0,
+      depth: 0.85,
+      horizonY: 0
+    };
+
+    let trackCurve = 0;
+    let targetCurve = 0;
+    let skyOffset = 0;
+    let cityOffset = 0;
+
+    // =========================================================================
+    // VOTOS, BOOSTS & PROTOCOLO DE EVENTOS
+    // =========================================================================
+    function triggerScreenShake() {
+      stageEl.classList.remove('shake-active');
+      void stageEl.offsetWidth;
+      stageEl.classList.add('shake-active');
+      setTimeout(() => stageEl.classList.remove('shake-active'), 350);
+    }
+
+    function addToast(text, color = '#38bdf8') {
+      const toast = document.createElement('div');
+      toast.className = 'toast-item';
+      toast.style.borderLeftColor = color;
+      toast.innerHTML = text;
+      toastFeedEl.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    function vote(teamKey, user = '@espectador') {
+      if (isGameOver) return;
+      audio.initEngineSound();
+
+      const racer = RACERS[teamKey];
+      if (!racer) return;
+
+      // Cada voto dá pequeno empurrão de aceleração (+12 km/h)
+      racer.speed = Math.min(racer.maxSpeed, racer.speed + 14);
+      addToast(`⚡ <b>${user}</b> acelerou <b>${racer.name}</b> (+14 km/h)`, racer.color);
+    }
+
+    function triggerGift(teamKey, giftName = 'Rose', user = '@espectador') {
+      if (isGameOver) return;
+      audio.initEngineSound();
+      audio.playNitroRush();
+      triggerScreenShake();
+
+      const racer = RACERS[teamKey];
+      if (!racer) return;
+
+      const isBig = (giftName === 'Lion' || giftName === 'Rocket' || giftName === 'Universe');
+      const boostAmount = isBig ? 130 : 65;
+      const boostDuration = isBig ? 6.0 : 3.5;
+
+      racer.nitroTimer = Math.max(racer.nitroTimer, boostDuration);
+      racer.speed = Math.min(racer.maxSpeed, racer.speed + boostAmount);
+
+      addToast(`🚀 <b>${user}</b> enviou <b>${giftName}</b>! SUPER NITRO em <b>${racer.name}</b>!`, '#fbbf24');
+    }
+
+    // Listener do Broadcaster
+    const broadcasterChannel = new BroadcastChannel('v5_broadcaster_games');
+    broadcasterChannel.onmessage = (event) => handleLivePayload(event.data);
+    window.addEventListener('v5_event', (e) => handleLivePayload(e.detail));
+
+    function handleLivePayload(payload) {
+      if (!payload) return;
+      const user = payload.user || '@espectador';
+
+      if (payload.type === 'gift') {
+        const gift = payload.giftName || 'Gift';
+        const team = (payload.team === 'A' || payload.comment === '1') ? 'roxingo' :
+                     (payload.team === 'B' || payload.comment === '2') ? 'baiano' : 'macaco';
+        triggerGift(team, gift, user);
+      } else if (payload.type === 'comment' || payload.type === 'vote') {
+        const text = String(payload.comment || payload.action || '').trim().toLowerCase();
+        if (text === '1' || text.includes('rox') || text.includes('roxinho')) vote('roxingo', user);
+        else if (text === '2' || text.includes('bai') || text.includes('bahia')) vote('baiano', user);
+        else if (text === '3' || text.includes('mac') || text.includes('macaco')) vote('macaco', user);
+      }
+    }
+
+    // Toggle Debug Drawer
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') toggleDebug();
+    });
+    function toggleDebug() {
+      debugDrawer.classList.toggle('open');
+    }
+
+    // =========================================================================
+    // MOTOR ANTI-SILÊNCIO (Simulação Autônoma)
+    // =========================================================================
+    const mockUsers = [
+      '@pedro_speed', '@julia_drift', '@marcos_nitro', '@ana_holding',
+      '@thiago_apex', '@camila_turbo', '@felipe_race', '@bianca_boost'
+    ];
+
+    setInterval(() => {
+      if (isGameOver) return;
+      const rndUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+      const teams = ['roxingo', 'baiano', 'macaco'];
+      const rndTeam = teams[Math.floor(Math.random() * teams.length)];
+
+      if (Math.random() < 0.20) {
+        triggerGift(rndTeam, 'Rose', rndUser);
+      } else {
+        vote(rndTeam, rndUser);
+      }
+    }, 2400);
+
+    // =========================================================================
+    // LOOP PRINCIPAL DE SIMULAÇÃO E RENDERIZAÇÃO
+    // =========================================================================
+    let lastTime = performance.now();
+    let currentLeaderKey = 'roxingo';
+
+    function gameLoop(now) {
+      const dt = Math.min(0.1, (now - lastTime) / 1000);
+      lastTime = now;
+
+      update(dt);
+      render();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    function update(dt) {
+      if (isGameOver) return;
+
+      // 1. Atualizar dinâmica dos pilotos
+      const racerList = Object.values(RACERS);
+      racerList.forEach(r => {
+        // Desaceleração suave para baseSpeed
+        if (r.nitroTimer > 0) {
+          r.nitroTimer -= dt;
+        } else if (r.speed > r.baseSpeed) {
+          r.speed -= r.acceleration * dt * 0.8;
+        }
+
+        // Avanço de distância (escala em metros)
+        r.z += (r.speed * (1000 / 3600)) * dt * 3.5;
+
+        // Atualizar telemetria DOM
+        r.speedEl.textContent = `${Math.round(r.speed)} km/h`;
+        const pct = Math.min(100, (r.z / TARGET_DISTANCE) * 100);
+        r.progEl.style.width = `${pct}%`;
+
+        // Vitória por distância
+        if (r.z >= TARGET_DISTANCE) {
+          finishRound(r);
+        }
+      });
+
+      // 2. Classificação de posições (1º, 2º, 3º)
+      racerList.sort((a, b) => b.z - a.z);
+      racerList.forEach((r, idx) => {
+        r.rank = idx + 1;
+        if (idx === 0) {
+          r.cardEl.classList.add('leader');
+          if (r.id !== currentLeaderKey) {
+            currentLeaderKey = r.id;
+            audio.playOvertakeHorn();
+            addToast(`🏁 <b>${r.name}</b> assumiu a LIDERANÇA!`, r.color);
+          }
+        } else {
+          r.cardEl.classList.remove('leader');
+        }
+      });
+
+      // 3. Câmera segue o líder suavemente
+      const leader = racerList[0];
+      const targetCamZ = leader.z - 180;
+      camera.z += (targetCamZ - camera.z) * Math.min(1.0, dt * 6.0);
+      camera.horizonY = H * 0.35;
+
+      // Atualizar som do motor proporcional ao líder
+      audio.updateEngineRPM(leader.speed);
+
+      // Curva procedural da pista
+      if (Math.random() < 0.015) {
+        targetCurve = (Math.random() - 0.5) * 2.2;
+      }
+      trackCurve += (targetCurve - trackCurve) * dt * 1.5;
+      skyOffset = (skyOffset + trackCurve * 0.8) % W;
+      cityOffset = (cityOffset + trackCurve * 1.6) % W;
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, W, H);
+
+      // 1. Céu e Horizonte Cyberpunk (Parallax)
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, camera.horizonY);
+      skyGrad.addColorStop(0, '#030712');
+      skyGrad.addColorStop(1, '#1e1b4b');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, W, camera.horizonY);
+
+      // Linha do horizonte neon
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, camera.horizonY);
+      ctx.lineTo(W, camera.horizonY);
+      ctx.stroke();
+
+      // Silhueta de edifícios futuristas em parallax
+      ctx.fillStyle = '#090d16';
+      const bWidth = 40;
+      const numB = Math.ceil(W / bWidth) + 2;
+      const startBx = -(cityOffset % bWidth);
+      for (let i = 0; i < numB; i++) {
+        const bx = startBx + (i * bWidth);
+        const bH = 35 + ((i * 31) % 70);
+        ctx.fillRect(bx, camera.horizonY - bH, bWidth - 4, bH);
+        if (i % 2 === 0) {
+          ctx.fillStyle = (i % 4 === 0) ? '#a855f7' : '#38bdf8';
+          ctx.fillRect(bx + 6, camera.horizonY - bH + 10, 3, 3);
+          ctx.fillRect(bx + 18, camera.horizonY - bH + 22, 3, 3);
+          ctx.fillStyle = '#090d16';
+        }
+      }
+
+      // 2. Asfalto Tridimensional com Projeção e Listras
+      renderRoad3D();
+
+      // 3. Renderizar os 3 Karts dos Avatares
+      renderKarts();
+
+      // 4. Confetes de Vitória
+      renderConfetti();
+    }
+
+    function renderRoad3D() {
+      const roadH = H - camera.horizonY;
+      const baseW = W * 0.95;
+      const topW = W * 0.08;
+
+      // Pista Principal (Trapezóide)
+      ctx.fillStyle = '#0a0e1a';
+      ctx.beginPath();
+      ctx.moveTo((W / 2) - topW, camera.horizonY);
+      ctx.lineTo((W / 2) + topW, camera.horizonY);
+      ctx.lineTo((W / 2) + baseW, H);
+      ctx.lineTo((W / 2) - baseW, H);
+      ctx.closePath();
+      ctx.fill();
+
+      // Zebrados Laterais Dinâmicos
+      const numStrips = 24;
+      const scrollOffset = (camera.z * 0.25) % (roadH / numStrips);
+
+      for (let i = 0; i < numStrips; i++) {
+        const y1 = camera.horizonY + (i * (roadH / numStrips)) + scrollOffset;
+        const y2 = y1 + (roadH / numStrips * 0.5);
+        if (y1 > H || y2 < camera.horizonY) continue;
+
+        const p1 = (y1 - camera.horizonY) / roadH;
+        const p2 = (y2 - camera.horizonY) / roadH;
+
+        const w1 = topW + (baseW - topW) * p1;
+        const w2 = topW + (baseW - topW) * p2;
+
+        const isEven = (i % 2 === 0);
+        ctx.fillStyle = isEven ? '#06b6d4' : '#f43f5e';
+
+        // Faixa Esquerda
+        ctx.beginPath();
+        ctx.moveTo((W / 2) - w1 - (w1 * 0.12), y1);
+        ctx.lineTo((W / 2) - w1, y1);
+        ctx.lineTo((W / 2) - w2, y2);
+        ctx.lineTo((W / 2) - w2 - (w2 * 0.12), y2);
+        ctx.closePath();
+        ctx.fill();
+
+        // Faixa Direita
+        ctx.beginPath();
+        ctx.moveTo((W / 2) + w1, y1);
+        ctx.lineTo((W / 2) + w1 + (w1 * 0.12), y1);
+        ctx.lineTo((W / 2) + w2 + (w2 * 0.12), y2);
+        ctx.lineTo((W / 2) + w2, y2);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Divisórias Pontilhadas de Pista (3 Faixas)
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([16, 16]);
+      ctx.lineDashOffset = -(camera.z * 0.6) % 32;
+
+      // Divisória 1
+      ctx.beginPath();
+      ctx.moveTo((W / 2) - (topW * 0.33), camera.horizonY);
+      ctx.lineTo((W / 2) - (baseW * 0.33), H);
+      ctx.stroke();
+
+      // Divisória 2
+      ctx.beginPath();
+      ctx.moveTo((W / 2) + (topW * 0.33), camera.horizonY);
+      ctx.lineTo((W / 2) + (baseW * 0.33), H);
+      ctx.stroke();
+
+      ctx.setLineDash([]);
+    }
+
+    function renderKarts() {
+      const racers = Object.values(RACERS).sort((a, b) => a.z - b.z);
+
+      racers.forEach(r => {
+        // Distância relativa em relação à câmera
+        const relZ = r.z - camera.z;
+        if (relZ < -150 || relZ > 1200) return;
+
+        // Projeção não-linear de escala e Y
+        const normZ = Math.max(0.01, (relZ + 180) / 1000);
+        const scale = Math.max(0.25, Math.min(1.4, 1.0 / (normZ * 0.8 + 0.2)));
+        
+        const roadH = H - camera.horizonY;
+        const curY = camera.horizonY + (roadH * Math.min(0.92, (0.55 + (scale * 0.28))));
+
+        const baseW = W * 0.95;
+        const topW = W * 0.08;
+        const curRoadW = topW + (baseW - topW) * ((curY - camera.horizonY) / roadH);
+        const curX = (W / 2) + (r.x * curRoadW * 0.55);
+
+        const carW = 72 * scale;
+        const carH = 48 * scale;
+
+        drawKartSprite(r, curX, curY, carW, carH, scale);
+      });
+    }
+
+    function drawKartSprite(r, x, y, w, h, scale) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Sombra projetada no asfalto
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+      ctx.beginPath();
+      ctx.ellipse(0, h * 0.45, w * 0.6, h * 0.25, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Chassi Principal com Brilho Neon
+      ctx.fillStyle = r.color;
+      ctx.shadowColor = r.color;
+      ctx.shadowBlur = (r.nitroTimer > 0) ? 28 : 12;
+
+      ctx.beginPath();
+      ctx.roundRect(-w * 0.45, -h * 0.4, w * 0.9, h * 0.75, 8 * scale);
+      ctx.fill();
+
+      // Cockpit / Piloto Temático
+      ctx.fillStyle = '#0f172a';
+      ctx.shadowBlur = 0;
+      ctx.beginPath();
+      ctx.roundRect(-w * 0.25, -h * 0.28, w * 0.5, h * 0.45, 6 * scale);
+      ctx.fill();
+
+      // Detalhes Específicos de Cada Avatar
+      if (r.id === 'roxingo') {
+        // Antenas / Orelhas holográficas de Roxingo
+        ctx.fillStyle = '#d946ef';
+        ctx.shadowColor = '#d946ef';
+        ctx.shadowBlur = 8;
+        ctx.fillRect(-w * 0.35, -h * 0.55, w * 0.12, h * 0.22);
+        ctx.fillRect(w * 0.23, -h * 0.55, w * 0.12, h * 0.22);
+      } else if (r.id === 'baiano') {
+        // Chapéu estilizado dourado
+        ctx.fillStyle = '#fbbf24';
+        ctx.shadowColor = '#fbbf24';
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.ellipse(0, -h * 0.25, w * 0.32, h * 0.14, 0, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (r.id === 'macaco') {
+        // Headphones cibernéticos do Macaco Driver
+        ctx.fillStyle = '#4ade80';
+        ctx.shadowColor = '#4ade80';
+        ctx.shadowBlur = 8;
+        ctx.fillRect(-w * 0.32, -h * 0.32, w * 0.1, h * 0.3);
+        ctx.fillRect(w * 0.22, -h * 0.32, w * 0.1, h * 0.3);
+      }
+
+      // Lanternas Traseiras Neon
+      ctx.fillStyle = '#ef4444';
+      ctx.shadowColor = '#ef4444';
+      ctx.shadowBlur = 6;
+      ctx.fillRect(-w * 0.4, h * 0.3, w * 0.16, h * 0.1);
+      ctx.fillRect(w * 0.24, h * 0.3, w * 0.16, h * 0.1);
+
+      // Fogo de Escape / Turbina de Nitro
+      if (r.nitroTimer > 0) {
+        ctx.fillStyle = '#38bdf8';
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 20;
+        const flH = (h * 0.6) + (Math.random() * h * 0.4);
+        ctx.beginPath();
+        ctx.moveTo(-w * 0.15, h * 0.35);
+        ctx.lineTo(0, h * 0.35 + flH);
+        ctx.lineTo(w * 0.15, h * 0.35);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Rótulo Flutuante com Posição e Nome
+      ctx.restore();
+      ctx.save();
+      ctx.font = `bold ${Math.max(10, Math.round(13 * scale))}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#000000';
+      ctx.shadowBlur = 6;
+      ctx.fillText(`#${r.rank} ${r.name}`, x, y - (h * 0.55));
+      ctx.restore();
+    }
+
+    // =========================================================================
+    // CICLO DE PARTIDA, VITÓRIA & AUTO-RESET
+    // =========================================================================
+    function startTimer() {
+      roundTime = 45;
+      roundTimerEl.textContent = `${roundTime}s`;
+      clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        if (isGameOver) return;
+        roundTime--;
+        roundTimerEl.textContent = `${roundTime}s`;
+
+        if (roundTime <= 0) {
+          // Vencedor pelo maior progresso
+          const list = Object.values(RACERS).sort((a, b) => b.z - a.z);
+          finishRound(list[0]);
+        }
+      }, 1000);
+    }
+
+    function finishRound(winner) {
+      if (isGameOver) return;
+      isGameOver = true;
+      clearInterval(timerInterval);
+
+      audio.playVictoryFanfare();
+      triggerScreenShake();
+
+      // Classificação Final
+      const podium = Object.values(RACERS).sort((a, b) => b.z - a.z);
+      victoryTitle.textContent = `${winner.name.toUpperCase()} VENCEU!`;
+      victoryTitle.style.color = winner.accentColor;
+      victorySubtitle.textContent = `Craque do circuito com velocidade de pico e impulsos do chat!`;
+
+      podium1.textContent = `🥇 1º Lugar: ${podium[0].name} (${Math.round(podium[0].z)}m)`;
+      podium2.textContent = `🥈 2º Lugar: ${podium[1].name} (+${Math.round(podium[0].z - podium[1].z)}m)`;
+      podium3.textContent = `🥉 3º Lugar: ${podium[2].name} (+${Math.round(podium[0].z - podium[2].z)}m)`;
+
+      // Gerar confetes
+      confettis = [];
+      for (let i = 0; i < 90; i++) {
+        confettis.push({
+          x: Math.random() * W,
+          y: Math.random() * -H,
+          vx: (Math.random() - 0.5) * 4,
+          vy: 3 + Math.random() * 5,
+          color: ['#a855f7', '#f97316', '#22c55e', '#38bdf8', '#fbbf24'][Math.floor(Math.random() * 5)],
+          size: 6 + Math.random() * 6
+        });
+      }
+
+      victoryOverlay.classList.add('active');
+      resetFill.style.transition = 'none';
+      resetFill.style.width = '100%';
+      void resetFill.offsetWidth;
+      resetFill.style.transition = 'width 5s linear';
+      resetFill.style.width = '0%';
+
+      setTimeout(() => {
+        resetGame();
+      }, 5000);
+    }
+
+    function resetGame() {
+      victoryOverlay.classList.remove('active');
+      confettis = [];
+
+      Object.values(RACERS).forEach(r => {
+        r.z = 0;
+        r.speed = 120;
+        r.nitroTimer = 0;
+        r.progEl.style.width = '0%';
+        r.speedEl.textContent = '120 km/h';
+      });
+
+      camera.z = 0;
+      isGameOver = false;
+      startTimer();
+      addToast('🏁 LARGADA AUTORIZADA! Nova corrida iniciada!', '#38bdf8');
+    }
+
+    function renderConfetti() {
+      if (confettis.length === 0) return;
+      confettis.forEach(c => {
+        c.x += c.vx;
+        c.y += c.vy;
+        ctx.fillStyle = c.color;
+        ctx.fillRect(c.x, c.y, c.size, c.size * 0.6);
+      });
+    }
+
+    // Inicialização da Página
+    resize();
+    startTimer();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>

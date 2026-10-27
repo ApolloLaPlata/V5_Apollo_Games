@@ -83,9 +83,9 @@
 
 ### FASE 4: CARTUCHOS DE CORRIDA, TRÁFEGO & VELOCIDADE (ETAPAS 031 A 040)
 - [x] **Etapa 031:** Arquitetura do motor de pistas verticais pseudo-3D com scrolling infinito de asfalto e parallax.
-- [ ] **Etapa 032:** Forjamento do Cartucho #03: Corrida dos Avatares da Holding (Roxingo, Baiano e Macaco Driver disputando 3 pistas verticais com boosts do chat).
-- [ ] **Etapa 033:** Implementação dos sprites procedurais vetoriais e animações dinâmicas dos 3 avatares pilotos.
-- [ ] **Etapa 034:** Sistema de turbos de nitro e sons de motor com modulação de pitch proporcional à velocidade dos pilotos.
+- [x] **Etapa 032:** Forjamento do Cartucho #03: Corrida dos Avatares da Holding (Roxingo, Baiano e Macaco Driver disputando 3 pistas verticais com boosts do chat).
+- [x] **Etapa 033:** Implementação dos sprites procedurais vetoriais e animações dinâmicas dos 3 avatares pilotos.
+- [x] **Etapa 034:** Sistema de turbos de nitro e sons de motor com modulação de pitch proporcional à velocidade dos pilotos.
 - [ ] **Etapa 035:** Forjamento do Cartucho #15: Corrida Maluca Espacial (Foguetes acelerando rumo à órbita com chuva de meteoros e escudos acionados por presentes).
 - [ ] **Etapa 036:** Forjamento do Cartucho #16: Arrancada Noturna Neon (Drag Race em linha reta com troca de marcha sincronizada por votos pontuais).
 - [ ] **Etapa 037:** Integração de fumaça de pneus, rastros de neon e sistema de ultrapassagem em milissegundos.

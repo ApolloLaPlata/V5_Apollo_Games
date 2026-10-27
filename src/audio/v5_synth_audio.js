@@ -950,6 +950,94 @@
       noise.start(t);
       noise.stop(t + 0.4);
     }
+
+    /**
+     * Sopro de Turbina e Nitro Rush (Fase 4: Corridas 9:16)
+     * Ruído filtrado com sweep ascendente de ressonância
+     */
+    playNitroRush() {
+      if (!this._canPlay()) return;
+      const ctx = this._ensureContext();
+      const t = ctx.currentTime;
+
+      const bufferSize = Math.floor(ctx.sampleRate * 0.45);
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer;
+
+      const flt = ctx.createBiquadFilter();
+      flt.type = 'bandpass';
+      flt.frequency.setValueAtTime(400, t);
+      flt.frequency.exponentialRampToValueAtTime(3200, t + 0.35);
+      flt.Q.setValueAtTime(3.0, t);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.3, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+
+      noise.connect(flt);
+      flt.connect(gain);
+      gain.connect(this.masterGain);
+
+      noise.start(t);
+      noise.stop(t + 0.45);
+    }
+
+    /**
+     * Buzina de Ultrapassagem / Overtake Horn
+     * Tom bitonal característico de karts
+     */
+    playOvertakeHorn() {
+      if (!this._canPlay()) return;
+      const ctx = this._ensureContext();
+      const t = ctx.currentTime;
+
+      [440, 554.37].forEach(f => {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, t);
+        g.gain.setValueAtTime(0.12, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start(t);
+        osc.stop(t + 0.25);
+      });
+    }
+
+    /**
+     * Derrapagem de Pneu / Tire Screech
+     */
+    playTireScreech() {
+      if (!this._canPlay()) return;
+      const ctx = this._ensureContext();
+      const t = ctx.currentTime;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(950, t);
+      osc.frequency.exponentialRampToValueAtTime(650, t + 0.3);
+
+      const flt = ctx.createBiquadFilter();
+      flt.type = 'bandpass';
+      flt.frequency.setValueAtTime(1200, t);
+      flt.Q.setValueAtTime(4.0, t);
+
+      gain.gain.setValueAtTime(0.18, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+
+      osc.connect(flt);
+      flt.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(t);
+      osc.stop(t + 0.3);
+    }
   }
 
   return V5SynthAudio;

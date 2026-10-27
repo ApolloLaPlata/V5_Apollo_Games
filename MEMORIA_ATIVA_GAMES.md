@@ -27,7 +27,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | **01** | `01_cabo_de_guerra_neon` | Cabo de Guerra Neon | Chat vota 1 ou 2 para puxar a corda; Presentes dão super-tração | **HOMOLOGADO** |
 | **01B** | `01b_cabo_de_guerra_elementos` | Cabo de Guerra dos Elementos | Fogo vs Gelo com termômetro dinâmico (-100°C a +1000°C) e partículas térmicas | **HOMOLOGADO** |
 | **02** | `02_plinko_pachinko_fortuna` | Plinko da Fortuna | Comentários e gifts soltam bolinhas físicas que caem em multiplicadores (50x Jackpot) | **HOMOLOGADO** |
-| **03** | `03_corrida_avatares_holding` | Corrida dos Avatares | Roxingo, Baiano e Macaco Driver disputam pista acelerando com votos | Planejado |
+| **03** | `03_corrida_avatares_holding` | Corrida dos Avatares da Holding | Roxingo, Baiano e Macaco Driver disputando circuito pseudo-3D com nitros e telemetria | **HOMOLOGADO** |
 | **04** | `04_boss_raid_cooperativo` | Boss Raid do Chat | Chat inteiro ataca monstro gigante com barra de HP em 45 segundos | Planejado |
 | **05** | `05_roleta_desafios_live` | Roleta dos Desafios | Presentes giram a roleta de desafios cômicos para o streamer ou avatar | Planejado |
 | **06** | `06_batalha_dos_baloes` | Estouro de Balão | Dois lados inflando balões colossais com física elástica até o estouro | **HOMOLOGADO** |
