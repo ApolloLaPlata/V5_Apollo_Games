@@ -771,7 +771,7 @@
           if (bx + ballRadius >= fortressX && angularVel > 0) {
             // Impacto!
             const impactSpeed = Math.abs(angularVel * ropeLength);
-            let dmg = Math.floor(impactSpeed * (isSuper ? 35 : 12));
+            let dmg = Math.min(15000, Math.floor(impactSpeed * (isSuper ? 35 : 12)));
             fortressHp = Math.max(0, fortressHp - dmg);
 
             angularVel = -angularVel * 0.4; // Rebote

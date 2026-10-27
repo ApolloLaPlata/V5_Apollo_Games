@@ -132,8 +132,8 @@
 - [x] **Etapa 066:** Forjamento do Cartucho #22: Ponte de Vidro Quebradiço (Chat escolhe caminho esquerdo ou direito; passos errados caem no precipício).
 - [x] **Etapa 067:** Forjamento do Cartucho #23: Sobrevivência na Lava (Plataformas flutuantes que afundam na lava neon conforme recebem peso de votos).
 - [x] **Etapa 068:** Animações de erupção de partículas incandescentes e sons de borbulhamento térmico.
-- [ ] **Etapa 069:** Testes de balanceamento de tempo e curva de adrenalina no Test Lab 9:16.
-- [ ] **Etapa 070:** Homologação e envio dos cartuchos de eliminação para o Broadcaster.
+- [x] **Etapa 069:** Testes de balanceamento de tempo e curva de adrenalina no Test Lab 9:16.
+- [x] **Etapa 070:** Homologação e envio dos cartuchos de eliminação para o Broadcaster.
 
 ---
 

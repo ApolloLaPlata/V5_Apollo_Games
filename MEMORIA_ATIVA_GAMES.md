@@ -87,4 +87,6 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/test_cartridge_21.py`: Validação automatizada do Cartucho #21 (11/11 checks aprovados).
 - `scripts/test_cartridge_22.py`: Validação automatizada do Cartucho #22 (11/11 checks aprovados).
 - `scripts/test_cartridge_23.py`: Validação automatizada do Cartucho #23 (11/11 checks aprovados).
+- `scripts/test_tension_balance.js`: Simulação Monte Carlo (10.000 rodadas) de balanceamento da curva de adrenalina e tempo dos 4 cartuchos de eliminação (100% aprovado).
+- `scripts/test_elimination_cartridges.py`: Suíte de homologação formal das 5 Leis Absolutas para os 4 cartuchos de eliminação (33/33 checks aprovados).
 - `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 22 cartuchos ativos).
