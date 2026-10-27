@@ -1,0 +1,633 @@
+{
+  "timestamp": "2026-10-27T07:32:10.819947",
+  "holding": "Holding V5 Apollo",
+  "captaincy": "Capitania V5 Games",
+  "total_cartridges_audited": 41,
+  "total_compliant": 41,
+  "compliance_rate_percent": 100.0,
+  "standards": {
+    "aspect_ratio": "9:16 (1080 x 1920)",
+    "min_top_safe_zone_px": 140,
+    "min_bottom_safe_zone_px": 180,
+    "playable_height_px": 1600,
+    "mobile_viewport_lock": true
+  },
+  "status": "HOMOLOGADO_SAFE_ZONES",
+  "cartridges": [
+    {
+      "slug": "01_cabo_de_guerra_neon",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "01b_cabo_de_guerra_elementos",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "02_plinko_pachinko_fortuna",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "03_corrida_avatares_holding",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "04_boss_raid_cooperativo",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "05_roleta_desafios_live",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "06_batalha_dos_baloes",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "07_pendulo_destruidor",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "08_caca_tesouro_coordenadas",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "09_tsunami_de_curtidas",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "10_queda_dos_blocos",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "11_queda_de_braco_titas",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "12_pachinko_pinball_neon",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "13_cascata_de_moedas",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "14_vortex_gravitacional",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "15_corrida_maluca_espacial",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "16_arrancada_noturna_neon",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "17_caca_niquel_neon_777",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "18_roleta_russa_baloes",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "19_defesa_da_torre_chat",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "20_subida_da_montanha_sagrada",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "21_batata_quente_explosiva",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "22_ponte_de_vidro_quebradico",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "23_sobrevivencia_na_lava",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "24_campo_minado_neon",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "25_batalha_naval_live",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "26_guerra_dos_tanques_neon",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "27_meteoro_defensor",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "28_labirinto_pacman_neon",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "29_basquete_street_neon",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "30_gol_de_penalti_live",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "31_guitar_hero_neon",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "32_corte_de_frutas_neon",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "33_corrida_de_cavalos_retro",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "34_pinball_galactico",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "35_quiz_frenetico_holding",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "36_pula_corda_extremo",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "37_torre_de_blocos_equilibrada",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "38_fuga_da_prisao_espacial",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "39_alvo_movel_snipers",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    },
+    {
+      "slug": "40_duelo_de_magicos_neon",
+      "compliant": true,
+      "aspect_ratio_9_16": true,
+      "top_safe_zone_px": 140,
+      "bottom_safe_zone_px": 180,
+      "playable_center_height_px": 1600,
+      "viewport_zoom_locked": true,
+      "overflow_hidden": true,
+      "platforms_certified": [
+        "TikTok Live",
+        "YouTube Shorts",
+        "Twitch Vertical"
+      ]
+    }
+  ]
+}
