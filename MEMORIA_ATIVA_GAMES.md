@@ -46,6 +46,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | **19** | `19_defesa_da_torre_chat` | Defesa da Torre do Chat | Hordas de inimigos descendo em 3 lanes verticais enquanto o chat ativa e aprimora canhões nos slots com bomba orbital de gifts | **HOMOLOGADO** |
 | **20** | `20_subida_da_montanha_sagrada` | Subida da Montanha Sagrada | Escalada vertical até 1.000m, desvio de pedregulhos e avalanches com salto, votos e voo místico da Fênix de gifts | **HOMOLOGADO** |
 | **21** | `21_batata_quente_explosiva` | Batata Quente Explosiva | Bomba relógio com pavio aceso passando entre avatares, BPM cardíaco acelerado (75 a 180 BPM) e eliminação | **HOMOLOGADO** |
+| **22** | `22_ponte_de_vidro_quebradico` | Ponte de Vidro Quebradiço | Travessia de 8 degraus no abismo de 200m; chat vota 1 (Esq) ou 2 (Dir); estilhaçamento e raio-X de gifts | **HOMOLOGADO** |
 
 ---
 
@@ -82,4 +83,6 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/test_physics_cartridges.py`: Valida 100% das 5 Leis Absolutas para os 4 cartuchos de física (45/45 checks).
 - `scripts/benchmark_racing_latency.js`: Teste de estresse com 2.000 comandos de chat a 465.000 comandos/s (latência média 0.8 µs e 99.95% folga de CPU).
 - `scripts/test_racing_cartridges.py`: Valida 100% das 5 Leis Absolutas para os 3 cartuchos de corrida (34/34 checks).
-- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 12 cartuchos ativos).
+- `scripts/test_cartridge_21.py`: Validação automatizada do Cartucho #21 (11/11 checks aprovados).
+- `scripts/test_cartridge_22.py`: Validação automatizada do Cartucho #22 (11/11 checks aprovados).
+- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 21 cartuchos ativos).

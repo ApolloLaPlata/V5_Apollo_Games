@@ -3,16 +3,16 @@ import os
 bus_path = r"C:\Users\v5est\.gemini\antigravity\brain\9270dd65-160e-47e8-aea2-6a92fd50cfc6\antigravity_hive_bus.md"
 
 entry = """
-### [27/10/2026 - 11:45] CAPITANIA V5 GAMES - ETAPAS 064 E 065 CONCLUÍDAS: CARTUCHO #21 BATATA QUENTE EXPLOSIVA
-- **Cartucho Homologado:** `21_batata_quente_explosiva` (Batata Quente Explosiva - BPM Cardíaco & Eliminação 9:16).
+### [27/10/2026 - 12:00] CAPITANIA V5 GAMES - ETAPA 066 CONCLUÍDA: CARTUCHO #22 PONTE DE VIDRO QUEBRADIÇO
+- **Cartucho Homologado:** `22_ponte_de_vidro_quebradico` (Ponte de Vidro Quebradiço - Abismo 200m & Eliminação 9:16).
 - **Inovações de Engenharia:**
-  1. Bomba esférica com pavio aceso voando em trajetória parabólica suave entre 5 avatares posicionados na tela vertical.
-  2. Sintetizador procedural de áudio (Web Audio API - Etapa 065): chiado contínuo estalante de pavio (`startFuseSound`), pulso cardíaco tum-tum cuja cadência escala de 75 BPM para 180 BPM nos segundos finais, whoosh de passe e detonação de 35Hz.
-  3. Vinheta visual periférica de estresse pulsando em sincronia com os batimentos cardíacos.
-  4. Tempo de detonação secreto entre 22s e 38s garantindo suspense absoluto na live.
-  5. Presentes ativam Escudo Repulsor que arremessa a bomba e dá 3.5s de imunidade com spotlight.
-- **Sincronização:** Total de 20 cartuchos ativos no Broadcaster (`v5_games_manifest.json`).
-- **Próximas Etapas:** Etapa 066 — Forjamento do Cartucho #22: Ponte de Vidro Quebradiço (Escolha esquerda/direita com precipício).
+  1. Travessia de 8 degraus duplos sobre o precipício neon com perspectiva 2.5D vertical e névoa atmosférica abissal.
+  2. Votação dividida 50/50 em tempo real (comandos `1` / `esq` vs `2` / `dir`) com barra de votos volumétrica no degrau ativo.
+  3. Síntese procedural Web Audio API: estilhaçamento agudo de vidro temperado via cluster oscilador de 1200-3400Hz com envelope exponencial, grito Doppler descendente (450Hz -> 80Hz) de queda no abismo e sino de avanço seguro.
+  4. Revelação raio-X de Gifts: presentes revelam instantaneamente a placa correta com glow dourado cintilante e escudo de proteção.
+  5. Pódio de sobreviventes com nomes de espectadores que votaram no caminho correto até a chegada.
+- **Sincronização:** Total de 21 cartuchos homologados e sincronizados no Broadcaster (`v5_games_manifest.json`).
+- **Próximas Etapas:** Etapas 067 & 068 — Forjamento do Cartucho #23: Sobrevivência na Lava (Plataformas que afundam com erupções incandescentes).
 """
 
 if os.path.exists(bus_path):
@@ -21,4 +21,3 @@ if os.path.exists(bus_path):
     print("Hive Bus updated successfully!")
 else:
     print(f"Path not found: {bus_path}")
-

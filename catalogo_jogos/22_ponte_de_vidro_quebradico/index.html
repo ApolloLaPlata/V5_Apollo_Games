@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Ponte de Vidro Quebradiço (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 25%, #081d33 0%, #030a14 60%, #010408 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 14px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(3, 10, 20, 0.98) 0%, rgba(3, 10, 20, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #38bdf8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .step-badge {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.6);
+      color: #7dd3fc;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* HUD de Degraus e Vidas */
+    .bridge-hud {
+      width: 100%;
+      background: rgba(8, 24, 44, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .hud-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hud-title {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #f0f9ff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step-text {
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: 900;
+      color: #38bdf8;
+    }
+
+    .step-bar-bg {
+      position: relative;
+      width: 100%;
+      height: 14px;
+      background: #020617;
+      border-radius: 7px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .step-bar-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 12.5%;
+      background: linear-gradient(90deg, #38bdf8 0%, #06b6d4 50%, #10b981 100%);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+      transition: width 0.3s ease-out;
+    }
+
+    .life-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: #94a3b8;
+    }
+
+    .life-pips {
+      display: flex;
+      gap: 4px;
+    }
+
+    .life-active { color: #ef4444; font-size: 12px; }
+    .life-lost { color: #334155; font-size: 12px; }
+
+    /* Canvas Principal */
+    #bridge-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 10px 14px 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(3, 10, 20, 0.98) 0%, rgba(3, 10, 20, 0) 100%);
+    }
+
+    /* Votação Dividida (Esquerda vs Direita) */
+    .vote-split-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .vote-cards-row {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .vote-card {
+      flex: 1;
+      background: rgba(12, 32, 58, 0.85);
+      border: 2px solid rgba(56, 189, 248, 0.3);
+      border-radius: 10px;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      transition: transform 0.1s ease, border-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .vote-card-leading {
+      border-color: #38bdf8 !important;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+    }
+
+    .vote-key {
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 900;
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 8px rgba(2, 132, 199, 0.6);
+    }
+
+    .vote-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #f0f9ff;
+      text-transform: uppercase;
+    }
+
+    .vote-count {
+      font-size: 10px;
+      font-weight: 800;
+      color: #7dd3fc;
+      font-family: monospace;
+    }
+
+    /* Barra Comparativa de Votos */
+    .ratio-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #0f172a;
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .ratio-fill-left {
+      height: 100%;
+      width: 50%;
+      background: #0284c7;
+      transition: width 0.15s ease-out;
+    }
+
+    .ratio-fill-right {
+      height: 100%;
+      width: 50%;
+      background: #0d9488;
+      transition: width 0.15s ease-out;
+    }
+
+    /* Leaderboard MVP */
+    .mvp-strip {
+      width: 100%;
+      background: rgba(8, 24, 44, 0.8);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 8px;
+      padding: 5px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .mvp-tag {
+      font-weight: 800;
+      color: #facc15;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mvp-user {
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .mvp-score {
+      font-family: monospace;
+      font-weight: 900;
+      color: #38bdf8;
+    }
+
+    /* Gaveta de Depuração Local */
+    .debug-drawer {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .debug-btn {
+      background: #081d33;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #e0f2fe;
+      padding: 5px 9px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .debug-btn:hover { background: #0369a1; }
+
+    /* Overlay de Fim de Partida */
+    #bridge-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(2, 6, 14, 0.94);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease-out;
+    }
+
+    #bridge-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .overlay-badge {
+      font-size: 48px;
+      animation: bounce 0.8s infinite alternate ease-in-out;
+    }
+
+    @keyframes bounce {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.15); }
+    }
+
+    .overlay-title {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      background: linear-gradient(135deg, #38bdf8 0%, #10b981 50%, #facc15 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .defeat-title {
+      background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .podium-box {
+      width: 85%;
+      max-width: 320px;
+      background: rgba(12, 32, 58, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .podium-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      background: rgba(3, 10, 20, 0.6);
+      border-radius: 6px;
+      font-size: 11px;
+    }
+
+    .auto-reset-bar {
+      width: 85%;
+      max-width: 320px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .auto-reset-fill {
+      height: 100%;
+      width: 100%;
+      background: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-stage">
+    <!-- Top Safe Zone (140px) -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <div class="live-dot"></div>
+          V5 PONTE DE VIDRO
+        </div>
+        <div class="step-badge" id="step-badge">
+          👣 DEGRAU <span id="step-num">1</span>/8 • <span id="step-timer">4.0s</span>
+        </div>
+      </div>
+
+      <!-- Placar de Progresso e Vidas -->
+      <div class="bridge-hud">
+        <div class="hud-row">
+          <div class="hud-title">
+            🌉 TRAVESSIA DO ABISMO (200m)
+          </div>
+          <div class="step-text" id="step-text">Degrau 1 de 8</div>
+        </div>
+
+        <div class="step-bar-bg">
+          <div class="step-bar-fill" id="step-bar-fill"></div>
+        </div>
+
+        <div class="life-row">
+          <span>VIDAS DA COMUNIDADE:</span>
+          <div class="life-pips" id="life-pips">
+            <span class="life-active">❤️</span>
+            <span class="life-active">❤️</span>
+            <span class="life-active">❤️</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Principal da Ponte e Estilhaços -->
+    <canvas id="bridge-canvas"></canvas>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <footer class="bottom-panel">
+      <!-- Votação Esquerda vs Direita -->
+      <div class="vote-split-container">
+        <div class="vote-cards-row">
+          <div class="vote-card" id="card-vote-left" onclick="voteSide('left')">
+            <div class="vote-key">1</div>
+            <div class="vote-label">ESQUERDA</div>
+            <div class="vote-count" id="count-left">0 VOTOS (50%)</div>
+          </div>
+
+          <div class="vote-card" id="card-vote-right" onclick="voteSide('right')">
+            <div class="vote-key">2</div>
+            <div class="vote-label">DIREITA</div>
+            <div class="vote-count" id="count-right">0 VOTOS (50%)</div>
+          </div>
+        </div>
+
+        <div class="ratio-bar-bg">
+          <div class="ratio-fill-left" id="ratio-fill-left"></div>
+          <div class="ratio-fill-right" id="ratio-fill-right"></div>
+        </div>
+      </div>
+
+      <!-- Leaderboard MVP -->
+      <div class="mvp-strip">
+        <div class="mvp-tag">🔮 MESTRE DO VIDRO:</div>
+        <div class="mvp-user" id="mvp-user">@aguardando_chat</div>
+        <div class="mvp-score" id="mvp-score">0 ACERTOS</div>
+      </div>
+
+      <!-- Gaveta de Depuração Local -->
+      <div class="debug-drawer">
+        <button class="debug-btn" onclick="voteSide('left')">⬅️ Votar Esq (1)</button>
+        <button class="debug-btn" onclick="voteSide('right')">➡️ Votar Dir (2)</button>
+        <button class="debug-btn" onclick="triggerXRayGift()">🔍 Raio-X Gift</button>
+        <button class="debug-btn" onclick="resetBridge()">🔄 Reset</button>
+      </div>
+    </footer>
+
+    <!-- Overlay de Fim de Partida -->
+    <div id="bridge-overlay">
+      <div class="overlay-badge" id="overlay-badge">👑</div>
+      <div class="overlay-title" id="overlay-title">PONTE CONQUISTADA!</div>
+      <div style="font-size: 13px; color: #cbd5e1;" id="overlay-sub">A comunidade guiou o herói até o outro lado do abismo!</div>
+
+      <div class="podium-box">
+        <div style="font-size: 11px; font-weight: 800; color: #38bdf8; text-align: center;">TOP ACERTADORES DA LIVE</div>
+        <div id="podium-content"></div>
+      </div>
+
+      <div class="auto-reset-bar">
+        <div class="auto-reset-fill" id="reset-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. SINTETIZADOR DE ÁUDIO PROCEDURAL (Web Audio API - Zero Arquivos Externos)
+    // =========================================================================
+    class GlassBridgeAudioSynthesizer {
+      constructor() {
+        this.ctx = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Salto no ar
+      playJump() {
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.exponentialRampToValueAtTime(640, now + 0.12);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.13);
+      }
+
+      // Vidro seguro (Ding cristalino harmônico em 1.5kHz)
+      playGlassSafe() {
+        this.init();
+        const now = this.ctx.currentTime;
+        [1567.98, 2093.00].forEach((f, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = f;
+          gain.gain.setValueAtTime(0.35, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.42);
+        });
+      }
+
+      // Estilhaçamento explosivo de vidro quebrado
+      playGlassShatter() {
+        this.init();
+        const now = this.ctx.currentTime;
+
+        // Ruído agudo de estilhaços
+        const bufferSize = this.ctx.sampleRate * 0.35;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.06));
+        }
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.value = 3500;
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.7, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        noise.start(now);
+
+        // Grito/queda em pitch descendente no abismo
+        const dropOsc = this.ctx.createOscillator();
+        const dropGain = this.ctx.createGain();
+        dropOsc.type = 'sawtooth';
+        dropOsc.frequency.setValueAtTime(400, now);
+        dropOsc.frequency.exponentialRampToValueAtTime(45, now + 0.6);
+
+        dropGain.gain.setValueAtTime(0.4, now);
+        dropGain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+
+        dropOsc.connect(dropGain);
+        dropGain.connect(this.ctx.destination);
+        dropOsc.start(now);
+        dropOsc.stop(now + 0.66);
+      }
+
+      // Revelação Raio-X por Gifts
+      playXRayScan() {
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, now);
+        osc.frequency.linearRampToValueAtTime(1760, now + 0.3);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.36);
+      }
+
+      // Fanfarra triunfal da ponte
+      playVictory() {
+        this.init();
+        const chord = [523.25, 659.25, 783.99, 1046.50];
+        chord.forEach((f, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.1);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.value = f;
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.52);
+        });
+      }
+    }
+
+    const sound = new GlassBridgeAudioSynthesizer();
+
+    // =========================================================================
+    // 2. MOTOR DE JOGO DA PONTE DE VIDRO
+    // =========================================================================
+    const stage = document.getElementById('game-stage');
+    const canvas = document.getElementById('bridge-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = stage.clientWidth;
+      canvas.height = stage.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Configuração dos 8 Degraus (cada um com 'left' ou 'right' seguro)
+    const TOTAL_STEPS = 8;
+    let currentStep = 1;
+    let bridgeMap = []; // Array de 'left' ou 'right' seguros
+
+    function generateBridgeMap() {
+      bridgeMap = [];
+      for (let i = 0; i < TOTAL_STEPS; i++) {
+        bridgeMap.push(Math.random() > 0.5 ? 'left' : 'right');
+      }
+    }
+    generateBridgeMap();
+
+    let lives = 3;
+    let stepTimer = 4.0;
+    const stepDuration = 4.0;
+    let isGameOver = false;
+    let winner = null;
+    let shakeIntensity = 0;
+    let isXRayRevealed = false;
+
+    // Votos do Degrau Atual
+    let votesLeft = 0;
+    let votesRight = 0;
+
+    // Jogador Posicionado na Ponte
+    let playerX = 0.5; // Centro
+    let playerY = 0.8;
+    let isJumping = false;
+    let jumpProgress = 0;
+
+    // Estilhaços de Vidro (Object Pool)
+    const glassShards = [];
+
+    // Estatísticas MVP
+    const predictors = new Map();
+    let topPredictor = null;
+
+    // =========================================================================
+    // 3. VOTAÇÃO & AÇÕES DO PÚBLICO
+    // =========================================================================
+    function voteSide(side, user = '@espectador') {
+      if (isGameOver || isJumping) return;
+      lastInteractionTime = Date.now();
+
+      if (side === 'left') {
+        votesLeft++;
+      } else {
+        votesRight++;
+      }
+
+      recordPrediction(user, side);
+      updateVoteHUD();
+    }
+
+    function triggerXRayGift(user = '@whale_gift') {
+      if (isGameOver || isJumping) return;
+      lastInteractionTime = Date.now();
+
+      sound.playXRayScan();
+      isXRayRevealed = true;
+      shakeIntensity = 10;
+      recordPrediction(user, bridgeMap[currentStep - 1]);
+    }
+
+    function recordPrediction(user, side) {
+      let p = predictors.get(user);
+      if (!p) {
+        p = { user, correct: 0, lastSide: side };
+        predictors.set(user, p);
+      }
+      p.lastSide = side;
+    }
+
+    function executeJump() {
+      if (isGameOver) return;
+      isJumping = true;
+      sound.playJump();
+
+      const chosenSide = votesLeft >= votesRight ? 'left' : 'right';
+      const safeSide = bridgeMap[currentStep - 1];
+      const isSuccess = (chosenSide === safeSide) || isXRayRevealed;
+
+      // Animação de salto
+      jumpProgress = 0;
+      const targetSideX = chosenSide === 'left' ? 0.32 : 0.68;
+
+      const jumpInterval = setInterval(() => {
+        jumpProgress += 0.15;
+        playerX = 0.5 + (targetSideX - 0.5) * Math.min(1.0, jumpProgress);
+
+        if (jumpProgress >= 1.0) {
+          clearInterval(jumpInterval);
+          isJumping = false;
+
+          if (isSuccess) {
+            // Sucesso!
+            sound.playGlassSafe();
+            currentStep++;
+            isXRayRevealed = false;
+            votesLeft = 0;
+            votesRight = 0;
+            stepTimer = stepDuration;
+
+            if (currentStep > TOTAL_STEPS) {
+              endGame(true);
+            }
+          } else {
+            // Vidro Quebrou!
+            sound.playGlassShatter();
+            shakeIntensity = 25;
+            spawnGlassShards(chosenSide === 'left' ? canvas.width * 0.32 : canvas.width * 0.68, canvas.height * 0.55);
+
+            lives--;
+            if (lives <= 0) {
+              endGame(false);
+            } else {
+              // Recupera no mesmo degrau com menos 1 vida
+              votesLeft = 0;
+              votesRight = 0;
+              stepTimer = stepDuration;
+              playerX = 0.5;
+            }
+          }
+          updateHUD();
+          updateVoteHUD();
+        }
+      }, 30);
+    }
+
+    function spawnGlassShards(x, y, count = 35) {
+      for (let i = 0; i < count; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const spd = 60 + Math.random() * 260;
+        glassShards.push({
+          x: x,
+          y: y,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd + 80,
+          rot: Math.random() * Math.PI * 2,
+          rotSpeed: (Math.random() - 0.5) * 12,
+          size: 4 + Math.random() * 8,
+          alpha: 1.0,
+          life: 0,
+          maxLife: 0.8
+        });
+      }
+    }
+
+    // =========================================================================
+    // 4. LOOP DE ATUALIZAÇÃO
+    // =========================================================================
+    let lastTime = performance.now();
+
+    function updateGame(timestamp) {
+      const dt = Math.min(0.1, (timestamp - lastTime) / 1000);
+      lastTime = timestamp;
+
+      // Shake decay
+      if (shakeIntensity > 0) {
+        shakeIntensity = Math.max(0, shakeIntensity - (30 * dt));
+        const sx = (Math.random() - 0.5) * shakeIntensity;
+        const sy = (Math.random() - 0.5) * shakeIntensity;
+        stage.style.transform = `translate(${sx}px, ${sy}px)`;
+      } else {
+        stage.style.transform = 'none';
+      }
+
+      if (!isGameOver && !isJumping) {
+        stepTimer -= dt;
+        document.getElementById('step-timer').innerText = `${Math.max(0, stepTimer).toFixed(1)}s`;
+
+        if (stepTimer <= 0) {
+          executeJump();
+        }
+      }
+
+      // Atualizar Estilhaços
+      for (let i = glassShards.length - 1; i >= 0; i--) {
+        const s = glassShards[i];
+        s.life += dt;
+        s.x += s.vx * dt;
+        s.y += s.vy * dt;
+        s.vy += 500 * dt; // Gravidade no abismo
+        s.rot += s.rotSpeed * dt;
+        s.alpha = Math.max(0, 1.0 - (s.life / s.maxLife));
+        if (s.life >= s.maxLife) glassShards.splice(i, 1);
+      }
+
+      render();
+      requestAnimationFrame(updateGame);
+    }
+    requestAnimationFrame(updateGame);
+
+    // =========================================================================
+    // 5. RENDERIZAÇÃO VETORIAL DA PONTE E PLACAS
+    // =========================================================================
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const w = canvas.width;
+      const h = canvas.height;
+
+      // Cabos de Aço Suspensos
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(w * 0.15, 140);
+      ctx.lineTo(w * 0.15, h - 180);
+      ctx.moveTo(w * 0.85, 140);
+      ctx.lineTo(w * 0.85, h - 180);
+      ctx.stroke();
+
+      // Placas de Vidro do Degrau Atual (Esquerda e Direita)
+      const plateW = w * 0.30;
+      const plateH = h * 0.18;
+      const plateY = h * 0.46;
+
+      const safeSide = bridgeMap[currentStep - 1];
+
+      // Placa Esquerda
+      ctx.save();
+      const isLeftSafeRevealed = isXRayRevealed && safeSide === 'left';
+      ctx.fillStyle = isLeftSafeRevealed ? 'rgba(16, 185, 129, 0.4)' : 'rgba(56, 189, 248, 0.15)';
+      ctx.strokeStyle = isLeftSafeRevealed ? '#10b981' : '#38bdf8';
+      ctx.lineWidth = isLeftSafeRevealed ? 4 : 2;
+      ctx.shadowColor = ctx.strokeStyle;
+      ctx.shadowBlur = isLeftSafeRevealed ? 25 : 10;
+      ctx.fillRect(w * 0.17, plateY, plateW, plateH);
+      ctx.strokeRect(w * 0.17, plateY, plateW, plateH);
+
+      // Reflexo do vidro
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.beginPath();
+      ctx.moveTo(w * 0.20, plateY + 10);
+      ctx.lineTo(w * 0.35, plateY + plateH - 10);
+      ctx.stroke();
+      ctx.restore();
+
+      // Placa Direita
+      ctx.save();
+      const isRightSafeRevealed = isXRayRevealed && safeSide === 'right';
+      ctx.fillStyle = isRightSafeRevealed ? 'rgba(16, 185, 129, 0.4)' : 'rgba(56, 189, 248, 0.15)';
+      ctx.strokeStyle = isRightSafeRevealed ? '#10b981' : '#38bdf8';
+      ctx.lineWidth = isRightSafeRevealed ? 4 : 2;
+      ctx.shadowColor = ctx.strokeStyle;
+      ctx.shadowBlur = isRightSafeRevealed ? 25 : 10;
+      ctx.fillRect(w * 0.53, plateY, plateW, plateH);
+      ctx.strokeRect(w * 0.53, plateY, plateW, plateH);
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.beginPath();
+      ctx.moveTo(w * 0.56, plateY + 10);
+      ctx.lineTo(w * 0.71, plateY + plateH - 10);
+      ctx.stroke();
+      ctx.restore();
+
+      // Desenhar Estilhaços
+      glassShards.forEach(s => {
+        ctx.save();
+        ctx.globalAlpha = s.alpha;
+        ctx.translate(s.x, s.y);
+        ctx.rotate(s.rot);
+        ctx.fillStyle = '#7dd3fc';
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 8;
+        ctx.fillRect(-s.size / 2, -s.size / 2, s.size, s.size);
+        ctx.restore();
+      });
+
+      // Desenhar Herói Saltador
+      const px = playerX * w;
+      const py = plateY + (plateH * 0.5) - (isJumping ? Math.sin(jumpProgress * Math.PI) * 45 : 0);
+
+      ctx.save();
+      ctx.translate(px, py);
+
+      // Sombra
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      ctx.beginPath();
+      ctx.ellipse(0, 22, 16, 6, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Corpo
+      ctx.fillStyle = '#38bdf8';
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 15;
+      ctx.beginPath();
+      ctx.arc(0, -10, 14, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Capa esvoaçante
+      ctx.fillStyle = '#0284c7';
+      ctx.beginPath();
+      ctx.moveTo(-10, -5);
+      ctx.lineTo(10, -5);
+      ctx.lineTo(14, 20);
+      ctx.lineTo(-14, 20);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // =========================================================================
+    // 6. ATUALIZAÇÃO DA HUD & DOM
+    // =========================================================================
+    const stepBarFill = document.getElementById('step-bar-fill');
+    const stepNum = document.getElementById('step-num');
+    const stepText = document.getElementById('step-text');
+    const lifePips = document.getElementById('life-pips');
+    const countLeft = document.getElementById('count-left');
+    const countRight = document.getElementById('count-right');
+    const ratioLeft = document.getElementById('ratio-fill-left');
+    const ratioRight = document.getElementById('ratio-fill-right');
+
+    function updateHUD() {
+      const pct = (currentStep / TOTAL_STEPS) * 100;
+      stepBarFill.style.width = `${pct}%`;
+      stepNum.innerText = Math.min(TOTAL_STEPS, currentStep);
+      stepText.innerText = `Degrau ${Math.min(TOTAL_STEPS, currentStep)} de ${TOTAL_STEPS}`;
+
+      let lHtml = '';
+      for (let i = 0; i < 3; i++) {
+        lHtml += `<span class="${i < lives ? 'life-active' : 'life-lost'}">❤️</span>`;
+      }
+      lifePips.innerHTML = lHtml;
+    }
+
+    function updateVoteHUD() {
+      const total = votesLeft + votesRight;
+      const leftPct = total > 0 ? Math.round((votesLeft / total) * 100) : 50;
+      const rightPct = total > 0 ? (100 - leftPct) : 50;
+
+      countLeft.innerText = `${votesLeft} VOTOS (${leftPct}%)`;
+      countRight.innerText = `${votesRight} VOTOS (${rightPct}%)`;
+
+      ratioLeft.style.width = `${leftPct}%`;
+      ratioRight.style.width = `${rightPct}%`;
+
+      const cardL = document.getElementById('card-vote-left');
+      const cardR = document.getElementById('card-vote-right');
+      if (votesLeft > votesRight) {
+        cardL.classList.add('vote-card-leading');
+        cardR.classList.remove('vote-card-leading');
+      } else if (votesRight > votesLeft) {
+        cardR.classList.add('vote-card-leading');
+        cardL.classList.remove('vote-card-leading');
+      } else {
+        cardL.classList.remove('vote-card-leading');
+        cardR.classList.remove('vote-card-leading');
+      }
+    }
+
+    // =========================================================================
+    // 7. OVERLAY DE FIM DE PARTIDA & AUTO-RESET (5 Segundos)
+    // =========================================================================
+    const bridgeOverlay = document.getElementById('bridge-overlay');
+    const overlayBadge = document.getElementById('overlay-badge');
+    const overlayTitle = document.getElementById('overlay-title');
+    const overlaySub = document.getElementById('overlay-sub');
+    const podiumContent = document.getElementById('podium-content');
+    const resetFill = document.getElementById('reset-fill');
+
+    function endGame(isVictory) {
+      isGameOver = true;
+      winner = isVictory ? 'CHAT' : 'ABISMO';
+      bridgeOverlay.classList.add('active');
+
+      if (isVictory) {
+        sound.playVictory();
+        overlayBadge.innerText = '👑';
+        overlayTitle.innerText = 'PONTE CONQUISTADA!';
+        overlayTitle.className = 'overlay-title';
+        overlaySub.innerText = 'O chat desvendou o caminho seguro até o cume sagrado!';
+      } else {
+        overlayBadge.innerText = '💀';
+        overlayTitle.innerText = 'O VIDRO CEDEU!';
+        overlayTitle.className = 'overlay-title defeat-title';
+        overlaySub.innerText = 'As vidas da comunidade acabaram na queda livre do abismo!';
+      }
+
+      podiumContent.innerHTML = '';
+      const arr = Array.from(predictors.values()).slice(0, 3);
+      if (arr.length === 0) {
+        podiumContent.innerHTML = '<div style="text-align: center; color: #94a3b8;">Nenhum participante registrado</div>';
+      } else {
+        arr.forEach((p, idx) => {
+          const medal = ['🥇', '🥈', '🥉'][idx];
+          podiumContent.innerHTML += `
+            <div class="podium-item">
+              <span style="font-weight: 800;">${medal} ${p.user}</span>
+              <span style="color: #38bdf8; font-weight: 900;">ACERTOU</span>
+            </div>
+          `;
+        });
+      }
+
+      resetFill.style.transition = 'none';
+      resetFill.style.width = '100%';
+      void resetFill.offsetWidth;
+      resetFill.style.transition = 'width 5s linear';
+      resetFill.style.width = '0%';
+
+      setTimeout(() => {
+        resetBridge();
+      }, 5000);
+    }
+
+    function resetBridge() {
+      currentStep = 1;
+      lives = 3;
+      stepTimer = stepDuration;
+      isGameOver = false;
+      winner = null;
+      isJumping = false;
+      isXRayRevealed = false;
+      votesLeft = 0;
+      votesRight = 0;
+      playerX = 0.5;
+      glassShards.length = 0;
+      predictors.clear();
+      generateBridgeMap();
+      bridgeOverlay.classList.remove('active');
+      document.getElementById('mvp-user').innerText = '@aguardando_chat';
+      document.getElementById('mvp-score').innerText = '0 ACERTOS';
+      updateHUD();
+      updateVoteHUD();
+    }
+
+    // =========================================================================
+    // 8. MOTOR ANTI-SILÊNCIO
+    // =========================================================================
+    const mockUsers = ['@ponte_mestre', '@glass_walker', '@salto_fe', '@espectador_pro'];
+    let lastInteractionTime = Date.now();
+
+    setInterval(() => {
+      if (isGameOver || isJumping) return;
+      if (Date.now() - lastInteractionTime > 1800) {
+        const randSide = Math.random() > 0.5 ? 'left' : 'right';
+        const randUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+        voteSide(randSide, randUser);
+      }
+    }, 1500);
+
+    // =========================================================================
+    // 9. V5 BROADCASTER EVENT BUS
+    // =========================================================================
+    const broadcasterChannel = new BroadcastChannel('v5_broadcaster_games');
+    broadcasterChannel.onmessage = (event) => {
+      handleIncomingEvent(event.data);
+    };
+
+    window.addEventListener('v5_event', (e) => {
+      handleIncomingEvent(e.detail);
+    });
+
+    function handleIncomingEvent(data) {
+      if (!data) return;
+      lastInteractionTime = Date.now();
+
+      const user = data.user || '@espectador';
+      const comment = (data.comment || '').trim().toLowerCase();
+      const isGift = data.type === 'gift';
+
+      if (isGift) {
+        triggerXRayGift(user);
+      } else {
+        if (comment.includes('1') || comment.includes('esq')) {
+          voteSide('left', user);
+        } else if (comment.includes('2') || comment.includes('dir')) {
+          voteSide('right', user);
+        } else {
+          // Voto aleatório para manter a votação sempre em movimento
+          voteSide(Math.random() > 0.5 ? 'left' : 'right', user);
+        }
+      }
+    }
+  </script>
+</body>
+</html>

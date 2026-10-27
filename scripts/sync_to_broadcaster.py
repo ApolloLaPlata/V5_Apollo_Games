@@ -167,6 +167,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "passar"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "22_ponte_de_vidro_quebradico": {
+        "name": "Ponte de Vidro Quebradiço",
+        "category": "tensao_eliminacao",
+        "description": "Travessia de 8 degraus suspensa no abismo onde o chat escolhe esquerda ou direita, com revelação raio-X de gifts",
+        "commands": ["1", "2", "esq", "dir"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 
