@@ -15,6 +15,7 @@
     "status": "HOMOLOGADO",
     "version": "2.0.0",
     "path": "/games/01_cabo_de_guerra_neon/index.html",
+    "thumbnail": "/games/01_cabo_de_guerra_neon/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -24,7 +25,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.140974"
+    "updatedAt": "2026-10-27T07:10:32.861884"
   },
   {
     "slug": "01b_cabo_de_guerra_elementos",
@@ -44,6 +45,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/01b_cabo_de_guerra_elementos/index.html",
+    "thumbnail": "/games/01b_cabo_de_guerra_elementos/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -53,7 +55,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.142985"
+    "updatedAt": "2026-10-27T07:10:32.877317"
   },
   {
     "slug": "02_plinko_pachinko_fortuna",
@@ -72,6 +74,7 @@
     "status": "HOMOLOGADO",
     "version": "2.0.0",
     "path": "/games/02_plinko_pachinko_fortuna/index.html",
+    "thumbnail": "/games/02_plinko_pachinko_fortuna/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -81,7 +84,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.143987"
+    "updatedAt": "2026-10-27T07:10:32.895520"
   },
   {
     "slug": "03_corrida_avatares_holding",
@@ -103,6 +106,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/03_corrida_avatares_holding/index.html",
+    "thumbnail": "/games/03_corrida_avatares_holding/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -112,7 +116,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.146036"
+    "updatedAt": "2026-10-27T07:10:32.913376"
   },
   {
     "slug": "04_boss_raid_cooperativo",
@@ -132,6 +136,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/04_boss_raid_cooperativo/index.html",
+    "thumbnail": "/games/04_boss_raid_cooperativo/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -141,7 +146,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.148595"
+    "updatedAt": "2026-10-27T07:10:32.932401"
   },
   {
     "slug": "05_roleta_desafios_live",
@@ -161,6 +166,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/05_roleta_desafios_live/index.html",
+    "thumbnail": "/games/05_roleta_desafios_live/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -170,7 +176,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.151124"
+    "updatedAt": "2026-10-27T07:10:32.953316"
   },
   {
     "slug": "06_batalha_dos_baloes",
@@ -190,6 +196,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/06_batalha_dos_baloes/index.html",
+    "thumbnail": "/games/06_batalha_dos_baloes/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -199,7 +206,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.152121"
+    "updatedAt": "2026-10-27T07:10:32.975289"
   },
   {
     "slug": "07_pendulo_destruidor",
@@ -221,6 +228,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/07_pendulo_destruidor/index.html",
+    "thumbnail": "/games/07_pendulo_destruidor/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -230,7 +238,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.155304"
+    "updatedAt": "2026-10-27T07:10:32.991669"
   },
   {
     "slug": "08_caca_tesouro_coordenadas",
@@ -251,6 +259,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/08_caca_tesouro_coordenadas/index.html",
+    "thumbnail": "/games/08_caca_tesouro_coordenadas/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -260,7 +269,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.155821"
+    "updatedAt": "2026-10-27T07:10:33.009512"
   },
   {
     "slug": "09_tsunami_de_curtidas",
@@ -279,6 +288,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/09_tsunami_de_curtidas/index.html",
+    "thumbnail": "/games/09_tsunami_de_curtidas/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -288,7 +298,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.158377"
+    "updatedAt": "2026-10-27T07:10:33.030997"
   },
   {
     "slug": "10_queda_dos_blocos",
@@ -312,6 +322,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/10_queda_dos_blocos/index.html",
+    "thumbnail": "/games/10_queda_dos_blocos/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -321,7 +332,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.160903"
+    "updatedAt": "2026-10-27T07:10:33.055643"
   },
   {
     "slug": "11_queda_de_braco_titas",
@@ -341,6 +352,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/11_queda_de_braco_titas/index.html",
+    "thumbnail": "/games/11_queda_de_braco_titas/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -350,7 +362,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.162906"
+    "updatedAt": "2026-10-27T07:10:33.082126"
   },
   {
     "slug": "12_pachinko_pinball_neon",
@@ -372,6 +384,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/12_pachinko_pinball_neon/index.html",
+    "thumbnail": "/games/12_pachinko_pinball_neon/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -381,7 +394,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.165411"
+    "updatedAt": "2026-10-27T07:10:33.099264"
   },
   {
     "slug": "13_cascata_de_moedas",
@@ -403,6 +416,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/13_cascata_de_moedas/index.html",
+    "thumbnail": "/games/13_cascata_de_moedas/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -412,7 +426,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.167423"
+    "updatedAt": "2026-10-27T07:10:33.116438"
   },
   {
     "slug": "14_vortex_gravitacional",
@@ -434,6 +448,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/14_vortex_gravitacional/index.html",
+    "thumbnail": "/games/14_vortex_gravitacional/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -443,7 +458,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.168944"
+    "updatedAt": "2026-10-27T07:10:33.134724"
   },
   {
     "slug": "15_corrida_maluca_espacial",
@@ -465,6 +480,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/15_corrida_maluca_espacial/index.html",
+    "thumbnail": "/games/15_corrida_maluca_espacial/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -474,7 +490,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.171493"
+    "updatedAt": "2026-10-27T07:10:33.155665"
   },
   {
     "slug": "16_arrancada_noturna_neon",
@@ -494,6 +510,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/16_arrancada_noturna_neon/index.html",
+    "thumbnail": "/games/16_arrancada_noturna_neon/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -503,7 +520,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.174002"
+    "updatedAt": "2026-10-27T07:10:33.178050"
   },
   {
     "slug": "17_caca_niquel_neon_777",
@@ -523,6 +540,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/17_caca_niquel_neon_777/index.html",
+    "thumbnail": "/games/17_caca_niquel_neon_777/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -532,7 +550,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.176049"
+    "updatedAt": "2026-10-27T07:10:33.199598"
   },
   {
     "slug": "18_roleta_russa_baloes",
@@ -553,6 +571,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/18_roleta_russa_baloes/index.html",
+    "thumbnail": "/games/18_roleta_russa_baloes/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -562,7 +581,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.178127"
+    "updatedAt": "2026-10-27T07:10:33.222952"
   },
   {
     "slug": "19_defesa_da_torre_chat",
@@ -584,6 +603,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/19_defesa_da_torre_chat/index.html",
+    "thumbnail": "/games/19_defesa_da_torre_chat/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -593,7 +613,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.182706"
+    "updatedAt": "2026-10-27T07:10:33.245162"
   },
   {
     "slug": "20_subida_da_montanha_sagrada",
@@ -615,6 +635,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/20_subida_da_montanha_sagrada/index.html",
+    "thumbnail": "/games/20_subida_da_montanha_sagrada/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -624,7 +645,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.185872"
+    "updatedAt": "2026-10-27T07:10:33.265977"
   },
   {
     "slug": "21_batata_quente_explosiva",
@@ -644,6 +665,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/21_batata_quente_explosiva/index.html",
+    "thumbnail": "/games/21_batata_quente_explosiva/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -653,7 +675,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.188670"
+    "updatedAt": "2026-10-27T07:10:33.282629"
   },
   {
     "slug": "22_ponte_de_vidro_quebradico",
@@ -673,6 +695,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/22_ponte_de_vidro_quebradico/index.html",
+    "thumbnail": "/games/22_ponte_de_vidro_quebradico/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -682,7 +705,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.190915"
+    "updatedAt": "2026-10-27T07:10:33.305688"
   },
   {
     "slug": "23_sobrevivencia_na_lava",
@@ -706,6 +729,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/23_sobrevivencia_na_lava/index.html",
+    "thumbnail": "/games/23_sobrevivencia_na_lava/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -715,7 +739,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.193277"
+    "updatedAt": "2026-10-27T07:10:33.323927"
   },
   {
     "slug": "24_campo_minado_neon",
@@ -737,6 +761,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/24_campo_minado_neon/index.html",
+    "thumbnail": "/games/24_campo_minado_neon/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -746,7 +771,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.194906"
+    "updatedAt": "2026-10-27T07:10:33.341709"
   },
   {
     "slug": "25_batalha_naval_live",
@@ -768,6 +793,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/25_batalha_naval_live/index.html",
+    "thumbnail": "/games/25_batalha_naval_live/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -777,7 +803,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.196603"
+    "updatedAt": "2026-10-27T07:10:33.366621"
   },
   {
     "slug": "26_guerra_dos_tanques_neon",
@@ -802,6 +828,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/26_guerra_dos_tanques_neon/index.html",
+    "thumbnail": "/games/26_guerra_dos_tanques_neon/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -811,7 +838,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.198672"
+    "updatedAt": "2026-10-27T07:10:33.383949"
   },
   {
     "slug": "27_meteoro_defensor",
@@ -834,6 +861,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/27_meteoro_defensor/index.html",
+    "thumbnail": "/games/27_meteoro_defensor/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -843,7 +871,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.200357"
+    "updatedAt": "2026-10-27T07:10:33.402190"
   },
   {
     "slug": "28_labirinto_pacman_neon",
@@ -867,6 +895,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/28_labirinto_pacman_neon/index.html",
+    "thumbnail": "/games/28_labirinto_pacman_neon/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -876,7 +905,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.202227"
+    "updatedAt": "2026-10-27T07:10:33.427634"
   },
   {
     "slug": "29_basquete_street_neon",
@@ -898,6 +927,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/29_basquete_street_neon/index.html",
+    "thumbnail": "/games/29_basquete_street_neon/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -907,7 +937,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.204472"
+    "updatedAt": "2026-10-27T07:10:33.445051"
   },
   {
     "slug": "30_gol_de_penalti_live",
@@ -931,6 +961,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/30_gol_de_penalti_live/index.html",
+    "thumbnail": "/games/30_gol_de_penalti_live/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -940,7 +971,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.206460"
+    "updatedAt": "2026-10-27T07:10:33.465299"
   },
   {
     "slug": "31_guitar_hero_neon",
@@ -964,6 +995,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/31_guitar_hero_neon/index.html",
+    "thumbnail": "/games/31_guitar_hero_neon/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -973,7 +1005,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.208635"
+    "updatedAt": "2026-10-27T07:10:33.480048"
   },
   {
     "slug": "32_corte_de_frutas_neon",
@@ -997,6 +1029,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/32_corte_de_frutas_neon/index.html",
+    "thumbnail": "/games/32_corte_de_frutas_neon/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -1006,7 +1039,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.210378"
+    "updatedAt": "2026-10-27T07:10:33.499859"
   },
   {
     "slug": "33_corrida_de_cavalos_retro",
@@ -1030,6 +1063,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/33_corrida_de_cavalos_retro/index.html",
+    "thumbnail": "/games/33_corrida_de_cavalos_retro/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -1039,7 +1073,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.211992"
+    "updatedAt": "2026-10-27T07:10:33.519212"
   },
   {
     "slug": "34_pinball_galactico",
@@ -1064,6 +1098,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/34_pinball_galactico/index.html",
+    "thumbnail": "/games/34_pinball_galactico/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -1073,7 +1108,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.213758"
+    "updatedAt": "2026-10-27T07:10:33.542574"
   },
   {
     "slug": "35_quiz_frenetico_holding",
@@ -1097,6 +1132,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/35_quiz_frenetico_holding/index.html",
+    "thumbnail": "/games/35_quiz_frenetico_holding/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -1106,7 +1142,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.216616"
+    "updatedAt": "2026-10-27T07:10:33.568634"
   },
   {
     "slug": "36_pula_corda_extremo",
@@ -1129,6 +1165,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/36_pula_corda_extremo/index.html",
+    "thumbnail": "/games/36_pula_corda_extremo/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -1138,7 +1175,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.218552"
+    "updatedAt": "2026-10-27T07:10:33.595263"
   },
   {
     "slug": "37_torre_de_blocos_equilibrada",
@@ -1161,6 +1198,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/37_torre_de_blocos_equilibrada/index.html",
+    "thumbnail": "/games/37_torre_de_blocos_equilibrada/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -1170,7 +1208,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.220083"
+    "updatedAt": "2026-10-27T07:10:33.616107"
   },
   {
     "slug": "38_fuga_da_prisao_espacial",
@@ -1194,6 +1232,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/38_fuga_da_prisao_espacial/index.html",
+    "thumbnail": "/games/38_fuga_da_prisao_espacial/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -1203,7 +1242,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.221096"
+    "updatedAt": "2026-10-27T07:10:33.642262"
   },
   {
     "slug": "39_alvo_movel_snipers",
@@ -1226,6 +1265,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/39_alvo_movel_snipers/index.html",
+    "thumbnail": "/games/39_alvo_movel_snipers/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -1235,7 +1275,7 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.223109"
+    "updatedAt": "2026-10-27T07:10:33.665219"
   },
   {
     "slug": "40_duelo_de_magicos_neon",
@@ -1257,6 +1297,7 @@
     "status": "HOMOLOGADO",
     "version": "1.0.0",
     "path": "/games/40_duelo_de_magicos_neon/index.html",
+    "thumbnail": "/games/40_duelo_de_magicos_neon/thumbnail.svg",
     "aspectRatio": "9:16",
     "resolution": "1080x1920",
     "safeZones": {
@@ -1266,6 +1307,6 @@
     "soundEngine": "Web Audio API (Procedural)",
     "antiSilence": true,
     "autoResetSeconds": 5,
-    "updatedAt": "2026-10-27T07:00:35.225652"
+    "updatedAt": "2026-10-27T07:10:33.684614"
   }
 ]

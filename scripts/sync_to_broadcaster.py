@@ -370,6 +370,7 @@ def sync_games():
                 "status": meta["status"],
                 "version": meta["version"],
                 "path": f"/games/{item}/index.html",
+                "thumbnail": f"/games/{item}/thumbnail.svg",
                 "aspectRatio": "9:16",
                 "resolution": "1080x1920",
                 "safeZones": {"top": "140px", "bottom": "180px"},

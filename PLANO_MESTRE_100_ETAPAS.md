@@ -172,7 +172,7 @@
 - [x] **Etapa 094:** Forjamento do Cartucho #39: Alvo Móvel dos Snipers (Dardos e flechas disparados no timing certo em direção a alvos circulares concêntricos).
 - [x] **Etapa 095:** Forjamento do Cartucho #40: Duelo de Mágicos Neon (Magias de fogo vs gelo colidindo no centro com disputa de poder em tempo real).
 - [x] **Etapa 096:** Consolidação e auditoria do Manifesto Global `v5_games_manifest.json` com metadados completos de todos os 40 cartuchos.
-- [ ] **Etapa 097:** Geração de miniaturas (thumbnails em SVG vetorial) automáticas para o seletor de jogos do console Broadcaster.
+- [x] **Etapa 097:** Geração de miniaturas (thumbnails em SVG vetorial) automáticas para o seletor de jogos do console Broadcaster.
 - [ ] **Etapa 098:** Atualização do script `scripts/sync_to_broadcaster.py` com verificação de integridade MD5 e relatório de despacho.
 - [ ] **Etapa 099:** Execução de sincronização geral dos 40 cartuchos para a pasta pública do V5 Broadcaster.
 - [ ] **Etapa 100:** Atualização do `MEMORIA_ATIVA_GAMES.md` com status de homologação de todo o catálogo.

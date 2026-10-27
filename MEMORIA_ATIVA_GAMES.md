@@ -129,4 +129,6 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/test_cartridge_39.py`: Validação automatizada do Cartucho #39 (11/11 checks aprovados, alvos concêntricos oscilantes, balística de flechas, mira Lock-On e Chuva Nuclear).
 - `scripts/test_cartridge_40.py`: Validação automatizada do Cartucho #40 (11/11 checks aprovados, duelo cósmico fogo vs gelo, feixes com clash orb, screen shake e Super Gifts).
 - `scripts/test_manifest_consolidation_96.py`: Auditoria e consolidação estrita do manifesto com 16 campos de schema por jogo (8/8 checks aprovados).
+- `scripts/generate_cartridge_thumbnails.py`: Gerador industrial de miniaturas SVG vetoriais temáticas (viewBox 400x500) para todos os 41 cartuchos.
+- `scripts/test_cartridge_thumbnails_97.py`: Suíte de validação XML/SVG e conformidade das miniaturas (7/7 checks aprovados).
 - `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 41 pastas/40 cartuchos homologados e ativos).
