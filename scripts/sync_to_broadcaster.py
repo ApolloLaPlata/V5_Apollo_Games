@@ -231,6 +231,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "4", "fogo", "laser", "tiro"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "28_labirinto_pacman_neon": {
+        "name": "Labirinto do Pacman Neon",
+        "category": "arcade_navegacao",
+        "description": "Chat pilota o Pacman Neon por direções cardeais (1-Cima, 2-Baixo, 3-Esq, 4-Dir) para coletar pastilhas e devorar fantasmas",
+        "commands": ["1", "2", "3", "4", "cima", "baixo", "esquerda", "direita"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 

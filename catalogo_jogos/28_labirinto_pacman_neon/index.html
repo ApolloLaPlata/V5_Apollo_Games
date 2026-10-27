@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Labirinto do Pacman Neon (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #02040a;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 40%, #081124 0%, #030712 65%, #010206 100%);
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(251, 191, 36, 0.15);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Vinheta e Atmosfera de Arcade Retrô */
+    #ambient-vignette {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.85);
+      z-index: 2;
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 12px 16px 6px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 10;
+      min-height: 140px;
+      background: linear-gradient(180deg, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0.75) 75%, transparent 100%);
+    }
+
+    .badge-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .live-pill {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+
+    .game-title {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #fbbf24;
+      text-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+      text-transform: uppercase;
+    }
+
+    .round-indicator {
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 700;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Placar de Moedas, Vidas e Tempo */
+    .pacman-hud-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 10px;
+      padding: 6px 12px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hud-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .score-label {
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: rgba(2, 6, 23, 0.9);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f59e0b, #fbbf24, #fde047);
+      box-shadow: 0 0 10px rgba(251, 191, 36, 0.8);
+      transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hud-subtext {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    /* Canvas Central do Labirinto */
+    #maze-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+    }
+
+    /* Toast de Notificação de Power-ups */
+    #action-toast {
+      position: absolute;
+      top: 148px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid #38bdf8;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    #action-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Safe Zone Inferior (180px) */
+    .bottom-safe-zone {
+      padding: 10px 14px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      min-height: 180px;
+      background: linear-gradient(0deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.8) 75%, transparent 100%);
+    }
+
+    .command-guide-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      backdrop-filter: blur(8px);
+    }
+
+    .guide-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 900;
+      color: #f1f5f9;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .direction-buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .dir-tag {
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      color: #fbbf24;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 5px 2px;
+      border-radius: 6px;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .dir-tag.active {
+      background: #fbbf24;
+      color: #000000;
+      box-shadow: 0 0 12px #fbbf24;
+    }
+
+    .gift-benefit-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #38bdf8;
+    }
+
+    .recent-feed {
+      height: 24px;
+      overflow: hidden;
+      font-size: 10px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feed-avatar {
+      font-weight: 800;
+      color: #f8fafc;
+    }
+
+    /* Overlay de Vitória & Auto-Reset */
+    #victory-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(2, 6, 23, 0.92);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    #victory-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .trophy-glow {
+      font-size: 56px;
+      filter: drop-shadow(0 0 30px #fbbf24);
+      animation: floatTrophy 2s infinite ease-in-out;
+    }
+
+    @keyframes floatTrophy {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.05); }
+    }
+
+    .victory-title {
+      font-size: 24px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      text-align: center;
+      color: #fbbf24;
+      text-shadow: 0 0 20px rgba(251, 191, 36, 0.8);
+    }
+
+    .victory-subtitle {
+      font-size: 12px;
+      color: #cbd5e1;
+      font-weight: 600;
+      text-align: center;
+      max-width: 80%;
+    }
+
+    .mvp-card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mvp-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #fbbf24;
+      letter-spacing: 1px;
+    }
+
+    .mvp-name {
+      font-size: 15px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .auto-reset-meter {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    /* Gaveta de Depuração Local */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(15, 23, 42, 0.98);
+      border-top: 2px solid #fbbf24;
+      padding: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    #debug-drawer.open {
+      display: flex;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 6px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .debug-btn:hover {
+      background: #334155;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Vinheta de ambientação retrô -->
+    <div id="ambient-vignette"></div>
+
+    <!-- Safe Zone Superior (140px) -->
+    <header class="top-header">
+      <div class="badge-bar">
+        <div class="live-pill">
+          <div class="live-dot"></div>
+          AO VIVO
+        </div>
+        <div class="game-title">LABIRINTO DO PACMAN NEON</div>
+        <div class="round-indicator" id="round-number">FASE #1</div>
+      </div>
+
+      <div class="pacman-hud-box">
+        <div class="hud-info-row">
+          <span class="score-label">
+            <span>🟡</span>
+            <span id="score-text">0 / 15.000 PONTOS</span>
+          </span>
+          <span id="lives-text">VIDAS: 🟡 🟡 🟡</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-bar" style="width: 0%;"></div>
+        </div>
+        <div class="hud-subtext">
+          <span id="hunter-mode-text">Modo Caçador: OFF</span>
+          <span id="coins-count-text">Pastilhas: 0/120</span>
+          <span id="time-left-text">Tempo: 45s</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central do Labirinto Vertical 9:16 -->
+    <canvas id="maze-canvas" width="1080" height="1920"></canvas>
+
+    <!-- Toast de Notificação de Power-ups -->
+    <div id="action-toast">
+      <span id="toast-icon">⚡</span>
+      <span id="toast-text">MODO CAÇADOR ATIVADO! COMA OS FANTASMAS!</span>
+    </div>
+
+    <!-- Safe Zone Inferior (180px) -->
+    <footer class="bottom-safe-zone">
+      <div class="command-guide-card">
+        <div class="guide-title">
+          <span>CONTROLE DO PACMAN (CHAT DIGITA AS DIREÇÕES)</span>
+          <span style="color: #fbbf24;">PÚBLICO É O PILOTO</span>
+        </div>
+        <div class="direction-buttons-grid">
+          <div class="dir-tag" id="tag-up">1: CIMA ⬆</div>
+          <div class="dir-tag" id="tag-down">2: BAIXO ⬇</div>
+          <div class="dir-tag" id="tag-left">3: ESQ ⬅</div>
+          <div class="dir-tag" id="tag-right">4: DIR ➔</div>
+        </div>
+      </div>
+
+      <div class="gift-benefit-bar">
+        <span>🎁 PRESENTES / GIFTS:</span>
+        <span>SUPER VELOCIDADE 2X OU CONGELAMENTO DOS FANTASMAS!</span>
+      </div>
+
+      <div class="recent-feed" id="recent-feed">
+        <span>🕹️ Navegação do Chat:</span>
+        <span class="feed-avatar" id="feed-msg">Aguardando comando de direção dos espectadores...</span>
+      </div>
+    </footer>
+
+    <!-- Overlay de Vitória & Auto-Reset -->
+    <div id="victory-overlay">
+      <div class="trophy-glow">🍒</div>
+      <div class="victory-title" id="winner-title">LABIRINTO CONQUISTADO!</div>
+      <div class="victory-subtitle" id="winner-summary">O chat coordenou cada esquina com maestria e devorou todas as pastilhas neon!</div>
+      <div class="mvp-card">
+        <div class="mvp-label">PILOTO MAIS RÁPIDO DO CHAT (MVP)</div>
+        <div class="mvp-name" id="mvp-user-name">@pacman_mestre</div>
+      </div>
+      <div class="auto-reset-meter" id="auto-reset-countdown">Próximo labirinto em 5s...</div>
+    </div>
+
+    <!-- Gaveta de Depuração Local -->
+    <div id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #fbbf24; display: flex; justify-content: space-between;">
+        <span>PAINEL DE DEPURAÇÃO DO STREAMER (TECLA D)</span>
+        <button onclick="toggleDebugDrawer()" style="background:none; border:none; color:#fca5a5; cursor:pointer;">✕ Fechar</button>
+      </div>
+      <div class="debug-grid">
+        <button class="debug-btn" onclick="testDirection('up')">Cima (1)</button>
+        <button class="debug-btn" onclick="testDirection('down')">Baixo (2)</button>
+        <button class="debug-btn" onclick="testDirection('left')">Esquerda (3)</button>
+        <button class="debug-btn" onclick="testDirection('right')">Direita (4)</button>
+        <button class="debug-btn" onclick="testGift('Rose')">Rosa (Super Pastilha)</button>
+        <button class="debug-btn" onclick="testGift('Lion')">Leão (Congelar)</button>
+        <button class="debug-btn" onclick="testAddScore(5000)">+5.000 Pts</button>
+        <button class="debug-btn" onclick="resetMatch()">Auto-Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SDK V5 Live Event Bus -->
+  <script src="../../sdk/v5_live_game_sdk.js"></script>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE GAMES: LABIRINTO DO PACMAN NEON (CARTUCHO #28)
+       Proporção: 9:16 Vertical Estrito (1080 x 1920 px)
+       Navegação por Votos de Chat (Cima/Baixo/Esq/Dir), Pastilhas e Fantasmas
+       ========================================================================== */
+
+    // 1. SINTETIZADOR PROCEDURAL DE ÁUDIO (WEB AUDIO API PURA - ZERO .MP3/.WAV)
+    class NeonPacmanAudioSynth {
+      constructor() {
+        this.ctx = null;
+        this.isMuted = false;
+        this.wakaToggle = false;
+      }
+
+      initContext() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playWakaWaka() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        this.wakaToggle = !this.wakaToggle;
+        const freq = this.wakaToggle ? 480 : 330;
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now);
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.7, now + 0.08);
+
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0.001, now + 0.08);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.08);
+      }
+
+      playPowerPellet() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.linearRampToValueAtTime(660, now + 0.25);
+
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }
+
+      playEatGhost() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.linearRampToValueAtTime(1400, now + 0.35);
+
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.35);
+      }
+
+      playDeathChime() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const now = this.ctx.currentTime;
+        const tones = [500, 470, 440, 415, 390, 350, 310, 260, 200];
+        tones.forEach((t, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const start = now + i * 0.07;
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(t, start);
+          gain.gain.setValueAtTime(0.25, start);
+          gain.gain.exponentialRampToValueAtTime(0.001, start + 0.07);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(start);
+          osc.stop(start + 0.07);
+        });
+      }
+
+      playVictoryFanfare() {
+        this.initContext();
+        if (!this.ctx || this.isMuted) return;
+
+        const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50];
+        const now = this.ctx.currentTime;
+
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const startTime = now + idx * 0.11;
+          const dur = 0.45;
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, startTime);
+
+          gain.gain.setValueAtTime(0.28, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + dur);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(startTime);
+          osc.stop(startTime + dur);
+        });
+      }
+    }
+
+    const sound = new NeonPacmanAudioSynth();
+
+    // 2. CONSTANTES E GRID DO LABIRINTO (1080 x 1920)
+    const STAGE_WIDTH = 1080;
+    const STAGE_HEIGHT = 1920;
+
+    const canvas = document.getElementById('maze-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Matriz do Labirinto Vertical Otimizada (15 colunas x 21 linhas)
+    // 1 = Parede Neon, 0 = Pastilha Normal, 2 = Super Pastilha, 3 = Espaço Vazio
+    const COLS = 15;
+    const ROWS = 21;
+    const CELL_SIZE = 64; // 15 * 64 = 960px de largura (centralizado em 1080)
+    const OFFSET_X = (STAGE_WIDTH - (COLS * CELL_SIZE)) / 2; // 60px de margem
+    const OFFSET_Y = 240; // Abaixo da safe zone superior
+
+    const ORIGINAL_MAZE = [
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,2,0,0,0,0,0,1,0,0,0,0,0,2,1],
+      [1,0,1,1,0,1,0,1,0,1,0,1,1,0,1],
+      [1,0,1,1,0,1,0,1,0,1,0,1,1,0,1],
+      [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+      [1,0,1,1,0,1,1,1,1,1,0,1,1,0,1],
+      [1,0,0,0,0,0,0,1,0,0,0,0,0,0,1],
+      [1,1,1,1,0,1,3,3,3,1,0,1,1,1,1],
+      [3,3,3,1,0,1,3,3,3,1,0,1,3,3,3],
+      [1,1,1,1,0,1,1,1,1,1,0,1,1,1,1],
+      [1,0,0,0,0,0,0,3,0,0,0,0,0,0,1],
+      [1,0,1,1,0,1,1,1,1,1,0,1,1,0,1],
+      [1,0,0,1,0,0,0,1,0,0,0,1,0,0,1],
+      [1,1,0,1,0,1,0,1,0,1,0,1,0,1,1],
+      [1,0,0,0,0,1,0,0,0,1,0,0,0,0,1],
+      [1,0,1,1,1,1,0,1,0,1,1,1,1,0,1],
+      [1,0,0,0,0,0,0,1,0,0,0,0,0,0,1],
+      [1,0,1,1,0,1,1,1,1,1,0,1,1,0,1],
+      [1,0,0,1,0,0,0,0,0,0,0,1,0,0,1],
+      [1,2,0,1,0,1,1,1,1,1,0,1,0,2,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    ];
+
+    let mazeGrid = JSON.parse(JSON.stringify(ORIGINAL_MAZE));
+
+    // 3. ESTADO DO JOGO
+    const state = {
+      round: 1,
+      score: 0,
+      targetScore: 15000,
+      lives: 3,
+      totalCoins: 0,
+      coinsEaten: 0,
+      timeRemaining: 45.0,
+      isGameOver: false,
+      autoResetTimer: 5,
+      hunterModeTime: 0,
+      freezeGhostsTime: 0,
+      speedBoostTime: 0,
+      lastFrameTime: performance.now(),
+
+      pacman: {
+        col: 7,
+        row: 14,
+        x: 0,
+        y: 0,
+        dir: 'right', // 'up', 'down', 'left', 'right'
+        nextDir: 'right',
+        speed: 210, // px/s
+        mouthAngle: 0.25,
+        mouthSpeed: 6,
+        isMoving: true
+      },
+
+      ghosts: [
+        { name: 'Blinky', color: '#ef4444', col: 7, row: 8, x: 0, y: 0, dir: 'up', speed: 180 },
+        { name: 'Pinky',  color: '#ec4899', col: 6, row: 8, x: 0, y: 0, dir: 'up', speed: 175 },
+        { name: 'Inky',   color: '#06b6d4', col: 8, row: 8, x: 0, y: 0, dir: 'up', speed: 170 },
+        { name: 'Clyde',  color: '#f97316', col: 7, row: 7, x: 0, y: 0, dir: 'left', speed: 165 }
+      ],
+
+      particles: [],
+      floatingTexts: [],
+      mvpUser: '@pacman_mestre'
+    };
+
+    // Inicialização da contagem de moedas e posições no canvas
+    function initMazeData() {
+      state.totalCoins = 0;
+      state.coinsEaten = 0;
+
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          if (mazeGrid[r][c] === 0 || mazeGrid[r][c] === 2) {
+            state.totalCoins++;
+          }
+        }
+      }
+
+      resetCharacterPositions();
+    }
+
+    function resetCharacterPositions() {
+      // Pacman
+      state.pacman.col = 7;
+      state.pacman.row = 14;
+      state.pacman.x = OFFSET_X + state.pacman.col * CELL_SIZE + CELL_SIZE / 2;
+      state.pacman.y = OFFSET_Y + state.pacman.row * CELL_SIZE + CELL_SIZE / 2;
+      state.pacman.dir = 'right';
+      state.pacman.nextDir = 'right';
+
+      // Fantasmas no cercado central
+      const ghostSpawns = [
+        { col: 7, row: 8, dir: 'up' },
+        { col: 6, row: 8, dir: 'up' },
+        { col: 8, row: 8, dir: 'up' },
+        { col: 7, row: 7, dir: 'left' }
+      ];
+
+      state.ghosts.forEach((g, idx) => {
+        g.col = ghostSpawns[idx].col;
+        g.row = ghostSpawns[idx].row;
+        g.x = OFFSET_X + g.col * CELL_SIZE + CELL_SIZE / 2;
+        g.y = OFFSET_Y + g.row * CELL_SIZE + CELL_SIZE / 2;
+        g.dir = ghostSpawns[idx].dir;
+      });
+    }
+
+    // 4. MOVIMENTO DO PACMAN E COLISÃO COM PAREDES
+    const DIR_OFFSETS = {
+      up:    { dc: 0, dr: -1, vx: 0, vy: -1 },
+      down:  { dc: 0, dr: 1,  vx: 0, vy: 1 },
+      left:  { dc: -1, dr: 0, vx: -1, vy: 0 },
+      right: { dc: 1, dr: 0,  vx: 1, vy: 0 }
+    };
+
+    function canMoveInDir(col, row, dir) {
+      const offset = DIR_OFFSETS[dir];
+      let nc = col + offset.dc;
+      let nr = row + offset.dr;
+
+      // Túnel horizontal lateral
+      if (nc < 0) nc = COLS - 1;
+      if (nc >= COLS) nc = 0;
+
+      if (nr < 0 || nr >= ROWS) return false;
+      return mazeGrid[nr][nc] !== 1;
+    }
+
+    function updatePacman(dt) {
+      if (state.isGameOver) return;
+
+      const p = state.pacman;
+      const currentSpeed = (state.speedBoostTime > 0 ? p.speed * 1.5 : p.speed);
+
+      // Boca animada
+      p.mouthAngle += p.mouthSpeed * dt;
+
+      // Cálculo da célula atual
+      const currentCellX = OFFSET_X + p.col * CELL_SIZE + CELL_SIZE / 2;
+      const currentCellY = OFFSET_Y + p.row * CELL_SIZE + CELL_SIZE / 2;
+
+      // Verifica se está alinhado com o centro do bloco para poder virar
+      const distToCenter = Math.hypot(p.x - currentCellX, p.y - currentCellY);
+
+      if (distToCenter < 12 && p.nextDir !== p.dir) {
+        if (canMoveInDir(p.col, p.row, p.nextDir)) {
+          p.dir = p.nextDir;
+          p.x = currentCellX;
+          p.y = currentCellY;
+          highlightDirTag(p.dir);
+        }
+      }
+
+      // Se pode continuar na direção atual
+      if (canMoveInDir(p.col, p.row, p.dir)) {
+        const vel = DIR_OFFSETS[p.dir];
+        p.x += vel.vx * currentSpeed * dt;
+        p.y += vel.vy * currentSpeed * dt;
+
+        // Atualiza linha e coluna atuais
+        p.col = Math.floor((p.x - OFFSET_X) / CELL_SIZE);
+        p.row = Math.floor((p.y - OFFSET_Y) / CELL_SIZE);
+
+        // Túnel lateral
+        if (p.x < OFFSET_X) {
+          p.x = OFFSET_X + (COLS - 1) * CELL_SIZE;
+        } else if (p.x > OFFSET_X + COLS * CELL_SIZE) {
+          p.x = OFFSET_X;
+        }
+      } else {
+        // Encostou na parede
+        p.x = currentCellX;
+        p.y = currentCellY;
+      }
+
+      // Comer pastilhas
+      if (p.row >= 0 && p.row < ROWS && p.col >= 0 && p.col < COLS) {
+        const cell = mazeGrid[p.row][p.col];
+        if (cell === 0) {
+          // Pastilha normal
+          mazeGrid[p.row][p.col] = 3;
+          state.score += 100;
+          state.coinsEaten++;
+          sound.playWakaWaka();
+          updateHudUI();
+          createEatParticles(p.x, p.y, '#fbbf24', 4);
+        } else if (cell === 2) {
+          // Super pastilha
+          mazeGrid[p.row][p.col] = 3;
+          state.score += 500;
+          state.coinsEaten++;
+          state.hunterModeTime = 8.0; // 8 segundos de caça
+          sound.playPowerPellet();
+          showToast('⚡ MODO CAÇADOR ATIVADO! COMA OS FANTASMAS!');
+          updateHudUI();
+          createEatParticles(p.x, p.y, '#38bdf8', 15);
+        }
+      }
+
+      // Verifica vitória se bateu a meta de pontos ou comeu 90% das moedas
+      if ((state.score >= state.targetScore || state.coinsEaten >= state.totalCoins) && !state.isGameOver) {
+        triggerGameOver(true);
+      }
+    }
+
+    // 5. MOVIMENTO INTELIGENTE DOS FANTASMAS
+    function updateGhosts(dt) {
+      if (state.isGameOver) return;
+      if (state.freezeGhostsTime > 0) return; // Congelados por gift
+
+      const dirs = ['up', 'down', 'left', 'right'];
+
+      state.ghosts.forEach(g => {
+        const gSpeed = (state.hunterModeTime > 0 ? g.speed * 0.6 : g.speed);
+        const cellCenterX = OFFSET_X + g.col * CELL_SIZE + CELL_SIZE / 2;
+        const cellCenterY = OFFSET_Y + g.row * CELL_SIZE + CELL_SIZE / 2;
+
+        const distToCenter = Math.hypot(g.x - cellCenterX, g.y - cellCenterY);
+
+        if (distToCenter < 10) {
+          // Nas encruzilhadas, escolhe a direção válida (tentando perseguir ou fugir do Pacman)
+          const validDirs = dirs.filter(d => canMoveInDir(g.col, g.row, d));
+
+          if (validDirs.length > 0) {
+            // Em modo caçador, fantasmas fogem; no modo normal, tentam encurralar
+            if (state.hunterModeTime > 0) {
+              // Fuga
+              validDirs.sort((a, b) => {
+                const offA = DIR_OFFSETS[a];
+                const offB = DIR_OFFSETS[b];
+                const distA = Math.hypot((g.col + offA.dc) - state.pacman.col, (g.row + offA.dr) - state.pacman.row);
+                const distB = Math.hypot((g.col + offB.dc) - state.pacman.col, (g.row + offB.dr) - state.pacman.row);
+                return distB - distA; // Maior distância
+              });
+            } else {
+              // Perseguição com aleatoriedade orgânica
+              if (Math.random() < 0.7) {
+                validDirs.sort((a, b) => {
+                  const offA = DIR_OFFSETS[a];
+                  const offB = DIR_OFFSETS[b];
+                  const distA = Math.hypot((g.col + offA.dc) - state.pacman.col, (g.row + offA.dr) - state.pacman.row);
+                  const distB = Math.hypot((g.col + offB.dc) - state.pacman.col, (g.row + offB.dr) - state.pacman.row);
+                  return distA - distB; // Menor distância
+                });
+              }
+            }
+            g.dir = validDirs[0];
+          }
+        }
+
+        if (canMoveInDir(g.col, g.row, g.dir)) {
+          const vel = DIR_OFFSETS[g.dir];
+          g.x += vel.vx * gSpeed * dt;
+          g.y += vel.vy * gSpeed * dt;
+
+          g.col = Math.floor((g.x - OFFSET_X) / CELL_SIZE);
+          g.row = Math.floor((g.y - OFFSET_Y) / CELL_SIZE);
+        }
+
+        // Colisão com o Pacman
+        const distToPacman = Math.hypot(g.x - state.pacman.x, g.y - state.pacman.y);
+        if (distToPacman < 34) {
+          if (state.hunterModeTime > 0) {
+            // Pacman come o fantasma!
+            g.col = 7;
+            g.row = 8;
+            g.x = OFFSET_X + g.col * CELL_SIZE + CELL_SIZE / 2;
+            g.y = OFFSET_Y + g.row * CELL_SIZE + CELL_SIZE / 2;
+            state.score += 1000;
+            sound.playEatGhost();
+            showToast(`👻 FANTASMA DEVORADO! +1.000 PONTOS!`);
+            createFloatingText(g.x, g.y, '+1.000', '#38bdf8');
+            updateHudUI();
+          } else {
+            // Pacman é pego pelo fantasma!
+            handlePacmanCaught();
+          }
+        }
+      });
+    }
+
+    function handlePacmanCaught() {
+      state.lives--;
+      sound.playDeathChime();
+      updateHudUI();
+      createEatParticles(state.pacman.x, state.pacman.y, '#ef4444', 30);
+
+      if (state.lives <= 0) {
+        triggerGameOver(false);
+      } else {
+        showToast(`💥 PACMAN FOI PEGO! RESTAM ${state.lives} VIDAS!`);
+        resetCharacterPositions();
+      }
+    }
+
+    // 6. RENDERIZAÇÃO 2D EM CANVAS
+    function drawMaze(c) {
+      c.save();
+
+      // Desenha paredes neon com glow
+      for (let r = 0; r < ROWS; r++) {
+        for (let col = 0; col < COLS; col++) {
+          const cell = mazeGrid[r][col];
+          const x = OFFSET_X + col * CELL_SIZE;
+          const y = OFFSET_Y + r * CELL_SIZE;
+
+          if (cell === 1) {
+            // Parede cibernética neon
+            c.strokeStyle = '#00f3ff';
+            c.lineWidth = 3;
+            c.fillStyle = 'rgba(0, 243, 255, 0.08)';
+            c.shadowColor = '#00f3ff';
+            c.shadowBlur = 10;
+            c.fillRect(x + 4, y + 4, CELL_SIZE - 8, CELL_SIZE - 8);
+            c.strokeRect(x + 4, y + 4, CELL_SIZE - 8, CELL_SIZE - 8);
+          } else if (cell === 0) {
+            // Pastilha normal
+            c.beginPath();
+            c.arc(x + CELL_SIZE / 2, y + CELL_SIZE / 2, 5, 0, Math.PI * 2);
+            c.fillStyle = '#fbbf24';
+            c.shadowColor = '#fbbf24';
+            c.shadowBlur = 8;
+            c.fill();
+          } else if (cell === 2) {
+            // Super Pastilha pulsante
+            const pulse = 10 + Math.sin(Date.now() * 0.008) * 3;
+            c.beginPath();
+            c.arc(x + CELL_SIZE / 2, y + CELL_SIZE / 2, pulse, 0, Math.PI * 2);
+            c.fillStyle = '#38bdf8';
+            c.shadowColor = '#38bdf8';
+            c.shadowBlur = 15;
+            c.fill();
+          }
+        }
+      }
+
+      c.restore();
+    }
+
+    function drawPacman(c) {
+      const p = state.pacman;
+      c.save();
+      c.translate(p.x, p.y);
+
+      // Ângulo de rotação conforme a direção
+      let rot = 0;
+      if (p.dir === 'down') rot = Math.PI / 2;
+      if (p.dir === 'left') rot = Math.PI;
+      if (p.dir === 'up') rot = -Math.PI / 2;
+      c.rotate(rot);
+
+      const mouth = Math.abs(Math.sin(p.mouthAngle)) * 0.35 + 0.05;
+
+      c.beginPath();
+      c.arc(0, 0, 26, mouth * Math.PI, (2 - mouth) * Math.PI);
+      c.lineTo(0, 0);
+      c.fillStyle = '#fbbf24';
+      c.shadowColor = '#fbbf24';
+      c.shadowBlur = 18;
+      c.fill();
+
+      // Olho do Pacman
+      c.beginPath();
+      c.arc(2, -14, 4, 0, Math.PI * 2);
+      c.fillStyle = '#020617';
+      c.fill();
+
+      c.restore();
+    }
+
+    function drawGhosts(c) {
+      state.ghosts.forEach(g => {
+        c.save();
+        c.translate(g.x, g.y);
+
+        const isVulnerable = state.hunterModeTime > 0;
+        const isFrozen = state.freezeGhostsTime > 0;
+        let ghostColor = isVulnerable ? '#38bdf8' : g.color;
+        if (isFrozen) ghostColor = '#a5f3fc';
+
+        // Cabeça abaulada
+        c.beginPath();
+        c.arc(0, -6, 22, Math.PI, 0);
+        c.lineTo(22, 16);
+
+        // Tentáculos neon na base
+        for (let i = 0; i < 3; i++) {
+          const tentX = 22 - (i * 14.6);
+          c.quadraticCurveTo(tentX - 7, 26, tentX - 14.6, 16);
+        }
+
+        c.closePath();
+        c.fillStyle = ghostColor;
+        c.shadowColor = ghostColor;
+        c.shadowBlur = 15;
+        c.fill();
+
+        // Olhos
+        c.beginPath();
+        c.arc(-8, -8, 6, 0, Math.PI * 2);
+        c.arc(8, -8, 6, 0, Math.PI * 2);
+        c.fillStyle = '#ffffff';
+        c.fill();
+
+        // Pupilas
+        const pOff = DIR_OFFSETS[g.dir] || { vx: 0, vy: 0 };
+        c.beginPath();
+        c.arc(-8 + pOff.vx * 3, -8 + pOff.vy * 3, 3, 0, Math.PI * 2);
+        c.arc(8 + pOff.vx * 3, -8 + pOff.vy * 3, 3, 0, Math.PI * 2);
+        c.fillStyle = '#020617';
+        c.fill();
+
+        c.restore();
+      });
+    }
+
+    // Partículas e Efeitos
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() * 2 - 1) * 160;
+        this.vy = (Math.random() * 2 - 1) * 160;
+        this.color = color;
+        this.radius = Math.random() * 4 + 2;
+        this.life = 1.0;
+        this.decay = Math.random() * 2.0 + 1.2;
+      }
+
+      update(dt) {
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        this.life -= this.decay * dt;
+      }
+
+      draw(c) {
+        if (this.life <= 0) return;
+        c.save();
+        c.beginPath();
+        c.arc(this.x, this.y, this.radius * this.life, 0, Math.PI * 2);
+        c.fillStyle = this.color;
+        c.globalAlpha = this.life;
+        c.shadowColor = this.color;
+        c.shadowBlur = 10;
+        c.fill();
+        c.restore();
+      }
+    }
+
+    function createEatParticles(x, y, color, count) {
+      for (let i = 0; i < count; i++) {
+        state.particles.push(new Particle(x, y, color));
+      }
+    }
+
+    function createFloatingText(x, y, text, color) {
+      state.floatingTexts.push({
+        x: x,
+        y: y,
+        text: text,
+        color: color,
+        alpha: 1.0,
+        vy: -60
+      });
+    }
+
+    function updateFloatingTexts(dt) {
+      for (let i = state.floatingTexts.length - 1; i >= 0; i--) {
+        const ft = state.floatingTexts[i];
+        ft.y += ft.vy * dt;
+        ft.alpha -= 1.4 * dt;
+        if (ft.alpha <= 0) {
+          state.floatingTexts.splice(i, 1);
+        }
+      }
+    }
+
+    function drawFloatingTexts(c) {
+      state.floatingTexts.forEach(ft => {
+        c.save();
+        c.font = '900 24px -apple-system, sans-serif';
+        c.fillStyle = ft.color;
+        c.globalAlpha = Math.max(0, ft.alpha);
+        c.textAlign = 'center';
+        c.shadowColor = ft.color;
+        c.shadowBlur = 10;
+        c.fillText(ft.text, ft.x, ft.y);
+        c.restore();
+      });
+    }
+
+    function updateHudUI() {
+      document.getElementById('score-text').innerText = `${state.score.toLocaleString()} / 15.000 PONTOS`;
+      const pct = Math.min(100, (state.score / state.targetScore) * 100);
+      document.getElementById('progress-bar').style.width = pct + '%';
+
+      let livesIcon = '';
+      for (let i = 0; i < state.lives; i++) livesIcon += '🟡 ';
+      document.getElementById('lives-text').innerText = `VIDAS: ${livesIcon}`;
+
+      document.getElementById('hunter-mode-text').innerText = state.hunterModeTime > 0 ? `Modo Caçador: ${Math.ceil(state.hunterModeTime)}s` : 'Modo Caçador: OFF';
+      document.getElementById('hunter-mode-text').style.color = state.hunterModeTime > 0 ? '#38bdf8' : '#94a3b8';
+
+      document.getElementById('coins-count-text').innerText = `Pastilhas: ${state.coinsEaten}/${state.totalCoins}`;
+    }
+
+    function highlightDirTag(dir) {
+      ['up', 'down', 'left', 'right'].forEach(d => {
+        const el = document.getElementById(`tag-${d}`);
+        if (el) el.classList.remove('active');
+      });
+      const target = document.getElementById(`tag-${dir}`);
+      if (target) target.classList.add('active');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('action-toast');
+      const txt = document.getElementById('toast-text');
+      txt.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    function showFeed(msg, user = '') {
+      const feed = document.getElementById('feed-msg');
+      if (feed) {
+        feed.innerHTML = user ? `<strong>${user}</strong>: ${msg}` : msg;
+      }
+    }
+
+    // 7. CICLO FECHADO & AUTO-RESET (LEI 5)
+    function triggerGameOver(isVictory) {
+      state.isGameOver = true;
+      if (isVictory) {
+        sound.playVictoryFanfare();
+      }
+
+      const overlay = document.getElementById('victory-overlay');
+      const title = document.getElementById('winner-title');
+      const summary = document.getElementById('winner-summary');
+      const mvp = document.getElementById('mvp-user-name');
+      const countdown = document.getElementById('auto-reset-countdown');
+
+      if (isVictory) {
+        title.innerText = 'LABIRINTO CONQUISTADO!';
+        title.style.color = '#fbbf24';
+        summary.innerText = `O chat devorou o labirinto e acumulou ${state.score.toLocaleString()} pontos com maestria!`;
+      } else {
+        title.innerText = 'FIM DE JOGO!';
+        title.style.color = '#ef4444';
+        summary.innerText = 'Os fantasmas pegaram o Pacman! O chat deve alinhar melhor as curvas!';
+      }
+
+      mvp.innerText = state.mvpUser || '@pacman_mestre';
+      overlay.classList.add('active');
+
+      state.autoResetTimer = 5;
+      const interval = setInterval(() => {
+        state.autoResetTimer--;
+        if (countdown) {
+          countdown.innerText = `Próximo labirinto em ${state.autoResetTimer}s...`;
+        }
+        if (state.autoResetTimer <= 0) {
+          clearInterval(interval);
+          resetMatch();
+        }
+      }, 1000);
+    }
+
+    function resetMatch() {
+      state.round++;
+      document.getElementById('round-number').innerText = `FASE #${state.round}`;
+
+      state.isGameOver = false;
+      state.score = 0;
+      state.lives = 3;
+      state.timeRemaining = 45.0;
+      state.hunterModeTime = 0;
+      state.freezeGhostsTime = 0;
+      state.speedBoostTime = 0;
+
+      // Restaura o labirinto original
+      mazeGrid = JSON.parse(JSON.stringify(ORIGINAL_MAZE));
+      initMazeData();
+      updateHudUI();
+
+      document.getElementById('victory-overlay').classList.remove('active');
+      showFeed('Novo labirinto iniciado! Chat, digitem as direções!');
+    }
+
+    // 8. LOOP PRINCIPAL DE RENDERIZAÇÃO 60 FPS
+    function gameLoop(now) {
+      const dt = Math.min(0.06, (now - state.lastFrameTime) / 1000);
+      state.lastFrameTime = now;
+
+      // Cronômetro da Rodada
+      if (!state.isGameOver) {
+        state.timeRemaining -= dt;
+        const timeEl = document.getElementById('time-left-text');
+        if (timeEl) {
+          timeEl.innerText = `Tempo: ${Math.max(0, Math.ceil(state.timeRemaining))}s`;
+        }
+
+        if (state.timeRemaining <= 0) {
+          triggerGameOver(state.score >= 5000);
+        }
+
+        if (state.hunterModeTime > 0) state.hunterModeTime -= dt;
+        if (state.freezeGhostsTime > 0) state.freezeGhostsTime -= dt;
+        if (state.speedBoostTime > 0) state.speedBoostTime -= dt;
+
+        updatePacman(dt);
+        updateGhosts(dt);
+      }
+
+      ctx.clearRect(0, 0, STAGE_WIDTH, STAGE_HEIGHT);
+
+      // Desenho dos Elementos
+      drawMaze(ctx);
+      drawPacman(ctx);
+      drawGhosts(ctx);
+
+      // Partículas e Textos Flutuantes
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const pt = state.particles[i];
+        pt.update(dt);
+        pt.draw(ctx);
+        if (pt.life <= 0) state.particles.splice(i, 1);
+      }
+
+      updateFloatingTexts(dt);
+      drawFloatingTexts(ctx);
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // 9. INTEGRAÇÃO COM SDK V5 LIVE & PARSER DE CHAT
+    function handleLiveCommand(payload) {
+      if (!payload) return;
+      const user = payload.user || '@espectador';
+      const comment = (payload.comment || '').toString().toLowerCase().trim();
+      const giftName = payload.giftName || null;
+
+      // 1. Processamento de Presentes / Gifts
+      if (payload.type === 'gift' || giftName) {
+        if (giftName === 'Lion' || giftName === 'Cap' || comment.includes('congelar')) {
+          state.freezeGhostsTime = 6.0;
+          sound.playPowerPellet();
+          showToast(`❄️ FANTASMAS CONGELADOS POR 6 SEGUNDOS POR ${user.toUpperCase()}!`);
+        } else {
+          state.hunterModeTime = 10.0;
+          state.speedBoostTime = 8.0;
+          sound.playPowerPellet();
+          showToast(`⚡ SUPER TURBO & MODO CAÇADOR ATIVADO POR ${user.toUpperCase()}!`);
+        }
+        state.mvpUser = user;
+        showFeed(`Ativou super poder do labirinto!`, user);
+        return;
+      }
+
+      // 2. Comandos de Direção do Chat
+      let targetDir = null;
+      if (comment.includes('1') || comment.includes('cima') || comment.includes('up') || comment.includes('c')) {
+        targetDir = 'up';
+      } else if (comment.includes('2') || comment.includes('baixo') || comment.includes('down') || comment.includes('b')) {
+        targetDir = 'down';
+      } else if (comment.includes('3') || comment.includes('esquerda') || comment.includes('esq') || comment.includes('left')) {
+        targetDir = 'left';
+      } else if (comment.includes('4') || comment.includes('direita') || comment.includes('dir') || comment.includes('right')) {
+        targetDir = 'right';
+      }
+
+      if (targetDir) {
+        state.pacman.nextDir = targetDir;
+        state.mvpUser = user;
+        highlightDirTag(targetDir);
+        showFeed(`Votou para virar para ${targetDir.toUpperCase()}!`, user);
+      }
+    }
+
+    // Inicialização do SDK V5
+    const sdk = new V5LiveSDK({
+      gameId: '28_labirinto_pacman_neon',
+      autoBotEnabled: true,
+      autoBotInterval: 2500,
+      autoBotSilenceThreshold: 3000
+    });
+
+    sdk.on('comment', (data) => handleLiveCommand(data));
+    sdk.on('gift', (data) => handleLiveCommand(data));
+    sdk.on('like', (data) => {
+      // Likes dão micro pontuação
+      if (Math.random() < 0.2) {
+        state.score += 25;
+        updateHudUI();
+      }
+    });
+
+    // 10. MOTOR ANTI-SILÊNCIO ORGÂNICO (LEI 3)
+    const mockUsers = ['@pac_fan99', '@retro_gamer', '@waka_king', '@neon_ghost', '@arcade_live', '@joystick_pro'];
+    const mockDirs = ['up', 'down', 'left', 'right'];
+
+    setInterval(() => {
+      if (state.isGameOver) return;
+      const now = Date.now();
+      if (now - sdk.lastEventTime > 2800) {
+        const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+        const validDirs = mockDirs.filter(d => canMoveInDir(state.pacman.col, state.pacman.row, d));
+        const chosenDir = validDirs.length > 0 ? validDirs[Math.floor(Math.random() * validDirs.length)] : 'right';
+
+        handleLiveCommand({
+          type: 'comment',
+          user: randomUser,
+          comment: chosenDir
+        });
+      }
+    }, 2500);
+
+    // 11. GAVETA DE DEPURAÇÃO LOCAL (TECLA D OU DUPLO CLIQUE)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        toggleDebugDrawer();
+      }
+    });
+
+    document.getElementById('game-stage').addEventListener('dblclick', () => {
+      toggleDebugDrawer();
+    });
+
+    function toggleDebugDrawer() {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.classList.toggle('open');
+    }
+
+    function testDirection(dir) {
+      sound.initContext();
+      handleLiveCommand({
+        type: 'comment',
+        user: '@streamer_dev',
+        comment: dir
+      });
+    }
+
+    function testGift(giftName) {
+      sound.initContext();
+      handleLiveCommand({
+        type: 'gift',
+        user: '@patrocinador_live',
+        giftName: giftName,
+        value: 10
+      });
+    }
+
+    function testAddScore(pts) {
+      state.score += pts;
+      updateHudUI();
+    }
+
+    // Inicialização da Partida
+    window.addEventListener('DOMContentLoaded', () => {
+      initMazeData();
+      updateHudUI();
+      requestAnimationFrame(gameLoop);
+    });
+
+  </script>
+</body>
+</html>

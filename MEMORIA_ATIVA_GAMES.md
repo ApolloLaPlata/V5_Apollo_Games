@@ -52,6 +52,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | **25** | `25_batalha_naval_live` | Batalha Naval da Live | Grade 4x4; chat dispara canhões navais em coordenadas A1-D4 com sonar submarino procedural | **HOMOLOGADO** |
 | **26** | `26_guerra_dos_tanques_neon` | Guerra dos Tanques Neon | Disputa de artilharia 2D com parábolas de tiro, vento dinâmico, terreno destrutível e super mísseis | **HOMOLOGADO** |
 | **27** | `27_meteoro_defensor` | Meteoro Defensor | Planeta Terra central, defesa espacial por satélites lasers do chat (setores 1 a 4) e raio 360° de gifts | **HOMOLOGADO** |
+| **28** | `28_labirinto_pacman_neon` | Labirinto do Pacman Neon | Chat pilota Pacman por direções (1-4 / Cima-Baixo-Esq-Dir) para coletar pastilhas e devorar fantasmas | **HOMOLOGADO** |
 
 ---
 
@@ -104,4 +105,5 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/test_board_cartridges.py`: Suíte de homologação formal das 5 Leis Absolutas para os 4 cartuchos de tabuleiro (#08, #10, #24, #25) com 33/33 checks aprovados.
 - `scripts/test_cartridge_26.py`: Validação automatizada do Cartucho #26 (11/11 checks aprovados, balística 2D, vento e terreno destrutível).
 - `scripts/test_cartridge_27.py`: Validação automatizada do Cartucho #27 (11/11 checks aprovados, Terra central, satélites lasers e escudo EMP).
-- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 28 cartuchos ativos).
+- `scripts/test_cartridge_28.py`: Validação automatizada do Cartucho #28 (11/11 checks aprovados, labirinto vertical 9:16, Pacman, 4 fantasmas e modo caçador).
+- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 29 cartuchos ativos).

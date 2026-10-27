@@ -154,7 +154,7 @@
 ### FASE 9: CATÁLOGO AVANÇADO & EFEITOS CINEMATOGRÁFICOS (ETAPAS 081 A 090)
 - [x] **Etapa 081:** Forjamento do Cartucho #26: Guerra dos Tanques Neon (Disputa de artilharia em 2D com parábolas de tiro ajustadas por votos).
 - [x] **Etapa 082:** Forjamento do Cartucho #27: Meteoro Defensor (Planeta Terra no centro da tela e o chat destruindo asteroides com disparos a laser).
-- [ ] **Etapa 083:** Forjamento do Cartucho #28: Labirinto do Pacman Neon (Chat decide direções Cima/Baixo/Esquerda/Direita para coletar moedas antes dos fantasmas).
+- [x] **Etapa 083:** Forjamento do Cartucho #28: Labirinto do Pacman Neon (Chat decide direções Cima/Baixo/Esquerda/Direita para coletar moedas antes dos fantasmas).
 - [ ] **Etapa 084:** Forjamento do Cartucho #29: Basquete Street 9:16 (Desafio de arremessos livres com tabela móvel e física de cesta com rede elástica).
 - [ ] **Etapa 085:** Forjamento do Cartucho #30: Gol de Pênalti da Live (Disputa entre batedor e goleiro com o chat decidindo o canto do chute e presentes ativando bola de fogo).
 - [ ] **Etapa 086:** Forjamento do Cartucho #31: Guitar Hero da Live (Notas descendo no ritmo com chat digitando as cores 1-Verde, 2-Vermelho, 3-Amarelo).
