@@ -23,6 +23,10 @@
       align-items: center;
       width: 100vw;
       height: 100vh;
+    
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
     }
 
     #game-stage {
@@ -1155,6 +1159,7 @@
     try {
       const channel = new BroadcastChannel('v5_broadcaster_games');
       channel.onmessage = (e) => handleEvent(e.data);
+      window.addEventListener('beforeunload', () => { try { channel.close(); } catch(e) {} });
     } catch (e) {}
 
     window.addEventListener('v5_event', (e) => handleEvent(e.detail));

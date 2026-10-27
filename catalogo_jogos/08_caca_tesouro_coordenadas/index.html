@@ -23,6 +23,10 @@
       align-items: center;
       width: 100vw;
       height: 100vh;
+    
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
     }
 
     /* Container 9:16 Estrito Responsivo para OBS Browser Source */
@@ -1262,6 +1266,7 @@
     try {
       const channel = new BroadcastChannel('v5_broadcaster_games');
       channel.onmessage = (e) => handleGameEvent(e.data);
+      window.addEventListener('beforeunload', () => { try { channel.close(); } catch(e) {} });
     } catch (e) {
       console.warn('BroadcastChannel offline:', e);
     }

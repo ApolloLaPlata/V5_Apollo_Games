@@ -23,6 +23,10 @@
       align-items: center;
       width: 100vw;
       height: 100vh;
+    
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
     }
 
     /* Container 9:16 Estrito Responsivo para OBS Browser Source */
@@ -972,6 +976,7 @@
       const broadcasterChannel = new BroadcastChannel('v5_broadcaster_games');
       broadcasterChannel.onmessage = (event) => {
         if (event && event.data) handleLivePayload(event.data);
+      window.addEventListener('beforeunload', () => { try { broadcasterChannel.close(); } catch(e) {} });
       };
     } catch (err) {
       console.warn('[V5Games] BroadcastChannel offline ou restrito:', err);
