@@ -677,6 +677,8 @@
 
     let rubberShreds = [];
     let confettis = [];
+    let lastAudioA = 0;
+    let lastAudioB = 0;
 
     // DOM Elements
     const scoreCyanEl = document.getElementById('score-cyan');
@@ -702,7 +704,11 @@
           audio.playSuperPump();
           spawnToast(`🎁 ${user} mandou ${giftName}! SUPER BOMBA AZUL (+${weight}%)`, '#38bdf8');
         } else {
-          audio.playInflate(targetA / 100);
+          const nowMs = performance.now();
+          if (nowMs - lastAudioA > 50) {
+            audio.playInflate(targetA / 100);
+            lastAudioA = nowMs;
+          }
         }
 
         if (targetA >= 100) {
@@ -716,7 +722,11 @@
           audio.playSuperPump();
           spawnToast(`🎁 ${user} mandou ${giftName}! SUPER BOMBA ROSA (+${weight}%)`, '#f43f5e');
         } else {
-          audio.playInflate(targetB / 100);
+          const nowMs = performance.now();
+          if (nowMs - lastAudioB > 50) {
+            audio.playInflate(targetB / 100);
+            lastAudioB = nowMs;
+          }
         }
 
         if (targetB >= 100) {

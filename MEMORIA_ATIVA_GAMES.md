@@ -30,7 +30,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | **03** | `03_corrida_avatares_holding` | Corrida dos Avatares | Roxingo, Baiano e Macaco Driver disputam pista acelerando com votos | Planejado |
 | **04** | `04_boss_raid_cooperativo` | Boss Raid do Chat | Chat inteiro ataca monstro gigante com barra de HP em 45 segundos | Planejado |
 | **05** | `05_roleta_desafios_live` | Roleta dos Desafios | Presentes giram a roleta de desafios cômicos para o streamer ou avatar | Planejado |
-| **06** | `06_batalha_dos_baloes` | Estouro de Balão | Dois lados enchendo balões colossais; o primeiro a estourar vence | Planejado |
+| **06** | `06_batalha_dos_baloes` | Estouro de Balão | Dois lados inflando balões colossais com física elástica até o estouro | **HOMOLOGADO** |
 | **07** | `07_pendulo_destruidor` | Pêndulo da Demolição | Chat ajusta o ângulo do pêndulo para derrubar a torre adversária | Planejado |
 | **08** | `08_caca_tesouro_coordenadas` | Caça ao Baú de Ouro | Chat escolhe quadrantes (A1 a D4) para desarmar bombas e achar o baú | Planejado |
 | **09** | `09_tsunami_de_curtidas` | Tsunami de Likes | Disputa frenética de pressão de tela por curtidas contínuas | Planejado |
