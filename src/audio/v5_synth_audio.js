@@ -339,11 +339,183 @@
       osc.stop(now + (isFinal ? 0.4 : 0.15));
     }
 
-    // Fanfarra de vitória clássica
+    // =========================================================================
+    // 5. BIBLIOTECA PROCEDURAL DE JINGLES E FANFARRAS DE VITÓRIA (5 SEGUNDOS)
+    // =========================================================================
+
+    /**
+     * Marcha Comemorativa Épica (Exatos 5 Segundos para a tela de vitória)
+     * Estrutura: Fanfarra Triunfal -> Arpejo Dinâmico -> Acorde Sustentado -> Confete Pop
+     */
+    playEpicVictoryJingle() {
+      if (this.isMuted) return;
+      const ctx = this.getAudioContext();
+      const now = ctx.currentTime;
+
+      // Padrão melódico da fanfarra: Sol4, Sol4, Sol4, Dó5, Mi5, Sol5, Dó6
+      const score = [
+        { f: 392.00, t: 0.00, d: 0.18, type: 'triangle' }, // G4
+        { f: 392.00, t: 0.22, d: 0.18, type: 'triangle' }, // G4
+        { f: 392.00, t: 0.44, d: 0.18, type: 'triangle' }, // G4
+        { f: 523.25, t: 0.68, d: 0.65, type: 'sawtooth' }, // C5 (Longo)
+        { f: 659.25, t: 1.35, d: 0.40, type: 'triangle' }, // E5
+        { f: 783.99, t: 1.80, d: 0.70, type: 'sawtooth' }, // G5
+        { f: 1046.50, t: 2.55, d: 1.80, type: 'triangle' } // C6 (Clímax sustentado)
+      ];
+
+      score.forEach(note => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const startT = now + note.t;
+
+        osc.type = note.type;
+        osc.frequency.setValueAtTime(note.f, startT);
+
+        // Micro-harmônico metálico
+        gain.gain.setValueAtTime(0.22, startT);
+        gain.gain.exponentialRampToValueAtTime(0.001, startT + note.d);
+
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+
+        osc.start(startT);
+        osc.stop(startT + note.d);
+      });
+
+      // Acorde polifônico final glorioso no segundo 2.55
+      setTimeout(() => {
+        this.playChord('glory', 523.25, 2.0);
+      }, 2550);
+
+      // Estouro de confete procedural no clímax
+      setTimeout(() => {
+        this.playConfettiPop();
+      }, 2600);
+
+      setTimeout(() => {
+        this.playConfettiPop();
+      }, 3200);
+    }
+
+    /**
+     * Jingle Frenesi do Jackpot Dourado (5 Segundos de arpejos e moedas)
+     */
+    playJackpotFrenzyJingle() {
+      if (this.isMuted) return;
+      const ctx = this.getAudioContext();
+      const now = ctx.currentTime;
+
+      // Arpejo cintilante acelerado
+      const arpeggio = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98, 2093.00];
+      for (let cycle = 0; cycle < 3; cycle++) {
+        arpeggio.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const startT = now + (cycle * 0.8) + (idx * 0.08);
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, startT);
+
+          gain.gain.setValueAtTime(0.18, startT);
+          gain.gain.exponentialRampToValueAtTime(0.001, startT + 0.25);
+
+          osc.connect(gain);
+          gain.connect(this.masterGain);
+
+          osc.start(startT);
+          osc.stop(startT + 0.25);
+        });
+      }
+
+      // Cascata de moedas tilintando
+      this.playCoinShower(8);
+      setTimeout(() => this.playCoinShower(8), 1200);
+      setTimeout(() => this.playChord('glory', 659.25, 1.5), 2600);
+    }
+
+    /**
+     * Jingle de Início de Partida ("Round Start" - 2 Segundos de contagem e energia)
+     */
+    playRoundStartJingle() {
+      if (this.isMuted) return;
+      this.playCountdownTick(false);
+      setTimeout(() => this.playCountdownTick(false), 500);
+      setTimeout(() => this.playCountdownTick(true), 1000);
+      setTimeout(() => {
+        this.playWhistle();
+        this.playChord('power', 440, 0.7);
+      }, 1500);
+    }
+
+    /**
+     * Stinger de Mudança de Liderança (1.5 Segundos de tensão dramática)
+     */
+    playLeadChangeJingle() {
+      if (this.isMuted) return;
+      const ctx = this.getAudioContext();
+      const now = ctx.currentTime;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.linearRampToValueAtTime(880, now + 0.35);
+
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(now);
+      osc.stop(now + 0.6);
+
+      setTimeout(() => this.playChord('power', 523.25, 0.6), 350);
+    }
+
+    /**
+     * Trombone Triste / Derrota Cômica (3.5 Segundos de "Wah-Wah-Wah-Waaah")
+     */
+    playSadTromboneJingle() {
+      if (this.isMuted) return;
+      const ctx = this.getAudioContext();
+      const now = ctx.currentTime;
+
+      const notes = [
+        { f: 293.66, t: 0.0, d: 0.4 }, // D4
+        { f: 277.18, t: 0.5, d: 0.4 }, // C#4
+        { f: 261.63, t: 1.0, d: 0.4 }, // C4
+        { f: 246.94, t: 1.5, d: 1.2 }  // B3 com queda
+      ];
+
+      notes.forEach((n, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const startT = now + n.t;
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(n.f, startT);
+
+        // Queda de tom na última nota
+        if (idx === 3) {
+          osc.frequency.exponentialRampToValueAtTime(n.f * 0.75, startT + n.d);
+        }
+
+        gain.gain.setValueAtTime(0.22, startT);
+        gain.gain.exponentialRampToValueAtTime(0.001, startT + n.d);
+
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+
+        osc.start(startT);
+        osc.stop(startT + n.d);
+      });
+    }
+
+    // Fanfarra de vitória clássica (Retrocompatibilidade)
     playVictory() {
-      this.playChord('glory', 523.25, 0.8);
-      setTimeout(() => this.playChord('glory', 659.25, 1.2), 300);
-      setTimeout(() => this.playConfettiPop(), 600);
+      this.playEpicVictoryJingle();
     }
   }
 
