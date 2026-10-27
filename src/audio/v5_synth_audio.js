@@ -296,6 +296,130 @@
       osc.stop(now + 0.15);
     }
 
+    /**
+     * Micro-Onda de Choque Subaquática (Underwater Shockwave)
+     * Combina implosão por cavitação hidrostática, sub-bass rumble abafado e varredura ressonante.
+     * @param {number} intensity Intensidade do impacto (0.5 a 2.0)
+     */
+    playUnderwaterShockwave(intensity = 1.0) {
+      if (this.isMuted) return;
+      const ctx = this.getAudioContext();
+      const now = ctx.currentTime;
+      const clampedIntensity = Math.max(0.5, Math.min(2.0, intensity));
+
+      // 1. Cavitação Hidráulica (Ruído branco abafado sob alta pressão com filtro passa-baixa ressonante)
+      const noise = ctx.createBufferSource();
+      noise.buffer = this.createNoiseBuffer();
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(450 * clampedIntensity, now);
+      filter.frequency.exponentialRampToValueAtTime(40, now + 0.6);
+      filter.Q.setValueAtTime(3.5, now);
+
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.35 * clampedIntensity, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+
+      noise.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(this.masterGain);
+      noise.start(now);
+      noise.stop(now + 0.6);
+
+      // 2. Sub-Bass Hydro Rumble (Estrondo profundo de deslocamento de massa d'água)
+      const subOsc = ctx.createOscillator();
+      const subGain = ctx.createGain();
+      subOsc.type = 'sine';
+      subOsc.frequency.setValueAtTime(95, now);
+      subOsc.frequency.exponentialRampToValueAtTime(28, now + 0.7);
+
+      subGain.gain.setValueAtTime(0.45 * clampedIntensity, now);
+      subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+
+      subOsc.connect(subGain);
+      subGain.connect(this.masterGain);
+      subOsc.start(now);
+      subOsc.stop(now + 0.7);
+
+      // 3. Pulso de Eco Aquático Ressonante (Sonar Ripple)
+      const echoOsc = ctx.createOscillator();
+      const echoGain = ctx.createGain();
+      echoOsc.type = 'triangle';
+      echoOsc.frequency.setValueAtTime(180, now + 0.05);
+      echoOsc.frequency.exponentialRampToValueAtTime(60, now + 0.35);
+
+      echoGain.gain.setValueAtTime(0.2 * clampedIntensity, now + 0.05);
+      echoGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+      echoOsc.connect(echoGain);
+      echoGain.connect(this.masterGain);
+      echoOsc.start(now + 0.05);
+      echoOsc.stop(now + 0.35);
+    }
+
+    /**
+     * Alarme Sonoro de Inundação / Sonar Hydro-Pulse
+     * Pulso sonoro de emergência subaquático avisando que a maré passou do limite crítico (>80%).
+     * @param {boolean} isUrgent Se true, frequência mais aguda e compasso mais rápido
+     */
+    playFloodAlert(isUrgent = false) {
+      if (this.isMuted) return;
+      const ctx = this.getAudioContext();
+      const now = ctx.currentTime;
+
+      const freq1 = isUrgent ? 880 : 587.33; // A5 ou D5
+      const freq2 = isUrgent ? 659.25 : 440;    // E5 ou A4
+
+      [ { f: freq1, t: 0.0 }, { f: freq2, t: 0.14 } ].forEach((tone) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(tone.f, now + tone.t);
+        osc.frequency.linearRampToValueAtTime(tone.f * 0.95, now + tone.t + 0.12);
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1400, now + tone.t);
+
+        gain.gain.setValueAtTime(0.18, now + tone.t);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + tone.t + 0.12);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.masterGain);
+
+        osc.start(now + tone.t);
+        osc.stop(now + tone.t + 0.12);
+      });
+    }
+
+    /**
+     * Estouro de Bolha de Alta Tensão / Micro-Respingo
+     */
+    playBubblePop() {
+      if (this.isMuted) return;
+      const ctx = this.getAudioContext();
+      const now = ctx.currentTime;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      const startF = 350 + Math.random() * 200;
+      osc.frequency.setValueAtTime(startF, now);
+      osc.frequency.exponentialRampToValueAtTime(startF * 2.2, now + 0.06);
+
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(now);
+      osc.stop(now + 0.06);
+    }
+
     // =========================================================================
     // 3. GERADOR DE ACORDES POLIFÔNICOS (Triunfo, Vitória, Mudança de Fase)
     // =========================================================================

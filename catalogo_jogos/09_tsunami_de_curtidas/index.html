@@ -37,6 +37,43 @@
       justify-content: space-between;
       overflow: hidden;
       box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Screen Shake Hidráulico */
+    .shake-active {
+      animation: hydraulicShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes hydraulicShake {
+      10%, 90% { transform: translate3d(-3px, -2px, 0); }
+      20%, 80% { transform: translate3d(4px, 3px, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, -3px, 0); }
+      40%, 60% { transform: translate3d(4px, 2px, 0); }
+    }
+
+    /* Estroboscópio de Emergência no Topo */
+    #flood-strobe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: #ef4444;
+      box-shadow: 0 0 20px #ef4444;
+      opacity: 0;
+      z-index: 40;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    #flood-strobe.active {
+      animation: strobeBlink 0.6s infinite;
+    }
+
+    @keyframes strobeBlink {
+      0%, 100% { opacity: 0.95; }
+      50% { opacity: 0.15; }
     }
 
     /* Top Safe Zone (140px) */
@@ -142,6 +179,44 @@
       margin-top: 2px;
     }
 
+    /* Alerta de Inundação Crítica (>80%) */
+    #flood-warning-banner {
+      position: absolute;
+      top: 142px;
+      left: 16px;
+      right: 16px;
+      background: rgba(220, 38, 38, 0.92);
+      border: 1px solid #ef4444;
+      border-radius: 12px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #fff;
+      box-shadow: 0 0 25px rgba(239, 68, 68, 0.7);
+      z-index: 30;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: none;
+    }
+
+    #flood-warning-banner.active {
+      opacity: 1;
+      transform: translateY(0);
+      animation: alertPulse 1.2s infinite;
+    }
+
+    @keyframes alertPulse {
+      0%, 100% { opacity: 1; filter: drop-shadow(0 0 10px #ef4444); }
+      50% { opacity: 0.7; filter: drop-shadow(0 0 2px #ef4444); }
+    }
+
     /* Canvas Central de Ondas */
     #arena-container {
       position: absolute;
@@ -221,7 +296,7 @@
 
     .toast-container {
       position: absolute;
-      top: 145px;
+      top: 180px;
       width: calc(100% - 32px);
       left: 16px;
       display: flex;
@@ -347,6 +422,9 @@
 
   <div id="game-stage">
     
+    <!-- Estroboscópio de Emergência -->
+    <div id="flood-strobe"></div>
+
     <!-- Top Safe Zone -->
     <header class="top-header">
       <div class="brand-row">
@@ -371,6 +449,13 @@
       </div>
     </header>
 
+    <!-- Alerta de Inundação Crítica -->
+    <div id="flood-warning-banner">
+      <span>🚨</span>
+      <span id="flood-warning-text">PERIGO DE INUNDAÇÃO CRÍTICA (80%+)</span>
+      <span>🚨</span>
+    </div>
+
     <!-- Canvas Central -->
     <div id="arena-container">
       <canvas id="tsunami-canvas"></canvas>
@@ -393,7 +478,7 @@
       </div>
 
       <div class="gift-cta">
-        <span style="font-size: 11px; font-weight: 700; color: #fef08a;">🎁 Presentes = Mega Tsunami (+15% a +50% de Maré!)</span>
+        <span style="font-size: 11px; font-weight: 700; color: #fef08a;">🎁 Presentes = Choque Subaquático (+15% a +50% de Maré!)</span>
         <span style="background: #f59e0b; color: #000; font-weight: 900; font-size: 10px; padding: 3px 8px; border-radius: 8px;">MAREMOTO</span>
       </div>
     </footer>
@@ -420,8 +505,10 @@
       <div class="debug-buttons">
         <button class="debug-btn" onclick="pumpTsunami('A', 2, '@teste_azul')">🔵 Onda Azul (+2%)</button>
         <button class="debug-btn" onclick="pumpTsunami('B', 2, '@teste_orange')">🟠 Onda Laranja (+2%)</button>
-        <button class="debug-btn" onclick="pumpTsunami('A', 15, '@vip_mar', 'Rosa')">🌸 Rosa (+15%)</button>
-        <button class="debug-btn" onclick="pumpTsunami('B', 40, '@vip_onda', 'Leão')">🦁 Leão (+40%)</button>
+        <button class="debug-btn" onclick="pumpTsunami('A', 15, '@vip_mar', 'Rosa')">🌸 Rosa Shockwave</button>
+        <button class="debug-btn" onclick="pumpTsunami('B', 40, '@vip_onda', 'Leão')">🦁 Leão Maremoto</button>
+        <button class="debug-btn" onclick="testShockwave()">⚡ Choque Subaquático</button>
+        <button class="debug-btn" onclick="audio.playFloodAlert(true)">🚨 Alarme Inundação</button>
         <button class="debug-btn" onclick="triggerWin('A')">🏆 Vitória Azul</button>
         <button class="debug-btn" onclick="triggerWin('B')">🏆 Vitória Laranja</button>
       </div>
@@ -431,12 +518,17 @@
 
   <script>
     /**
-     * SINTETIZADOR AQUÁTICO E ONDAS (Web Audio API)
+     * SINTETIZADOR AQUÁTICO E MICRO-ONDAS DE CHOQUE (Web Audio API)
+     * Procedural, zero MP3/WAV externo, ultra-baixa latência
      */
     class WaterAudio {
       constructor() {
         this.ctx = null;
+        this.lastShockwaveTime = 0;
+        this.lastAlertTime = 0;
+        this.lastSplashTime = 0;
       }
+
       getCtx() {
         if (!this.ctx) {
           const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -445,16 +537,22 @@
         if (this.ctx.state === 'suspended') this.ctx.resume();
         return this.ctx;
       }
-      playSplash() {
+
+      playSplash(intensity = 1.0) {
+        const now = Date.now();
+        if (now - this.lastSplashTime < 60) return; // Micro-throttle 60ms
+        this.lastSplashTime = now;
+
         try {
           const c = this.getCtx();
           const t = c.currentTime;
           const osc = c.createOscillator();
           const g = c.createGain();
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(320, t);
-          osc.frequency.exponentialRampToValueAtTime(120, t + 0.12);
-          g.gain.setValueAtTime(0.2, t);
+          const startF = 340 + (Math.random() * 80);
+          osc.frequency.setValueAtTime(startF, t);
+          osc.frequency.exponentialRampToValueAtTime(110, t + 0.12);
+          g.gain.setValueAtTime(0.22 * Math.min(1.5, intensity), t);
           g.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
           osc.connect(g);
           g.connect(c.destination);
@@ -462,23 +560,132 @@
           osc.stop(t + 0.12);
         } catch (e) {}
       }
-      playMegaWave() {
+
+      /**
+       * Micro-Onda de Choque Subaquática (Underwater Shockwave)
+       * Cavitação hidrostática profunda + sub-bass rumble + sonar echo
+       */
+      playUnderwaterShockwave(intensity = 1.0) {
+        const now = Date.now();
+        if (now - this.lastShockwaveTime < 140) return; // Micro-throttle
+        this.lastShockwaveTime = now;
+
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const clamped = Math.max(0.5, Math.min(2.0, intensity));
+
+          // 1. Cavitação Hidráulica (Ruído com filtro passa-baixa ressonante)
+          const bufferSize = c.sampleRate * 0.5;
+          const noiseBuffer = c.createBuffer(1, bufferSize, c.sampleRate);
+          const data = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+          const noise = c.createBufferSource();
+          noise.buffer = noiseBuffer;
+          const filter = c.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(480 * clamped, t);
+          filter.frequency.exponentialRampToValueAtTime(35, t + 0.55);
+          filter.Q.setValueAtTime(4.0, t);
+
+          const noiseGain = c.createGain();
+          noiseGain.gain.setValueAtTime(0.38 * clamped, t);
+          noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+
+          noise.connect(filter);
+          filter.connect(noiseGain);
+          noiseGain.connect(c.destination);
+          noise.start(t);
+          noise.stop(t + 0.55);
+
+          // 2. Sub-Bass Hydro Rumble (95Hz -> 28Hz)
+          const sub = c.createOscillator();
+          const subG = c.createGain();
+          sub.type = 'sine';
+          sub.frequency.setValueAtTime(95, t);
+          sub.frequency.exponentialRampToValueAtTime(28, t + 0.65);
+          subG.gain.setValueAtTime(0.48 * clamped, t);
+          subG.gain.exponentialRampToValueAtTime(0.001, t + 0.65);
+          sub.connect(subG);
+          subG.connect(c.destination);
+          sub.start(t);
+          sub.stop(t + 0.65);
+
+          // 3. Sonar Echo secundário defasado
+          const echo = c.createOscillator();
+          const echoG = c.createGain();
+          echo.type = 'triangle';
+          echo.frequency.setValueAtTime(200, t + 0.06);
+          echo.frequency.exponentialRampToValueAtTime(55, t + 0.35);
+          echoG.gain.setValueAtTime(0.22 * clamped, t + 0.06);
+          echoG.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+          echo.connect(echoG);
+          echoG.connect(c.destination);
+          echo.start(t + 0.06);
+          echo.stop(t + 0.35);
+        } catch (e) {}
+      }
+
+      /**
+       * Alarme Sonoro de Inundação / Sonar Hydro-Pulse
+       * Dispara aviso acústico quando maré > 80%
+       */
+      playFloodAlert(isUrgent = false) {
+        const now = Date.now();
+        if (now - this.lastAlertTime < 2400) return; // Cooldown 2.4s
+        this.lastAlertTime = now;
+
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          const freq1 = isUrgent ? 880 : 587.33;
+          const freq2 = isUrgent ? 659.25 : 440;
+
+          [ { f: freq1, delay: 0.0 }, { f: freq2, delay: 0.15 } ].forEach((tone) => {
+            const osc = c.createOscillator();
+            const g = c.createGain();
+            const flt = c.createBiquadFilter();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(tone.f, t + tone.delay);
+            osc.frequency.linearRampToValueAtTime(tone.f * 0.94, t + tone.delay + 0.13);
+
+            flt.type = 'lowpass';
+            flt.frequency.setValueAtTime(1300, t + tone.delay);
+
+            g.gain.setValueAtTime(0.2, t + tone.delay);
+            g.gain.exponentialRampToValueAtTime(0.001, t + tone.delay + 0.13);
+
+            osc.connect(flt);
+            flt.connect(g);
+            g.connect(c.destination);
+
+            osc.start(t + tone.delay);
+            osc.stop(t + tone.delay + 0.13);
+          });
+        } catch (e) {}
+      }
+
+      playBubblePop() {
         try {
           const c = this.getCtx();
           const t = c.currentTime;
           const osc = c.createOscillator();
           const g = c.createGain();
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(140, t);
-          osc.frequency.exponentialRampToValueAtTime(45, t + 0.4);
-          g.gain.setValueAtTime(0.35, t);
-          g.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+          osc.type = 'sine';
+          const f = 380 + Math.random() * 220;
+          osc.frequency.setValueAtTime(f, t);
+          osc.frequency.exponentialRampToValueAtTime(f * 2.1, t + 0.05);
+          g.gain.setValueAtTime(0.12, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
           osc.connect(g);
           g.connect(c.destination);
           osc.start(t);
-          osc.stop(t + 0.4);
+          osc.stop(t + 0.05);
         } catch (e) {}
       }
+
       playVictory() {
         try {
           const c = this.getCtx();
@@ -489,12 +696,12 @@
             const st = t + (i * 0.12);
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(f, st);
-            g.gain.setValueAtTime(0.2, st);
-            g.gain.exponentialRampToValueAtTime(0.001, st + 0.4);
+            g.gain.setValueAtTime(0.22, st);
+            g.gain.exponentialRampToValueAtTime(0.001, st + 0.45);
             osc.connect(g);
             g.connect(c.destination);
             osc.start(st);
-            osc.stop(st + 0.4);
+            osc.stop(st + 0.45);
           });
         } catch (e) {}
       }
@@ -505,14 +712,14 @@
     /**
      * MOTOR DAS ONDAS DO TSUNAMI (CANVAS 2D - 60 FPS)
      */
+    const stageEl = document.getElementById('game-stage');
     const canvas = document.getElementById('tsunami-canvas');
     const ctx = canvas.getContext('2d');
     let W = 0, H = 0;
 
     function resize() {
-      const stage = document.getElementById('game-stage');
-      W = stage.clientWidth;
-      H = stage.clientHeight;
+      W = stageEl.clientWidth;
+      H = stageEl.clientHeight;
       canvas.width = W;
       canvas.height = H;
     }
@@ -529,7 +736,11 @@
     let timerInterval = null;
     let isGameOver = false;
 
+    // Coleções de Partículas Líquidas
     let waterDrops = [];
+    let shockwaves = [];
+    let bubbles = [];
+    let screenSplashes = [];
     let confettis = [];
 
     // DOM Elements
@@ -543,38 +754,68 @@
     const resetFill = document.getElementById('reset-fill');
     const toastContainer = document.getElementById('toast-container');
     const debugDrawer = document.getElementById('debug-drawer');
+    const floodBanner = document.getElementById('flood-warning-banner');
+    const floodWarningText = document.getElementById('flood-warning-text');
+    const floodStrobe = document.getElementById('flood-strobe');
+
+    function triggerScreenShake() {
+      stageEl.classList.remove('shake-active');
+      void stageEl.offsetWidth; // Trigger reflow
+      stageEl.classList.add('shake-active');
+      setTimeout(() => stageEl.classList.remove('shake-active'), 350);
+    }
 
     function pumpTsunami(team, weight = 1, user = '@espectador', giftName = null) {
       if (isGameOver) return;
       audio.getCtx();
 
+      const isGift = Boolean(giftName);
+      const isMegaPush = isGift || weight >= 10;
+
       if (team === 'A') {
         targetTideA = Math.min(100, targetTideA + weight);
         targetTideB = Math.max(0, targetTideB - (weight * 0.5));
-        spawnDrops(W * 0.25, H * (1 - (targetTideA / 100)), '#38bdf8');
+        const impactY = H * (0.85 - ((targetTideA / 100) * (0.85 - 0.18)));
 
-        if (giftName) {
-          audio.playMegaWave();
-          spawnToast(`🎁 ${user} lançou ${giftName}! MAREMOTO AZUL (+${weight * 10}%)`, '#38bdf8');
+        spawnDrops(W * 0.25, impactY, '#38bdf8', isMegaPush ? 24 : 12);
+        spawnShockwave(W * 0.25, impactY, '#38bdf8', isMegaPush ? 70 : 35);
+
+        if (isMegaPush) {
+          audio.playUnderwaterShockwave(1.5);
+          triggerScreenShake();
+          spawnScreenSplashes('#38bdf8', 12);
+          spawnToast(`🎁 ${user} lançou ${giftName || 'SUPER ONDA'}! ONDA DE CHOQUE AZUL (+${weight * 10}%)`, '#38bdf8');
         } else {
-          audio.playSplash();
+          audio.playSplash(1.0);
         }
 
         if (targetTideA >= 100) triggerWin('A');
       } else {
         targetTideB = Math.min(100, targetTideB + weight);
         targetTideA = Math.max(0, targetTideA - (weight * 0.5));
-        spawnDrops(W * 0.75, H * (1 - (targetTideB / 100)), '#fb923c');
+        const impactY = H * (0.85 - ((targetTideB / 100) * (0.85 - 0.18)));
 
-        if (giftName) {
-          audio.playMegaWave();
-          spawnToast(`🎁 ${user} lançou ${giftName}! MAREMOTO LARANJA (+${weight * 10}%)`, '#fb923c');
+        spawnDrops(W * 0.75, impactY, '#fb923c', isMegaPush ? 24 : 12);
+        spawnShockwave(W * 0.75, impactY, '#fb923c', isMegaPush ? 70 : 35);
+
+        if (isMegaPush) {
+          audio.playUnderwaterShockwave(1.5);
+          triggerScreenShake();
+          spawnScreenSplashes('#fb923c', 12);
+          spawnToast(`🎁 ${user} lançou ${giftName || 'SUPER ONDA'}! ONDA DE CHOQUE LARANJA (+${weight * 10}%)`, '#fb923c');
         } else {
-          audio.playSplash();
+          audio.playSplash(1.0);
         }
 
         if (targetTideB >= 100) triggerWin('B');
       }
+    }
+
+    function testShockwave() {
+      audio.playUnderwaterShockwave(1.8);
+      triggerScreenShake();
+      spawnShockwave(W * 0.5, H * 0.5, '#38bdf8', 90);
+      spawnScreenSplashes('#38bdf8', 18);
     }
 
     function triggerWin(team) {
@@ -583,7 +824,11 @@
       if (timerInterval) clearInterval(timerInterval);
 
       audio.playVictory();
+      triggerScreenShake();
       spawnConfetti(team === 'A');
+
+      floodBanner.classList.remove('active');
+      floodStrobe.classList.remove('active');
 
       if (team === 'A') {
         winsA++;
@@ -623,18 +868,66 @@
       }, 2500);
     }
 
-    function spawnDrops(x, y, color) {
-      for (let i = 0; i < 12; i++) {
+    // Partículas: Gotículas e Espirros de Crista
+    function spawnDrops(x, y, color, count = 12) {
+      for (let i = 0; i < count; i++) {
         waterDrops.push({
           x: x + (Math.random() - 0.5) * 40,
           y: y,
-          vx: (Math.random() - 0.5) * 6,
-          vy: -Math.random() * 6 - 2,
-          radius: Math.random() * 3 + 1.5,
+          vx: (Math.random() - 0.5) * 8,
+          vy: -Math.random() * 8 - 2.5,
+          radius: Math.random() * 3.5 + 1.5,
           color: color,
           alpha: 1.0
         });
       }
+    }
+
+    // Partículas: Anéis de Choque Hidráulicos (Shockwave Rings)
+    function spawnShockwave(x, y, color, maxRadius = 50) {
+      shockwaves.push({
+        x: x,
+        y: y,
+        radius: 4,
+        maxRadius: maxRadius,
+        color: color,
+        alpha: 1.0,
+        lineWidth: 4
+      });
+    }
+
+    // Partículas: Gotas escorrendo na tela/vidro
+    function spawnScreenSplashes(color, count = 10) {
+      for (let i = 0; i < count; i++) {
+        screenSplashes.push({
+          x: Math.random() * W,
+          y: Math.random() * (H * 0.6) + (H * 0.15),
+          radius: Math.random() * 5 + 3,
+          length: Math.random() * 18 + 8,
+          vy: Math.random() * 1.5 + 0.5,
+          alpha: 0.9,
+          color: color
+        });
+      }
+    }
+
+    // Partículas: Bolhas Subaquáticas
+    function spawnBubble(team) {
+      const colW = W * 0.5;
+      const startX = team === 'A' ? (Math.random() * (colW - 20) + 10) : (colW + Math.random() * (colW - 20) + 10);
+      const bottomY = H * 0.85;
+      bubbles.push({
+        team: team,
+        x: startX,
+        origX: startX,
+        y: bottomY - Math.random() * 20,
+        vy: Math.random() * 2.2 + 1.2,
+        radius: Math.random() * 3.2 + 1.2,
+        wobbleSpeed: Math.random() * 0.08 + 0.04,
+        wobbleAmp: Math.random() * 6 + 2,
+        color: team === 'A' ? 'rgba(56, 189, 248, 0.75)' : 'rgba(251, 146, 60, 0.75)',
+        alpha: 0.85
+      });
     }
 
     function spawnConfetti(isBlue) {
@@ -666,6 +959,8 @@
       roundTimerEl.innerText = roundTime;
       victoryOverlay.classList.remove('active');
       resetFill.style.width = '0%';
+      floodBanner.classList.remove('active');
+      floodStrobe.classList.remove('active');
 
       if (timerInterval) clearInterval(timerInterval);
 
@@ -701,26 +996,87 @@
       const colW = W * 0.5;
       const time = now * 0.003;
 
+      // Monitor de Alerta de Inundação Crítica (>80%)
+      if (!isGameOver && (tideA >= 80 || tideB >= 80)) {
+        floodBanner.classList.add('active');
+        floodStrobe.classList.add('active');
+        const leadingTeam = tideA >= 80 ? 'AZUL' : 'LARANJA';
+        floodWarningText.innerText = `🚨 ALERTA: TSUNAMI ${leadingTeam} AMEAÇA INUNDAÇÃO (${Math.round(Math.max(tideA, tideB))}%)!`;
+        audio.playFloodAlert(Math.max(tideA, tideB) >= 90);
+      } else {
+        floodBanner.classList.remove('active');
+        floodStrobe.classList.remove('active');
+      }
+
+      // Geração contínua de micro-bolhas no fundo dos tanques
+      if (Math.random() < 0.35) spawnBubble('A');
+      if (Math.random() < 0.35) spawnBubble('B');
+
       // 1. Tanque Esquerdo (Time Azul)
-      drawWaveColumn(0, colW, tideA, '#38bdf8', 'rgba(56, 189, 248, 0.45)', time, 0);
+      const waterYA = drawWaveColumn(0, colW, tideA, '#38bdf8', 'rgba(56, 189, 248, 0.45)', time, 0);
 
       // 2. Tanque Direito (Time Laranja)
-      drawWaveColumn(colW, colW, tideB, '#fb923c', 'rgba(251, 146, 60, 0.45)', time, Math.PI);
+      const waterYB = drawWaveColumn(colW, colW, tideB, '#fb923c', 'rgba(251, 146, 60, 0.45)', time, Math.PI);
 
       // 3. Divisória Central de Vidro Neon
       ctx.beginPath();
       ctx.moveTo(colW, H * 0.15);
       ctx.lineTo(colW, H * 0.85);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
       ctx.lineWidth = 3;
       ctx.stroke();
 
-      // 4. Gotículas e Splashes
+      // 4. Bolhas Subaquáticas
+      for (let i = bubbles.length - 1; i >= 0; i--) {
+        const b = bubbles[i];
+        b.y -= b.vy;
+        b.x = b.origX + Math.sin(now * b.wobbleSpeed) * b.wobbleAmp;
+
+        const surfaceY = b.team === 'A' ? waterYA : waterYB;
+        if (b.y <= surfaceY) {
+          // Atingiu a crista da onda: micro-respingo
+          if (Math.random() < 0.2) audio.playBubblePop();
+          spawnDrops(b.x, surfaceY, b.team === 'A' ? '#38bdf8' : '#fb923c', 2);
+          bubbles.splice(i, 1);
+        } else {
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+          ctx.strokeStyle = b.color;
+          ctx.lineWidth = 1.2;
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+          ctx.fill();
+          ctx.stroke();
+        }
+      }
+
+      // 5. Ondas de Choque Hidráulicas (Shockwave Rings)
+      for (let i = shockwaves.length - 1; i >= 0; i--) {
+        const s = shockwaves[i];
+        s.radius += (s.maxRadius - s.radius) * 0.18 + 1.2;
+        s.alpha -= 0.035;
+
+        if (s.alpha <= 0 || s.radius >= s.maxRadius) {
+          shockwaves.splice(i, 1);
+        } else {
+          ctx.save();
+          ctx.beginPath();
+          ctx.ellipse(s.x, s.y, s.radius * 1.3, s.radius * 0.55, 0, 0, Math.PI * 2);
+          ctx.strokeStyle = s.color;
+          ctx.globalAlpha = s.alpha;
+          ctx.lineWidth = s.lineWidth;
+          ctx.shadowColor = s.color;
+          ctx.shadowBlur = 10;
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+
+      // 6. Gotículas e Splashes Saltando da Crista
       for (let i = waterDrops.length - 1; i >= 0; i--) {
         const d = waterDrops[i];
         d.x += d.vx;
         d.y += d.vy;
-        d.vy += 0.25; // Gravidade
+        d.vy += 0.28; // Gravidade
         d.alpha -= 0.025;
         if (d.alpha <= 0) waterDrops.splice(i, 1);
         else {
@@ -733,7 +1089,35 @@
         }
       }
 
-      // 5. Confetes
+      // 7. Gotas Escorrendo na Tela (Screen Splashes)
+      for (let i = screenSplashes.length - 1; i >= 0; i--) {
+        const sp = screenSplashes[i];
+        sp.y += sp.vy;
+        sp.alpha -= 0.008;
+
+        if (sp.alpha <= 0 || sp.y > H) {
+          screenSplashes.splice(i, 1);
+        } else {
+          ctx.save();
+          ctx.beginPath();
+          ctx.ellipse(sp.x, sp.y, sp.radius, sp.length * 0.5, 0, 0, Math.PI * 2);
+          ctx.fillStyle = sp.color;
+          ctx.globalAlpha = sp.alpha * 0.45;
+          ctx.shadowColor = sp.color;
+          ctx.shadowBlur = 8;
+          ctx.fill();
+
+          // Ponto de luz interno na gota
+          ctx.beginPath();
+          ctx.arc(sp.x - sp.radius * 0.3, sp.y - sp.length * 0.2, sp.radius * 0.4, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.globalAlpha = sp.alpha * 0.8;
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      // 8. Confetes
       for (let i = confettis.length - 1; i >= 0; i--) {
         const cf = confettis[i];
         cf.x += cf.vx;
@@ -767,7 +1151,6 @@
     }
 
     function drawWaveColumn(startX, width, tidePercent, color, fillColor, time, phaseOffset) {
-      // Altura da água varia do fundo (H * 0.85) até o topo (H * 0.18)
       const bottomY = H * 0.85;
       const topLimitY = H * 0.18;
       const usableHeight = bottomY - topLimitY;
@@ -817,7 +1200,18 @@
       ctx.lineWidth = 3;
       ctx.stroke();
 
+      // Espuma efervescente na crista da onda
+      for (let i = 2; i < waveSteps; i += 3) {
+        const foamX = startX + (i * stepW);
+        const foamY = waterY + Math.sin((i * 0.35) + time + phaseOffset) * (6 + (tidePercent * 0.08));
+        ctx.beginPath();
+        ctx.arc(foamX, foamY - 1, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.fill();
+      }
+
       ctx.restore();
+      return waterY;
     }
 
     /**

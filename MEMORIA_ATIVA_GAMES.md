@@ -33,7 +33,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | **06** | `06_batalha_dos_baloes` | Estouro de Balão | Dois lados inflando balões colossais com física elástica até o estouro | **HOMOLOGADO** |
 | **07** | `07_pendulo_destruidor` | Pêndulo da Demolição | Chat ajusta o ângulo do pêndulo para derrubar a torre adversária | Planejado |
 | **08** | `08_caca_tesouro_coordenadas` | Caça ao Baú de Ouro | Chat escolhe quadrantes (A1 a D4) para desarmar bombas e achar o baú | Planejado |
-| **09** | `09_tsunami_de_curtidas` | Tsunami de Likes | Disputa frenética de pressão de tela por curtidas contínuas | Planejado |
+| **09** | `09_tsunami_de_curtidas` | Tsunami de Likes | Disputa frenética de maré e pressão hidráulica, micro-ondas de choque e alarme de inundação | **HOMOLOGADO** |
 | **10** | `10_queda_dos_blocos` | Tetris da Discórdia | Chat decide onde soltar blocos pesados para esmagar os inimigos | Planejado |
 
 ---
