@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-27T07:14:53.900974",
+  "timestamp": "2026-10-27T07:18:20.442925",
   "holding": "Holding V5 Apollo",
   "captaincy": "Capitania V5 Games",
   "destination": "E:\\MEUS PROGRAMAS\\V5_APOLLO_SITES\\V5_Apollo_Broadcaster\\frontend\\public\\games",
@@ -7,7 +7,7 @@
   "total_files_verified": 82,
   "total_bytes_transferred": 1739026,
   "total_megabytes": 1.66,
-  "duration_seconds": 2.34,
+  "duration_seconds": 2.24,
   "md5_match_rate_percent": 100.0,
   "md5_mismatches": 0,
   "status": "HOMOLOGADO_DESPACHADO",

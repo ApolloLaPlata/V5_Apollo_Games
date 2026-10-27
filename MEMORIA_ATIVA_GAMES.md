@@ -132,4 +132,5 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/generate_cartridge_thumbnails.py`: Gerador industrial de miniaturas SVG vetoriais temáticas (viewBox 400x500) para todos os 41 cartuchos.
 - `scripts/test_cartridge_thumbnails_97.py`: Suíte de validação XML/SVG e conformidade das miniaturas (7/7 checks aprovados).
 - `scripts/test_md5_sync_report_98.py`: Validação criptográfica MD5 e auditoria dos relatórios de despacho JSON e Markdown (8/8 checks aprovados).
-- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo industrial com verificação MD5 bit-a-bit e gerador de relatórios de despacho (`relatorio_despacho_broadcaster.json` e `.md` com 100% integridade).
+- `scripts/test_general_sync_99.py`: Suíte de homologação da sincronização geral de 41 cartuchos e integração com `games_registry.json` e `v5_games_manifest.json` no Broadcaster (8/8 checks aprovados).
+- `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo industrial com verificação MD5 bit-a-bit, gerador de manifestos espelhados e gerador de `games_registry.json` para o V5 Broadcaster.

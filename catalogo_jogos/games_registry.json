@@ -1,0 +1,375 @@
+{
+  "total": 41,
+  "synced_at": 1793103500.4398978,
+  "games": [
+    {
+      "slug": "01_cabo_de_guerra_neon",
+      "name": "V5 Live: Cabo de Guerra Neon (9:16)",
+      "url": "/games/01_cabo_de_guerra_neon/index.html",
+      "thumbnail": "/games/01_cabo_de_guerra_neon/thumbnail.svg",
+      "path": "frontend/public/games/01_cabo_de_guerra_neon",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "01b_cabo_de_guerra_elementos",
+      "name": "V5 Live: Cabo de Guerra dos Elementos (9:16)",
+      "url": "/games/01b_cabo_de_guerra_elementos/index.html",
+      "thumbnail": "/games/01b_cabo_de_guerra_elementos/thumbnail.svg",
+      "path": "frontend/public/games/01b_cabo_de_guerra_elementos",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "02_plinko_pachinko_fortuna",
+      "name": "V5 Live: Plinko da Fortuna (9:16)",
+      "url": "/games/02_plinko_pachinko_fortuna/index.html",
+      "thumbnail": "/games/02_plinko_pachinko_fortuna/thumbnail.svg",
+      "path": "frontend/public/games/02_plinko_pachinko_fortuna",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "03_corrida_avatares_holding",
+      "name": "V5 Live: Corrida dos Avatares da Holding (9:16)",
+      "url": "/games/03_corrida_avatares_holding/index.html",
+      "thumbnail": "/games/03_corrida_avatares_holding/thumbnail.svg",
+      "path": "frontend/public/games/03_corrida_avatares_holding",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "04_boss_raid_cooperativo",
+      "name": "V5 Live: Boss Raid do Chat (9:16)",
+      "url": "/games/04_boss_raid_cooperativo/index.html",
+      "thumbnail": "/games/04_boss_raid_cooperativo/thumbnail.svg",
+      "path": "frontend/public/games/04_boss_raid_cooperativo",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "05_roleta_desafios_live",
+      "name": "V5 Live: Roleta dos Desafios da Live (9:16)",
+      "url": "/games/05_roleta_desafios_live/index.html",
+      "thumbnail": "/games/05_roleta_desafios_live/thumbnail.svg",
+      "path": "frontend/public/games/05_roleta_desafios_live",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "06_batalha_dos_baloes",
+      "name": "V5 Live: Batalha dos Balões Gigantes (9:16)",
+      "url": "/games/06_batalha_dos_baloes/index.html",
+      "thumbnail": "/games/06_batalha_dos_baloes/thumbnail.svg",
+      "path": "frontend/public/games/06_batalha_dos_baloes",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "07_pendulo_destruidor",
+      "name": "V5 Live: Pêndulo Demolidor (9:16)",
+      "url": "/games/07_pendulo_destruidor/index.html",
+      "thumbnail": "/games/07_pendulo_destruidor/thumbnail.svg",
+      "path": "frontend/public/games/07_pendulo_destruidor",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "08_caca_tesouro_coordenadas",
+      "name": "V5 Live: Caça ao Baú do Tesouro (9:16)",
+      "url": "/games/08_caca_tesouro_coordenadas/index.html",
+      "thumbnail": "/games/08_caca_tesouro_coordenadas/thumbnail.svg",
+      "path": "frontend/public/games/08_caca_tesouro_coordenadas",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "09_tsunami_de_curtidas",
+      "name": "V5 Live: Tsunami de Curtidas (9:16)",
+      "url": "/games/09_tsunami_de_curtidas/index.html",
+      "thumbnail": "/games/09_tsunami_de_curtidas/thumbnail.svg",
+      "path": "frontend/public/games/09_tsunami_de_curtidas",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "10_queda_dos_blocos",
+      "name": "V5 Live: Tetris da Discórdia (9:16)",
+      "url": "/games/10_queda_dos_blocos/index.html",
+      "thumbnail": "/games/10_queda_dos_blocos/thumbnail.svg",
+      "path": "frontend/public/games/10_queda_dos_blocos",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "11_queda_de_braco_titas",
+      "name": "V5 Live: Queda de Braço dos Titãs (9:16)",
+      "url": "/games/11_queda_de_braco_titas/index.html",
+      "thumbnail": "/games/11_queda_de_braco_titas/thumbnail.svg",
+      "path": "frontend/public/games/11_queda_de_braco_titas",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "12_pachinko_pinball_neon",
+      "name": "V5 Live: Pachinko Pinball Neon (9:16)",
+      "url": "/games/12_pachinko_pinball_neon/index.html",
+      "thumbnail": "/games/12_pachinko_pinball_neon/thumbnail.svg",
+      "path": "frontend/public/games/12_pachinko_pinball_neon",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "13_cascata_de_moedas",
+      "name": "V5 Live: Cascata de Moedas Douradas (9:16)",
+      "url": "/games/13_cascata_de_moedas/index.html",
+      "thumbnail": "/games/13_cascata_de_moedas/thumbnail.svg",
+      "path": "frontend/public/games/13_cascata_de_moedas",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "14_vortex_gravitacional",
+      "name": "V5 Live: Vortex Gravitacional (9:16)",
+      "url": "/games/14_vortex_gravitacional/index.html",
+      "thumbnail": "/games/14_vortex_gravitacional/thumbnail.svg",
+      "path": "frontend/public/games/14_vortex_gravitacional",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "15_corrida_maluca_espacial",
+      "name": "V5 Live: Corrida Maluca Espacial (9:16)",
+      "url": "/games/15_corrida_maluca_espacial/index.html",
+      "thumbnail": "/games/15_corrida_maluca_espacial/thumbnail.svg",
+      "path": "frontend/public/games/15_corrida_maluca_espacial",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "16_arrancada_noturna_neon",
+      "name": "V5 Live: Arrancada Noturna Neon (9:16)",
+      "url": "/games/16_arrancada_noturna_neon/index.html",
+      "thumbnail": "/games/16_arrancada_noturna_neon/thumbnail.svg",
+      "path": "frontend/public/games/16_arrancada_noturna_neon",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "17_caca_niquel_neon_777",
+      "name": "V5 Live: Caça-Níquel Neon 777 (9:16)",
+      "url": "/games/17_caca_niquel_neon_777/index.html",
+      "thumbnail": "/games/17_caca_niquel_neon_777/thumbnail.svg",
+      "path": "frontend/public/games/17_caca_niquel_neon_777",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "18_roleta_russa_baloes",
+      "name": "V5 Live: Roleta Russa de Balões (9:16)",
+      "url": "/games/18_roleta_russa_baloes/index.html",
+      "thumbnail": "/games/18_roleta_russa_baloes/thumbnail.svg",
+      "path": "frontend/public/games/18_roleta_russa_baloes",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "19_defesa_da_torre_chat",
+      "name": "V5 Live: Defesa da Torre do Chat (9:16)",
+      "url": "/games/19_defesa_da_torre_chat/index.html",
+      "thumbnail": "/games/19_defesa_da_torre_chat/thumbnail.svg",
+      "path": "frontend/public/games/19_defesa_da_torre_chat",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "20_subida_da_montanha_sagrada",
+      "name": "V5 Live: Subida da Montanha Sagrada (9:16)",
+      "url": "/games/20_subida_da_montanha_sagrada/index.html",
+      "thumbnail": "/games/20_subida_da_montanha_sagrada/thumbnail.svg",
+      "path": "frontend/public/games/20_subida_da_montanha_sagrada",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "21_batata_quente_explosiva",
+      "name": "V5 Live: Batata Quente Explosiva (9:16)",
+      "url": "/games/21_batata_quente_explosiva/index.html",
+      "thumbnail": "/games/21_batata_quente_explosiva/thumbnail.svg",
+      "path": "frontend/public/games/21_batata_quente_explosiva",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "22_ponte_de_vidro_quebradico",
+      "name": "V5 Live: Ponte de Vidro Quebradiço (9:16)",
+      "url": "/games/22_ponte_de_vidro_quebradico/index.html",
+      "thumbnail": "/games/22_ponte_de_vidro_quebradico/thumbnail.svg",
+      "path": "frontend/public/games/22_ponte_de_vidro_quebradico",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "23_sobrevivencia_na_lava",
+      "name": "V5 Live: Sobrevivência na Lava (9:16)",
+      "url": "/games/23_sobrevivencia_na_lava/index.html",
+      "thumbnail": "/games/23_sobrevivencia_na_lava/thumbnail.svg",
+      "path": "frontend/public/games/23_sobrevivencia_na_lava",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "24_campo_minado_neon",
+      "name": "V5 Live: Campo Minado Neon (9:16)",
+      "url": "/games/24_campo_minado_neon/index.html",
+      "thumbnail": "/games/24_campo_minado_neon/thumbnail.svg",
+      "path": "frontend/public/games/24_campo_minado_neon",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "25_batalha_naval_live",
+      "name": "V5 Live: Batalha Naval da Live (9:16)",
+      "url": "/games/25_batalha_naval_live/index.html",
+      "thumbnail": "/games/25_batalha_naval_live/thumbnail.svg",
+      "path": "frontend/public/games/25_batalha_naval_live",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "26_guerra_dos_tanques_neon",
+      "name": "V5 Live: Guerra dos Tanques Neon (9:16)",
+      "url": "/games/26_guerra_dos_tanques_neon/index.html",
+      "thumbnail": "/games/26_guerra_dos_tanques_neon/thumbnail.svg",
+      "path": "frontend/public/games/26_guerra_dos_tanques_neon",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "27_meteoro_defensor",
+      "name": "V5 Live: Meteoro Defensor (9:16)",
+      "url": "/games/27_meteoro_defensor/index.html",
+      "thumbnail": "/games/27_meteoro_defensor/thumbnail.svg",
+      "path": "frontend/public/games/27_meteoro_defensor",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "28_labirinto_pacman_neon",
+      "name": "V5 Live: Labirinto do Pacman Neon (9:16)",
+      "url": "/games/28_labirinto_pacman_neon/index.html",
+      "thumbnail": "/games/28_labirinto_pacman_neon/thumbnail.svg",
+      "path": "frontend/public/games/28_labirinto_pacman_neon",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "29_basquete_street_neon",
+      "name": "V5 Live: Basquete Street Neon (9:16)",
+      "url": "/games/29_basquete_street_neon/index.html",
+      "thumbnail": "/games/29_basquete_street_neon/thumbnail.svg",
+      "path": "frontend/public/games/29_basquete_street_neon",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "30_gol_de_penalti_live",
+      "name": "V5 Live: Gol de Pênalti da Live (9:16)",
+      "url": "/games/30_gol_de_penalti_live/index.html",
+      "thumbnail": "/games/30_gol_de_penalti_live/thumbnail.svg",
+      "path": "frontend/public/games/30_gol_de_penalti_live",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "31_guitar_hero_neon",
+      "name": "V5 Live: Guitar Hero da Live (9:16)",
+      "url": "/games/31_guitar_hero_neon/index.html",
+      "thumbnail": "/games/31_guitar_hero_neon/thumbnail.svg",
+      "path": "frontend/public/games/31_guitar_hero_neon",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "32_corte_de_frutas_neon",
+      "name": "V5 Live: Corte de Frutas Neon (9:16)",
+      "url": "/games/32_corte_de_frutas_neon/index.html",
+      "thumbnail": "/games/32_corte_de_frutas_neon/thumbnail.svg",
+      "path": "frontend/public/games/32_corte_de_frutas_neon",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "33_corrida_de_cavalos_retro",
+      "name": "V5 Live: Corrida de Cavalos Retrô (9:16)",
+      "url": "/games/33_corrida_de_cavalos_retro/index.html",
+      "thumbnail": "/games/33_corrida_de_cavalos_retro/thumbnail.svg",
+      "path": "frontend/public/games/33_corrida_de_cavalos_retro",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "34_pinball_galactico",
+      "name": "V5 Live: Pinball Galáctico (9:16)",
+      "url": "/games/34_pinball_galactico/index.html",
+      "thumbnail": "/games/34_pinball_galactico/thumbnail.svg",
+      "path": "frontend/public/games/34_pinball_galactico",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "35_quiz_frenetico_holding",
+      "name": "V5 Live: Quiz Frenético da Holding (9:16)",
+      "url": "/games/35_quiz_frenetico_holding/index.html",
+      "thumbnail": "/games/35_quiz_frenetico_holding/thumbnail.svg",
+      "path": "frontend/public/games/35_quiz_frenetico_holding",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "36_pula_corda_extremo",
+      "name": "V5 Live: Pula-Corda Extremo (9:16)",
+      "url": "/games/36_pula_corda_extremo/index.html",
+      "thumbnail": "/games/36_pula_corda_extremo/thumbnail.svg",
+      "path": "frontend/public/games/36_pula_corda_extremo",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "37_torre_de_blocos_equilibrada",
+      "name": "V5 Live: Torre de Blocos Equilibrada (9:16)",
+      "url": "/games/37_torre_de_blocos_equilibrada/index.html",
+      "thumbnail": "/games/37_torre_de_blocos_equilibrada/thumbnail.svg",
+      "path": "frontend/public/games/37_torre_de_blocos_equilibrada",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "38_fuga_da_prisao_espacial",
+      "name": "V5 Live: Fuga da Prisão Espacial (9:16)",
+      "url": "/games/38_fuga_da_prisao_espacial/index.html",
+      "thumbnail": "/games/38_fuga_da_prisao_espacial/thumbnail.svg",
+      "path": "frontend/public/games/38_fuga_da_prisao_espacial",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "39_alvo_movel_snipers",
+      "name": "V5 Live: Alvo Móvel dos Snipers (9:16)",
+      "url": "/games/39_alvo_movel_snipers/index.html",
+      "thumbnail": "/games/39_alvo_movel_snipers/thumbnail.svg",
+      "path": "frontend/public/games/39_alvo_movel_snipers",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    },
+    {
+      "slug": "40_duelo_de_magicos_neon",
+      "name": "V5 Live: Duelo de Mágicos Neon (9:16)",
+      "url": "/games/40_duelo_de_magicos_neon/index.html",
+      "thumbnail": "/games/40_duelo_de_magicos_neon/thumbnail.svg",
+      "path": "frontend/public/games/40_duelo_de_magicos_neon",
+      "source": "V5_Apollo_Games",
+      "status": "ready"
+    }
+  ]
+}

@@ -455,6 +455,33 @@ def sync_games():
     with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2, ensure_ascii=False)
 
+    # Salva games_registry.json para a API do Next.js do Broadcaster (/api/games/catalog)
+    registry_data = {
+        "total": len(manifest),
+        "synced_at": time.time(),
+        "games": [
+            {
+                "slug": g["slug"],
+                "name": f"V5 Live: {g['name']} (9:16)",
+                "url": f"/games/{g['slug']}/index.html",
+                "thumbnail": f"/games/{g['slug']}/thumbnail.svg",
+                "path": f"frontend/public/games/{g['slug']}",
+                "source": "V5_Apollo_Games",
+                "status": "ready"
+            }
+            for g in manifest
+        ]
+    }
+    registry_broadcaster_path = os.path.join(BROADCASTER_GAMES_DIR, "games_registry.json")
+    with open(registry_broadcaster_path, "w", encoding="utf-8") as f:
+        json.dump(registry_data, f, indent=2, ensure_ascii=False)
+    print(f"[REGISTRY BROADCASTER] {registry_broadcaster_path}")
+
+    registry_local_path = os.path.join(CATALOG_DIR, "games_registry.json")
+    with open(registry_local_path, "w", encoding="utf-8") as f:
+        json.dump(registry_data, f, indent=2, ensure_ascii=False)
+    print(f"[REGISTRY LOCAL] {registry_local_path}")
+
     duration = round(time.time() - start_time, 2)
     mb_transferred = round(total_bytes_transferred / (1024 * 1024), 2)
     match_rate = 100.0 if md5_mismatches == 0 else round((1 - md5_mismatches / total_files_verified) * 100, 2)
