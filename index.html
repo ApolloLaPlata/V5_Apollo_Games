@@ -3,213 +3,541 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>V5 Games — Laboratório de Testes & Simulador 9:16</title>
+  <title>V5 Games — Central de Testes Local (Test Lab 9:16)</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
     body {
       background-color: #030712;
       color: #f3f4f6;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    /* Sidebar de Jogos e Controle */
-    .sidebar {
-      width: 380px;
-      background: #0b0f19;
-      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 24px;
-      gap: 20px;
-      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* Header Superior do Test Lab */
+    header {
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 900;
+      font-size: 16px;
+      color: #030712;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
     }
 
     .brand-title {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 800;
-      letter-spacing: -0.5px;
+      letter-spacing: 1px;
       color: #ffffff;
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      color: #94a3b8;
+      font-family: monospace;
+    }
+
+    .cartridge-selector-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .select-label {
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f8fafc;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 10px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .btn-action {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-action:hover {
+      background: #334155;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Container Principal da Bancada de Testes */
+    main {
+      flex: 1;
+      display: flex;
+      padding: 20px;
+      gap: 24px;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+      height: calc(100vh - 65px);
+    }
+
+    /* Coluna do Smartphone 9:16 */
+    .viewport-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .device-frame {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-height: 820px;
+      aspect-ratio: 9 / 16;
+      background: #000000;
+      border-radius: 42px;
+      border: 12px solid #1e293b;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 40px rgba(56, 189, 248, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Notch Superior do Celular */
+    .device-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 20px;
+      background: #1e293b;
+      border-bottom-left-radius: 14px;
+      border-bottom-right-radius: 14px;
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .notch-camera {
+      width: 8px;
+      height: 8px;
+      background: #090d16;
+      border-radius: 50%;
+    }
+
+    /* Iframe onde o cartucho roda */
+    #cartridge-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #020617;
+      display: block;
+    }
+
+    /* Overlay Opcional de Safe Zones do TikTok */
+    .safe-zone-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 40;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .safe-zone-top {
+      height: 140px;
+      background: rgba(239, 68, 68, 0.15);
+      border-bottom: 2px dashed #ef4444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fca5a5;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .safe-zone-bottom {
+      height: 180px;
+      background: rgba(239, 68, 68, 0.15);
+      border-top: 2px dashed #ef4444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fca5a5;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Coluna Lateral de Monitor e Telemetria */
+    .sidebar-column {
+      width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: 100%;
+    }
+
+    .panel-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 16px;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 10px;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .brand-badge {
-      background: #f59e0b;
-      color: #000;
+    .status-pill {
       font-size: 10px;
       font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 4px;
-      text-transform: uppercase;
-    }
-
-    .section-label {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: #9ca3af;
-    }
-
-    .game-selector {
-      width: 100%;
-      background: #111827;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #fff;
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    /* Simulador de Eventos da Live */
-    .event-panel {
-      background: rgba(17, 24, 39, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 16px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
       display: flex;
-      flex-direction: column;
-      gap: 10px;
+      align-items: center;
+      gap: 4px;
     }
 
-    .btn-action {
-      padding: 10px 14px;
-      border-radius: 8px;
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #10b981;
+    }
+
+    /* Controles de Depuração */
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 12px;
-      font-weight: 700;
-      border: 1px solid transparent;
+      color: #cbd5e1;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: all 0.15s ease;
+      inset: 0;
+      background-color: #334155;
+      transition: .3s;
+      border-radius: 22px;
     }
 
-    .btn-blue { background: #0284c7; color: #fff; }
-    .btn-blue:hover { background: #0369a1; }
-
-    .btn-orange { background: #ea580c; color: #fff; }
-    .btn-orange:hover { background: #c2410c; }
-
-    .btn-gift { background: #10b981; color: #000; font-weight: 800; }
-    .btn-gift:hover { background: #059669; }
-
-    .btn-sync {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: #000;
-      font-weight: 800;
-      margin-top: auto;
-      padding: 12px;
-      border-radius: 10px;
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
     }
 
-    /* Área Central com Moldura 9:16 de Celular */
-    .viewport-area {
+    input:checked + .slider {
+      background-color: #38bdf8;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(18px);
+    }
+
+    /* Terminal de Monitor de Eventos */
+    .event-terminal {
       flex: 1;
+      background: #020617;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 11px;
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: radial-gradient(circle at center, #111827 0%, #030712 100%);
-      padding: 20px;
-      position: relative;
+      gap: 6px;
     }
 
-    .phone-mockup {
-      width: 420px;
-      height: 746px; /* 9:16 exato */
-      background: #000;
-      border-radius: 40px;
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 10px #1f2937;
-      overflow: hidden;
-      position: relative;
+    .terminal-entry {
+      color: #94a3b8;
+      line-height: 1.4;
+      word-break: break-all;
+    }
+
+    .terminal-entry .time {
+      color: #64748b;
+    }
+
+    .terminal-entry .type {
+      color: #38bdf8;
+      font-weight: 700;
+    }
+
+    .terminal-entry .highlight {
+      color: #fbbf24;
+    }
+
+    .terminal-footer {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
+      font-size: 11px;
+      color: #64748b;
     }
 
-    .phone-mockup iframe {
-      width: 100%;
-      height: 100%;
+    .clear-btn {
+      color: #94a3b8;
+      background: none;
       border: none;
+      cursor: pointer;
+      font-size: 11px;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
-  <!-- Painel de Controle e Teste -->
-  <div class="sidebar">
-    <div class="brand-title">
-      <span>V5 GAMES</span>
-      <span class="brand-badge">Test Lab</span>
-    </div>
-
-    <div>
-      <div class="section-label" style="margin-bottom: 8px;">1. Selecionar Cartucho Local</div>
-      <select class="game-selector" id="game-select" onchange="loadSelectedGame()">
-        <option value="catalogo_jogos/01_cabo_de_guerra_neon/index.html">01. Cabo de Guerra Neon (Homologado)</option>
-      </select>
-    </div>
-
-    <div>
-      <div class="section-label" style="margin-bottom: 8px;">2. Injetor de Eventos de Live</div>
-      <div class="event-panel">
-        <button class="btn-action btn-blue" onclick="sendEvent({ comment: '1', team: 'A', weight: 1, user: '@viewer_azul' })">
-          🔵 Simular Comentário "1" (Time A)
-        </button>
-        <button class="btn-action btn-orange" onclick="sendEvent({ comment: '2', team: 'B', weight: 1, user: '@viewer_laranja' })">
-          🟠 Simular Comentário "2" (Time B)
-        </button>
-        <button class="btn-action btn-gift" onclick="sendEvent({ type: 'gift', giftName: 'Rosa', team: 'A', weight: 5, user: '@vip_tipper' })">
-          🎁 Simular Gift Rosa (+5pts A)
-        </button>
-        <button class="btn-action btn-gift" onclick="sendEvent({ type: 'gift', giftName: 'Leão', team: 'B', weight: 20, user: '@whale_tipper' })">
-          🦁 Simular Gift Leão (+20pts B)
-        </button>
+  <!-- Header Superior -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">V5</div>
+      <div>
+        <div class="brand-title">V5 GAMES TEST LAB</div>
+        <div class="brand-subtitle">Simulador de Transmissão Vertical 9:16 (1080x1920)</div>
       </div>
     </div>
 
-    <div style="font-size: 11px; color: #6b7280; line-height: 1.5;">
-      💡 <strong>Isolamento Garantido:</strong> Este ambiente roda 100% offline no workspace local. O jogo só é exportado para o Broadcaster quando aprovado.
+    <div class="cartridge-selector-bar">
+      <span class="select-label">Cartucho Ativo:</span>
+      <select id="cartridge-select" onchange="changeCartridge()">
+        <option value="catalogo_jogos/01_cabo_de_guerra_neon/index.html">01 — Cabo de Guerra Neon</option>
+        <option value="catalogo_jogos/02_plinko_pachinko_fortuna/index.html" selected>02 — Plinko da Fortuna (Pachinko)</option>
+      </select>
+      <button class="btn-action" onclick="reloadCartridge()">🔄 Recarregar</button>
+    </div>
+  </header>
+
+  <!-- Bancada de Trabalho -->
+  <main>
+    <!-- Viewport 9:16 -->
+    <div class="viewport-column">
+      <div class="device-frame">
+        <div class="device-notch">
+          <div class="notch-camera"></div>
+        </div>
+
+        <iframe id="cartridge-frame" src="catalogo_jogos/02_plinko_pachinko_fortuna/index.html"></iframe>
+
+        <!-- Overlay de Safe Zones -->
+        <div class="safe-zone-overlay" id="safe-zone-overlay">
+          <div class="safe-zone-top">⚠️ Safe Zone Topo (140px) — Placar & Doações</div>
+          <div class="safe-zone-bottom">⚠️ Safe Zone Base (180px) — Feed & Interface TikTok</div>
+        </div>
+      </div>
     </div>
 
-    <button class="btn-action btn-sync" onclick="alert('Execute no terminal: python scripts/sync_to_broadcaster.py')">
-      🚀 Sincronizar Catálogo com Broadcaster
-    </button>
-  </div>
+    <!-- Monitor de Eventos & Telemetria -->
+    <div class="sidebar-column">
+      
+      <!-- Controles de Visualização -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <span class="panel-title">📱 Visualização & Safe Zones</span>
+          <span class="status-pill"><span class="pulse-dot"></span> 60 FPS</span>
+        </div>
 
-  <!-- Viewport de Celular 9:16 -->
-  <div class="viewport-area">
-    <div class="phone-mockup">
-      <iframe id="game-iframe" src="catalogo_jogos/01_cabo_de_guerra_neon/index.html"></iframe>
+        <div class="toggle-row">
+          <span>Exibir Safe Zones do TikTok (9:16)</span>
+          <label class="switch">
+            <input type="checkbox" id="toggle-safe-zone" onchange="toggleSafeZones()">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <span>Simulação de Resolução</span>
+          <span style="font-family: monospace; color: #38bdf8; font-weight: 700;">1080 x 1920 px</span>
+        </div>
+      </div>
+
+      <!-- Monitor de Eventos (Event Bus) -->
+      <div class="panel-card" style="flex: 1;">
+        <div class="panel-header">
+          <span class="panel-title">📡 Monitor de Eventos de Live</span>
+          <button class="clear-btn" onclick="clearTerminal()">Limpar</button>
+        </div>
+
+        <div class="event-terminal" id="event-terminal">
+          <div class="terminal-entry">
+            <span class="time">[00:00:00]</span> <span class="type">[SISTEMA]</span> V5 Games Test Lab inicializado com sucesso.
+          </div>
+          <div class="terminal-entry">
+            <span class="time">[00:00:00]</span> <span class="type">[BARRAMENTO]</span> Escutando BroadcastChannel('v5_broadcaster_games')...
+          </div>
+        </div>
+
+        <div class="terminal-footer">
+          <span>Canal: v5_broadcaster_games</span>
+          <span id="event-counter">2 eventos registrados</span>
+        </div>
+      </div>
+
     </div>
-  </div>
+  </main>
 
   <script>
-    const iframe = document.getElementById('game-iframe');
-    const select = document.getElementById('game-select');
-    const channel = new BroadcastChannel('v5_broadcaster_games');
+    const frame = document.getElementById('cartridge-frame');
+    const select = document.getElementById('cartridge-select');
+    const safeZoneOverlay = document.getElementById('safe-zone-overlay');
+    const terminal = document.getElementById('event-terminal');
+    const eventCounterEl = document.getElementById('event-counter');
+    let eventCount = 2;
 
-    function loadSelectedGame() {
-      iframe.src = select.value;
+    function changeCartridge() {
+      const target = select.value;
+      frame.src = target;
+      logEvent('CARTRIDGE', `Carregando cartucho: ${target}`);
     }
 
-    function sendEvent(data) {
-      // Dispara via BroadcastChannel
-      channel.postMessage(data);
-
-      // Dispara diretamente na janela do iframe se possivel
-      try {
-        iframe.contentWindow.postMessage(data, '*');
-      } catch (e) {}
+    function reloadCartridge() {
+      frame.src = select.value;
+      logEvent('RESET', `Cartucho recarregado no simulador.`);
     }
+
+    function toggleSafeZones() {
+      const isChecked = document.getElementById('toggle-safe-zone').checked;
+      safeZoneOverlay.style.display = isChecked ? 'flex' : 'none';
+    }
+
+    function logEvent(type, message) {
+      eventCount++;
+      const now = new Date();
+      const timeStr = now.toTimeString().split(' ')[0];
+      const entry = document.createElement('div');
+      entry.className = 'terminal-entry';
+      entry.innerHTML = `<span class="time">[${timeStr}]</span> <span class="type">[${type}]</span> ${message}`;
+      terminal.appendChild(entry);
+      terminal.scrollTop = terminal.scrollHeight;
+      eventCounterEl.innerText = `${eventCount} eventos registrados`;
+    }
+
+    function clearTerminal() {
+      terminal.innerHTML = '';
+      eventCount = 0;
+      eventCounterEl.innerText = `0 eventos registrados`;
+    }
+
+    // Escuta de Eventos via BroadcastChannel para telemetria no console de testes
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        const channel = new BroadcastChannel('v5_broadcaster_games');
+        channel.onmessage = (event) => {
+          if (event.data) {
+            const d = event.data;
+            logEvent('BROADCAST', `<span class="highlight">${d.user || '@anon'}</span> -> ${d.type || 'ação'} (${d.action || d.comment || d.giftName || ''})`);
+          }
+        };
+      }
+    } catch (e) {
+      console.warn('BroadcastChannel indisponível para telemetria.');
+    }
+
+    // Escuta de mensagens via window.postMessage do iframe
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type) {
+        logEvent('IFRAME_MSG', JSON.stringify(event.data));
+      }
+    });
   </script>
 </body>
 </html>
