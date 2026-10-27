@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Fuga da Prisão Espacial (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container Vertical 9:16 Estrito */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 30%, #0c1222 0%, #020617 90%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+    }
+
+    /* Safe Zone Topo (140px) */
+    .top-safe-zone {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 140px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 16px 8px 16px;
+      background: linear-gradient(180deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.85) 75%, rgba(2, 6, 23, 0) 100%);
+      pointer-events: none;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-pill {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #38bdf8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+      animation: pulseDot 1.5s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .round-timer-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-weight: 800;
+      font-size: 13px;
+      color: #f8fafc;
+    }
+
+    .timer-val {
+      color: #38bdf8;
+    }
+
+    /* Placar de Altitude e Escudo */
+    .escape-hud-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 10px;
+      padding: 6px 12px;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
+    }
+
+    .score-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .score-title {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+    }
+
+    .altitude-counter {
+      font-size: 20px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #00f0ff;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+    }
+
+    .shield-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(14, 165, 233, 0.2);
+      border: 1px solid #38bdf8;
+      color: #38bdf8;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: monospace;
+    }
+
+    .rescue-distance {
+      font-size: 11px;
+      font-weight: 800;
+      color: #ffd700;
+      font-family: monospace;
+    }
+
+    /* Canvas Central do Poço de Fuga 9:16 */
+    #game-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+    }
+
+    /* Safe Zone Base (180px) */
+    .bottom-safe-zone {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 180px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 10px 14px;
+      background: linear-gradient(0deg, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.85) 65%, rgba(2, 6, 23, 0) 100%);
+      pointer-events: none;
+      gap: 8px;
+    }
+
+    /* Comandos do Chat */
+    .chat-commands-box {
+      display: grid;
+      grid-template-columns: 1.2fr 1.2fr 1.2fr 1.4fr;
+      gap: 6px;
+      pointer-events: auto;
+    }
+
+    .cmd-btn {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 8px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .cmd-btn:active {
+      transform: scale(0.95);
+    }
+
+    .cmd-btn.c1 { border-color: #00f0ff; color: #00f0ff; }
+    .cmd-btn.c2 { border-color: #ffd700; color: #ffd700; }
+    .cmd-btn.c3 { border-color: #ff0055; color: #ff0055; }
+    .cmd-btn.c4 { border-color: #00ff88; color: #00ff88; }
+
+    .cmd-key {
+      font-size: 13px;
+      font-weight: 900;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    .cmd-label {
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+      white-space: nowrap;
+    }
+
+    /* Barra de Gifts */
+    .gifts-reward-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px dashed rgba(56, 189, 248, 0.4);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 9px;
+      color: #f1f5f9;
+      pointer-events: auto;
+    }
+
+    .gift-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+    }
+
+    .gift-icon {
+      font-size: 13px;
+    }
+
+    .gift-effect {
+      color: #38bdf8;
+      font-weight: 800;
+    }
+
+    /* Modal de Vitória e Fim de Rodada */
+    #victory-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 50;
+      background: rgba(2, 6, 23, 0.94);
+      backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .podium-box {
+      width: 100%;
+      max-width: 340px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid #00f0ff;
+      border-radius: 16px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 0 40px rgba(0, 240, 255, 0.35);
+      animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .trophy-badge {
+      font-size: 52px;
+      filter: drop-shadow(0 0 16px #00f0ff);
+      animation: floatTrophy 2s infinite ease-in-out;
+    }
+
+    @keyframes floatTrophy {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .winner-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: #00f0ff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .final-score-val {
+      font-size: 28px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #ffd700;
+    }
+
+    .mvp-donor-card {
+      width: 100%;
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .reset-countdown {
+      font-size: 12px;
+      color: #94a3b8;
+      font-family: monospace;
+    }
+
+    /* Painel de Depuração Local do Streamer (Tecla D) */
+    #debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(2, 6, 23, 0.98);
+      border-top: 2px solid #38bdf8;
+      padding: 12px;
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.8);
+    }
+
+    .debug-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #38bdf8;
+      font-family: monospace;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .dbg-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-radius: 4px;
+      padding: 6px 2px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Safe Zone Topo (140px) -->
+    <header class="top-safe-zone">
+      <div class="header-row">
+        <div class="brand-pill">
+          <span class="live-dot"></span>
+          <span>V5 PRISÃO ESPACIAL 9:16</span>
+        </div>
+        <div class="round-timer-badge">
+          <span>FUGA:</span>
+          <span class="timer-val" id="time-display">00:45</span>
+        </div>
+      </div>
+
+      <!-- Placar de Altitude e Escudos -->
+      <div class="escape-hud-strip">
+        <div class="score-block">
+          <span class="score-title">ALTITUDE ALCANÇADA</span>
+          <span class="altitude-counter" id="altitude-display">0 M</span>
+        </div>
+
+        <div class="shield-badge" id="shield-display">🛡️ ESCUDO 3x</div>
+
+        <div class="score-block" style="align-items: flex-end;">
+          <span class="score-title">DISTÂNCIA DA NAVE</span>
+          <span class="rescue-distance" id="distance-display">1.000 M</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Central do Poço de Fuga -->
+    <canvas id="game-canvas" width="1080" height="1920"></canvas>
+
+    <!-- Safe Zone Base (180px) -->
+    <footer class="bottom-safe-zone">
+      <!-- Comandos do Chat -->
+      <div class="chat-commands-box">
+        <button class="cmd-btn c1" onclick="moveAstronaut(0, '@teste')">
+          <span class="cmd-key">1</span>
+          <span class="cmd-label">Corredor Esq</span>
+        </button>
+        <button class="cmd-btn c2" onclick="moveAstronaut(1, '@teste')">
+          <span class="cmd-key">2</span>
+          <span class="cmd-label">Corredor Meio</span>
+        </button>
+        <button class="cmd-btn c3" onclick="moveAstronaut(2, '@teste')">
+          <span class="cmd-key">3</span>
+          <span class="cmd-label">Corredor Dir</span>
+        </button>
+        <button class="cmd-btn c4" onclick="triggerBoost('@teste')">
+          <span class="cmd-key">BOOST</span>
+          <span class="cmd-label">Super Jetpack</span>
+        </button>
+      </div>
+
+      <!-- Barra de Gifts -->
+      <div class="gifts-reward-bar">
+        <div class="gift-item">
+          <span class="gift-icon">🌹</span>
+          <span>Rosa (Rose): <span class="gift-effect">Escudo Defletor (+3 Cargas)</span></span>
+        </div>
+        <div class="gift-item">
+          <span class="gift-icon">🦁</span>
+          <span>Leão (Lion): <span class="gift-effect">Hiper-Dobra (+250m Invulnerável)</span></span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Modal de Vitória e Fim de Rodada -->
+    <div id="victory-modal">
+      <div class="podium-box">
+        <div class="trophy-badge">🚀</div>
+        <div class="winner-title">FUGA CONCLUÍDA!</div>
+        <div class="final-score-val" id="podium-score-val">1.000 METROS</div>
+
+        <div class="mvp-donor-card">
+          <span style="color:#ffd700; font-weight:800;">👑 PILOTO DE RESGATE:</span>
+          <span id="podium-mvp-user" style="font-weight:900; color:#fff;">@ComandanteLive (780 pts)</span>
+        </div>
+
+        <div class="reset-countdown" id="podium-countdown">NOVA FUGA EM 5S...</div>
+      </div>
+    </div>
+
+    <!-- Painel de Depuração Local do Streamer (Tecla D) -->
+    <div id="debug-drawer">
+      <div class="debug-header">
+        <span>GAVETA DE DEPURAÇÃO DO STREAMER (TECLA D)</span>
+        <button onclick="toggleDebugDrawer()" style="background:none; border:none; color:#f43f5e; font-size:12px; cursor:pointer;">FECHAR [X]</button>
+      </div>
+      <div class="debug-grid">
+        <button class="dbg-btn" onclick="moveAstronaut(0, '@streamer')">Corredor Esq (1)</button>
+        <button class="dbg-btn" onclick="moveAstronaut(1, '@streamer')">Corredor Meio (2)</button>
+        <button class="dbg-btn" onclick="moveAstronaut(2, '@streamer')">Corredor Dir (3)</button>
+        <button class="dbg-btn" onclick="triggerBoost('@streamer')">Boost Jetpack</button>
+      </div>
+      <div class="debug-grid" style="margin-top:4px;">
+        <button class="dbg-btn" style="background:#0284c7;" onclick="triggerShieldDeflector('@streamer')">Escudo (Rosa)</button>
+        <button class="dbg-btn" style="background:#d97706;" onclick="triggerWarpDrive('@streamer')">Hiper-Dobra (Leão)</button>
+        <button class="dbg-btn" style="background:#e11d48;" onclick="spawnSecurityLaser()">Gerar Laser</button>
+        <button class="dbg-btn" style="background:#16a34a;" onclick="finalizeEscape()">Finalizar Fuga</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       V5 LIVE: FUGA DA PRISÃO ESPACIAL (9:16 VERTICAL ENGINE)
+       Holding V5 Apollo — Capitania V5 Games
+       Conformidade Estrita com as 5 Leis Absolutas do Cartucho V5
+       ========================================================================== */
+
+    // --- LEI 4: SINTETIZADOR DE ÁUDIO PROCEDURAL (WEB AUDIO API PURA) ---
+    class ProceduralAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.init();
+      }
+
+      init() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
+      }
+
+      ensureContext() {
+        if (!this.ctx) this.init();
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Propulsão do Jetpack (som contínuo/pulsante)
+      playJetpackThrust() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.exponentialRampToValueAtTime(80, now + 0.12);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(450, now);
+
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.13);
+      }
+
+      // Disparo de Laser de Contenção
+      playLaserFire() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(1100, now);
+        osc.frequency.exponentialRampToValueAtTime(180, now + 0.15);
+
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.16);
+      }
+
+      // Impacto de Laser no Escudo Defletor
+      playShieldImpact() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, now);
+        osc.frequency.exponentialRampToValueAtTime(320, now + 0.2);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.23);
+      }
+
+      // Ativação da Hiper-Dobra (Leão)
+      playWarpDriveSound() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const notes = [
+          { f: 440, d: 0.08 },
+          { f: 660, d: 0.08 },
+          { f: 880, d: 0.08 },
+          { f: 1320, d: 0.3 }
+        ];
+
+        let currTime = this.ctx.currentTime + 0.02;
+        notes.forEach(n => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(n.f, currTime);
+
+          gain.gain.setValueAtTime(0, currTime);
+          gain.gain.linearRampToValueAtTime(0.25, currTime + 0.01);
+          gain.gain.exponentialRampToValueAtTime(0.001, currTime + n.d);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(currTime);
+          osc.stop(currTime + n.d + 0.02);
+          currTime += n.d + 0.01;
+        });
+      }
+
+      // Fanfarra Triunfal de Conclusão da Fuga
+      playVictoryFanfare() {
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        const notes = [
+          { f: 523.25, d: 0.15 },
+          { f: 659.25, d: 0.15 },
+          { f: 783.99, d: 0.15 },
+          { f: 1046.50, d: 0.55 }
+        ];
+
+        let currTime = this.ctx.currentTime + 0.05;
+        notes.forEach(n => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(n.f, currTime);
+
+          gain.gain.setValueAtTime(0, currTime);
+          gain.gain.linearRampToValueAtTime(0.3, currTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, currTime + n.d);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(currTime);
+          osc.stop(currTime + n.d + 0.05);
+          currTime += n.d + 0.04;
+        });
+      }
+    }
+
+    const audio = new ProceduralAudioEngine();
+
+    // --- CONFIGURAÇÃO DA FÍSICA & CENÁRIO ESPACIAL (1080 x 1920) ---
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+
+    const ROUND_DURATION_SEC = 45;
+    const TARGET_METERS = 1000;
+    const LANES_X = [340, 540, 740]; // 3 Corredores Verticais
+
+    const state = {
+      roundActive: true,
+      timeRemaining: ROUND_DURATION_SEC,
+      altitude: 0,            // Metros escalados
+      targetMeters: TARGET_METERS,
+      shields: 3,             // Escudos protetores
+      warpTimer: 0,           // Timer de Hiper-Dobra
+      climbSpeed: 24,         // Velocidade de subida m/s
+      currentLane: 1,         // 0: Esq, 1: Meio, 2: Dir
+      astronautX: 540,
+      astronautY: 1420,
+      targetX: 540,
+      lasers: [],             // Lasers de contenção
+      particles: [],
+      confetti: [],
+      bgOffset: 0,
+      lastInteractionTime: performance.now(),
+      lastLaserSpawnTime: performance.now(),
+      resetCountdown: 5,
+      donors: {}
+    };
+
+    function initEscapeGame() {
+      state.roundActive = true;
+      state.timeRemaining = ROUND_DURATION_SEC;
+      state.altitude = 0;
+      state.shields = 3;
+      state.warpTimer = 0;
+      state.climbSpeed = 24;
+      state.currentLane = 1;
+      state.astronautX = LANES_X[1];
+      state.targetX = LANES_X[1];
+      state.lasers = [];
+      state.particles = [];
+      state.confetti = [];
+      state.bgOffset = 0;
+      state.resetCountdown = 5;
+      state.donors = {};
+      document.getElementById('victory-modal').style.display = 'none';
+
+      updateHUD();
+    }
+
+    // --- CONTROLE DE NAVEGAÇÃO DO ASTRONAUTA ---
+    function moveAstronaut(laneIdx, user) {
+      if (!state.roundActive) return;
+      if (laneIdx < 0 || laneIdx > 2) return;
+
+      state.lastInteractionTime = performance.now();
+      state.currentLane = laneIdx;
+      state.targetX = LANES_X[laneIdx];
+
+      const userKey = user || "@piloto";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 10;
+
+      audio.playJetpackThrust();
+      spawnJetpackParticles(state.astronautX, state.astronautY + 35, '#00f0ff', 12);
+    }
+
+    function triggerBoost(user) {
+      if (!state.roundActive) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@super_piloto";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 25;
+
+      state.altitude += 28;
+      audio.playJetpackThrust();
+      spawnJetpackParticles(state.astronautX, state.astronautY + 35, '#ffd700', 25);
+      updateHUD();
+    }
+
+    // --- SUPER GIFTS: ESCUDO & HIPER-DOBRA ---
+    function triggerShieldDeflector(user) {
+      if (!state.roundActive) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@super_donor";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 200;
+
+      state.shields = Math.min(state.shields + 3, 6);
+      audio.playShieldImpact();
+      spawnJetpackParticles(state.astronautX, state.astronautY, '#38bdf8', 35);
+      updateHUD();
+    }
+
+    function triggerWarpDrive(user) {
+      if (!state.roundActive) return;
+      state.lastInteractionTime = performance.now();
+
+      const userKey = user || "@leao_vip";
+      state.donors[userKey] = (state.donors[userKey] || 0) + 1000;
+
+      state.warpTimer = 4.0; // 4 segundos de hiper-velocidade invulnerável
+      state.altitude += 250;
+      audio.playWarpDriveSound();
+      spawnJetpackParticles(state.astronautX, state.astronautY, '#a855f7', 60);
+
+      // Limpa todos os lasers da tela
+      state.lasers = [];
+      updateHUD();
+    }
+
+    // --- GERADOR DE LASERS DE CONTENÇÃO ---
+    function spawnSecurityLaser() {
+      // Sorteia 1 ou 2 corredores para bloquear com laser
+      const blockedLanes = [Math.floor(Math.random() * 3)];
+      if (Math.random() < 0.35) {
+        // Bloqueia 2 corredores, deixando sempre 1 livre
+        const remaining = [0, 1, 2].filter(l => !blockedLanes.includes(l));
+        blockedLanes.push(remaining[Math.floor(Math.random() * remaining.length)]);
+      }
+
+      blockedLanes.forEach(l => {
+        state.lasers.push({
+          lane: l,
+          x: LANES_X[l],
+          y: 200,
+          vy: 650, // Velocidade de descida
+          length: 120,
+          color: '#ff0055'
+        });
+      });
+
+      audio.playLaserFire();
+    }
+
+    // --- LEI 3: MOTOR ANTI-SILÊNCIO (< 3s) ---
+    const MOCK_USERS = [
+      "@astronauta99", "@fuga_espacial", "@cyber_pilot", 
+      "@star_walker", "@holding_vip", "@piloto_neon"
+    ];
+
+    function runAntiSilence() {
+      const now = performance.now();
+      if (now - state.lastInteractionTime > 2200 && state.roundActive) {
+        state.lastInteractionTime = now;
+        const randomUser = MOCK_USERS[Math.floor(Math.random() * MOCK_USERS.length)];
+
+        // Encontra corredor livre dos lasers que estão descendo
+        const dangerousLanes = state.lasers
+          .filter(l => l.y > 900 && l.y < 1500)
+          .map(l => l.lane);
+
+        const safeLanes = [0, 1, 2].filter(l => !dangerousLanes.includes(l));
+        const targetLane = (safeLanes.length > 0)
+          ? safeLanes[Math.floor(Math.random() * safeLanes.length)]
+          : Math.floor(Math.random() * 3);
+
+        moveAstronaut(targetLane, randomUser);
+
+        // 12% de chance de micro-gift espontâneo
+        if (Math.random() < 0.12) {
+          triggerShieldDeflector(randomUser);
+        }
+      }
+    }
+
+    // --- PARTÍCULAS & CONFETES ---
+    function spawnJetpackParticles(x, y, color, count = 8) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.PI * 0.5 + (Math.random() - 0.5) * 1.2;
+        const spd = Math.random() * 9 + 4;
+        state.particles.push({
+          x: x + (Math.random() - 0.5) * 20,
+          y: y,
+          vx: Math.cos(angle) * spd,
+          vy: Math.sin(angle) * spd,
+          size: Math.random() * 5 + 2,
+          color: color,
+          alpha: 1.0,
+          decay: Math.random() * 0.04 + 0.03
+        });
+      }
+    }
+
+    function spawnConfetti() {
+      const colors = ['#00f0ff', '#ff0055', '#ffd700', '#00ff88', '#a855f7', '#ffffff'];
+      for (let i = 0; i < 90; i++) {
+        state.confetti.push({
+          x: Math.random() * 1080,
+          y: Math.random() * 600,
+          vx: (Math.random() - 0.5) * 6,
+          vy: Math.random() * 5 + 3,
+          rot: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 12,
+          w: Math.random() * 12 + 8,
+          h: Math.random() * 6 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1.0
+        });
+      }
+    }
+
+    // --- LOOP PRINCIPAL DE FÍSICA & ATUALIZAÇÃO ---
+    let lastTimestamp = performance.now();
+
+    function updateGame(dt) {
+      runAntiSilence();
+
+      if (state.roundActive) {
+        state.timeRemaining -= dt;
+        if (state.timeRemaining <= 0) {
+          state.timeRemaining = 0;
+          finalizeEscape();
+        }
+
+        if (state.warpTimer > 0) {
+          state.warpTimer -= dt;
+        }
+
+        // Subida de altitude contínua
+        const effectiveSpeed = (state.warpTimer > 0) ? state.climbSpeed * 3.5 : state.climbSpeed;
+        state.altitude += effectiveSpeed * dt;
+        state.bgOffset += effectiveSpeed * 12 * dt;
+
+        // Checagem de vitória (1.000 metros)
+        if (state.altitude >= TARGET_METERS) {
+          state.altitude = TARGET_METERS;
+          finalizeEscape();
+        }
+
+        // Suavização do movimento horizontal do astronauta
+        state.astronautX += (state.targetX - state.astronautX) * dt * 14;
+
+        // Efeito constante de partículas do jetpack
+        if (Math.random() < 0.65) {
+          spawnJetpackParticles(state.astronautX, state.astronautY + 30, '#00f0ff', 3);
+        }
+
+        // Geração periódica de lasers
+        const now = performance.now();
+        if (now - state.lastLaserSpawnTime > 1300 && state.warpTimer <= 0) {
+          state.lastLaserSpawnTime = now;
+          spawnSecurityLaser();
+        }
+
+        // Atualização de Lasers
+        for (let i = state.lasers.length - 1; i >= 0; i--) {
+          const l = state.lasers[i];
+          l.y += l.vy * dt;
+
+          // Colisão com o astronauta
+          const hitDistX = Math.abs(l.x - state.astronautX);
+          const hitDistY = Math.abs(l.y - state.astronautY);
+
+          if (hitDistX < 50 && hitDistY < 60) {
+            // Atingido pelo laser!
+            state.lasers.splice(i, 1);
+            if (state.warpTimer <= 0) {
+              if (state.shields > 0) {
+                state.shields--;
+                audio.playShieldImpact();
+                spawnJetpackParticles(state.astronautX, state.astronautY, '#38bdf8', 25);
+              } else {
+                // Sem escudo: perde altitude
+                state.altitude = Math.max(0, state.altitude - 40);
+                audio.playShieldImpact();
+                spawnJetpackParticles(state.astronautX, state.astronautY, '#ff0055', 30);
+              }
+            }
+            continue;
+          }
+
+          // Remove lasers que saíram da base
+          if (l.y > 1750) {
+            state.lasers.splice(i, 1);
+          }
+        }
+
+        updateHUD();
+      } else {
+        // Pós-rodada / Reset
+        state.resetCountdown -= dt;
+        const countdownEl = document.getElementById('podium-countdown');
+        if (countdownEl) {
+          countdownEl.innerText = `NOVA FUGA EM ${Math.ceil(state.resetCountdown)}S...`;
+        }
+        if (state.resetCountdown <= 0) {
+          initEscapeGame();
+        }
+      }
+
+      // Atualiza Partículas
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const p = state.particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+        if (p.alpha <= 0) {
+          state.particles.splice(i, 1);
+        }
+      }
+
+      // Atualiza Confetes
+      for (let i = state.confetti.length - 1; i >= 0; i--) {
+        const c = state.confetti[i];
+        c.y += c.vy;
+        c.x += c.vx;
+        c.rot += c.rotSpeed;
+        if (c.y > 1920) c.y = -20;
+      }
+    }
+
+    function updateHUD() {
+      // Timer
+      const min = Math.floor(state.timeRemaining / 60);
+      const sec = Math.floor(state.timeRemaining % 60);
+      document.getElementById('time-display').innerText = 
+        `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+
+      // Altitude e Nave
+      document.getElementById('altitude-display').innerText = `${Math.floor(state.altitude)} M`;
+      const dist = Math.max(0, TARGET_METERS - Math.floor(state.altitude));
+      document.getElementById('distance-display').innerText = `${dist} M`;
+
+      // Escudos
+      const shieldText = (state.warpTimer > 0)
+        ? "⚡ HIPER-DOBRA ATIVA"
+        : `🛡️ ESCUDO ${state.shields}x`;
+      document.getElementById('shield-display').innerText = shieldText;
+    }
+
+    function finalizeEscape() {
+      if (!state.roundActive) return;
+      state.roundActive = false;
+
+      audio.playVictoryFanfare();
+      spawnConfetti();
+
+      // Determina MVP do chat
+      let topUser = "@ComandanteEspacial";
+      let topPts = 180;
+      for (const [u, pts] of Object.entries(state.donors)) {
+        if (pts > topPts) {
+          topPts = pts;
+          topUser = u;
+        }
+      }
+
+      document.getElementById('podium-score-val').innerText = `${Math.floor(state.altitude)} METROS`;
+      document.getElementById('podium-mvp-user').innerText = `${topUser} (${topPts} pts)`;
+      document.getElementById('victory-modal').style.display = 'flex';
+    }
+
+    // --- RENDERIZAÇÃO CANVAS 2D DO POÇO DE SEGURANÇA MÁXIMA ---
+    function render() {
+      ctx.clearRect(0, 0, 1080, 1920);
+
+      // 1. Paredes Metálicas do Poço com Rolagem Vertical
+      drawShaftBackground();
+
+      // 2. Guias e Linhas de Corredores (3 Lanes)
+      drawLanes();
+
+      // 3. Lasers de Contenção Descendo
+      drawLasers();
+
+      // 4. Astronauta com Jetpack
+      drawAstronaut();
+
+      // 5. Partículas do Jetpack
+      drawParticles();
+
+      // 6. Confetes de Vitória
+      if (!state.roundActive) {
+        drawConfetti();
+      }
+    }
+
+    function drawShaftBackground() {
+      // Paredes laterais reforçadas
+      ctx.fillStyle = "#090d16";
+      ctx.fillRect(0, 0, 180, 1920);
+      ctx.fillRect(900, 0, 180, 1920);
+
+      // Nervuras metálicas com rolagem vertical contínua
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.15)";
+      ctx.lineWidth = 3;
+      const step = 90;
+      const offset = state.bgOffset % step;
+
+      for (let y = -step; y < 1920 + step; y += step) {
+        const lineY = y + offset;
+        // Nervura esquerda
+        ctx.beginPath();
+        ctx.moveTo(0, lineY);
+        ctx.lineTo(180, lineY);
+        ctx.stroke();
+
+        // Nervura direita
+        ctx.beginPath();
+        ctx.moveTo(900, lineY);
+        ctx.lineTo(1080, lineY);
+        ctx.stroke();
+      }
+
+      // Luzes de alarme vermelhas nas paredes
+      const alertY = (state.bgOffset * 0.7) % 360;
+      for (let y = -360; y < 1920 + 360; y += 360) {
+        ctx.fillStyle = "rgba(239, 68, 68, 0.7)";
+        ctx.beginPath();
+        ctx.arc(170, y + alertY, 8, 0, Math.PI * 2);
+        ctx.arc(910, y + alertY, 8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function drawLanes() {
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([20, 20]);
+
+      // Divisores entre corredores
+      ctx.beginPath();
+      ctx.moveTo(440, 0);
+      ctx.lineTo(440, 1920);
+      ctx.moveTo(640, 0);
+      ctx.lineTo(640, 1920);
+      ctx.stroke();
+
+      ctx.setLineDash([]);
+    }
+
+    function drawLasers() {
+      state.lasers.forEach(l => {
+        ctx.save();
+        ctx.strokeStyle = l.color;
+        ctx.lineWidth = 10;
+        ctx.lineCap = "round";
+        ctx.shadowColor = l.color;
+        ctx.shadowBlur = 20;
+
+        // Feixe de laser de contenção
+        ctx.beginPath();
+        ctx.moveTo(l.x, l.y - l.length / 2);
+        ctx.lineTo(l.x, l.y + l.length / 2);
+        ctx.stroke();
+
+        // Núcleo branco incandescente
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(l.x, l.y - l.length / 2);
+        ctx.lineTo(l.x, l.y + l.length / 2);
+        ctx.stroke();
+
+        ctx.restore();
+      });
+    }
+
+    function drawAstronaut() {
+      ctx.save();
+      ctx.translate(state.astronautX, state.astronautY);
+
+      // Redoma de Escudo Defletor Holográfico (se ativo)
+      if (state.shields > 0 || state.warpTimer > 0) {
+        const shieldColor = (state.warpTimer > 0) ? '#a855f7' : '#00f0ff';
+        ctx.save();
+        ctx.strokeStyle = shieldColor;
+        ctx.lineWidth = 3;
+        ctx.shadowColor = shieldColor;
+        ctx.shadowBlur = 25;
+
+        ctx.beginPath();
+        ctx.arc(0, 0, 52, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.fillStyle = (state.warpTimer > 0) ? 'rgba(168, 85, 247, 0.18)' : 'rgba(0, 240, 255, 0.15)';
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Jetpack nas costas
+      ctx.fillStyle = "#334155";
+      ctx.fillRect(-24, -15, 12, 35);
+      ctx.fillRect(12, -15, 12, 35);
+
+      // Bocais de propulsão
+      ctx.fillStyle = "#00f0ff";
+      ctx.fillRect(-22, 20, 8, 6);
+      ctx.fillRect(14, 20, 8, 6);
+
+      // Corpo do Traje Espacial
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.roundRect(-16, -20, 32, 42, 6);
+      ctx.fill();
+
+      // Capacete com Viseira Espelhada Dourada
+      ctx.fillStyle = "#030712";
+      ctx.beginPath();
+      ctx.arc(0, -32, 16, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#ffd700";
+      ctx.shadowColor = "#ffd700";
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.roundRect(-10, -37, 20, 11, 4);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Braços do Astronauta
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(-16, -10);
+      ctx.lineTo(-24, 8);
+      ctx.moveTo(16, -10);
+      ctx.lineTo(24, 8);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawParticles() {
+      state.particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1.0;
+      ctx.shadowBlur = 0;
+    }
+
+    function drawConfetti() {
+      state.confetti.forEach(c => {
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate((c.rot * Math.PI) / 180);
+        ctx.fillStyle = c.color;
+        ctx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+        ctx.restore();
+      });
+    }
+
+    // --- LOOP PRINCIPAL DE ANIMAÇÃO ---
+    function gameLoop(timestamp) {
+      const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.1);
+      lastTimestamp = timestamp;
+
+      updateGame(dt);
+      render();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // --- PROTOCOLO DE EVENTOS DO BROADCASTER & SDK ---
+    function initEventBus() {
+      try {
+        const channel = new BroadcastChannel('v5_broadcaster_games');
+        channel.onmessage = (event) => {
+          handleIncomingEvent(event.data);
+        };
+      } catch (e) {
+        console.warn("BroadcastChannel não suportado");
+      }
+
+      window.addEventListener('v5_event', (e) => {
+        if (e.detail) handleIncomingEvent(e.detail);
+      });
+    }
+
+    function handleIncomingEvent(payload) {
+      if (!payload) return;
+
+      const type = payload.type;
+      const comment = (payload.comment || "").toString().toLowerCase().trim();
+      const user = payload.user || "@espectador";
+      const giftName = payload.giftName || null;
+
+      // Parsing de Comentários / Votos
+      if (type === 'comment' || comment) {
+        if (comment === '1' || comment.includes('esq') || comment.includes('esquerda')) {
+          moveAstronaut(0, user);
+        } else if (comment === '2' || comment.includes('meio') || comment.includes('centro')) {
+          moveAstronaut(1, user);
+        } else if (comment === '3' || comment.includes('dir') || comment.includes('direita')) {
+          moveAstronaut(2, user);
+        } else if (comment.includes('boost') || comment.includes('turbo') || comment.includes('sobe')) {
+          triggerBoost(user);
+        }
+      }
+
+      // Parsing de Gifts
+      if (type === 'gift' || giftName) {
+        if (giftName === 'Lion' || giftName === 'Foguete') {
+          triggerWarpDrive(user);
+        } else {
+          triggerShieldDeflector(user);
+        }
+      }
+    }
+
+    // --- GAVETA DE DEPURAÇÃO DO STREAMER ---
+    function toggleDebugDrawer() {
+      const drawer = document.getElementById('debug-drawer');
+      drawer.style.display = (drawer.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        toggleDebugDrawer();
+      }
+    });
+
+    document.querySelector('.bottom-safe-zone').addEventListener('dblclick', () => {
+      toggleDebugDrawer();
+    });
+
+    // Início automático ao carregar
+    window.addEventListener('load', () => {
+      initEscapeGame();
+      initEventBus();
+      requestAnimationFrame(gameLoop);
+    });
+  </script>
+</body>
+</html>

@@ -311,6 +311,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "esq", "meio", "dir", "puxa"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "38_fuga_da_prisao_espacial": {
+        "name": "Fuga da Prisão Espacial",
+        "category": "fuga_reflexo",
+        "description": "Escalada vertical de 1.000m com jetpack em 3 corredores desviando de lasers de contenção, com escudo defletor e hiper-dobra",
+        "commands": ["1", "2", "3", "esq", "meio", "dir", "boost", "turbo"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 
