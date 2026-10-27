@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Batata Quente Explosiva (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 35%, #2a0b12 0%, #120306 60%, #050102 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Vinheta de Pulso Cardíaco */
+    #heartbeat-vignette {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      box-shadow: inset 0 0 80px rgba(239, 68, 68, 0);
+      transition: box-shadow 0.1s ease-out;
+      z-index: 2;
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 14px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(18, 3, 6, 0.98) 0%, rgba(18, 3, 6, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #ef4444;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .bpm-badge {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.6);
+      color: #fca5a5;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* HUD de Tensão e Pavio */
+    .bomb-hud {
+      width: 100%;
+      background: rgba(36, 10, 18, 0.85);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .bomb-status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .bomb-title {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #fee2e2;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .holder-badge {
+      font-size: 11px;
+      font-weight: 900;
+      color: #facc15;
+      font-family: monospace;
+    }
+
+    .fuse-bar-bg {
+      position: relative;
+      width: 100%;
+      height: 14px;
+      background: #090204;
+      border-radius: 7px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .fuse-bar-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #ef4444 0%, #f97316 50%, #facc15 100%);
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+      transition: width 0.1s linear;
+    }
+
+    .danger-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: #94a3b8;
+    }
+
+    /* Canvas Principal */
+    #bomb-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 10px 14px 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(18, 3, 6, 0.98) 0%, rgba(18, 3, 6, 0) 100%);
+    }
+
+    /* Grid de Passes Rápidos */
+    .pass-controls-grid {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .pass-card {
+      flex: 1;
+      background: rgba(42, 12, 22, 0.85);
+      border: 2px solid rgba(239, 68, 68, 0.3);
+      border-radius: 10px;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      transition: transform 0.1s ease, border-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .pass-card-active {
+      transform: scale(1.06);
+      border-color: #facc15 !important;
+      box-shadow: 0 0 15px rgba(250, 204, 21, 0.6);
+    }
+
+    .pass-key {
+      background: #dc2626;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 900;
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 8px rgba(220, 38, 38, 0.6);
+    }
+
+    .pass-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #fee2e2;
+      text-transform: uppercase;
+    }
+
+    .pass-sub {
+      font-size: 9px;
+      font-weight: 700;
+      color: #ef4444;
+      font-family: monospace;
+    }
+
+    /* Leaderboard de Passes */
+    .pass-stat-bar {
+      width: 100%;
+      background: rgba(36, 10, 18, 0.8);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      padding: 5px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .pass-stat-label {
+      font-weight: 800;
+      color: #facc15;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pass-stat-user {
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .pass-stat-count {
+      font-family: monospace;
+      font-weight: 900;
+      color: #38bdf8;
+    }
+
+    /* Gaveta de Depuração Local */
+    .debug-drawer {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .debug-btn {
+      background: #240a12;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      padding: 5px 9px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .debug-btn:hover { background: #7f1d1d; }
+
+    /* Overlay de Explosão */
+    #explosion-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(8, 1, 2, 0.94);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease-out;
+    }
+
+    #explosion-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .overlay-badge {
+      font-size: 52px;
+      animation: explodePop 0.8s infinite alternate ease-in-out;
+    }
+
+    @keyframes explodePop {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.2); }
+    }
+
+    .overlay-title {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      background: linear-gradient(135deg, #ef4444 0%, #f97316 50%, #facc15 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .eliminated-card {
+      width: 85%;
+      max-width: 320px;
+      background: rgba(42, 12, 22, 0.9);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .eliminated-avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: #7f1d1d;
+      border: 3px solid #ef4444;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.8);
+    }
+
+    .eliminated-name {
+      font-size: 14px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .auto-reset-bar {
+      width: 85%;
+      max-width: 320px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .auto-reset-fill {
+      height: 100%;
+      width: 100%;
+      background: #ef4444;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-stage">
+    <div id="heartbeat-vignette"></div>
+
+    <!-- Top Safe Zone (140px) -->
+    <header class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <div class="live-dot"></div>
+          V5 BATATA QUENTE
+        </div>
+        <div class="bpm-badge" id="bpm-badge">
+          💓 <span id="bpm-val">75 BPM</span>
+        </div>
+      </div>
+
+      <!-- Placar da Bomba -->
+      <div class="bomb-hud">
+        <div class="bomb-status-row">
+          <div class="bomb-title">
+            💣 BOMBA DE PAVIO CURTO
+          </div>
+          <div class="holder-badge" id="holder-badge">COM: @aguardando</div>
+        </div>
+
+        <div class="fuse-bar-bg">
+          <div class="fuse-bar-fill" id="fuse-bar-fill"></div>
+        </div>
+
+        <div class="danger-row">
+          <span>NÍVEL DE PERIGO:</span>
+          <span style="color: #ef4444; font-weight: 900;" id="danger-text">MODERADO</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Principal da Bomba e Avatares -->
+    <canvas id="bomb-canvas"></canvas>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <footer class="bottom-panel">
+      <!-- Grid de Ações -->
+      <div class="pass-controls-grid">
+        <div class="pass-card" id="pass-card-1" onclick="passToAvatar(0)">
+          <div class="pass-key">1</div>
+          <div class="pass-label">PASSAR 1</div>
+          <div class="pass-sub" id="p-sub-1">@jogador_1</div>
+        </div>
+
+        <div class="pass-card" id="pass-card-2" onclick="passToAvatar(1)">
+          <div class="pass-key">2</div>
+          <div class="pass-label">PASSAR 2</div>
+          <div class="pass-sub" id="p-sub-2">@jogador_2</div>
+        </div>
+
+        <div class="pass-card" id="pass-card-3" onclick="passToAvatar(2)">
+          <div class="pass-key">3</div>
+          <div class="pass-label">PASSAR 3</div>
+          <div class="pass-sub" id="p-sub-3">@jogador_3</div>
+        </div>
+      </div>
+
+      <!-- Leaderboard de Passes -->
+      <div class="pass-stat-bar">
+        <div class="pass-stat-label">⚡ MAIS RÁPIDO DO CHAT:</div>
+        <div class="pass-stat-user" id="mvp-user">@aguardando_chat</div>
+        <div class="pass-stat-count" id="mvp-passes">0 PASSES</div>
+      </div>
+
+      <!-- Gaveta de Depuração Local -->
+      <div class="debug-drawer">
+        <button class="debug-btn" onclick="passToRandom()">🎲 Passar (Chat)</button>
+        <button class="debug-btn" onclick="triggerShieldGift()">🛡️ Gift Escudo</button>
+        <button class="debug-btn" onclick="forceExplode()">💥 Forçar Detonação</button>
+        <button class="debug-btn" onclick="resetRound()">🔄 Reset</button>
+      </div>
+    </footer>
+
+    <!-- Overlay de Explosão & Eliminação -->
+    <div id="explosion-overlay">
+      <div class="overlay-badge">💥</div>
+      <div class="overlay-title">KABOOOOM!</div>
+      <div style="font-size: 13px; color: #fca5a5;">A bomba detonou nas mãos de:</div>
+
+      <div class="eliminated-card">
+        <div class="eliminated-avatar">💀</div>
+        <div class="eliminated-name" id="eliminated-name">@jogador</div>
+        <div style="font-size: 11px; color: #94a3b8;">ELIMINADO DA RODADA!</div>
+      </div>
+
+      <div class="auto-reset-bar">
+        <div class="auto-reset-fill" id="reset-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. SINTETIZADOR DE ÁUDIO PROCEDURAL (Web Audio API - Etapa 065)
+    // =========================================================================
+    class HotPotatoAudioSynthesizer {
+      constructor() {
+        this.ctx = null;
+        this.fuseNoiseNode = null;
+        this.fuseGainNode = null;
+        this.heartbeatTimer = null;
+        this.currentBpm = 75;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Pavio queimando contínuo com chiado e estalidos
+      startFuseSound() {
+        this.init();
+        if (this.fuseNoiseNode) return;
+
+        const bufferSize = this.ctx.sampleRate * 2;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          // Ruído rosa com pulsos estocásticos de faísca
+          const spark = Math.random() < 0.02 ? (Math.random() * 2 - 1) : 0;
+          data[i] = ((Math.random() * 2 - 1) * 0.15) + (spark * 0.85);
+        }
+
+        this.fuseNoiseNode = this.ctx.createBufferSource();
+        this.fuseNoiseNode.buffer = buffer;
+        this.fuseNoiseNode.loop = true;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.value = 2800;
+
+        this.fuseGainNode = this.ctx.createGain();
+        this.fuseGainNode.gain.setValueAtTime(0.2, this.ctx.currentTime);
+
+        this.fuseNoiseNode.connect(filter);
+        filter.connect(this.fuseGainNode);
+        this.fuseGainNode.connect(this.ctx.destination);
+        this.fuseNoiseNode.start();
+      }
+
+      stopFuseSound() {
+        if (this.fuseNoiseNode) {
+          try { this.fuseNoiseNode.stop(); } catch(e) {}
+          this.fuseNoiseNode.disconnect();
+          this.fuseNoiseNode = null;
+        }
+      }
+
+      // Tic-tac cardíaco procedural acelerado (tum-tum)
+      playHeartbeatPulse() {
+        this.init();
+        const now = this.ctx.currentTime;
+
+        // Primeiro batimento (Tum)
+        const osc1 = this.ctx.createOscillator();
+        const gain1 = this.ctx.createGain();
+        osc1.type = 'triangle';
+        osc1.frequency.setValueAtTime(65, now);
+        osc1.frequency.exponentialRampToValueAtTime(35, now + 0.08);
+
+        gain1.gain.setValueAtTime(0.5, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+
+        osc1.connect(gain1);
+        gain1.connect(this.ctx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.1);
+
+        // Segundo batimento reflexo (Tum) a +0.12s
+        const osc2 = this.ctx.createOscillator();
+        const gain2 = this.ctx.createGain();
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(55, now + 0.12);
+        osc2.frequency.exponentialRampToValueAtTime(30, now + 0.20);
+
+        gain2.gain.setValueAtTime(0.35, now + 0.12);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.21);
+
+        osc2.connect(gain2);
+        gain2.connect(this.ctx.destination);
+        osc2.start(now + 0.12);
+        osc2.stop(now + 0.22);
+      }
+
+      // Som de passe rápido (whoosh de ar quente)
+      playPassSound() {
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(450, now);
+        osc.frequency.exponentialRampToValueAtTime(180, now + 0.12);
+
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.13);
+      }
+
+      // Detonação explosiva colossal
+      playExplosion() {
+        this.init();
+        this.stopFuseSound();
+        const now = this.ctx.currentTime;
+
+        // Sub bass drop de choque
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.exponentialRampToValueAtTime(25, now + 0.6);
+
+        gain.gain.setValueAtTime(0.9, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.66);
+
+        // Ruído estéreo massivo de detonação
+        const bufferSize = this.ctx.sampleRate * 0.5;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.08));
+        }
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const noiseGain = this.ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.8, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+        noise.connect(noiseGain);
+        noiseGain.connect(this.ctx.destination);
+        noise.start(now);
+      }
+    }
+
+    const sound = new HotPotatoAudioSynthesizer();
+
+    // =========================================================================
+    // 2. MOTOR DO JOGO & PARTICIPANTES
+    // =========================================================================
+    const stage = document.getElementById('game-stage');
+    const canvas = document.getElementById('bomb-canvas');
+    const ctx = canvas.getContext('2d');
+    const vignette = document.getElementById('heartbeat-vignette');
+
+    function resizeCanvas() {
+      canvas.width = stage.clientWidth;
+      canvas.height = stage.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Avatares na Tela (Círculo Elíptico Vertical)
+    const avatars = [
+      { id: 0, name: '@pedro_live',   x: 0.28, y: 0.38, hasBomb: true,  color: '#38bdf8', icon: '🤠', immune: 0 },
+      { id: 1, name: '@camila_vip',   x: 0.72, y: 0.38, hasBomb: false, color: '#ec4899', icon: '🦊', immune: 0 },
+      { id: 2, name: '@lucas_hero',   x: 0.22, y: 0.55, hasBomb: false, color: '#10b981', icon: '🤖', immune: 0 },
+      { id: 3, name: '@mari_gamer',   x: 0.78, y: 0.55, hasBomb: false, color: '#facc15', icon: '🐱', immune: 0 },
+      { id: 4, name: '@felipe_tikt',  x: 0.50, y: 0.68, hasBomb: false, color: '#a855f7', icon: '🦁', immune: 0 }
+    ];
+
+    let currentHolder = 0;
+
+    // Tempo Aleatório de Pavio (entre 22s e 38s)
+    let totalRoundTime = 25.0;
+    let timeRemaining = totalRoundTime;
+    let isGameOver = false;
+    let shakeIntensity = 0;
+
+    // Posição Interpolada da Bomba em Voo
+    const bombPos = { x: 0, y: 0, scale: 1.0, arcY: 0 };
+    let flightProgress = 1.0;
+    let flightStart = { x: 0, y: 0 };
+    let flightTarget = { x: 0, y: 0 };
+
+    // Estatísticas MVP
+    const passRank = new Map();
+    let topPasser = null;
+
+    // Partículas de Faísca do Pavio
+    const sparkParticles = [];
+
+    // =========================================================================
+    // 3. AÇÕES DE PASSE & ESCUDOS
+    // =========================================================================
+    function passToAvatar(targetIdx, user = '@espectador') {
+      if (isGameOver) return;
+      if (targetIdx === currentHolder || targetIdx < 0 || targetIdx >= avatars.length) return;
+
+      lastInteractionTime = Date.now();
+      const from = avatars[currentHolder];
+      const to = avatars[targetIdx];
+
+      // Iniciar voo parabólico da bomba
+      flightStart = { x: from.x * canvas.width, y: from.y * canvas.height };
+      flightTarget = { x: to.x * canvas.width, y: to.y * canvas.height };
+      flightProgress = 0.0;
+
+      from.hasBomb = false;
+      to.hasBomb = true;
+      currentHolder = targetIdx;
+
+      sound.playPassSound();
+
+      // Feedback visual
+      const btn = document.getElementById(`pass-card-${(targetIdx % 3) + 1}`);
+      if (btn) {
+        btn.classList.add('pass-card-active');
+        setTimeout(() => btn.classList.remove('pass-card-active'), 120);
+      }
+
+      // Rastrear MVP de passes
+      recordPass(user);
+    }
+
+    function passToRandom(user = '@espectador') {
+      const candidates = avatars.map((_, idx) => idx).filter(idx => idx !== currentHolder);
+      const nextIdx = candidates[Math.floor(Math.random() * candidates.length)];
+      passToAvatar(nextIdx, user);
+    }
+
+    function triggerShieldGift(user = '@whale_gift') {
+      if (isGameOver) return;
+      lastInteractionTime = Date.now();
+
+      // Escudo no holder atual e repulsão instantânea
+      avatars[currentHolder].immune = 3.5;
+      passToRandom(user);
+      shakeIntensity = 15;
+    }
+
+    function recordPass(user) {
+      let count = (passRank.get(user) || 0) + 1;
+      passRank.set(user, count);
+
+      if (!topPasser || count > topPasser.count) {
+        topPasser = { user, count };
+        document.getElementById('mvp-user').innerText = user;
+        document.getElementById('mvp-passes').innerText = `${count} PASSES`;
+      }
+    }
+
+    // =========================================================================
+    // 4. LOOP DE FÍSICA & BPM CARDÍACO
+    // =========================================================================
+    let lastTime = performance.now();
+    let heartbeatAcc = 0;
+
+    function gameLoop(timestamp) {
+      const dt = Math.min(0.1, (timestamp - lastTime) / 1000);
+      lastTime = timestamp;
+
+      // Shake decay
+      if (shakeIntensity > 0) {
+        shakeIntensity = Math.max(0, shakeIntensity - (30 * dt));
+        const sx = (Math.random() - 0.5) * shakeIntensity;
+        const sy = (Math.random() - 0.5) * shakeIntensity;
+        stage.style.transform = `translate(${sx}px, ${sy}px)`;
+      } else {
+        stage.style.transform = 'none';
+      }
+
+      if (!isGameOver) {
+        // Pavio queima progressivamente
+        timeRemaining -= dt;
+        sound.startFuseSound();
+
+        // Calcular BPM dinâmico (sobe de 75 BPM até 180 BPM nos segundos finais)
+        const progress = Math.max(0, 1.0 - (timeRemaining / totalRoundTime));
+        const bpm = Math.floor(75 + (progress * progress * 105));
+        document.getElementById('bpm-val').innerText = `${bpm} BPM`;
+
+        // Disparar batimento cardíaco com intervalo proporcional ao BPM
+        const intervalSec = 60 / bpm;
+        heartbeatAcc += dt;
+        if (heartbeatAcc >= intervalSec) {
+          heartbeatAcc = 0;
+          sound.playHeartbeatPulse();
+
+          // Flash na vinheta vermelha
+          vignette.style.boxShadow = `inset 0 0 ${40 + progress * 80}px rgba(239, 68, 68, ${0.3 + progress * 0.5})`;
+          setTimeout(() => {
+            vignette.style.boxShadow = 'inset 0 0 80px rgba(239, 68, 68, 0)';
+          }, 120);
+        }
+
+        // Pavio Zerou: Explosão!
+        if (timeRemaining <= 0) {
+          timeRemaining = 0;
+          forceExplode();
+          return;
+        }
+
+        // Interpolação de voo da bomba
+        if (flightProgress < 1.0) {
+          flightProgress = Math.min(1.0, flightProgress + (dt * 5.5));
+          const arc = Math.sin(flightProgress * Math.PI) * -60;
+          bombPos.x = flightStart.x + (flightTarget.x - flightStart.x) * flightProgress;
+          bombPos.y = flightStart.y + (flightTarget.y - flightStart.y) * flightProgress + arc;
+        } else {
+          const h = avatars[currentHolder];
+          bombPos.x = h.x * canvas.width;
+          bombPos.y = h.y * canvas.height;
+        }
+
+        // Gerar faíscas no pavio
+        spawnFuseSparks(bombPos.x, bombPos.y - 28);
+      }
+
+      // Atualizar Partículas de Faísca
+      for (let i = sparkParticles.length - 1; i >= 0; i--) {
+        const p = sparkParticles[i];
+        p.life += dt;
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.alpha = Math.max(0, 1.0 - (p.life / p.maxLife));
+        if (p.life >= p.maxLife) sparkParticles.splice(i, 1);
+      }
+
+      render();
+      updateHUD();
+      requestAnimationFrame(gameLoop);
+    }
+    requestAnimationFrame(gameLoop);
+
+    function spawnFuseSparks(x, y) {
+      for (let i = 0; i < 2; i++) {
+        const ang = (Math.random() - 0.5) * Math.PI * 1.5 - Math.PI * 0.5;
+        const spd = 40 + Math.random() * 80;
+        sparkParticles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd,
+          color: Math.random() > 0.5 ? '#facc15' : '#f97316',
+          size: 2 + Math.random() * 3,
+          alpha: 1.0,
+          life: 0,
+          maxLife: 0.25
+        });
+      }
+    }
+
+    // =========================================================================
+    // 5. RENDERIZAÇÃO VETORIAL
+    // =========================================================================
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 1. Desenhar Avatares
+      avatars.forEach((av, idx) => {
+        const ax = av.x * canvas.width;
+        const ay = av.y * canvas.height;
+        const isHolder = (idx === currentHolder && flightProgress >= 0.85);
+
+        ctx.save();
+        ctx.translate(ax, ay);
+
+        // Aura de perigo no que está com a bomba
+        if (isHolder) {
+          ctx.strokeStyle = '#ef4444';
+          ctx.lineWidth = 4;
+          ctx.shadowColor = '#ef4444';
+          ctx.shadowBlur = 20;
+          ctx.beginPath();
+          ctx.arc(0, 0, 38, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        // Círculo base do avatar
+        ctx.fillStyle = av.color;
+        ctx.shadowColor = av.color;
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.arc(0, 0, 28, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Emoji/Ícone central
+        ctx.font = '24px -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(av.icon, 0, 0);
+
+        // Nome do Avatar
+        ctx.font = '700 11px -apple-system, sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(av.name, 0, 42);
+
+        ctx.restore();
+      });
+
+      // 2. Desenhar Bomba
+      ctx.save();
+      ctx.translate(bombPos.x, bombPos.y);
+
+      // Corpo esférico preto da bomba
+      ctx.fillStyle = '#0f0508';
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 3;
+      ctx.shadowColor = '#ef4444';
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      ctx.arc(0, 0, 20, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Pavio de corda
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, -20);
+      ctx.quadraticCurveTo(8, -32, 0, -28);
+      ctx.stroke();
+
+      ctx.restore();
+
+      // 3. Faíscas
+      sparkParticles.forEach(p => {
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    // =========================================================================
+    // 6. ATUALIZAÇÃO DA HUD
+    // =========================================================================
+    const fuseFill = document.getElementById('fuse-bar-fill');
+    const holderBadge = document.getElementById('holder-badge');
+    const dangerText = document.getElementById('danger-text');
+
+    function updateHUD() {
+      const pct = Math.max(0, (timeRemaining / totalRoundTime)) * 100;
+      fuseFill.style.width = `${pct}%`;
+      holderBadge.innerText = `COM: ${avatars[currentHolder].name}`;
+
+      if (pct < 25) {
+        dangerText.innerText = 'CRÍTICO! 💥';
+        dangerText.style.color = '#ef4444';
+      } else if (pct < 60) {
+        dangerText.innerText = 'ALTO 🔥';
+        dangerText.style.color = '#f97316';
+      } else {
+        dangerText.innerText = 'MODERADO ⚠️';
+        dangerText.style.color = '#facc15';
+      }
+    }
+
+    // =========================================================================
+    // 7. EXPLOSÃO, OVERLAY & AUTO-RESET (5 Segundos)
+    // =========================================================================
+    const explosionOverlay = document.getElementById('explosion-overlay');
+    const eliminatedName = document.getElementById('eliminated-name');
+    const resetFill = document.getElementById('reset-fill');
+
+    function forceExplode() {
+      if (isGameOver) return;
+      isGameOver = true;
+      shakeIntensity = 35;
+      sound.playExplosion();
+
+      const victim = avatars[currentHolder];
+      eliminatedName.innerText = victim.name;
+      explosionOverlay.classList.add('active');
+
+      // Auto-reset em 5s
+      resetFill.style.transition = 'none';
+      resetFill.style.width = '100%';
+      void resetFill.offsetWidth;
+      resetFill.style.transition = 'width 5s linear';
+      resetFill.style.width = '0%';
+
+      setTimeout(() => {
+        resetRound();
+      }, 5000);
+    }
+
+    function resetRound() {
+      totalRoundTime = 22.0 + Math.random() * 16.0; // 22 a 38 segundos
+      timeRemaining = totalRoundTime;
+      isGameOver = false;
+      currentHolder = Math.floor(Math.random() * avatars.length);
+      avatars.forEach((a, idx) => { a.hasBomb = (idx === currentHolder); a.immune = 0; });
+      flightProgress = 1.0;
+      sparkParticles.length = 0;
+      explosionOverlay.classList.remove('active');
+    }
+
+    // =========================================================================
+    // 8. MOTOR ANTI-SILÊNCIO
+    // =========================================================================
+    const mockUsers = ['@batata_ninja', '@fogo_puro', '@tictac_master', '@dodge_king'];
+    let lastInteractionTime = Date.now();
+
+    setInterval(() => {
+      if (isGameOver) return;
+      if (Date.now() - lastInteractionTime > 1800) {
+        const randUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+        passToRandom(randUser);
+      }
+    }, 1500);
+
+    // =========================================================================
+    // 9. V5 BROADCASTER EVENT BUS
+    // =========================================================================
+    const broadcasterChannel = new BroadcastChannel('v5_broadcaster_games');
+    broadcasterChannel.onmessage = (event) => {
+      handleIncomingEvent(event.data);
+    };
+
+    window.addEventListener('v5_event', (e) => {
+      handleIncomingEvent(e.detail);
+    });
+
+    function handleIncomingEvent(data) {
+      if (!data) return;
+      lastInteractionTime = Date.now();
+
+      const user = data.user || '@espectador';
+      const comment = (data.comment || '').trim().toLowerCase();
+      const isGift = data.type === 'gift';
+
+      if (isGift) {
+        triggerShieldGift(user);
+      } else {
+        if (comment.includes('1')) {
+          passToAvatar(0, user);
+        } else if (comment.includes('2')) {
+          passToAvatar(1, user);
+        } else if (comment.includes('3')) {
+          passToAvatar(2, user);
+        } else {
+          passToRandom(user);
+        }
+      }
+    }
+  </script>
+</body>
+</html>

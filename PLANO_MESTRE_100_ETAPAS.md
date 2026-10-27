@@ -127,8 +127,8 @@
 - [x] **Etapa 061:** Arquitetura de jogos de eliminação por rodadas com contagem regressiva progressiva e tensão sonora crescente.
 - [x] **Etapa 062:** Forjamento do Cartucho #07: Pêndulo Demolidor (Chat ajusta a altura de liberação da bola de demolição para esmagar a fortaleza adversária).
 - [x] **Etapa 063:** Física pendular de corda com gravidade amortecida e detecção de impacto estrutural.
-- [ ] **Etapa 064:** Forjamento do Cartucho #21: Batata Quente Explosiva (Bomba com pavio aceso passando entre avatares na tela com tempo aleatório de 15 a 45s).
-- [ ] **Etapa 065:** Efeito sonoro procedural de pavio queimando e tic-tac acelerado sincronizado com o batimento cardíaco da live.
+- [x] **Etapa 064:** Forjamento do Cartucho #21: Batata Quente Explosiva (Bomba com pavio aceso passando entre avatares na tela com tempo aleatório de 15 a 45s).
+- [x] **Etapa 065:** Efeito sonoro procedural de pavio queimando e tic-tac acelerado sincronizado com o batimento cardíaco da live.
 - [ ] **Etapa 066:** Forjamento do Cartucho #22: Ponte de Vidro Quebradiço (Chat escolhe caminho esquerdo ou direito; passos errados caem no precipício).
 - [ ] **Etapa 067:** Forjamento do Cartucho #23: Sobrevivência na Lava (Plataformas flutuantes que afundam na lava neon conforme recebem peso de votos).
 - [ ] **Etapa 068:** Animações de erupção de partículas incandescentes e sons de borbulhamento térmico.

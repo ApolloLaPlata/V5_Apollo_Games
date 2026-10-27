@@ -45,6 +45,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | **18** | `18_roleta_russa_baloes` | Roleta Russa de Balões | Balão central elástico, agulha em 6 câmaras do tambor, estouro fatídico e spotlight do usuário sorteado | **HOMOLOGADO** |
 | **19** | `19_defesa_da_torre_chat` | Defesa da Torre do Chat | Hordas de inimigos descendo em 3 lanes verticais enquanto o chat ativa e aprimora canhões nos slots com bomba orbital de gifts | **HOMOLOGADO** |
 | **20** | `20_subida_da_montanha_sagrada` | Subida da Montanha Sagrada | Escalada vertical até 1.000m, desvio de pedregulhos e avalanches com salto, votos e voo místico da Fênix de gifts | **HOMOLOGADO** |
+| **21** | `21_batata_quente_explosiva` | Batata Quente Explosiva | Bomba relógio com pavio aceso passando entre avatares, BPM cardíaco acelerado (75 a 180 BPM) e eliminação | **HOMOLOGADO** |
 
 ---
 

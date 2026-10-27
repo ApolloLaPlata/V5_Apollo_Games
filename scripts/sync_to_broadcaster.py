@@ -159,6 +159,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "subir", "esq", "dir"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "21_batata_quente_explosiva": {
+        "name": "Batata Quente Explosiva",
+        "category": "tensao_eliminacao",
+        "description": "Bomba com pavio aceso passando entre avatares na tela com tempo aleatório de 20 a 40s, BPM acelerado e eliminação",
+        "commands": ["1", "2", "3", "passar"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 
