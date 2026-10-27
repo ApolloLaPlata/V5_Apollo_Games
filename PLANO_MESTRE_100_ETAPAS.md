@@ -42,7 +42,7 @@
 ### FASE 1: FUNDAÇÃO DO TEST LAB 9:16 & MOTORES CENTRAIS (ETAPAS 001 A 010)
 - [x] **Etapa 001:** Construção do Test Lab Local (`index.html` na raiz do workspace) com moldura vertical de smartphone 9:16 (1080x1920 responsivo), iframe seletor de cartuchos e monitor de eventos.
 - [x] **Etapa 002:** Implementação do Injetor de Eventos de Live no Test Lab: simulador de comentários (`1`, `2`, `3`, tags customizadas), curtidas contínuas e painel de presentes com pesos calibrados (Rosas, Moedas, Leão).
-- [ ] **Etapa 003:** Refatoração e Padronização do `sdk/v5_live_game_sdk.js` com auto-detecção de ambiente (OBS Browser Source vs Test Lab Iframe vs Standalone).
+- [x] **Etapa 003:** Refatoração e Padronização do `sdk/v5_live_game_sdk.js` com auto-detecção de ambiente (OBS Browser Source vs Test Lab Iframe vs Standalone).
 - [ ] **Etapa 004:** Implementação de Telemetria e Monitor de FPS/CPU no SDK (garantindo que o cartucho permaneça a 60 FPS com consumo < 5% da thread principal).
 - [ ] **Etapa 005:** Expansão do Sintetizador `src/audio/v5_synth_audio.js` com gerador de acordes polifônicos, ruído branco para explosões/confetes e síntese FM para sintetizadores retrô.
 - [ ] **Etapa 006:** Criação da biblioteca procedural de jingles e fanfarras de vitória no sintetizador de áudio (marchas comemorativas de 5 segundos).
