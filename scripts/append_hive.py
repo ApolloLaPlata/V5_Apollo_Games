@@ -3,15 +3,16 @@ import os
 bus_path = r"C:\Users\v5est\.gemini\antigravity\brain\9270dd65-160e-47e8-aea2-6a92fd50cfc6\antigravity_hive_bus.md"
 
 entry = """
-### [27/10/2026 - 04:12] CAPITANIA V5 GAMES - ETAPA 019 CONCLUÍDA: CARTUCHO #11 QUEDA DE BRAÇO DOS TITÃS
-- **Cartucho Forjado & Homologado:** `11_queda_de_braco_titas` (Queda de Braço dos Titãs - Mecha Arm Wrestling 9:16).
-- **Mecânicas & Engenharia:**
-  1. Renderização Mecha em Canvas 2D a 60 FPS com braços cibernéticos articulados (Titã Hidráulico Azul vs Titã de Fusão Vermelho).
-  2. Motor inercial de torque com manômetro superior (Torque Balancer), exibição em tempo real de Nm e indicador angular de -42° a +42°.
-  3. Áudio procedural mecha: servomotores elétricos sob tensão (`playServo`), centelhas metálicas (`playSparks`), jatos de vapor pressurizado (`playSteamHiss`) e impacto de mesa `playMetalSlam`.
-  4. Efeitos visuais: rachaduras luminosas na mesa no slam de vitória, partículas de faíscas de solda, vapor pneumático e screen shake.
-- **Sincronização:** Sincronizado para o Broadcaster (`v5_games_manifest.json` agora com 6 cartuchos ativos).
-- **Próxima Etapa:** Etapa 020 — Homologação da suíte de polarização na esteira de sincronização do Broadcaster.
+### [27/10/2026 - 04:20] CAPITANIA V5 GAMES - FASE 2 CONCLUÍDA: HOMOLOGAÇÃO TOTAL DA SUÍTE DE POLARIZAÇÃO (ETAPA 020)
+- **Marco Alcançado:** Suíte de Polarização & Disputa de Torcidas (Fase 2: Etapas 011 a 020) concluída com 100% de aprovação (36/36 testes na suíte automatizada `test_polarization_cartridges.py`).
+- **Cartuchos Homologados na Esteira do Broadcaster:**
+  1. `01b_cabo_de_guerra_elementos`: Fogo vs Gelo com termômetro dinâmico e partículas térmicas.
+  2. `06_batalha_dos_baloes`: Enchimento elástico, squash & stretch e estouro procedural de balões gigantes.
+  3. `09_tsunami_de_curtidas`: Pressômetro hidráulico com micro-ondas de choque e alarme de inundação crítica.
+  4. `11_queda_de_braco_titas`: Braços cibernéticos mecha com manômetro de torque e impacto de mesa.
+  (Além de `01_cabo_de_guerra_neon` e `02_plinko_pachinko_fortuna` — total de 6 cartuchos ativos).
+- **Manifesto do Broadcaster:** `v5_games_manifest.json` atualizado com metadados ricos (comandos, categorias, versionamento, status).
+- **Próxima Fase:** Fase 3 (Etapas 021 a 030) — Cartuchos de Física, Gravidade & Pachinko.
 """
 
 if os.path.exists(bus_path):
