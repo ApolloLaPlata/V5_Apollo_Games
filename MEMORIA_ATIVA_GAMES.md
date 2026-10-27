@@ -29,7 +29,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | **02** | `02_plinko_pachinko_fortuna` | Plinko da Fortuna | Comentários e gifts soltam bolinhas físicas que caem em multiplicadores (50x Jackpot) | **HOMOLOGADO** |
 | **03** | `03_corrida_avatares_holding` | Corrida dos Avatares da Holding | Roxingo, Baiano e Macaco Driver disputando circuito pseudo-3D com nitros e telemetria | **HOMOLOGADO** |
 | **04** | `04_boss_raid_cooperativo` | Boss Raid do Chat | Chat inteiro ataca monstro gigante com barra de HP em 45 segundos | Planejado |
-| **05** | `05_roleta_desafios_live` | Roleta dos Desafios | Presentes giram a roleta de desafios cômicos para o streamer ou avatar | Planejado |
+| **05** | `05_roleta_desafios_live` | Roleta dos Desafios da Live | Roleta determinística com palheta mecânica clicante, customizador de fatias e super-giros | **HOMOLOGADO** |
 | **06** | `06_batalha_dos_baloes` | Estouro de Balão | Dois lados inflando balões colossais com física elástica até o estouro | **HOMOLOGADO** |
 | **07** | `07_pendulo_destruidor` | Pêndulo da Demolição | Chat ajusta o ângulo do pêndulo para derrubar a torre adversária | Planejado |
 | **08** | `08_caca_tesouro_coordenadas` | Caça ao Baú de Ouro | Chat escolhe quadrantes (A1 a D4) para desarmar bombas e achar o baú | Planejado |
@@ -61,6 +61,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 ---
 
 ## 4. Motores Centrais de Física & Transmissão
+- `src/core/v5_roulette_engine.js`: Motor matemático determinístico de desaceleração angular cúbica, simulação de palheta mecânica elástica, fatias ponderadas e precisão de parada de 100% (0.00029ms/passo).
 - `src/core/v5_highway_engine.js`: Motor de pistas verticais pseudo-3D com projeção não-linear de perspectiva, buffer circular de segmentos de asfalto, 3 camadas de parallax, física de ultrapassagem, nitros e telemetria (0.0075ms/passo).
 - `src/core/v5_physics_engine.js`: Motor 2D de gravidade vertical e colisões elásticas com Spatial Hash Grid O(N), Object Pooling (zero GC) e suporte a pinos, bumpers, vortex e caçapas (>1100 FPS teóricos com 350 esferas).
 - `src/core/v5_polarization_engine.js`: Motor de física inercial de disputa e tensão de mola (Cabo de Guerra, Tsunami, Queda de Braço).

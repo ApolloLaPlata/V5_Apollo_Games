@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Roleta dos Desafios (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: radial-gradient(circle at 50% 45%, #1e1136 0%, #090514 60%, #030712 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Screen Shake em Super Giros e Alertas */
+    .shake-active {
+      animation: spinShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes spinShake {
+      10%, 90% { transform: translate3d(-3px, -2px, 0); }
+      20%, 80% { transform: translate3d(4px, 3px, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, -3px, 0); }
+      40%, 60% { transform: translate3d(4px, 2px, 0); }
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 16px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(3, 7, 18, 0.98) 0%, rgba(3, 7, 18, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #c084fc;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .timer-badge {
+      background: rgba(192, 132, 252, 0.15);
+      border: 1px solid rgba(192, 132, 252, 0.4);
+      color: #e9d5ff;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Placar de Histórico de Desafios */
+    .roulette-status-card {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(192, 132, 252, 0.25);
+      border-radius: 12px;
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .status-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .status-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: #94a3b8;
+      text-transform: uppercase;
+    }
+
+    .status-value {
+      font-size: 14px;
+      font-weight: 900;
+      color: #fbbf24;
+      text-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+    }
+
+    /* Canvas Central da Roleta */
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Feed de Notificações / Toasts */
+    .toast-feed {
+      position: absolute;
+      top: 145px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+      z-index: 8;
+    }
+
+    .toast-item {
+      background: rgba(15, 23, 42, 0.9);
+      border-left: 4px solid #c084fc;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      animation: slideInToast 0.25s ease-out forwards;
+    }
+
+    @keyframes slideInToast {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 12px 16px 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(3, 7, 18, 0.98) 0%, rgba(3, 7, 18, 0.7) 70%, rgba(3, 7, 18, 0) 100%);
+    }
+
+    .instructions-card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(192, 132, 252, 0.25);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .inst-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .spin-btn-action {
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      color: #ffffff;
+      padding: 4px 14px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+    }
+
+    .gift-info {
+      font-size: 11px;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Gaveta de Depuração Local */
+    .debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(3, 7, 18, 0.98);
+      border-top: 2px solid #c084fc;
+      padding: 12px 16px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 100;
+    }
+
+    .debug-drawer.open {
+      display: flex;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: #ffffff;
+      padding: 8px 4px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .debug-btn:active {
+      transform: scale(0.96);
+      background: #334155;
+    }
+
+    /* Modal de Customização de Fatias (Etapa 044) */
+    .customizer-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(3, 7, 18, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 120;
+      display: none;
+      flex-direction: column;
+      padding: 20px;
+      gap: 12px;
+    }
+
+    .customizer-modal.active {
+      display: flex;
+    }
+
+    .customizer-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: #c084fc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .customizer-textarea {
+      flex: 1;
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #ffffff;
+      padding: 12px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 12px;
+      resize: none;
+    }
+
+    /* Overlay de Desafio Sorteado e Vitória */
+    .challenge-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(3, 7, 18, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .challenge-overlay.active {
+      display: flex;
+      animation: challengeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes challengeIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .challenge-icon {
+      font-size: 72px;
+      filter: drop-shadow(0 0 24px rgba(251, 191, 36, 0.7));
+      animation: bounce 1s infinite alternate;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-12px); }
+    }
+
+    .challenge-badge {
+      border: 2px solid #fbbf24;
+      color: #fbbf24;
+      font-size: 13px;
+      font-weight: 900;
+      padding: 3px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .challenge-name {
+      font-size: 28px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #ffffff;
+      text-shadow: 0 0 16px rgba(255, 255, 255, 0.5);
+    }
+
+    .challenge-user {
+      font-size: 14px;
+      color: #94a3b8;
+    }
+
+    .auto-reset-bar {
+      width: 100%;
+      max-width: 280px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .auto-reset-fill {
+      width: 100%;
+      height: 100%;
+      background: #c084fc;
+      border-radius: 6px;
+      transition: width 5s linear;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Top Safe Zone (140px) -->
+    <div class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <span class="live-dot"></span>
+          V5 LIVE ROULETTE 9:16
+        </div>
+        <div class="timer-badge">
+          ⏱️ <span id="round-timer">45s</span>
+        </div>
+      </div>
+
+      <!-- Placar e Status -->
+      <div class="roulette-status-card">
+        <div class="status-item">
+          <span class="status-label">ÚLTIMO DESAFIO</span>
+          <span id="last-challenge" class="status-value">DANCINHA</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">SORTEIOS NA LIVE</span>
+          <span id="total-spins" class="status-value">0</span>
+        </div>
+        <div class="status-item" style="cursor: pointer;" onclick="openCustomizer()">
+          <span class="status-label">EDITAR FATIAS</span>
+          <span style="font-size: 13px; font-weight: 800; color: #c084fc;">⚙️ CONFIG</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feed de Notificações / Toasts -->
+    <div id="toast-feed" class="toast-feed"></div>
+
+    <!-- Canvas Central da Roleta -->
+    <div id="canvas-container">
+      <canvas id="roulette-canvas"></canvas>
+    </div>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <div class="bottom-panel" id="bottom-panel">
+      <div class="instructions-card">
+        <div class="inst-row">
+          <span>🎯 DIGITE <b>GIRAR</b> NO CHAT:</span>
+          <div class="spin-btn-action" onclick="spinRoulette('@streamer')">GIRAR ROLETA</div>
+        </div>
+        <div class="gift-info">
+          <span>🎁 Presente/Gift = 🌪️ <b>SUPER GIRO FRENESI + SUSPENSE MÁXIMO</b></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gaveta de Depuração Local -->
+    <div class="debug-drawer" id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #94a3b8; display: flex; justify-content: space-between;">
+        <span>PAINEL DE DEPURAÇÃO (TECLA 'D')</span>
+        <span style="cursor: pointer;" onclick="toggleDebug()">[FECHAR]</span>
+      </div>
+      <div class="debug-grid">
+        <button class="debug-btn" onclick="spinRoulette('@teste')">🎲 Giro Padrão</button>
+        <button class="debug-btn" onclick="triggerGiftSpin('Rose')">🌹 Giro com Rosa</button>
+        <button class="debug-btn" onclick="triggerGiftSpin('Lion')">🦁 Super Giro Leão</button>
+        <button class="debug-btn" onclick="spinToTargetIndex(0)">🎯 Parar em #0</button>
+        <button class="debug-btn" onclick="spinToTargetIndex(3)">🎯 Parar em #3</button>
+        <button class="debug-btn" onclick="spinToTargetIndex(7)">🎯 Parar em #7</button>
+      </div>
+    </div>
+
+    <!-- Modal de Customização de Fatias (Etapa 044) -->
+    <div class="customizer-modal" id="customizer-modal">
+      <div class="customizer-title">
+        <span>CUSTOMIZAR DESAFIOS DA ROLETA</span>
+        <span style="cursor: pointer;" onclick="closeCustomizer()">✕</span>
+      </div>
+      <p style="font-size: 11px; color: #94a3b8;">Edite uma fatia por linha no formato: <code>Ícone | Título | CorHex</code></p>
+      <textarea id="customizer-input" class="customizer-textarea"></textarea>
+      <div style="display: flex; gap: 8px;">
+        <button class="debug-btn" style="flex: 1; background: #9333ea;" onclick="saveCustomSlices()">SALVAR FATIAS</button>
+        <button class="debug-btn" style="flex: 1;" onclick="closeCustomizer()">CANCELAR</button>
+      </div>
+    </div>
+
+    <!-- Overlay de Desafio Sorteado e Celebração -->
+    <div class="challenge-overlay" id="challenge-overlay">
+      <div class="challenge-icon" id="challenge-icon">🎭</div>
+      <div class="challenge-badge">DESAFIO SORTEADO!</div>
+      <div class="challenge-name" id="challenge-name">CANTAR ÓPERA</div>
+      <div class="challenge-user" id="challenge-user">Ativado por @espectador</div>
+
+      <div class="auto-reset-bar">
+        <div class="auto-reset-fill" id="reset-fill"></div>
+      </div>
+      <span style="font-size: 11px; color: #94a3b8;">Preparando roleta para a próxima rodada...</span>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * V5 ROULETTE PROCEDURAL AUDIO SYNTHESIZER (Web Audio API)
+     * Som de catraca mecânica (Ratchet Click), vento de alta velocidade e fanfarra de desafio
+     */
+    class RouletteAudio {
+      constructor() {
+        this.ctx = null;
+        this.lastClickTime = 0;
+      }
+
+      getCtx() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        return this.ctx;
+      }
+
+      /**
+       * Clique mecânico de precisão da palheta (Flapper / Ratchet)
+       */
+      playRatchetClick(speedRatio = 1.0) {
+        const now = Date.now();
+        if (now - this.lastClickTime < 28) return; // Debounce de alta rotação
+        this.lastClickTime = now;
+
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+
+          // Impacto agudo de mola/pino metálico
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+
+          osc.type = 'triangle';
+          const clickFreq = 700 + (Math.min(2.5, speedRatio) * 450);
+          osc.frequency.setValueAtTime(clickFreq, t);
+          osc.frequency.exponentialRampToValueAtTime(clickFreq * 0.4, t + 0.035);
+
+          gain.gain.setValueAtTime(0.18, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.035);
+
+          osc.connect(gain);
+          gain.connect(c.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.035);
+        } catch (e) {}
+      }
+
+      playSpinWhoosh() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+
+          const bufferSize = Math.floor(c.sampleRate * 0.4);
+          const noiseBuffer = c.createBuffer(1, bufferSize, c.sampleRate);
+          const data = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+          const noise = c.createBufferSource();
+          noise.buffer = noiseBuffer;
+
+          const flt = c.createBiquadFilter();
+          flt.type = 'bandpass';
+          flt.frequency.setValueAtTime(400, t);
+          flt.frequency.exponentialRampToValueAtTime(1400, t + 0.2);
+          flt.frequency.exponentialRampToValueAtTime(300, t + 0.4);
+
+          const gain = c.createGain();
+          gain.gain.setValueAtTime(0.2, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+
+          noise.connect(flt);
+          flt.connect(gain);
+          gain.connect(c.destination);
+
+          noise.start(t);
+          noise.stop(t + 0.4);
+        } catch (e) {}
+      }
+
+      playChallengeFanfare() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          [392.00, 493.88, 587.33, 783.99].forEach((f, idx) => {
+            const osc = c.createOscillator();
+            const g = c.createGain();
+            const st = t + (idx * 0.09);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, st);
+            g.gain.setValueAtTime(0.22, st);
+            g.gain.exponentialRampToValueAtTime(0.001, st + 0.45);
+            osc.connect(g);
+            g.connect(c.destination);
+            osc.start(st);
+            osc.stop(st + 0.45);
+          });
+        } catch (e) {}
+      }
+    }
+
+    // =========================================================================
+    // MOTOR DE ROLETA DETERMINÍSTICO (V5 ROULETTE ENGINE EMBUTIDO)
+    // =========================================================================
+    const TWO_PI = Math.PI * 2;
+
+    let slices = [
+      { id: 'dance', label: 'DANCINHA', icon: '💃', color: '#ec4899', textColor: '#fff', weight: 1 },
+      { id: 'water', label: 'BEBER ÁGUA', icon: '💧', color: '#06b6d4', textColor: '#fff', weight: 1 },
+      { id: 'opera', label: 'CANTAR ÓPERA', icon: '🎭', color: '#a855f7', textColor: '#fff', weight: 1 },
+      { id: 'pushups', label: '10 FLEXÕES', icon: '💪', color: '#f59e0b', textColor: '#fff', weight: 1 },
+      { id: 'chicken', label: 'IMITAR GALINHA', icon: '🐔', color: '#ef4444', textColor: '#fff', weight: 1 },
+      { id: 'shoutout', label: 'SUPER SALVE', icon: '📢', color: '#10b981', textColor: '#fff', weight: 1 },
+      { id: 'floss', label: 'PASSINHO', icon: '🕺', color: '#8b5cf6', textColor: '#fff', weight: 1 },
+      { id: 'jackpot', label: 'RODADA DUPLA', icon: '⭐', color: '#fbbf24', textColor: '#000', weight: 1 }
+    ];
+
+    let angle = 0;
+    let angularVelocity = 0;
+    let isSpinning = false;
+    let isTargeted = false;
+    let targetSliceIndex = -1;
+    let startAngle = 0;
+    let targetAngle = 0;
+    let spinElapsed = 0;
+    let spinDuration = 0;
+    let pointerAngle = -Math.PI / 2; // Apontador localizado no topo (12 horas)
+    let flapperDeflection = 0;
+    let lastPinCrossed = -1;
+    let currentSliceIndex = 0;
+    let totalSpinsCount = 0;
+    let activeUser = '@espectador';
+
+    // =========================================================================
+    // ESTÁGIO & CANVAS
+    // =========================================================================
+    const stageEl = document.getElementById('game-stage');
+    const canvas = document.getElementById('roulette-canvas');
+    const ctx = canvas.getContext('2d');
+    const audio = new RouletteAudio();
+
+    let W = 0, H = 0;
+    function resize() {
+      W = stageEl.clientWidth;
+      H = stageEl.clientHeight;
+      canvas.width = W;
+      canvas.height = H;
+    }
+    window.addEventListener('resize', resize);
+
+    // DOM Elements
+    const roundTimerEl = document.getElementById('round-timer');
+    const toastFeedEl = document.getElementById('toast-feed');
+    const debugDrawer = document.getElementById('debug-drawer');
+    const challengeOverlay = document.getElementById('challenge-overlay');
+    const challengeIcon = document.getElementById('challenge-icon');
+    const challengeName = document.getElementById('challenge-name');
+    const challengeUser = document.getElementById('challenge-user');
+    const lastChallengeEl = document.getElementById('last-challenge');
+    const totalSpinsEl = document.getElementById('total-spins');
+    const resetFill = document.getElementById('reset-fill');
+    const customizerModal = document.getElementById('customizer-modal');
+    const customizerInput = document.getElementById('customizer-input');
+
+    let confettis = [];
+    let roundTime = 45;
+    let timerInterval = null;
+
+    // =========================================================================
+    // VOTOS, GIROS & PROTOCOLO DE EVENTOS
+    // =========================================================================
+    function triggerScreenShake() {
+      stageEl.classList.remove('shake-active');
+      void stageEl.offsetWidth;
+      stageEl.classList.add('shake-active');
+      setTimeout(() => stageEl.classList.remove('shake-active'), 350);
+    }
+
+    function addToast(text, color = '#c084fc') {
+      const toast = document.createElement('div');
+      toast.className = 'toast-item';
+      toast.style.borderLeftColor = color;
+      toast.innerHTML = text;
+      toastFeedEl.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    function spinRoulette(user = '@espectador') {
+      if (isSpinning) {
+        // Já está girando: adiciona impulso extra
+        angularVelocity += 10;
+        addToast(`🌪️ <b>${user}</b> deu um impulso extra na roleta!`, '#38bdf8');
+        return;
+      }
+
+      audio.getCtx();
+      audio.playSpinWhoosh();
+      activeUser = user;
+
+      // Sorteio determinístico ponderado
+      const rndTarget = Math.floor(Math.random() * slices.length);
+      spinToTarget(rndTarget, 5, 5.0);
+
+      totalSpinsCount++;
+      totalSpinsEl.textContent = totalSpinsCount;
+      addToast(`🎰 <b>${user}</b> girou a roleta!`, '#fbbf24');
+    }
+
+    function triggerGiftSpin(giftName = 'Rose', user = '@espectador') {
+      audio.getCtx();
+      audio.playSpinWhoosh();
+      triggerScreenShake();
+      activeUser = user;
+
+      const isBig = (giftName === 'Lion' || giftName === 'Rocket' || giftName === 'Universe');
+      const minLaps = isBig ? 8 : 6;
+      const duration = isBig ? 7.0 : 5.5;
+
+      const rndTarget = Math.floor(Math.random() * slices.length);
+      spinToTarget(rndTarget, minLaps, duration);
+
+      totalSpinsCount++;
+      totalSpinsEl.textContent = totalSpinsCount;
+      addToast(`🎁 <b>${user}</b> enviou <b>${giftName}</b>! SUPER GIRO FRENESI ATIVADO!`, '#fbbf24');
+    }
+
+    function spinToTargetIndex(targetIdx) {
+      audio.getCtx();
+      spinToTarget(targetIdx, 4, 4.0);
+    }
+
+    function spinToTarget(targetIdx, minLaps = 5, duration = 5.0) {
+      isSpinning = true;
+      isTargeted = true;
+      targetSliceIndex = targetIdx;
+      spinElapsed = 0;
+      spinDuration = duration;
+
+      const sliceSpan = TWO_PI / slices.length;
+      const targetMidAngle = (targetIdx * sliceSpan) + (sliceSpan * 0.5);
+
+      let desiredAngle = pointerAngle - targetMidAngle;
+      desiredAngle = ((desiredAngle % TWO_PI) + TWO_PI) % TWO_PI;
+
+      const currentNorm = ((angle % TWO_PI) + TWO_PI) % TWO_PI;
+      let deltaAngle = desiredAngle - currentNorm;
+      if (deltaAngle <= 0) deltaAngle += TWO_PI;
+      deltaAngle += (minLaps * TWO_PI);
+
+      startAngle = angle;
+      targetAngle = startAngle + deltaAngle;
+      lastPinCrossed = -1;
+    }
+
+    // Listener do Broadcaster
+    const broadcasterChannel = new BroadcastChannel('v5_broadcaster_games');
+    broadcasterChannel.onmessage = (event) => handleLivePayload(event.data);
+    window.addEventListener('v5_event', (e) => handleLivePayload(e.detail));
+
+    function handleLivePayload(payload) {
+      if (!payload) return;
+      const user = payload.user || '@espectador';
+
+      if (payload.type === 'gift') {
+        const gift = payload.giftName || 'Gift';
+        triggerGiftSpin(gift, user);
+      } else if (payload.type === 'comment' || payload.type === 'vote') {
+        const text = String(payload.comment || payload.action || '').trim().toLowerCase();
+        if (text === 'girar' || text === '1' || text === 'spin' || text.includes('roleta')) {
+          spinRoulette(user);
+        }
+      }
+    }
+
+    // Toggle Debug Drawer
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') toggleDebug();
+    });
+    function toggleDebug() {
+      debugDrawer.classList.toggle('open');
+    }
+
+    // =========================================================================
+    // MOTOR ANTI-SILÊNCIO (Simulação Autônoma)
+    // =========================================================================
+    const mockUsers = [
+      '@carla_live', '@renato_spin', '@lucas_show', '@vanessa_v5',
+      '@felipe_challenge', '@patricia_luck', '@gabriel_festa', '@amanda_top'
+    ];
+
+    setInterval(() => {
+      if (isSpinning) return;
+      const rndUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+      if (Math.random() < 0.25) {
+        triggerGiftSpin('Rose', rndUser);
+      } else {
+        spinRoulette(rndUser);
+      }
+    }, 3200);
+
+    // =========================================================================
+    // CUSTOMIZADOR DE FATIAS (Etapa 044)
+    // =========================================================================
+    function openCustomizer() {
+      const text = slices.map(s => `${s.icon} | ${s.label} | ${s.color}`).join('\n');
+      customizerInput.value = text;
+      customizerModal.classList.add('active');
+    }
+
+    function closeCustomizer() {
+      customizerModal.classList.remove('active');
+    }
+
+    function saveCustomSlices() {
+      const lines = customizerInput.value.split('\n').filter(l => l.trim().length > 0);
+      if (lines.length >= 4) {
+        slices = lines.map((line, idx) => {
+          const parts = line.split('|').map(p => p.trim());
+          return {
+            id: `custom_${idx}`,
+            icon: parts[0] || '🎯',
+            label: parts[1] || `Desafio #${idx + 1}`,
+            color: parts[2] || ['#a855f7', '#06b6d4', '#f59e0b', '#ec4899', '#10b981'][idx % 5],
+            textColor: '#ffffff',
+            weight: 1
+          };
+        });
+        addToast('✅ Fatias da roleta atualizadas com sucesso!', '#22c55e');
+      }
+      closeCustomizer();
+    }
+
+    // =========================================================================
+    // LOOP PRINCIPAL DE SIMULAÇÃO E RENDERIZAÇÃO
+    // =========================================================================
+    let lastTime = performance.now();
+
+    function gameLoop(now) {
+      const dt = Math.min(0.08, (now - lastTime) / 1000);
+      lastTime = now;
+
+      update(dt);
+      render();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    function update(dt) {
+      if (isSpinning) {
+        spinElapsed += dt;
+        const t = Math.min(1.0, spinElapsed / spinDuration);
+
+        // Curva Quintic Ease-Out
+        const ease = 1 - Math.pow(1 - t, 4);
+        angle = startAngle + (targetAngle - startAngle) * ease;
+
+        const derivative = 4 * Math.pow(1 - t, 3);
+        angularVelocity = ((targetAngle - startAngle) / spinDuration) * derivative;
+
+        // Atualizar cliques mecânicos de pinos
+        updateFlapperMechanics();
+
+        if (t >= 1.0) {
+          angle = targetAngle;
+          angularVelocity = 0;
+          isSpinning = false;
+          flapperDeflection = 0;
+
+          // Parada final e premiação
+          const chosen = slices[currentSliceIndex];
+          showChallengeHalt(chosen);
+        }
+      }
+
+      // Normalizar ângulo
+      angle = ((angle % TWO_PI) + TWO_PI) % TWO_PI;
+
+      // Identificar fatia atual sob o ponteiro
+      const sliceSpan = TWO_PI / slices.length;
+      const relAngle = ((pointerAngle - angle) % TWO_PI + TWO_PI) % TWO_PI;
+      currentSliceIndex = Math.floor(relAngle / sliceSpan) % slices.length;
+    }
+
+    function updateFlapperMechanics() {
+      const sliceSpan = TWO_PI / slices.length;
+      const relAngle = ((pointerAngle - angle) % TWO_PI + TWO_PI) % TWO_PI;
+
+      for (let i = 0; i < slices.length; i++) {
+        const pinAngle = i * sliceSpan;
+        const diff = Math.abs(relAngle - pinAngle);
+
+        if (diff < 0.08) {
+          flapperDeflection = (relAngle < pinAngle ? -1 : 1) * 0.25;
+
+          if (lastPinCrossed !== i) {
+            lastPinCrossed = i;
+            const speedRatio = Math.min(2.5, Math.abs(angularVelocity) / 8);
+            audio.playRatchetClick(speedRatio);
+          }
+          return;
+        }
+      }
+
+      flapperDeflection *= 0.75;
+    }
+
+    function showChallengeHalt(slice) {
+      audio.playChallengeFanfare();
+      triggerScreenShake();
+
+      lastChallengeEl.textContent = slice.label;
+      challengeIcon.textContent = slice.icon;
+      challengeName.textContent = slice.label;
+      challengeName.style.color = slice.color;
+      challengeUser.textContent = `Ativado por ${activeUser}`;
+
+      // Confetes
+      confettis = [];
+      for (let i = 0; i < 90; i++) {
+        confettis.push({
+          x: Math.random() * W,
+          y: Math.random() * -H,
+          vx: (Math.random() - 0.5) * 4,
+          vy: 3 + Math.random() * 5,
+          color: ['#a855f7', '#06b6d4', '#f59e0b', '#ec4899', '#10b981', '#fbbf24'][Math.floor(Math.random() * 6)],
+          size: 6 + Math.random() * 6
+        });
+      }
+
+      challengeOverlay.classList.add('active');
+      resetFill.style.transition = 'none';
+      resetFill.style.width = '100%';
+      void resetFill.offsetWidth;
+      resetFill.style.transition = 'width 5s linear';
+      resetFill.style.width = '0%';
+
+      setTimeout(() => {
+        challengeOverlay.classList.remove('active');
+        confettis = [];
+      }, 5000);
+    }
+
+    // =========================================================================
+    // RENDERIZADOR CANVAS DA ROLETA NEON
+    // =========================================================================
+    function render() {
+      ctx.clearRect(0, 0, W, H);
+
+      const cx = W / 2;
+      const cy = H * 0.46; // Posição vertical central da roleta
+      const radius = Math.min(W * 0.44, 210);
+
+      // 1. Aro Externo com Lâmpadas Neon
+      ctx.save();
+      ctx.shadowColor = '#c084fc';
+      ctx.shadowBlur = 24;
+      ctx.strokeStyle = '#a855f7';
+      ctx.lineWidth = 14;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius + 8, 0, TWO_PI);
+      ctx.stroke();
+      ctx.restore();
+
+      // 2. Fatias da Roleta
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(angle);
+
+      const sliceSpan = TWO_PI / slices.length;
+      slices.forEach((s, i) => {
+        const startA = i * sliceSpan;
+        const endA = startA + sliceSpan;
+
+        // Fatias Coloridas
+        ctx.fillStyle = s.color;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, radius, startA, endA);
+        ctx.closePath();
+        ctx.fill();
+
+        // Linha divisória
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Ícone e Texto Radial
+        ctx.save();
+        ctx.rotate(startA + sliceSpan / 2);
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+
+        // Ícone
+        ctx.font = '20px sans-serif';
+        ctx.fillText(s.icon, radius - 14, 0);
+
+        // Texto da fatia
+        ctx.font = 'bold 11px sans-serif';
+        ctx.fillStyle = s.textColor;
+        ctx.shadowColor = '#000000';
+        ctx.shadowBlur = 4;
+        ctx.fillText(s.label, radius - 44, 0);
+
+        ctx.restore();
+
+        // Pinos Metálicos Dourados nas bordas
+        const px = Math.cos(startA) * (radius - 2);
+        const py = Math.sin(startA) * (radius - 2);
+        ctx.fillStyle = '#fbbf24';
+        ctx.shadowColor = '#fbbf24';
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(px, py, 4.5, 0, TWO_PI);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      // 3. Miolo Central Holográfico
+      ctx.restore();
+      ctx.save();
+      ctx.translate(cx, cy);
+
+      ctx.fillStyle = '#0f172a';
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 4;
+      ctx.shadowColor = '#fbbf24';
+      ctx.shadowBlur = 14;
+      ctx.beginPath();
+      ctx.arc(0, 0, 36, 0, TWO_PI);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 13px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.shadowColor = '#000';
+      ctx.shadowBlur = 4;
+      ctx.fillText('V5 LIVE', 0, 0);
+      ctx.restore();
+
+      // 4. Palheta Mecânica (Flapper) no Topo
+      renderFlapper(cx, cy - radius - 8);
+
+      // 5. Confetes
+      renderConfetti();
+    }
+
+    function renderFlapper(px, py) {
+      ctx.save();
+      ctx.translate(px, py);
+      ctx.rotate(flapperDeflection);
+
+      // Sombra
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      ctx.beginPath();
+      ctx.moveTo(-10, -6);
+      ctx.lineTo(10, -6);
+      ctx.lineTo(0, 24);
+      ctx.closePath();
+      ctx.fill();
+
+      // Ponteiro Vermelho / Dourado
+      ctx.fillStyle = '#ef4444';
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2.5;
+      ctx.shadowColor = '#ef4444';
+      ctx.shadowBlur = 12;
+
+      ctx.beginPath();
+      ctx.moveTo(-12, -8);
+      ctx.lineTo(12, -8);
+      ctx.lineTo(0, 26);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Parafuso / Eixo do Ponteiro
+      ctx.fillStyle = '#f8fafc';
+      ctx.beginPath();
+      ctx.arc(0, -6, 4, 0, TWO_PI);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function renderConfetti() {
+      if (confettis.length === 0) return;
+      confettis.forEach(c => {
+        c.x += c.vx;
+        c.y += c.vy;
+        ctx.fillStyle = c.color;
+        ctx.fillRect(c.x, c.y, c.size, c.size * 0.6);
+      });
+    }
+
+    function startTimer() {
+      roundTime = 45;
+      roundTimerEl.textContent = `${roundTime}s`;
+      clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        roundTime--;
+        roundTimerEl.textContent = `${roundTime}s`;
+        if (roundTime <= 0) {
+          roundTime = 45;
+        }
+      }, 1000);
+    }
+
+    // Inicialização da Página
+    resize();
+    startTimer();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>

@@ -96,10 +96,10 @@
 ---
 
 ### FASE 5: CARTUCHOS DE ROLETAS, SORTEIOS & CAÇA-NÍQUEIS (ETAPAS 041 A 050)
-- [ ] **Etapa 041:** Arquitetura do motor matemático determinístico de desaceleração angular para roletas de live.
-- [ ] **Etapa 042:** Forjamento do Cartucho #05: Roleta dos Desafios da Live (Gifts giram a roleta de desafios hilários e castigos cômicos para a live).
-- [ ] **Etapa 043:** Implementação do ponteiro mecânico clicante procedural (som de catraca de alta precisão via Web Audio API).
-- [ ] **Etapa 044:** Customizador de fatias da roleta (permitindo streamers editarem os textos dos desafios facilmente via query string ou JSON local).
+- [x] **Etapa 041:** Arquitetura do motor matemático determinístico de desaceleração angular para roletas de live.
+- [x] **Etapa 042:** Forjamento do Cartucho #05: Roleta dos Desafios da Live (Gifts giram a roleta de desafios hilários e castigos cômicos para a live).
+- [x] **Etapa 043:** Implementação do ponteiro mecânico clicante procedural (som de catraca de alta precisão via Web Audio API).
+- [x] **Etapa 044:** Customizador de fatias da roleta (permitindo streamers editarem os textos dos desafios facilmente via query string ou JSON local).
 - [ ] **Etapa 045:** Forjamento do Cartucho #17: Caça-Níquel Neon 777 (Slot machine de 3 rolos acionada por comandos do chat com modos Frenesi).
 - [ ] **Etapa 046:** Síntese de sinos de jackpot, rotação mecânica e tilintar de moedas para o Caça-Níquel 777.
 - [ ] **Etapa 047:** Forjamento do Cartucho #18: Roleta Russa de Balões (Ponteiro sorteia participantes e agulha aproxima do balão até o estouro fatídico).

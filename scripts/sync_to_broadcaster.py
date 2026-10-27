@@ -40,6 +40,14 @@ GAME_METADATA = {
         "status": "HOMOLOGADO",
         "version": "1.0.0"
     },
+    "05_roleta_desafios_live": {
+        "name": "Roleta dos Desafios da Live",
+        "category": "sorteios_roletas",
+        "description": "Roleta determinística com palheta mecânica clicante, customizador de fatias e super-giros frenesi acionados por presentes",
+        "commands": ["girar", "1", "spin", "roleta"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
+    },
     "06_batalha_dos_baloes": {
         "name": "Batalha dos Balões Gigantes",
         "category": "polarizacao",

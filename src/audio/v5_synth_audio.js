@@ -1038,6 +1038,67 @@
       osc.start(t);
       osc.stop(t + 0.3);
     }
+
+    /**
+     * Clique Mecânico de Catraca / Flapper Click (Fase 5: Roletas 9:16)
+     * Impacto agudo metálico de mola contra pino
+     */
+    playRatchetClick(speedRatio = 1.0) {
+      if (!this._canPlay()) return;
+      const ctx = this._ensureContext();
+      const t = ctx.currentTime;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'triangle';
+      const clickFreq = 700 + (Math.min(2.5, speedRatio) * 450);
+      osc.frequency.setValueAtTime(clickFreq, t);
+      osc.frequency.exponentialRampToValueAtTime(clickFreq * 0.4, t + 0.035);
+
+      gain.gain.setValueAtTime(0.18, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.035);
+
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(t);
+      osc.stop(t + 0.035);
+    }
+
+    /**
+     * Zumbido Aerodinâmico de Giro de Roleta (Spin Whoosh)
+     */
+    playSpinWhoosh() {
+      if (!this._canPlay()) return;
+      const ctx = this._ensureContext();
+      const t = ctx.currentTime;
+
+      const bufferSize = Math.floor(ctx.sampleRate * 0.4);
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer;
+
+      const flt = ctx.createBiquadFilter();
+      flt.type = 'bandpass';
+      flt.frequency.setValueAtTime(400, t);
+      flt.frequency.exponentialRampToValueAtTime(1400, t + 0.2);
+      flt.frequency.exponentialRampToValueAtTime(300, t + 0.4);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.2, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+
+      noise.connect(flt);
+      flt.connect(gain);
+      gain.connect(this.masterGain);
+
+      noise.start(t);
+      noise.stop(t + 0.4);
+    }
   }
 
   return V5SynthAudio;
