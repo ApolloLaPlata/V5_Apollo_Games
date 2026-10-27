@@ -68,6 +68,8 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 ---
 
 ## 4. Motores Centrais de Física & Transmissão
+- `src/core/v5_grid_coordinates_engine.js`: Motor de grids interativos e coordenadas de chat com parsing ultra-tolerante para celular (A1-D4, A1-F6), agregação de votos em O(1), suporte a Raio-X por Gifts e cálculo geométrico 9:16 (580.000 ops/s).
+- `src/core/v5_pendulum_elimination_engine.js`: Motor não-linear de física pendular amortecida com detecção contínua de colisão contra fortalezas e pooling de detritos estruturais (2.200.000 passos/s).
 - `src/core/v5_roulette_engine.js`: Motor matemático determinístico de desaceleração angular cúbica, simulação de palheta mecânica elástica, fatias ponderadas e precisão de parada de 100% (0.00029ms/passo).
 - `src/core/v5_highway_engine.js`: Motor de pistas verticais pseudo-3D com projeção não-linear de perspectiva, buffer circular de segmentos de asfalto, 3 camadas de parallax, física de ultrapassagem, nitros e telemetria (0.0075ms/passo).
 - `src/core/v5_physics_engine.js`: Motor 2D de gravidade vertical e colisões elásticas com Spatial Hash Grid O(N), Object Pooling (zero GC) e suporte a pinos, bumpers, vortex e caçapas (>1100 FPS teóricos com 350 esferas).
@@ -89,4 +91,5 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 - `scripts/test_cartridge_23.py`: Validação automatizada do Cartucho #23 (11/11 checks aprovados).
 - `scripts/test_tension_balance.js`: Simulação Monte Carlo (10.000 rodadas) de balanceamento da curva de adrenalina e tempo dos 4 cartuchos de eliminação (100% aprovado).
 - `scripts/test_elimination_cartridges.py`: Suíte de homologação formal das 5 Leis Absolutas para os 4 cartuchos de eliminação (33/33 checks aprovados).
+- `scripts/test_grid_coordinates_engine.js`: Validação de parsing tolerante, grids 4x4/6x6, Raio-X de Gifts e benchmark de performance (31/31 checks aprovados, 580k ops/s).
 - `scripts/sync_to_broadcaster.py`: Sincronizador de catálogo e gerador de manifesto para o V5 Broadcaster (`v5_games_manifest.json` com 22 cartuchos ativos).
