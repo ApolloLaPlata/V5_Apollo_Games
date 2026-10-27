@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V5 Live: Corrida Maluca Espacial (9:16)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #010409;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container 9:16 Estrito Responsivo para OBS Browser Source */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: calc(100vh * (9 / 16));
+      background: #010409;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+      transition: transform 0.05s ease-out;
+    }
+
+    /* Screen Shake de Impacto de Meteoro ou Warp */
+    .shake-active {
+      animation: spaceShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes spaceShake {
+      10%, 90% { transform: translate3d(-3px, -2px, 0); }
+      20%, 80% { transform: translate3d(4px, 3px, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, -3px, 0); }
+      40%, 60% { transform: translate3d(4px, 2px, 0); }
+    }
+
+    /* Top Safe Zone (140px) */
+    .top-header {
+      padding: 16px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(1, 4, 9, 0.96) 0%, rgba(1, 4, 9, 0) 100%);
+    }
+
+    .brand-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #38bdf8;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .timer-badge {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Placar Orbital dos 3 Foguetes */
+    .rocket-telemetry-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 14px;
+      padding: 8px 6px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .rocket-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 4px;
+      border-radius: 10px;
+      position: relative;
+      transition: transform 0.2s, border-color 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .rocket-card.leader {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.12);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+    }
+
+    .rocket-badge {
+      font-size: 10px;
+      font-weight: 900;
+      padding: 1px 6px;
+      border-radius: 10px;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+    }
+
+    .rocket-card.apollo .rocket-badge { background: #0284c7; color: #fff; }
+    .rocket-card.solaris .rocket-badge { background: #dc2626; color: #fff; }
+    .rocket-card.nebula .rocket-badge { background: #ca8a04; color: #fff; }
+
+    .rocket-name {
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .rocket-alt {
+      font-size: 14px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      margin: 2px 0;
+    }
+
+    .rocket-card.apollo .rocket-alt { color: #38bdf8; text-shadow: 0 0 8px #38bdf8; }
+    .rocket-card.solaris .rocket-alt { color: #f87171; text-shadow: 0 0 8px #f87171; }
+    .rocket-card.nebula .rocket-alt { color: #facc15; text-shadow: 0 0 8px #facc15; }
+
+    .shield-status-indicator {
+      font-size: 10px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .shield-status-indicator.active {
+      color: #4ade80;
+      text-shadow: 0 0 6px #4ade80;
+    }
+
+    .shield-status-indicator.inactive {
+      color: #64748b;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 3px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 4px;
+      transition: width 0.1s linear;
+    }
+
+    .rocket-card.apollo .progress-fill { background: #38bdf8; }
+    .rocket-card.solaris .progress-fill { background: #ef4444; }
+    .rocket-card.nebula .progress-fill { background: #eab308; }
+
+    /* Canvas Central do Voo Espacial */
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Feed de Boosts e Meteoros */
+    .toast-feed {
+      position: absolute;
+      top: 145px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+      z-index: 8;
+    }
+
+    .toast-item {
+      background: rgba(15, 23, 42, 0.88);
+      border-left: 4px solid #38bdf8;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      animation: slideInToast 0.25s ease-out forwards;
+    }
+
+    @keyframes slideInToast {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Bottom Safe Zone (180px) */
+    .bottom-panel {
+      padding: 12px 16px 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(1, 4, 9, 0.98) 0%, rgba(1, 4, 9, 0.7) 70%, rgba(1, 4, 9, 0) 100%);
+    }
+
+    .instructions-card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .inst-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .vote-chips {
+      display: flex;
+      gap: 6px;
+    }
+
+    .vote-chip {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .chip-apollo { background: rgba(56, 189, 248, 0.25); border: 1px solid #38bdf8; color: #7dd3fc; }
+    .chip-solaris { background: rgba(239, 68, 68, 0.25); border: 1px solid #ef4444; color: #fca5a5; }
+    .chip-nebula { background: rgba(234, 179, 8, 0.25); border: 1px solid #eab308; color: #fef08a; }
+
+    .gift-info {
+      font-size: 11px;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Gaveta de Depuração Local */
+    .debug-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(3, 7, 18, 0.98);
+      border-top: 2px solid #38bdf8;
+      padding: 12px 16px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 100;
+    }
+
+    .debug-drawer.open {
+      display: flex;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .debug-btn {
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: #ffffff;
+      padding: 8px 4px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .debug-btn:active {
+      transform: scale(0.96);
+      background: #334155;
+    }
+
+    /* Tela de Vitória e Pódio Orbital */
+    .victory-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(1, 4, 9, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .victory-overlay.active {
+      display: flex;
+      animation: victoryFadeIn 0.4s ease-out forwards;
+    }
+
+    @keyframes victoryFadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .victory-crown {
+      font-size: 64px;
+      filter: drop-shadow(0 0 20px #38bdf8);
+      animation: floatOrbit 2s infinite ease-in-out;
+    }
+
+    @keyframes floatOrbit {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-14px) rotate(5deg); }
+    }
+
+    .victory-title {
+      font-size: 30px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .victory-subtitle {
+      font-size: 15px;
+      color: #94a3b8;
+      max-width: 320px;
+    }
+
+    .podium-box {
+      width: 100%;
+      max-width: 320px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .podium-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .auto-reset-bar {
+      width: 100%;
+      max-width: 280px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .auto-reset-fill {
+      width: 100%;
+      height: 100%;
+      background: #38bdf8;
+      border-radius: 6px;
+      transition: width 5s linear;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-stage">
+    <!-- Top Safe Zone (140px) -->
+    <div class="top-header">
+      <div class="brand-row">
+        <div class="brand-tag">
+          <span class="live-dot"></span>
+          V5 COSMIC ODYSSEY 9:16
+        </div>
+        <div class="timer-badge">
+          ⏱️ <span id="round-timer">45s</span>
+        </div>
+      </div>
+
+      <!-- Placar Orbital dos 3 Foguetes -->
+      <div class="rocket-telemetry-grid">
+        <div id="card-apollo" class="rocket-card apollo">
+          <span class="rocket-badge">#1 • VOTE 1</span>
+          <span class="rocket-name">APOLLO NOVA</span>
+          <span id="alt-apollo" class="rocket-alt">0 km</span>
+          <span id="shield-apollo" class="shield-status-indicator inactive">🛡️ NORMAL</span>
+          <div class="progress-bar-bg">
+            <div id="prog-apollo" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <div id="card-solaris" class="rocket-card solaris">
+          <span class="rocket-badge">#2 • VOTE 2</span>
+          <span class="rocket-name">SOLARIS FALCON</span>
+          <span id="alt-solaris" class="rocket-alt">0 km</span>
+          <span id="shield-solaris" class="shield-status-indicator inactive">🛡️ NORMAL</span>
+          <div class="progress-bar-bg">
+            <div id="prog-solaris" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <div id="card-nebula" class="rocket-card nebula">
+          <span class="rocket-badge">#3 • VOTE 3</span>
+          <span class="rocket-name">NEBULA TITAN</span>
+          <span id="alt-nebula" class="rocket-alt">0 km</span>
+          <span id="shield-nebula" class="shield-status-indicator inactive">🛡️ NORMAL</span>
+          <div class="progress-bar-bg">
+            <div id="prog-nebula" class="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feed de Notificações / Toasts -->
+    <div id="toast-feed" class="toast-feed"></div>
+
+    <!-- Canvas Central de Voo Espacial -->
+    <div id="canvas-container">
+      <canvas id="space-canvas"></canvas>
+    </div>
+
+    <!-- Bottom Safe Zone (180px) -->
+    <div class="bottom-panel" id="bottom-panel">
+      <div class="instructions-card">
+        <div class="inst-row">
+          <span>🚀 CONTROLE PELO CHAT:</span>
+          <div class="vote-chips">
+            <span class="vote-chip chip-apollo" onclick="vote('apollo')">1 APOLLO</span>
+            <span class="vote-chip chip-solaris" onclick="vote('solaris')">2 SOLARIS</span>
+            <span class="vote-chip chip-nebula" onclick="vote('nebula')">3 NEBULA</span>
+          </div>
+        </div>
+        <div class="gift-info">
+          <span>🎁 Envie Presente/Gift = 🛡️ <b>ESCUDO DE ENERGIA + 🚀 HIPER-DOBRA</b></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gaveta de Depuração Local -->
+    <div class="debug-drawer" id="debug-drawer">
+      <div style="font-size: 11px; font-weight: 800; color: #94a3b8; display: flex; justify-content: space-between;">
+        <span>PAINEL DE DEPURAÇÃO LOCAL (TECLA 'D')</span>
+        <span style="cursor: pointer;" onclick="toggleDebug()">[FECHAR]</span>
+      </div>
+      <div class="debug-grid">
+        <button class="debug-btn" onclick="vote('apollo')">+1 Voto Apollo</button>
+        <button class="debug-btn" onclick="vote('solaris')">+1 Voto Solaris</button>
+        <button class="debug-btn" onclick="vote('nebula')">+1 Voto Nebula</button>
+        <button class="debug-btn" onclick="triggerGift('apollo', 'Rose')">🌹 Escudo Apollo</button>
+        <button class="debug-btn" onclick="triggerGift('solaris', 'Rose')">🌹 Escudo Solaris</button>
+        <button class="debug-btn" onclick="triggerGift('nebula', 'Rose')">🌹 Escudo Nebula</button>
+        <button class="debug-btn" onclick="triggerGift('apollo', 'Lion')">🦁 Hiper Apollo</button>
+        <button class="debug-btn" onclick="triggerGift('solaris', 'Lion')">🦁 Hiper Solaris</button>
+        <button class="debug-btn" onclick="triggerGift('nebula', 'Lion')">🦁 Hiper Nebula</button>
+      </div>
+    </div>
+
+    <!-- Tela de Vitória e Pódio Orbital -->
+    <div class="victory-overlay" id="victory-overlay">
+      <div class="victory-crown" id="victory-crown">🛰️</div>
+      <div class="victory-title" id="victory-title">APOLLO NOVA CONQUISTOU A ÓRBITA!</div>
+      <div class="victory-subtitle" id="victory-subtitle">Cruzou a Linha de Kármán e atingiu a órbita espacial em primeiro lugar!</div>
+      
+      <div class="podium-box">
+        <div class="podium-row" id="podium-1">🥇 1º Lugar: Apollo Nova (100.000m)</div>
+        <div class="podium-row" id="podium-2">🥈 2º Lugar: Solaris Falcon (+1.200m)</div>
+        <div class="podium-row" id="podium-3">🥉 3º Lugar: Nebula Titan (+3.400m)</div>
+      </div>
+
+      <div class="auto-reset-bar">
+        <div class="auto-reset-fill" id="reset-fill"></div>
+      </div>
+      <span style="font-size: 11px; color: #94a3b8;">Nova missão orbital iniciando...</span>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * V5 SPACE PROCEDURAL AUDIO SYNTHESIZER (Web Audio API)
+     * Síntese de propulsão iônica, ativação de escudos, explosão de meteoros e fanfarra cósmica
+     */
+    class CosmicSpaceAudio {
+      constructor() {
+        this.ctx = null;
+        this.thrustOsc = null;
+        this.thrustGain = null;
+        this.isThrusting = false;
+      }
+
+      getCtx() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        return this.ctx;
+      }
+
+      initThrustSound() {
+        if (this.isThrusting) return;
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+
+          // Propulsão com ruído e onda senoidal grave
+          this.thrustOsc = c.createOscillator();
+          this.thrustOsc.type = 'triangle';
+          this.thrustOsc.frequency.setValueAtTime(65, t);
+
+          const flt = c.createBiquadFilter();
+          flt.type = 'lowpass';
+          flt.frequency.setValueAtTime(160, t);
+
+          this.thrustGain = c.createGain();
+          this.thrustGain.gain.setValueAtTime(0.06, t);
+
+          this.thrustOsc.connect(flt);
+          flt.connect(this.thrustGain);
+          this.thrustGain.connect(c.destination);
+
+          this.thrustOsc.start(t);
+          this.isThrusting = true;
+        } catch (e) {}
+      }
+
+      playShieldPulse() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(320, t);
+          osc.frequency.exponentialRampToValueAtTime(880, t + 0.15);
+          osc.frequency.exponentialRampToValueAtTime(440, t + 0.35);
+
+          gain.gain.setValueAtTime(0.22, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+
+          osc.connect(gain);
+          gain.connect(c.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.35);
+        } catch (e) {}
+      }
+
+      playMeteorExplosion() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+
+          const bufferSize = Math.floor(c.sampleRate * 0.35);
+          const noiseBuffer = c.createBuffer(1, bufferSize, c.sampleRate);
+          const data = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+          const noise = c.createBufferSource();
+          noise.buffer = noiseBuffer;
+
+          const flt = c.createBiquadFilter();
+          flt.type = 'lowpass';
+          flt.frequency.setValueAtTime(500, t);
+          flt.frequency.exponentialRampToValueAtTime(40, t + 0.35);
+
+          const gain = c.createGain();
+          gain.gain.setValueAtTime(0.35, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+
+          noise.connect(flt);
+          flt.connect(gain);
+          gain.connect(c.destination);
+
+          noise.start(t);
+          noise.stop(t + 0.35);
+        } catch (e) {}
+      }
+
+      playWarpJump() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(150, t);
+          osc.frequency.exponentialRampToValueAtTime(1200, t + 0.4);
+
+          const flt = c.createBiquadFilter();
+          flt.type = 'bandpass';
+          flt.frequency.setValueAtTime(800, t);
+          flt.frequency.exponentialRampToValueAtTime(2400, t + 0.4);
+
+          gain.gain.setValueAtTime(0.25, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+
+          osc.connect(flt);
+          flt.connect(gain);
+          gain.connect(c.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.4);
+        } catch (e) {}
+      }
+
+      playVictoryCosmic() {
+        try {
+          const c = this.getCtx();
+          const t = c.currentTime;
+          [392.00, 523.25, 659.25, 783.99, 1046.50].forEach((f, idx) => {
+            const osc = c.createOscillator();
+            const g = c.createGain();
+            const st = t + (idx * 0.1);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(f, st);
+            g.gain.setValueAtTime(0.25, st);
+            g.gain.exponentialRampToValueAtTime(0.001, st + 0.6);
+            osc.connect(g);
+            g.connect(c.destination);
+            osc.start(st);
+            osc.stop(st + 0.6);
+          });
+        } catch (e) {}
+      }
+    }
+
+    // =========================================================================
+    // INICIALIZAÇÃO DO ESTÁGIO & CANVAS
+    // =========================================================================
+    const stageEl = document.getElementById('game-stage');
+    const canvas = document.getElementById('space-canvas');
+    const ctx = canvas.getContext('2d');
+    const audio = new CosmicSpaceAudio();
+
+    let W = 0, H = 0;
+    function resize() {
+      W = stageEl.clientWidth;
+      H = stageEl.clientHeight;
+      canvas.width = W;
+      canvas.height = H;
+      initStars();
+    }
+    window.addEventListener('resize', resize);
+
+    // Estado da Partida
+    let roundTime = 45;
+    let timerInterval = null;
+    let isGameOver = false;
+    const ORBIT_TARGET_ALTITUDE = 100000; // 100.000m até a órbita
+
+    // DOM Elements
+    const roundTimerEl = document.getElementById('round-timer');
+    const toastFeedEl = document.getElementById('toast-feed');
+    const debugDrawer = document.getElementById('debug-drawer');
+    const victoryOverlay = document.getElementById('victory-overlay');
+    const victoryTitle = document.getElementById('victory-title');
+    const victorySubtitle = document.getElementById('victory-subtitle');
+    const resetFill = document.getElementById('reset-fill');
+    const podium1 = document.getElementById('podium-1');
+    const podium2 = document.getElementById('podium-2');
+    const podium3 = document.getElementById('podium-3');
+
+    // Estrelas e Meteoros
+    let stars = [];
+    let meteors = [];
+    let explosions = [];
+    let starConfetti = [];
+
+    // =========================================================================
+    // MODELAGEM DOS 3 FOGUETES
+    // =========================================================================
+    const ROCKETS = {
+      apollo: {
+        id: 'apollo',
+        name: 'Apollo Nova',
+        color: '#0284c7',
+        accentColor: '#38bdf8',
+        laneX: 0.22,
+        x: 0,
+        altitude: 0,
+        speed: 1400, // m/s
+        baseSpeed: 1400,
+        maxSpeed: 4200,
+        shieldTimer: 0,
+        rank: 1,
+        cardEl: document.getElementById('card-apollo'),
+        altEl: document.getElementById('alt-apollo'),
+        shieldEl: document.getElementById('shield-apollo'),
+        progEl: document.getElementById('prog-apollo')
+      },
+      solaris: {
+        id: 'solaris',
+        name: 'Solaris Falcon',
+        color: '#dc2626',
+        accentColor: '#f87171',
+        laneX: 0.50,
+        x: 0,
+        altitude: 0,
+        speed: 1400,
+        baseSpeed: 1400,
+        maxSpeed: 4200,
+        shieldTimer: 0,
+        rank: 2,
+        cardEl: document.getElementById('card-solaris'),
+        altEl: document.getElementById('alt-solaris'),
+        shieldEl: document.getElementById('shield-solaris'),
+        progEl: document.getElementById('prog-solaris')
+      },
+      nebula: {
+        id: 'nebula',
+        name: 'Nebula Titan',
+        color: '#ca8a04',
+        accentColor: '#facc15',
+        laneX: 0.78,
+        x: 0,
+        altitude: 0,
+        speed: 1400,
+        baseSpeed: 1400,
+        maxSpeed: 4200,
+        shieldTimer: 0,
+        rank: 3,
+        cardEl: document.getElementById('card-nebula'),
+        altEl: document.getElementById('alt-nebula'),
+        shieldEl: document.getElementById('shield-nebula'),
+        progEl: document.getElementById('prog-nebula')
+      }
+    };
+
+    function initStars() {
+      stars = [];
+      for (let i = 0; i < 120; i++) {
+        stars.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          size: Math.random() < 0.2 ? 2.5 : 1.2,
+          speed: 1 + Math.random() * 3,
+          brightness: 0.4 + Math.random() * 0.6
+        });
+      }
+    }
+
+    // =========================================================================
+    // VOTOS, BOOSTS & PROTOCOLO DE EVENTOS
+    // =========================================================================
+    function triggerScreenShake() {
+      stageEl.classList.remove('shake-active');
+      void stageEl.offsetWidth;
+      stageEl.classList.add('shake-active');
+      setTimeout(() => stageEl.classList.remove('shake-active'), 350);
+    }
+
+    function addToast(text, color = '#38bdf8') {
+      const toast = document.createElement('div');
+      toast.className = 'toast-item';
+      toast.style.borderLeftColor = color;
+      toast.innerHTML = text;
+      toastFeedEl.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    function vote(teamKey, user = '@espectador') {
+      if (isGameOver) return;
+      audio.initThrustSound();
+
+      const r = ROCKETS[teamKey];
+      if (!r) return;
+
+      r.speed = Math.min(r.maxSpeed, r.speed + 160);
+      addToast(`⚡ <b>${user}</b> impulsionou <b>${r.name}</b> (+160 m/s)`, r.accentColor);
+    }
+
+    function triggerGift(teamKey, giftName = 'Rose', user = '@espectador') {
+      if (isGameOver) return;
+      audio.initThrustSound();
+      audio.playShieldPulse();
+      audio.playWarpJump();
+      triggerScreenShake();
+
+      const r = ROCKETS[teamKey];
+      if (!r) return;
+
+      const isBig = (giftName === 'Lion' || giftName === 'Rocket' || giftName === 'Universe');
+      const shieldSec = isBig ? 6.0 : 4.0;
+      const speedBoost = isBig ? 1800 : 900;
+
+      r.shieldTimer = Math.max(r.shieldTimer, shieldSec);
+      r.speed = Math.min(r.maxSpeed, r.speed + speedBoost);
+
+      addToast(`🛡️ <b>${user}</b> ativou <b>ESCUDO & HIPER-DOBRA</b> em <b>${r.name}</b>!`, '#fbbf24');
+    }
+
+    // Listener do Broadcaster
+    const broadcasterChannel = new BroadcastChannel('v5_broadcaster_games');
+    broadcasterChannel.onmessage = (event) => handleLivePayload(event.data);
+    window.addEventListener('v5_event', (e) => handleLivePayload(e.detail));
+
+    function handleLivePayload(payload) {
+      if (!payload) return;
+      const user = payload.user || '@espectador';
+
+      if (payload.type === 'gift') {
+        const gift = payload.giftName || 'Gift';
+        const team = (payload.team === 'A' || payload.comment === '1') ? 'apollo' :
+                     (payload.team === 'B' || payload.comment === '2') ? 'solaris' : 'nebula';
+        triggerGift(team, gift, user);
+      } else if (payload.type === 'comment' || payload.type === 'vote') {
+        const text = String(payload.comment || payload.action || '').trim().toLowerCase();
+        if (text === '1' || text.includes('apo') || text.includes('apollo')) vote('apollo', user);
+        else if (text === '2' || text.includes('sol') || text.includes('solaris')) vote('solaris', user);
+        else if (text === '3' || text.includes('neb') || text.includes('nebula')) vote('nebula', user);
+      }
+    }
+
+    // Toggle Debug Drawer
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') toggleDebug();
+    });
+    function toggleDebug() {
+      debugDrawer.classList.toggle('open');
+    }
+
+    // =========================================================================
+    // MOTOR ANTI-SILÊNCIO (Simulação Autônoma)
+    // =========================================================================
+    const mockUsers = [
+      '@astro_sam', '@hugo_orbit', '@luna_space', '@marte_explorer',
+      '@cosmo_kid', '@andromeda_star', '@orion_voyager', '@nebula_fox'
+    ];
+
+    setInterval(() => {
+      if (isGameOver) return;
+      const rndUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+      const teams = ['apollo', 'solaris', 'nebula'];
+      const rndTeam = teams[Math.floor(Math.random() * teams.length)];
+
+      if (Math.random() < 0.20) {
+        triggerGift(rndTeam, 'Rose', rndUser);
+      } else {
+        vote(rndTeam, rndUser);
+      }
+    }, 2400);
+
+    // =========================================================================
+    // SPAWN DE METEOROS
+    // =========================================================================
+    function spawnMeteor() {
+      if (isGameOver) return;
+      meteors.push({
+        x: (W * 0.1) + Math.random() * (W * 0.8),
+        y: -40,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: 4 + Math.random() * 5,
+        radius: 12 + Math.random() * 10,
+        rotation: 0,
+        rotSpeed: (Math.random() - 0.5) * 0.1
+      });
+    }
+
+    setInterval(() => {
+      if (Math.random() < 0.65) spawnMeteor();
+    }, 1200);
+
+    // =========================================================================
+    // LOOP PRINCIPAL DE SIMULAÇÃO E RENDERIZAÇÃO
+    // =========================================================================
+    let lastTime = performance.now();
+    let currentLeaderKey = 'apollo';
+
+    function gameLoop(now) {
+      const dt = Math.min(0.1, (now - lastTime) / 1000);
+      lastTime = now;
+
+      update(dt);
+      render();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    function update(dt) {
+      if (isGameOver) return;
+
+      const rocketList = Object.values(ROCKETS);
+
+      // 1. Atualizar dinâmica dos foguetes
+      rocketList.forEach(r => {
+        r.x = W * r.laneX;
+
+        // Gerenciar escudo
+        if (r.shieldTimer > 0) {
+          r.shieldTimer -= dt;
+          r.shieldEl.className = 'shield-status-indicator active';
+          r.shieldEl.innerHTML = `🛡️ ATIVO (${Math.ceil(r.shieldTimer)}s)`;
+        } else {
+          r.shieldEl.className = 'shield-status-indicator inactive';
+          r.shieldEl.innerHTML = `🛡️ NORMAL`;
+          if (r.speed > r.baseSpeed) {
+            r.speed -= 280 * dt;
+          }
+        }
+
+        // Avanço de altitude
+        r.altitude += r.speed * dt;
+
+        // Atualizar telemetria DOM
+        r.altEl.textContent = `${(r.altitude / 1000).toFixed(1)} km`;
+        const pct = Math.min(100, (r.altitude / ORBIT_TARGET_ALTITUDE) * 100);
+        r.progEl.style.width = `${pct}%`;
+
+        if (r.altitude >= ORBIT_TARGET_ALTITUDE) {
+          finishRound(r);
+        }
+      });
+
+      // 2. Classificação de Liderança
+      rocketList.sort((a, b) => b.altitude - a.altitude);
+      rocketList.forEach((r, idx) => {
+        r.rank = idx + 1;
+        if (idx === 0) {
+          r.cardEl.classList.add('leader');
+          if (r.id !== currentLeaderKey) {
+            currentLeaderKey = r.id;
+            addToast(`🛰️ <b>${r.name}</b> assumiu a LIDERANÇA ORBITAL!`, r.accentColor);
+          }
+        } else {
+          r.cardEl.classList.remove('leader');
+        }
+      });
+
+      // 3. Atualizar Estrelas (Scrolling descendente)
+      const avgSpeed = (rocketList.reduce((acc, r) => acc + r.speed, 0) / 3) / 1000;
+      stars.forEach(s => {
+        s.y += (s.speed + avgSpeed * 1.5);
+        if (s.y > H) {
+          s.y = 0;
+          s.x = Math.random() * W;
+        }
+      });
+
+      // 4. Atualizar Meteoros e Colisões
+      const rocketY = H * 0.72; // Posição vertical dos foguetes na tela
+      for (let i = meteors.length - 1; i >= 0; i--) {
+        const m = meteors[i];
+        m.x += m.vx;
+        m.y += m.vy + (avgSpeed * 1.2);
+        m.rotation += m.rotSpeed;
+
+        // Checar colisão com cada foguete
+        rocketList.forEach(r => {
+          const dist = Math.hypot(m.x - r.x, m.y - rocketY);
+          if (dist < m.radius + 24) {
+            // Colisão!
+            if (r.shieldTimer > 0) {
+              // Escudo pulveriza o meteoro
+              audio.playShieldPulse();
+              createExplosion(m.x, m.y, '#38bdf8');
+              meteors.splice(i, 1);
+            } else {
+              // Foguete atingido
+              audio.playMeteorExplosion();
+              triggerScreenShake();
+              createExplosion(m.x, m.y, '#f87171');
+              r.speed = Math.max(700, r.speed - 500);
+              addToast(`💥 Meteoro atingiu <b>${r.name}</b> (-500 m/s)!`, '#f87171');
+              meteors.splice(i, 1);
+            }
+          }
+        });
+
+        if (m.y > H + 40) meteors.splice(i, 1);
+      }
+
+      // Atualizar partículas de explosão
+      for (let i = explosions.length - 1; i >= 0; i--) {
+        const ex = explosions[i];
+        ex.x += ex.vx;
+        ex.y += ex.vy;
+        ex.alpha -= 0.035;
+        if (ex.alpha <= 0) explosions.splice(i, 1);
+      }
+    }
+
+    function createExplosion(x, y, color = '#fbbf24') {
+      for (let i = 0; i < 20; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2 + Math.random() * 5;
+        explosions.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          color,
+          alpha: 1.0,
+          size: 3 + Math.random() * 4
+        });
+      }
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, W, H);
+
+      // 1. Fundo do Espaço Sideral com Gradiente Atmosférico
+      const maxAlt = Math.max(...Object.values(ROCKETS).map(r => r.altitude));
+      const altNorm = Math.min(1.0, maxAlt / ORBIT_TARGET_ALTITUDE);
+
+      const spaceGrad = ctx.createLinearGradient(0, 0, 0, H);
+      // Gradualmente escurecendo conforme sobe
+      spaceGrad.addColorStop(0, '#010409');
+      spaceGrad.addColorStop(0.5, `rgba(15, 10, 36, ${1.0 - altNorm * 0.5})`);
+      spaceGrad.addColorStop(1, `rgba(3, 15, 45, ${1.0 - altNorm * 0.7})`);
+      ctx.fillStyle = spaceGrad;
+      ctx.fillRect(0, 0, W, H);
+
+      // 2. Estrelas Cintilantes em Parallax
+      stars.forEach(s => {
+        ctx.fillStyle = `rgba(255, 255, 255, ${s.brightness})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 3. Renderizar Meteoros em Queda
+      renderMeteors();
+
+      // 4. Renderizar os 3 Foguetes com Chamas de Plasma e Escudos
+      renderRockets();
+
+      // 5. Partículas de Explosão
+      explosions.forEach(ex => {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, ex.alpha);
+        ctx.fillStyle = ex.color;
+        ctx.shadowColor = ex.color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(ex.x, ex.y, ex.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // 6. Confetes de Vitória
+      renderStarConfetti();
+    }
+
+    function renderMeteors() {
+      meteors.forEach(m => {
+        ctx.save();
+        ctx.translate(m.x, m.y);
+        ctx.rotate(m.rotation);
+
+        // Cauda Flamejante do Meteoro
+        const tailGrad = ctx.createLinearGradient(0, -m.radius * 2.5, 0, 0);
+        tailGrad.addColorStop(0, 'rgba(239, 68, 68, 0)');
+        tailGrad.addColorStop(1, '#f97316');
+        ctx.fillStyle = tailGrad;
+        ctx.beginPath();
+        ctx.moveTo(-m.radius * 0.7, 0);
+        ctx.lineTo(0, -m.radius * 3.0);
+        ctx.lineTo(m.radius * 0.7, 0);
+        ctx.closePath();
+        ctx.fill();
+
+        // Corpo Rochoso do Meteoro
+        ctx.fillStyle = '#78350f';
+        ctx.strokeStyle = '#f97316';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, m.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.restore();
+      });
+    }
+
+    function renderRockets() {
+      const rocketY = H * 0.72;
+      const rocketList = Object.values(ROCKETS).sort((a, b) => a.altitude - b.altitude);
+
+      rocketList.forEach(r => {
+        const x = r.x;
+        const y = rocketY;
+
+        ctx.save();
+        ctx.translate(x, y);
+
+        // Chamas de Propulsão / Fogo de Escape
+        const flameLength = 35 + (r.speed / 100) + (Math.random() * 15);
+        const flameGrad = ctx.createLinearGradient(0, 20, 0, 20 + flameLength);
+        flameGrad.addColorStop(0, '#ffffff');
+        flameGrad.addColorStop(0.3, r.accentColor);
+        flameGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+        ctx.fillStyle = flameGrad;
+        ctx.beginPath();
+        ctx.moveTo(-10, 20);
+        ctx.lineTo(0, 20 + flameLength);
+        ctx.lineTo(10, 20);
+        ctx.closePath();
+        ctx.fill();
+
+        // Fuselagem do Foguete (Corpo Cônico Aerodinâmico)
+        ctx.fillStyle = r.color;
+        ctx.strokeStyle = r.accentColor;
+        ctx.lineWidth = 2;
+        ctx.shadowColor = r.accentColor;
+        ctx.shadowBlur = (r.shieldTimer > 0) ? 25 : 12;
+
+        ctx.beginPath();
+        ctx.moveTo(0, -32);            // Nariz do foguete
+        ctx.lineTo(14, 18);           // Asa direita
+        ctx.lineTo(8, 20);            // Bocal direito
+        ctx.lineTo(-8, 20);           // Bocal esquerdo
+        ctx.lineTo(-14, 18);          // Asa esquerda
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Janela / Vigia Cibernética
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.arc(0, -6, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Escudo de Deflexão de Energia (Bolha Radiante)
+        if (r.shieldTimer > 0) {
+          ctx.strokeStyle = '#38bdf8';
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 18;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.ellipse(0, -4, 28, 38, 0, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+          ctx.fill();
+        }
+
+        // Rótulo Flutuante
+        ctx.restore();
+        ctx.save();
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = '#000000';
+        ctx.shadowBlur = 6;
+        ctx.fillText(`#${r.rank} ${r.name}`, x, y - 40);
+        ctx.restore();
+      });
+    }
+
+    // =========================================================================
+    // CICLO DE PARTIDA, VITÓRIA & AUTO-RESET
+    // =========================================================================
+    function startTimer() {
+      roundTime = 45;
+      roundTimerEl.textContent = `${roundTime}s`;
+      clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        if (isGameOver) return;
+        roundTime--;
+        roundTimerEl.textContent = `${roundTime}s`;
+
+        if (roundTime <= 0) {
+          const list = Object.values(ROCKETS).sort((a, b) => b.altitude - a.altitude);
+          finishRound(list[0]);
+        }
+      }, 1000);
+    }
+
+    function finishRound(winner) {
+      if (isGameOver) return;
+      isGameOver = true;
+      clearInterval(timerInterval);
+
+      audio.playVictoryCosmic();
+      triggerScreenShake();
+
+      const podium = Object.values(ROCKETS).sort((a, b) => b.altitude - a.altitude);
+      victoryTitle.textContent = `${winner.name.toUpperCase()} VENCEU!`;
+      victoryTitle.style.color = winner.accentColor;
+      victorySubtitle.textContent = `Atingiu a altitude orbital de ${(winner.altitude / 1000).toFixed(1)} km e venceu a Corrida Espacial!`;
+
+      podium1.textContent = `🥇 1º Lugar: ${podium[0].name} (${(podium[0].altitude / 1000).toFixed(1)} km)`;
+      podium2.textContent = `🥈 2º Lugar: ${podium[1].name} (+${((podium[0].altitude - podium[1].altitude) / 1000).toFixed(1)} km)`;
+      podium3.textContent = `🥉 3º Lugar: ${podium[2].name} (+${((podium[0].altitude - podium[2].altitude) / 1000).toFixed(1)} km)`;
+
+      // Gerar estrelas de comemoração
+      starConfetti = [];
+      for (let i = 0; i < 90; i++) {
+        starConfetti.push({
+          x: Math.random() * W,
+          y: Math.random() * -H,
+          vx: (Math.random() - 0.5) * 4,
+          vy: 3 + Math.random() * 5,
+          color: ['#38bdf8', '#f87171', '#facc15', '#a855f7', '#ffffff'][Math.floor(Math.random() * 5)],
+          size: 5 + Math.random() * 5
+        });
+      }
+
+      victoryOverlay.classList.add('active');
+      resetFill.style.transition = 'none';
+      resetFill.style.width = '100%';
+      void resetFill.offsetWidth;
+      resetFill.style.transition = 'width 5s linear';
+      resetFill.style.width = '0%';
+
+      setTimeout(() => {
+        resetGame();
+      }, 5000);
+    }
+
+    function resetGame() {
+      victoryOverlay.classList.remove('active');
+      starConfetti = [];
+      meteors = [];
+      explosions = [];
+
+      Object.values(ROCKETS).forEach(r => {
+        r.altitude = 0;
+        r.speed = r.baseSpeed;
+        r.shieldTimer = 0;
+        r.progEl.style.width = '0%';
+        r.altEl.textContent = '0.0 km';
+      });
+
+      isGameOver = false;
+      startTimer();
+      addToast('🛰️ NOVA MISSÃO INICIADA! Decolagem orbital autorizada!', '#38bdf8');
+    }
+
+    function renderStarConfetti() {
+      if (starConfetti.length === 0) return;
+      starConfetti.forEach(c => {
+        c.x += c.vx;
+        c.y += c.vy;
+        ctx.fillStyle = c.color;
+        ctx.fillRect(c.x, c.y, c.size, c.size);
+      });
+    }
+
+    // Inicialização da Página
+    resize();
+    startTimer();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>

@@ -87,6 +87,14 @@ GAME_METADATA = {
         "commands": ["1", "2", "3", "orb", "quasar", "blackhole"],
         "status": "HOMOLOGADO",
         "version": "1.0.0"
+    },
+    "15_corrida_maluca_espacial": {
+        "name": "Corrida Maluca Espacial",
+        "category": "corrida_velocidade",
+        "description": "Foguetes espaciais rumo à órbita com chuva de meteoros, escudos defletores e hiper-dobra ativada por presentes",
+        "commands": ["1", "2", "3", "apollo", "solaris", "nebula"],
+        "status": "HOMOLOGADO",
+        "version": "1.0.0"
     }
 }
 

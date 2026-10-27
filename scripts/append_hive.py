@@ -3,16 +3,16 @@ import os
 bus_path = r"C:\Users\v5est\.gemini\antigravity\brain\9270dd65-160e-47e8-aea2-6a92fd50cfc6\antigravity_hive_bus.md"
 
 entry = """
-### [27/10/2026 - 07:10] CAPITANIA V5 GAMES - ETAPAS 032, 033 E 034 CONCLUÍDAS: CARTUCHO #03 CORRIDA DOS AVATARES DA HOLDING
-- **Cartucho Homologado:** `03_corrida_avatares_holding` (Corrida dos Avatares da Holding - Roxingo, Baiano e Macaco Driver 9:16).
+### [27/10/2026 - 07:35] CAPITANIA V5 GAMES - ETAPA 035 CONCLUÍDA: CARTUCHO #15 CORRIDA MALUCA ESPACIAL
+- **Cartucho Homologado:** `15_corrida_maluca_espacial` (Corrida Maluca Espacial - Foguetes & Meteoros 9:16).
 - **Inovações de Engenharia:**
-  1. Circuito vertical pseudo-3D com 3 faixas delimitadas por neon, zebrados dinâmicos e scrolling infinito a 60 FPS.
-  2. Sprites procedurais vetoriais e animações exclusivas para os 3 avatares pilotos (Roxingo roxo com holo-ears, Baiano com chapéu solar e Macaco Driver com headphones neon).
-  3. Sistema de turbos de nitro (votos '1', '2', '3' aceleram; presentes ativam Super Hyper-Drive de +120 km/h com labaredas de plasma e screen shake).
-  4. Síntese de áudio procedural com modulação de RPM de motor, som de ar pressurizado (`playNitroRush`), buzina de ultrapassagem (`playOvertakeHorn`) e fanfarra de vitória.
-  5. Ciclo fechado de 45 segundos (ou 1500m de pista) com tela de pódio, confetes e auto-reset em 5 segundos.
-- **Sincronização:** Total de 10 cartuchos ativos no Broadcaster (`v5_games_manifest.json`).
-- **Próxima Etapa:** Etapa 035 — Forjamento do Cartucho #15: Corrida Maluca Espacial (Foguetes acelerando rumo à órbita com chuva de meteoros e escudos).
+  1. Voo espacial vertical ascendente rumo à órbita baixa da Terra (100.000m) com transição dinâmica de atmosfera e campo estelar em parallax.
+  2. 3 Foguetes com fuselagem cônica, propulsão iônica e telemetria orbital em tempo real (Apollo Nova, Solaris Falcon e Nebula Titan).
+  3. Sistema de perigos espaciais: chuva de meteoros colidindo e desacelerando naves (-500 m/s com explosões de partículas).
+  4. Escudo Quântico Defletor ativado por presentes do chat: pulveriza meteoros instantaneamente e aciona salto de hiper-dobra (+900 a +1800 m/s).
+  5. Síntese de áudio procedural com som contínuo de propulsão iônica (`playThrustSound`), pulso de escudo ressonante (`playShieldPulse`), explosão de meteoro e fanfarra orbital.
+- **Sincronização:** Total de 11 cartuchos ativos no Broadcaster (`v5_games_manifest.json`).
+- **Próxima Etapa:** Etapa 036 — Forjamento do Cartucho #16: Arrancada Noturna Neon (Drag Race em linha reta com troca de marcha sincronizada por votos).
 """
 
 if os.path.exists(bus_path):

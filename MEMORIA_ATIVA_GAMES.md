@@ -39,6 +39,7 @@ O objetivo financeiro e técnico é possuir um acervo proprietário de alta qual
 | **12** | `12_pachinko_pinball_neon` | Pachinko Pinball Neon | Flippers automáticos, canaletas magnéticas e 100x Super Jackpot por moedas do chat | **HOMOLOGADO** |
 | **13** | `13_cascata_de_moedas` | Cascata de Moedas Douradas | Coin Pusher 2.5D com pá motorizada, atrito de empilhamento, lingotes e avalanches | **HOMOLOGADO** |
 | **14** | `14_vortex_gravitacional` | Vortex Gravitacional | Buraco negro cósmico com atração não-linear, órbitas caóticas, áudio Doppler e pulsos de Quasar | **HOMOLOGADO** |
+| **15** | `15_corrida_maluca_espacial` | Corrida Maluca Espacial | Foguetes espaciais rumo à órbita com chuva de meteoros, escudos defletores e hiper-dobra | **HOMOLOGADO** |
 
 ---
 
