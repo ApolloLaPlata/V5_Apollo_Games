@@ -11,9 +11,16 @@
 - **Por que esta Capitania Existe:** O **V5 Broadcaster** é o motor de transmissão contínua 24/7 (FFmpeg, NVENC, OBS, Syndication, Rádio). Se o Broadcaster tentasse fabricar jogos, ele perderia o foco de infraestrutura pesada e se corromperia.
 - **A Divisão dos Poderes:**
   - **V5 Broadcaster:** O Console e Estúdio de Streaming.
-  - **V5 Games:** A Forja Exclusiva de Cartuchos. 
-- **A Tese de Monetização & Dogfooding:** Jogos de live em formato 9:16 são máquinas de retenção e faturamento em presentes (TikTok Gifts, rosas, foguetes, leões, moedas). Nós seremos nossos próprios primeiros clientes (alimentando nossas lives 24/7 e os canais multimodais da holding, como o **Roxingo**).
-- **Meta Primária Atingida:** Construção e homologação do acervo completo de **40 jogos proprietários ultra-polidos**, leves, sem dependências externas, 60 FPS estáveis, com sintetizador de áudio procedural Web Audio API e conformidade com as 5 Leis Absolutas.
+  - **V5 Games:** A Forja Exclusiva de Cartuchos & Infraestrutura de Runtime de Lives.
+- **Diretriz Soberana & Pivot de Infraestrutura:**
+  - Os 41 cartuchos atuais são reconhecidos como **Mecânicas Base de Lógica e Matemática** (PoCs funcionais de tiro, corrida, eliminação, coop).
+  - Os jogos comerciais para revenda e transmissão serão reconstruídos um por um do zero com direção visual profissional, personagens e arte impecáveis.
+  - **Foco Primário Atual da Engenharia:** Construção da **Infraestrutura Robusta de Runtime e Entrada de Comandos**:
+    1. Viewport 9:16 adaptativo e imune a distorções no OBS.
+    2. Pipeline multicanal (WebSocket, BroadcastChannel, postMessage) com proteção contra estouro de fila em raids.
+    3. Normalizador semântico de chat e sistema prioritário de presentes.
+    4. Estúdio de Bancada para testes de estresse de tráfego e telemetria em tempo real.
+    5. Template de cartucho desacoplado (Clean Boilerplate) pronto para plugar assets visuais AAA.
 
 ---
 
