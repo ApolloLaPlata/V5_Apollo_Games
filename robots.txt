@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /relatorios/
+
+Sitemap: https://games.v5apollo.com/sitemap.xml

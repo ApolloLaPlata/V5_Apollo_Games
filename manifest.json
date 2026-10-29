@@ -1,0 +1,16 @@
+{
+  "name": "V5 Games — Portal Oficial de Cartuchos Interativos de Live 9:16",
+  "short_name": "V5 Games",
+  "description": "Arcade interativo vertical 9:16 com cartuchos dinâmicos, rankings ao vivo e telemetria sovereign da Holding V5 Apollo.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030712",
+  "theme_color": "#00f0ff",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}
