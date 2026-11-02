@@ -617,6 +617,23 @@
     // DOM Elements
     const scoreBlueEl = document.getElementById('score-blue');
     const scoreOrangeEl = document.getElementById('score-orange');
+
+    // Leitura Dinâmica de Parâmetros de Customização do Cockpit
+    const urlParams = new URLSearchParams(window.location.search);
+    const customTeamA = urlParams.get('teamA');
+    const customTeamB = urlParams.get('teamB');
+    const customCmdA = (urlParams.get('cmdA') || '1').toLowerCase();
+    const customCmdB = (urlParams.get('cmdB') || '2').toLowerCase();
+    const customGiftMul = parseFloat(urlParams.get('giftMul') || '10');
+
+    if (customTeamA) {
+      const el = document.querySelector('.team-blue .box-title');
+      if (el) el.innerText = '🟦 ' + customTeamA;
+    }
+    if (customTeamB) {
+      const el = document.querySelector('.team-orange .box-title');
+      if (el) el.innerText = '🟧 ' + customTeamB;
+    }
     const roundTimerEl = document.getElementById('round-timer');
     const victoryOverlay = document.getElementById('victory-overlay');
     const victoryTitle = document.getElementById('victory-title');
@@ -971,10 +988,16 @@
       const user = data.user || '@espectador';
       const giftName = data.giftName || null;
 
-      if (cmd === '1' || team === 'A' || cmd.includes('azul')) {
-        pull('A', weight, user, giftName);
-      } else if (cmd === '2' || team === 'B' || cmd.includes('laranja') || cmd.includes('vermelho')) {
-        pull('B', weight, user, giftName);
+      let effectiveWeight = weight;
+      if (giftName) effectiveWeight = Math.max(weight, 1) * customGiftMul;
+
+      const isA = cmd === customCmdA || team === 'A' || (customTeamA && cmd.includes(customTeamA.toLowerCase())) || cmd === '1' || cmd.includes('azul');
+      const isB = cmd === customCmdB || team === 'B' || (customTeamB && cmd.includes(customTeamB.toLowerCase())) || cmd === '2' || cmd.includes('laranja') || cmd.includes('vermelho');
+
+      if (isA) {
+        pull('A', effectiveWeight, user, giftName);
+      } else if (isB) {
+        pull('B', effectiveWeight, user, giftName);
       }
     }
 

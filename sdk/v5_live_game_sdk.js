@@ -27,6 +27,9 @@
       this.isIframe = this.env === 'test_lab';
       this.isStandalone = this.env === 'standalone';
 
+      // Parâmetros de customização injetados via URL pelo Cockpit do Streamer
+      this.config = this.parseUrlConfig();
+
       this.callbacks = {
         comment: [],
         gift: [],
@@ -73,6 +76,29 @@
      * Auto-detecta se o jogo está rodando no OBS Studio,
      * dentro do Test Lab (Iframe) ou como aba Standalone no navegador.
      */
+    parseUrlConfig() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        return {
+          streamer: params.get('streamer') || 'streamer_v5',
+          token: params.get('token') || null,
+          teamA: params.get('teamA') || null,
+          teamB: params.get('teamB') || null,
+          cmdA: params.get('cmdA') || null,
+          cmdB: params.get('cmdB') || null,
+          goal: params.get('goal') ? parseInt(params.get('goal'), 10) : null,
+          giftMul: params.get('giftMul') ? parseFloat(params.get('giftMul')) : 10,
+          theme: params.get('theme') || 'neon'
+        };
+      } catch (e) {
+        return { streamer: 'streamer_v5', giftMul: 10 };
+      }
+    }
+
+    getConfig() {
+      return this.config;
+    }
+
     detectEnvironment() {
       // 1. OBS Browser Source
       const isOBS = (

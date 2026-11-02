@@ -1,26 +1,26 @@
-# MEMÓRIA ATIVA — CAPITANIA V5 GAMES (CATÁLOGO DE JOGOS DE LIVE)
+# MEMÓRIA ATIVA — CAPITANIA V5 GAMES (PLATAFORMA SOBERANA DE JOGOS & STOREFRONT DE LIVES)
 
-**Última Atualização:** 27 de Outubro de 2026  
-**Status do Projeto:** Fase 11 Concluída (Etapa 110 Homologada) — 110/110 Etapas Concluídas (100% Homologado), 40 Jogos Próprios (41 Cartuchos Físicos) Forjados, Blindados e Homologados com 100% de Integridade MD5 e Tag de Lançamento v1.0.0-soberano  
-**Destino de Hospedagem:** `E:\MEUS PROGRAMAS\V5_APOLLO_SITES\V5_Apollo_Broadcaster\frontend\public\games\`  
-**Resolução Padrão:** 1080 x 1920 (Vertical 9:16)
+**Última Atualização:** 02 de Novembro de 2026  
+**Status do Projeto:** Transição para Plataforma Soberana e Storefront Independente ("A Steam das Lives Interativas & Games da Holding V5 Apollo")  
+**Hospedagem & Runtime:** Porta local `:3012` (servidor independente com suporte a Browser Source para OBS/Streamlabs/Broadcaster)  
+**Resolução Padrão (Cartuchos Live):** 1080 x 1920 (Vertical 9:16)  
+**Linhas de Produto:** 1) Cartuchos de Live Interativa (41 PoCs Homologadas), 2) Franquia Roxinho (Web/Mobile), 3) Futuro Marketplace & RMT  
 
 ---
 
-## 0. O Propósito Sagrado do V5 Games & Aliança com o Broadcaster
-- **Por que esta Capitania Existe:** O **V5 Broadcaster** é o motor de transmissão contínua 24/7 (FFmpeg, NVENC, OBS, Syndication, Rádio). Se o Broadcaster tentasse fabricar jogos, ele perderia o foco de infraestrutura pesada e se corromperia.
-- **A Divisão dos Poderes:**
-  - **V5 Broadcaster:** O Console e Estúdio de Streaming.
-  - **V5 Games:** A Forja Exclusiva de Cartuchos & Infraestrutura de Runtime de Lives.
-- **Diretriz Soberana & Pivot de Infraestrutura:**
-  - Os 41 cartuchos atuais são reconhecidos como **Mecânicas Base de Lógica e Matemática** (PoCs funcionais de tiro, corrida, eliminação, coop).
-  - Os jogos comerciais para revenda e transmissão serão reconstruídos um por um do zero com direção visual profissional, personagens e arte impecáveis.
-  - **Foco Primário Atual da Engenharia:** Construção da **Infraestrutura Robusta de Runtime e Entrada de Comandos**:
-    1. Viewport 9:16 adaptativo e imune a distorções no OBS.
-    2. Pipeline multicanal (WebSocket, BroadcastChannel, postMessage) com proteção contra estouro de fila em raids.
-    3. Normalizador semântico de chat e sistema prioritário de presentes.
-    4. Estúdio de Bancada para testes de estresse de tráfego e telemetria em tempo real.
-    5. Template de cartucho desacoplado (Clean Boilerplate) pronto para plugar assets visuais AAA.
+## 0. O Propósito Soberano do V5 Games & Desacoplamento do Broadcaster
+- **O Fim da Dependência de Subpasta:** O V5 Games deixou de ser uma mera pasta estática dentro do Broadcaster. Ele agora é uma **Plataforma Completa e Autônoma**, com loja própria, sistema de aluguel/licenças, simulador de bancada, personalizador de partidas e gerador de URLs seguras para transmissões.
+- **A Divisão Soberana dos Poderes:**
+  - **V5 Broadcaster:** O Console e Estúdio de Streaming 24/7 (FFmpeg, NVENC, OBS, Rádio, Syndication). O Broadcaster não carrega pastas pesadas de jogos; ele apenas consome a URL do jogo via Browser Source ou conector API.
+  - **V5 Games:** A Plataforma de Jogos. Atende tanto os streamers do V5 Broadcaster quanto streamers externos (que utilizam OBS Studio padrão, Streamlabs, Twitch Studio ou TikTok Live Studio).
+  - **Quem aluga/compra um jogo no V5 Games:** Pode configurá-lo (times, comandos, peso de gifts) e obter uma URL tokenizada pronta para ser inserida em qualquer software de transmissão.
+- **As Três Frentes Estratégicas do Catálogo:**
+  1. **Jogos Interativos de Live 9:16:** Mecânicas matemáticas de alta retenção onde o público é o controle e gifts geram superpoderes.
+  2. **Franquia Roxinho (Web & Mobile):** Jogos com a marca e o mascote oficial da Holding V5 Apollo (ex: *Roxinho Runner*, *RoxinhoQuest*).
+  3. **Marketplace & RMT (Visão Futura):** Plataforma aberta para desenvolvedores parceiros distribuírem jogos interativos com divisão de receita.
+- **Diretriz de Qualidade Visual:**
+  - As 41 bases atuais são PoCs matemáticas e lógicas funcionais.
+  - O estúdio agora trabalha no design de alta fidelidade (personagens, artes vetoriais/sprites, interface cyberpunk limpa) para criar jogos comercialmente impecáveis para revenda e locação.
 
 ---
 

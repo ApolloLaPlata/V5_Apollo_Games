@@ -1,22 +1,15 @@
-<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>V5 Games — Portal Oficial de Cartuchos Interativos de Live 9:16</title>
+  <title>V5 Games — Plataforma Soberana de Jogos de Live & Storefront 9:16</title>
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <link rel="manifest" href="/manifest.json">
-  <meta name="description" content="Arcade interativo vertical 9:16 com cartuchos dinâmicos, rankings ao vivo e telemetria sovereign da Holding V5 Apollo.">
-  <meta property="og:title" content="V5 Games — Portal Oficial de Cartuchos Interativos de Live 9:16">
-  <meta property="og:description" content="Arcade interativo vertical 9:16 com cartuchos dinâmicos, rankings ao vivo e telemetria sovereign da Holding V5 Apollo.">
-  <meta property="og:url" content="https://games.v5apollo.com">
-  <meta property="og:site_name" content="V5 Games">
-  <meta property="og:locale" content="pt_BR">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="description" content="A Steam das Lives Interativas 9:16 e Games Proprietários da Holding V5 Apollo.">
   <style>
     /* ==========================================================================
-       V5 GAMES STUDIO — DESIGN SYSTEM (DARK OBSIDIAN & NEON GLASS)
-       Holding V5 Apollo — 100% Offline, Zero Dependências Externas
+       V5 GAMES SOVEREIGN PLATFORM — DESIGN SYSTEM (DARK OBSIDIAN & NEON GLASS)
+       Holding V5 Apollo — 100% Offline, Zero CDNs Externas
        ========================================================================== */
     :root {
       --bg-primary: #030712;
@@ -25,6 +18,7 @@
       --bg-surface-elevated: #1e293b;
       --border-subtle: rgba(255, 255, 255, 0.08);
       --border-accent: rgba(56, 189, 248, 0.3);
+      --border-purple: rgba(168, 85, 247, 0.4);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --text-subtle: #64748b;
@@ -57,42 +51,32 @@
       line-height: 1.5;
     }
 
-    /* Scrollbar elegante */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #030712;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #1e293b;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #334155;
-    }
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #030712; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
 
     /* ==========================================================================
-       HEADER & BARRA DE NAVEGAÇÃO
+       HEADER & BARRA DE NAVEGAÇÃO SOBERANA
        ========================================================================== */
     header.main-header {
       position: sticky;
       top: 0;
-      background: rgba(11, 17, 32, 0.92);
+      background: rgba(11, 17, 32, 0.95);
       border-bottom: 1px solid var(--border-subtle);
-      padding: 12px 32px;
+      padding: 12px 28px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      backdrop-filter: blur(14px);
+      backdrop-filter: blur(16px);
       z-index: 1000;
     }
 
     .brand-wrap {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       cursor: pointer;
     }
 
@@ -107,7 +91,7 @@
       font-weight: 900;
       font-size: 18px;
       color: #030712;
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.45);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
     }
 
     .brand-name {
@@ -132,8 +116,8 @@
     nav.nav-tabs {
       display: flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(15, 23, 42, 0.8);
+      gap: 4px;
+      background: rgba(15, 23, 42, 0.85);
       border: 1px solid var(--border-subtle);
       border-radius: 30px;
       padding: 4px;
@@ -143,15 +127,16 @@
       background: transparent;
       border: none;
       color: var(--text-muted);
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
-      padding: 8px 18px;
+      padding: 8px 14px;
       border-radius: 20px;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
     }
 
     .nav-btn:hover {
@@ -160,7 +145,7 @@
     }
 
     .nav-btn.active {
-      background: linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.22) 0%, rgba(168, 85, 247, 0.22) 100%);
       border: 1px solid var(--border-accent);
       color: var(--neon-cyan);
       box-shadow: 0 0 14px rgba(0, 240, 255, 0.2);
@@ -169,7 +154,7 @@
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
     }
 
     .live-status-pill {
@@ -183,7 +168,6 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      letter-spacing: 0.5px;
     }
 
     .pulse-dot {
@@ -200,68 +184,25 @@
       50% { opacity: 0.4; transform: scale(0.85); }
     }
 
-    .btn-bridge-broadcaster {
-      background: rgba(168, 85, 247, 0.15);
-      border: 1px solid rgba(168, 85, 247, 0.4);
-      color: #d8b4fe;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 7px 12px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      transition: all 0.2s;
-      text-decoration: none;
-    }
-    .btn-bridge-broadcaster:hover {
-      background: rgba(168, 85, 247, 0.3);
-      border-color: #c084fc;
-      color: #ffffff;
-      transform: translateY(-1px);
-    }
-    .btn-bridge-poster {
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      color: #fcd34d;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 7px 12px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      transition: all 0.2s;
-      text-decoration: none;
-    }
-    .btn-bridge-poster:hover {
-      background: rgba(245, 158, 11, 0.3);
-      border-color: #fbbf24;
-      color: #ffffff;
-      transform: translateY(-1px);
-    }
-
-    .btn-quick-launch {
-      background: linear-gradient(135deg, var(--neon-cyan) 0%, #0284c7 100%);
+    .btn-quick-cockpit {
+      background: linear-gradient(135deg, var(--neon-purple) 0%, #7c3aed 100%);
       border: none;
-      color: #030712;
+      color: #ffffff;
       font-size: 12px;
       font-weight: 800;
-      padding: 8px 16px;
+      padding: 8px 14px;
       border-radius: var(--radius-sm);
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.35);
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.35);
       transition: all 0.2s;
     }
 
-    .btn-quick-launch:hover {
+    .btn-quick-cockpit:hover {
       transform: translateY(-1px);
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.55);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.55);
     }
 
     /* ==========================================================================
@@ -306,26 +247,24 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid var(--border-accent);
+      color: var(--neon-cyan);
       font-size: 11px;
       font-weight: 800;
-      color: var(--neon-cyan);
-      background: rgba(0, 240, 255, 0.1);
-      border: 1px solid rgba(0, 240, 255, 0.3);
       padding: 4px 14px;
       border-radius: 20px;
       margin-bottom: 14px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
     .hero-title {
-      font-size: 36px;
+      font-size: 34px;
       font-weight: 900;
-      letter-spacing: -0.5px;
       color: #ffffff;
-      max-width: 900px;
+      max-width: 850px;
+      line-height: 1.25;
       margin-bottom: 12px;
-      line-height: 1.2;
     }
 
     .hero-title span {
@@ -337,29 +276,27 @@
     .hero-desc {
       font-size: 15px;
       color: var(--text-muted);
-      max-width: 750px;
-      margin-bottom: 24px;
+      max-width: 680px;
       line-height: 1.6;
+      margin-bottom: 24px;
     }
 
-    /* Faixa de Estatísticas de Produção */
     .hero-stats {
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
       justify-content: center;
-      margin-bottom: 10px;
     }
 
     .stat-badge {
-      background: rgba(15, 23, 42, 0.85);
+      background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
       padding: 10px 18px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 140px;
+      min-width: 120px;
     }
 
     .stat-val {
@@ -370,27 +307,24 @@
 
     .stat-label {
       font-size: 11px;
-      font-weight: 700;
       color: var(--text-subtle);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-weight: 700;
+      margin-top: 2px;
     }
 
-    /* Barra de Busca e Filtros */
+    /* Barra de Pesquisa e Filtros */
     .catalog-controls {
-      padding: 24px 32px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      max-width: 1600px;
-      width: 100%;
-      margin: 0 auto;
+      padding: 24px 32px 16px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .search-row {
       display: flex;
       gap: 16px;
       align-items: center;
+      margin-bottom: 16px;
     }
 
     .search-input-wrap {
@@ -398,31 +332,30 @@
       position: relative;
     }
 
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-subtle);
+      font-size: 14px;
+    }
+
     .search-input {
       width: 100%;
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 14px 18px 14px 44px;
-      color: #ffffff;
+      padding: 12px 16px 12px 40px;
+      color: var(--text-main);
       font-size: 14px;
-      font-weight: 500;
       outline: none;
       transition: all 0.2s;
     }
 
     .search-input:focus {
       border-color: var(--neon-cyan);
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 16px;
-      color: var(--text-subtle);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
     }
 
     .catalog-counter {
@@ -432,55 +365,46 @@
       white-space: nowrap;
     }
 
-    /* Filtros em Pílulas */
     .filter-pills {
       display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 4px;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
-    .pill-btn {
+    .filter-pill {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       color: var(--text-muted);
       font-size: 12px;
       font-weight: 700;
-      padding: 8px 16px;
+      padding: 6px 14px;
       border-radius: 20px;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
-      white-space: nowrap;
-      transition: all 0.2s;
+      transition: all 0.15s;
     }
 
-    .pill-btn:hover {
-      color: #ffffff;
-      border-color: rgba(255, 255, 255, 0.2);
-      background: #1e293b;
+    .filter-pill:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
     }
 
-    .pill-btn.active {
-      background: #1e293b;
+    .filter-pill.active {
+      background: rgba(0, 240, 255, 0.15);
       border-color: var(--neon-cyan);
       color: var(--neon-cyan);
-      box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
     }
 
-    /* Grid de Cartuchos */
+    /* Grid de Jogos */
     .games-grid {
-      padding: 0 32px 60px;
-      max-width: 1600px;
-      width: 100%;
-      margin: 0 auto;
+      padding: 32px;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 24px;
     }
 
-    /* Card de Jogo */
     .game-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
@@ -493,15 +417,16 @@
     }
 
     .game-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(56, 189, 248, 0.35);
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 240, 255, 0.15);
+      transform: translateY(-4px);
+      border-color: var(--border-accent);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 240, 255, 0.15);
     }
 
     .card-thumb-wrap {
       position: relative;
       width: 100%;
-      height: 220px;
+      aspect-ratio: 9/16;
+      max-height: 220px;
       background: #020617;
       overflow: hidden;
       display: flex;
@@ -527,210 +452,310 @@
       right: 10px;
       display: flex;
       justify-content: space-between;
-      align-items: center;
       pointer-events: none;
     }
 
     .badge-number {
       background: rgba(3, 7, 18, 0.85);
       border: 1px solid var(--border-subtle);
-      backdrop-filter: blur(8px);
       color: var(--neon-cyan);
-      font-weight: 900;
       font-size: 11px;
+      font-weight: 900;
       padding: 3px 8px;
-      border-radius: 6px;
-      letter-spacing: 0.5px;
+      border-radius: var(--radius-sm);
     }
 
     .badge-category {
-      background: rgba(3, 7, 18, 0.85);
+      background: rgba(15, 23, 42, 0.85);
       border: 1px solid var(--border-subtle);
-      backdrop-filter: blur(8px);
-      color: #ffffff;
-      font-weight: 800;
+      color: var(--text-muted);
       font-size: 10px;
+      font-weight: 700;
       padding: 3px 8px;
-      border-radius: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      border-radius: var(--radius-sm);
     }
 
     .card-body {
-      padding: 18px;
+      padding: 16px;
+      flex: 1;
       display: flex;
       flex-direction: column;
-      flex: 1;
-      gap: 12px;
-    }
-
-    .card-title-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px;
     }
 
     .card-title {
       font-size: 16px;
       font-weight: 800;
       color: #ffffff;
+      margin-bottom: 6px;
       line-height: 1.3;
     }
 
-    .badge-status {
-      font-size: 9px;
-      font-weight: 900;
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #34d399;
-      padding: 2px 6px;
-      border-radius: 4px;
-      white-space: nowrap;
-    }
-
     .card-desc {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-muted);
       line-height: 1.5;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    /* Comandos do Chat e Presentes */
-    .card-interaction-box {
-      background: rgba(3, 7, 18, 0.6);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-size: 11px;
-    }
-
-    .interaction-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .interaction-label {
-      color: var(--text-subtle);
-      font-weight: 700;
-      text-transform: uppercase;
-      min-width: 65px;
-      font-size: 10px;
-    }
-
-    .interaction-tags {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-    }
-
-    .cmd-tag {
-      background: rgba(56, 189, 248, 0.15);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      color: var(--neon-cyan);
-      font-family: monospace;
-      font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 4px;
-    }
-
-    .gift-tag {
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      color: var(--neon-gold);
-      font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      gap: 3px;
-    }
-
-    /* Ações do Card */
-    .card-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: auto;
-      padding-top: 6px;
-    }
-
-    .btn-play-sim {
+      margin-bottom: 14px;
       flex: 1;
-      background: linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(2, 132, 199, 0.25) 100%);
-      border: 1px solid rgba(0, 240, 255, 0.4);
-      color: var(--neon-cyan);
-      font-size: 12px;
-      font-weight: 800;
-      padding: 9px 12px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
+    }
+
+    .card-commands {
       display: flex;
-      align-items: center;
-      justify-content: center;
       gap: 6px;
-      transition: all 0.2s;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
     }
 
-    .btn-play-sim:hover {
-      background: var(--neon-cyan);
-      color: #030712;
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
-    }
-
-    .btn-icon-action {
-      background: #1e293b;
+    .cmd-pill {
+      background: var(--bg-secondary);
       border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-      width: 36px;
-      height: 36px;
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.2s;
-      position: relative;
+      color: var(--neon-gold);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: monospace;
     }
 
-    .btn-icon-action:hover {
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-card-test {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn-card-test:hover {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+    }
+
+    .btn-card-config {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(56, 189, 248, 0.2) 100%);
+      border: 1px solid var(--border-purple);
+      color: #d8b4fe;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn-card-config:hover {
+      background: rgba(168, 85, 247, 0.35);
       color: #ffffff;
-      background: #334155;
-      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
     }
 
     /* ==========================================================================
-       VIEW 2: SIMULADOR & TEST LAB 9:16
+       VIEW 2: COCKPIT DO STREAMER (SALA DE CONFIGURAÇÃO & TOKENIZADOR)
        ========================================================================== */
-    .simulator-container {
+    .cockpit-wrap {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .cockpit-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .cockpit-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(168, 85, 247, 0.1);
+      border: 1px solid var(--border-purple);
+      color: #d8b4fe;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .cockpit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    @media (max-width: 900px) {
+      .cockpit-grid { grid-template-columns: 1fr; }
+    }
+
+    .cockpit-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 28px;
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 65px);
-      padding: 16px 24px;
-      gap: 16px;
-      max-width: 1700px;
+      gap: 20px;
+    }
+
+    .cockpit-card-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 14px;
+    }
+
+    .cockpit-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .cockpit-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cockpit-input, .cockpit-select {
+      width: 100%;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 11px 14px;
+      color: var(--text-main);
+      font-size: 13.5px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .cockpit-input:focus, .cockpit-select:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+    }
+
+    .cockpit-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .output-box {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 12px;
+      color: var(--neon-cyan);
+      word-break: break-all;
+      user-select: all;
+      max-height: 100px;
+      overflow-y: auto;
+    }
+
+    .output-box.json {
+      color: var(--neon-gold);
+    }
+
+    .output-box.chat {
+      color: #34d399;
+      font-family: inherit;
+      font-size: 13px;
+    }
+
+    .btn-copy-cockpit {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-accent);
+      color: var(--neon-cyan);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-copy-cockpit:hover {
+      background: rgba(0, 240, 255, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-launch-configured {
+      background: linear-gradient(135deg, var(--neon-cyan) 0%, #0284c7 100%);
+      border: none;
+      color: #030712;
+      font-size: 13px;
+      font-weight: 900;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
+      transition: all 0.2s;
+    }
+
+    .btn-launch-configured:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+    }
+
+    /* ==========================================================================
+       VIEW 3: SIMULADOR & TEST LAB 9:16
+       ========================================================================== */
+    .simulator-container {
+      padding: 24px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 1400px;
       margin: 0 auto;
       width: 100%;
     }
 
-    /* Topbar do Simulador */
     .sim-topbar {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 14px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 10px 20px;
-      gap: 16px;
+      margin-bottom: 24px;
       flex-wrap: wrap;
+      gap: 12px;
     }
 
     .sim-title-group {
@@ -740,28 +765,26 @@
     }
 
     .sim-game-select {
-      background: #1e293b;
-      border: 1px solid var(--border-accent);
-      color: #ffffff;
-      font-size: 14px;
-      font-weight: 700;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
       padding: 8px 14px;
       border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 700;
       outline: none;
-      cursor: pointer;
-      max-width: 420px;
     }
 
     .sim-controls-group {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .sim-btn {
-      background: #1e293b;
+      background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
+      color: var(--text-main);
       font-size: 12px;
       font-weight: 700;
       padding: 8px 14px;
@@ -774,46 +797,35 @@
     }
 
     .sim-btn:hover {
-      color: #ffffff;
-      background: #334155;
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .sim-btn.active {
-      background: rgba(0, 240, 255, 0.15);
-      border-color: var(--neon-cyan);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-accent);
       color: var(--neon-cyan);
     }
 
-    /* Layout da Bancada de Testes */
     .sim-stage-wrap {
-      flex: 1;
       display: flex;
-      gap: 20px;
-      min-height: 0;
+      gap: 32px;
+      justify-content: center;
+      align-items: flex-start;
+      width: 100%;
     }
 
-    /* Coluna do Celular 9:16 */
-    .phone-viewport-col {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
+    @media (max-width: 1000px) {
+      .sim-stage-wrap { flex-direction: column; align-items: center; }
     }
 
     .phone-mockup {
+      width: 380px;
+      height: 675px;
+      background: #020617;
+      border: 8px solid #1e293b;
+      border-radius: 42px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 240, 255, 0.15);
       position: relative;
-      height: 100%;
-      max-height: 780px;
-      aspect-ratio: 9 / 16;
-      background: #000000;
-      border-radius: 40px;
-      border: 10px solid #1e293b;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 35px rgba(0, 240, 255, 0.15);
       overflow: hidden;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     .phone-notch {
@@ -821,21 +833,21 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 110px;
-      height: 18px;
+      width: 130px;
+      height: 22px;
       background: #1e293b;
-      border-bottom-left-radius: 12px;
-      border-bottom-right-radius: 12px;
-      z-index: 50;
+      border-bottom-left-radius: 14px;
+      border-bottom-right-radius: 14px;
+      z-index: 100;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
     .phone-camera {
-      width: 7px;
-      height: 7px;
-      background: #050811;
+      width: 8px;
+      height: 8px;
+      background: #030712;
       border-radius: 50%;
     }
 
@@ -844,18 +856,19 @@
       height: 100%;
       border: none;
       background: #000000;
-      display: block;
     }
 
-    /* Safe Zones Overlay */
     .safe-zone-overlay {
       position: absolute;
-      inset: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       pointer-events: none;
-      z-index: 40;
       display: none;
       flex-direction: column;
       justify-content: space-between;
+      z-index: 90;
     }
 
     .safe-zone-overlay.active {
@@ -864,269 +877,410 @@
 
     .sz-top {
       height: 140px;
-      background: rgba(239, 68, 68, 0.15);
+      background: rgba(239, 68, 68, 0.2);
       border-bottom: 2px dashed #ef4444;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       font-size: 11px;
       font-weight: 800;
-      color: #fca5a5;
+      color: #ef4444;
+      text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
     .sz-bottom {
       height: 180px;
-      background: rgba(239, 68, 68, 0.15);
+      background: rgba(239, 68, 68, 0.2);
       border-top: 2px dashed #ef4444;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       font-size: 11px;
       font-weight: 800;
-      color: #fca5a5;
+      color: #ef4444;
+      text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
-    /* Coluna Lateral do Cockpit */
-    .sim-cockpit-col {
-      width: 460px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      height: 100%;
-    }
-
-    .cockpit-tabs {
-      display: flex;
-      gap: 6px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 4px;
-    }
-
-    .cockpit-tab-btn {
+    /* Painel Lateral do Test Lab */
+    .sim-sidebar {
       flex: 1;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 700;
-      padding: 8px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .cockpit-tab-btn.active {
-      background: #1e293b;
-      color: var(--neon-cyan);
-    }
-
-    .cockpit-content {
-      flex: 1;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 16px;
+      max-width: 480px;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      overflow-y: auto;
     }
 
-    .cockpit-pane {
-      display: none;
+    .injector-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
       flex-direction: column;
       gap: 14px;
     }
 
-    .cockpit-pane.active {
-      display: flex;
-    }
-
-    .section-headline {
-      font-size: 11px;
+    .injector-title {
+      font-size: 14px;
       font-weight: 800;
-      color: var(--text-subtle);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      color: #ffffff;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-    }
-
-    /* Botões de Votos Rápidos */
-    .vote-buttons-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
     }
 
-    .btn-vote-sim {
-      background: #1e293b;
+    .injector-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .btn-inj {
+      background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
-      color: #ffffff;
-      font-size: 12px;
-      font-weight: 800;
-      padding: 10px 8px;
+      color: var(--text-main);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 8px 4px;
       border-radius: var(--radius-sm);
       cursor: pointer;
+      text-align: center;
       transition: all 0.15s;
     }
 
-    .btn-vote-sim.cyan {
-      border-color: rgba(0, 240, 255, 0.4);
+    .btn-inj:hover {
+      background: rgba(0, 240, 255, 0.2);
+      border-color: var(--neon-cyan);
       color: var(--neon-cyan);
     }
 
-    .btn-vote-sim.cyan:hover {
-      background: rgba(0, 240, 255, 0.2);
-    }
-
-    .btn-vote-sim.rose {
-      border-color: rgba(244, 63, 94, 0.4);
-      color: var(--neon-rose);
-    }
-
-    .btn-vote-sim.rose:hover {
-      background: rgba(244, 63, 94, 0.2);
-    }
-
-    .btn-vote-sim.gold {
+    .btn-inj-gift {
+      background: rgba(245, 158, 11, 0.15);
       border-color: rgba(245, 158, 11, 0.4);
-      color: var(--neon-gold);
+      color: #fbbf24;
     }
 
-    .btn-vote-sim.gold:hover {
-      background: rgba(245, 158, 11, 0.2);
-    }
-
-    /* Comentário customizado */
-    .custom-comment-box {
-      display: flex;
-      gap: 8px;
-    }
-
-    .sim-text-input {
-      flex: 1;
-      background: #0b1120;
-      border: 1px solid var(--border-subtle);
-      color: #ffffff;
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      font-size: 12px;
-      outline: none;
-    }
-
-    .sim-text-input:focus {
-      border-color: var(--neon-cyan);
-    }
-
-    .btn-sim-send {
-      background: #334155;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #ffffff;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 8px 14px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-    }
-
-    .btn-sim-send:hover {
-      background: var(--neon-cyan);
-      color: #030712;
-    }
-
-    /* Seção de Presentes / Gifts */
-    .gift-cards-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .gift-trigger-btn {
-      background: #1e293b;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.15s;
-    }
-
-    .gift-trigger-btn:hover {
-      border-color: var(--neon-gold);
-      background: rgba(245, 158, 11, 0.12);
-      transform: translateY(-2px);
-    }
-
-    .gift-symb {
-      font-size: 22px;
-    }
-
-    .gift-info-name {
-      font-size: 12px;
-      font-weight: 800;
+    .btn-inj-gift:hover {
+      background: rgba(245, 158, 11, 0.3);
       color: #ffffff;
     }
 
-    .gift-info-weight {
-      font-size: 10px;
-      color: var(--neon-gold);
-      font-weight: 700;
-    }
-
-    /* Terminal de Monitor */
-    .event-log-terminal {
-      flex: 1;
+    .terminal-box {
       background: #020617;
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-sm);
+      height: 140px;
       padding: 10px;
-      font-family: monospace;
+      font-family: 'Consolas', monospace;
       font-size: 11px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      max-height: 280px;
+      gap: 4px;
     }
 
     .log-line {
       color: var(--text-muted);
-      line-height: 1.4;
     }
 
-    .log-line .timestamp {
-      color: var(--text-subtle);
-    }
-
-    .log-line .ev-type {
-      color: var(--neon-cyan);
-      font-weight: bold;
-    }
-
-    .log-line .ev-val {
-      color: var(--neon-gold);
-    }
+    .log-line .timestamp { color: var(--text-subtle); }
+    .log-line .ev-type { color: var(--neon-cyan); font-weight: 700; }
+    .log-line .ev-val { color: var(--neon-gold); }
 
     /* ==========================================================================
-       VIEW 3: GUIA DO OBS & TRANSMISSÃO
+       VIEW 4: FRANQUIA ROXINHO (GAMES WEB & MOBILE)
        ========================================================================== */
-    .guide-container {
+    .roxinho-container {
       max-width: 1200px;
       width: 100%;
       margin: 0 auto;
-      padding: 40px 32px 80px;
+      padding: 40px 24px;
+    }
+
+    .roxinho-hero {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.18) 0%, rgba(56, 189, 248, 0.08) 100%);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      margin-bottom: 40px;
+      box-shadow: 0 10px 40px rgba(168, 85, 247, 0.12);
+    }
+
+    @media (max-width: 800px) {
+      .roxinho-hero { flex-direction: column; text-align: center; }
+    }
+
+    .roxinho-avatar-big {
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle at 35% 35%, #c084fc 0%, #7e22ce 100%);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 58px;
+      box-shadow: 0 0 35px rgba(168, 85, 247, 0.6);
+      flex-shrink: 0;
+    }
+
+    .roxinho-hero-content h2 {
+      font-size: 28px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .roxinho-hero-content h2 span {
+      color: #d8b4fe;
+    }
+
+    .roxinho-hero-content p {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .roxinho-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .rox-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 32px;
+      transition: all 0.25s;
+    }
+
+    .rox-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(168, 85, 247, 0.5);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+
+    .rox-card-banner {
+      height: 140px;
+      background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.3) 0%, rgba(3, 7, 18, 0.9) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 50px;
+    }
+
+    .rox-card-body {
+      padding: 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .rox-badge-status {
+      align-self: flex-start;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-alpha { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .status-concept { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+    .status-planned { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); }
+
+    .rox-card-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .rox-card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .rox-specs {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--text-subtle);
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 12px;
+    }
+
+    /* ==========================================================================
+       VIEW 5: PLANOS & ALUGUEL (STOREFRONT DE LIVES)
+       ========================================================================== */
+    .store-container {
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .store-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .store-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .store-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 36px 28px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.25s;
+    }
+
+    .store-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    }
+
+    .store-card.featured {
+      border: 2px solid var(--neon-cyan);
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.2);
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(11, 17, 32, 0.95) 100%);
+    }
+
+    .popular-ribbon {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--neon-cyan) 0%, #0284c7 100%);
+      color: #030712;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 4px 14px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .plan-name {
+      font-size: 20px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .plan-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.4;
+    }
+
+    .plan-price-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .plan-currency {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--neon-cyan);
+    }
+
+    .plan-price {
+      font-size: 38px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .plan-period {
+      font-size: 12px;
+      color: var(--text-subtle);
+    }
+
+    .plan-crypto-equiv {
+      font-size: 12px;
+      color: var(--neon-gold);
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    .plan-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+      flex: 1;
+    }
+
+    .plan-features li {
+      font-size: 13px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-plan {
+      width: 100%;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 800;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-plan:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--text-main);
+    }
+
+    .btn-plan.featured {
+      background: linear-gradient(135deg, var(--neon-cyan) 0%, #0284c7 100%);
+      border: none;
+      color: #030712;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.35);
+    }
+
+    .btn-plan.featured:hover {
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.55);
+    }
+
+    /* ==========================================================================
+       VIEW 6 & 7: GUIAS OBS & LEIS
+       ========================================================================== */
+    .guide-container {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
     .guide-step-card {
@@ -1139,17 +1293,17 @@
     }
 
     .step-number {
-      width: 48px;
-      height: 48px;
-      background: rgba(0, 240, 255, 0.1);
-      border: 1px solid rgba(0, 240, 255, 0.4);
-      color: var(--neon-cyan);
+      width: 38px;
+      height: 38px;
+      background: rgba(0, 240, 255, 0.15);
+      border: 1px solid var(--border-accent);
       border-radius: 50%;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 20px;
+      color: var(--neon-cyan);
       font-weight: 900;
+      font-size: 16px;
       flex-shrink: 0;
     }
 
@@ -1161,54 +1315,37 @@
     }
 
     .step-title {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 800;
       color: #ffffff;
     }
 
     .step-desc {
-      font-size: 14px;
+      font-size: 13.5px;
       color: var(--text-muted);
       line-height: 1.6;
     }
 
-    .code-snippet {
-      background: #020617;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 12px 16px;
-      font-family: monospace;
-      font-size: 13px;
-      color: var(--neon-cyan);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 8px;
-    }
-
-    /* ==========================================================================
-       TOAST FLUTUANTE DE FEEDBACK
-       ========================================================================== */
+    /* Toast Flutuante */
     #toast-notification {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: #1e293b;
+      bottom: 28px;
+      right: 28px;
+      background: rgba(15, 23, 42, 0.95);
       border: 1px solid var(--border-accent);
       color: #ffffff;
       padding: 12px 20px;
       border-radius: var(--radius-md);
       font-size: 13px;
       font-weight: 700;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 240, 255, 0.25);
       display: flex;
       align-items: center;
       gap: 10px;
-      z-index: 9999;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.25);
       transform: translateY(100px);
       opacity: 0;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      pointer-events: none;
+      z-index: 9999;
     }
 
     #toast-notification.show {
@@ -1218,15 +1355,14 @@
   </style>
 </head>
 <body>
-  
 
-  <!-- HEADER OFICIAL DA PLATAFORMA -->
+  <!-- HEADER OFICIAL DA PLATAFORMA SOBERANA -->
   <header class="main-header">
     <div class="brand-wrap" onclick="switchView('catalog')">
       <div class="brand-badge">V5</div>
       <div>
-        <div class="brand-name">V5 GAMES STUDIO</div>
-        <div class="brand-sub">Holding V5 Apollo • Live Cartridge Hub</div>
+        <div class="brand-name">V5 GAMES</div>
+        <div class="brand-sub">Holding V5 Apollo • Sovereign Games Platform</div>
       </div>
     </div>
 
@@ -1235,11 +1371,20 @@
       <button class="nav-btn active" id="tab-catalog" onclick="switchView('catalog')">
         <span>🕹️ Catálogo Arcade</span>
       </button>
+      <button class="nav-btn" id="tab-cockpit" onclick="switchView('cockpit')">
+        <span>🎮 Cockpit do Streamer</span>
+      </button>
       <button class="nav-btn" id="tab-simulator" onclick="switchView('simulator')">
         <span>📱 Simulador 9:16</span>
       </button>
+      <button class="nav-btn" id="tab-roxinho" onclick="switchView('roxinho')">
+        <span>🟣 Franquia Roxinho</span>
+      </button>
+      <button class="nav-btn" id="tab-store" onclick="switchView('store')">
+        <span>💎 Planos & Aluguel</span>
+      </button>
       <button class="nav-btn" id="tab-obs" onclick="switchView('obs')">
-        <span>📡 Como Usar no OBS</span>
+        <span>📡 OBS & Broadcaster</span>
       </button>
       <button class="nav-btn" id="tab-laws" onclick="switchView('laws')">
         <span>⚡ As 5 Leis</span>
@@ -1250,11 +1395,11 @@
     <div class="header-actions">
       <div class="live-status-pill">
         <span class="pulse-dot"></span>
-        <span>41 CARTUCHOS PRONTOS</span>
+        <span>41 CARTUCHOS</span>
       </div>
 
-      <button class="btn-quick-launch" onclick="launchGameSimulator('01_cabo_de_guerra_neon')">
-        <span>⚡ Testar #01</span>
+      <button class="btn-quick-cockpit" onclick="switchView('cockpit')">
+        <span>🎮 Configurar Partida</span>
       </button>
     </div>
   </header>
@@ -1266,17 +1411,14 @@
          VIEW 1: ARCADE & CATÁLOGO
          ======================================================================= -->
     <section class="app-view active" id="view-catalog">
-      
-      <!-- Hero de Destaque -->
       <div class="hero-banner">
         <div class="hero-tag">✨ A MAIOR FORJA DE JOGOS INTERATIVOS VERTICAIS 9:16</div>
-        <h1 class="hero-title">O Estúdio de Cartuchos para <span>Lives que Faturam 24/7</span></h1>
+        <h1 class="hero-title">A Steam dos <span>Jogos de Live Interativa</span></h1>
         <p class="hero-desc">
-          Jogos desenvolvidos especificamente para TikTok Live, YouTube Shorts e Twitch. 
-          Pilotados 100% pelo público digitando no chat ou enviando presentes. 60 FPS cravados, áudio procedural sintetizado e zero dependências de internet.
+          Jogos desenvolvidos especificamente para transmissões no TikTok Live, YouTube Shorts e Twitch. 
+          O público comanda a partida pelo chat ou presentes. Funciona no <strong>V5 Broadcaster</strong> ou diretamente como fonte de navegador em qualquer <strong>OBS Studio</strong>.
         </p>
 
-        <!-- Métricas Rápidas -->
         <div class="hero-stats">
           <div class="stat-badge">
             <span class="stat-val">41</span>
@@ -1288,7 +1430,7 @@
           </div>
           <div class="stat-badge">
             <span class="stat-val">60 FPS</span>
-            <span class="stat-label">Renderização Ultra-Leve</span>
+            <span class="stat-label">Renderização Ultraleve</span>
           </div>
           <div class="stat-badge">
             <span class="stat-val">100% Offline</span>
@@ -1301,7 +1443,7 @@
         </div>
       </div>
 
-      <!-- Barra de Pesquisa e Filtros -->
+      <!-- Controles de Busca e Filtros -->
       <div class="catalog-controls">
         <div class="search-row">
           <div class="search-input-wrap">
@@ -1317,25 +1459,135 @@
           <div class="catalog-counter" id="catalog-counter">Exibindo 41 de 41 cartuchos</div>
         </div>
 
-        <!-- Categorias em Pílulas -->
-        <div class="filter-pills" id="filter-pills-container">
-          <!-- Injetado dinamicamente via JS -->
-        </div>
+        <div class="filter-pills" id="filter-pills-container"></div>
       </div>
 
       <!-- Grid de Jogos -->
-      <div class="games-grid" id="games-grid">
-        <!-- Cards gerados dinamicamente via JS -->
+      <div class="games-grid" id="games-grid"></div>
+    </section>
+
+    <!-- =======================================================================
+         VIEW 2: COCKPIT DO STREAMER (SALA DE CONFIGURAÇÃO & TOKENIZADOR)
+         ======================================================================= -->
+    <section class="app-view" id="view-cockpit">
+      <div class="cockpit-wrap">
+        <div class="cockpit-header">
+          <div class="cockpit-tag">🛠️ SALA DE CONTROLE DE TRANSMISSÃO</div>
+          <h2 style="font-size: 30px; font-weight: 900; color: #ffffff;">Configure sua Partida & Gere seu Link OBS</h2>
+          <p style="font-size: 15px; color: var(--text-muted); margin-top: 6px;">
+            Personalize nomes de times, comandos aceitos e pesos de presentes. Obtenha a URL pronta para o OBS Studio ou a configuração para o V5 Broadcaster.
+          </p>
+        </div>
+
+        <div class="cockpit-grid">
+          <!-- Coluna 1: Formulário de Configuração -->
+          <div class="cockpit-card">
+            <div class="cockpit-card-title">
+              <span>⚙️ Parâmetros da Partida</span>
+            </div>
+
+            <div class="cockpit-form-group">
+              <label class="cockpit-label">Selecione o Cartucho de Jogo</label>
+              <select id="cockpit-game-select" class="cockpit-select" onchange="updateCockpit()">
+                <!-- Preenchido via JS -->
+              </select>
+            </div>
+
+            <div class="cockpit-row-2">
+              <div class="cockpit-form-group">
+                <label class="cockpit-label">Nome do Time A (Azul)</label>
+                <input type="text" id="cockpit-team-a" class="cockpit-input" value="Time Roxinho" oninput="updateCockpit()">
+              </div>
+              <div class="cockpit-form-group">
+                <label class="cockpit-label">Comando Chat Time A</label>
+                <input type="text" id="cockpit-cmd-a" class="cockpit-input" value="1" oninput="updateCockpit()">
+              </div>
+            </div>
+
+            <div class="cockpit-row-2">
+              <div class="cockpit-form-group">
+                <label class="cockpit-label">Nome do Time B (Laranja)</label>
+                <input type="text" id="cockpit-team-b" class="cockpit-input" value="Time Dourado" oninput="updateCockpit()">
+              </div>
+              <div class="cockpit-form-group">
+                <label class="cockpit-label">Comando Chat Time B</label>
+                <input type="text" id="cockpit-cmd-b" class="cockpit-input" value="2" oninput="updateCockpit()">
+              </div>
+            </div>
+
+            <div class="cockpit-row-2">
+              <div class="cockpit-form-group">
+                <label class="cockpit-label">Meta de Pontos / Duração</label>
+                <select id="cockpit-goal" class="cockpit-select" onchange="updateCockpit()">
+                  <option value="50">50 Pontos (Rodada Ultra-Rápida)</option>
+                  <option value="100" selected>100 Pontos (Padrão Equilibrado)</option>
+                  <option value="200">200 Pontos (Batalha Épica)</option>
+                </select>
+              </div>
+              <div class="cockpit-form-group">
+                <label class="cockpit-label">Multiplicador de Gifts</label>
+                <select id="cockpit-gift-mul" class="cockpit-select" onchange="updateCockpit()">
+                  <option value="5">5x (Moderado)</option>
+                  <option value="10" selected>10x (Padrão Recomendado)</option>
+                  <option value="25">25x (Super Monetização)</option>
+                  <option value="50">50x (Chuva de Presentes)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cockpit-form-group">
+              <label class="cockpit-label">Identificador do Streamer</label>
+              <input type="text" id="cockpit-streamer" class="cockpit-input" value="streamer_v5" oninput="updateCockpit()">
+            </div>
+          </div>
+
+          <!-- Coluna 2: Saídas & Links Prontos -->
+          <div class="cockpit-card">
+            <div class="cockpit-card-title">
+              <span>🚀 Integração & Transmissão</span>
+            </div>
+
+            <!-- OBS Browser Source Link -->
+            <div class="cockpit-form-group">
+              <label class="cockpit-label">1. URL para OBS Studio / Streamlabs (Browser Source)</label>
+              <div class="output-box" id="cockpit-out-obs">Carregando...</div>
+              <button class="btn-copy-cockpit" onclick="copyCockpitObsUrl()">
+                <span>📋 Copiar Link do OBS (1080x1920)</span>
+              </button>
+            </div>
+
+            <!-- Broadcaster Config Payload -->
+            <div class="cockpit-form-group">
+              <label class="cockpit-label">2. Payload de Vinculação para V5 Broadcaster</label>
+              <div class="output-box json" id="cockpit-out-broadcaster">Carregando...</div>
+              <button class="btn-copy-cockpit" onclick="copyBroadcasterConfig()">
+                <span>⚡ Copiar JSON do Broadcaster</span>
+              </button>
+            </div>
+
+            <!-- Chat Title / Call to Action -->
+            <div class="cockpit-form-group">
+              <label class="cockpit-label">3. Legenda Pronta para o Chat da Live</label>
+              <div class="output-box chat" id="cockpit-out-chat">Carregando...</div>
+              <button class="btn-copy-cockpit" onclick="copyChatHeadline()">
+                <span>💬 Copiar Chamada do Chat</span>
+              </button>
+            </div>
+
+            <button class="btn-launch-configured" onclick="launchFromCockpitToSimulator()">
+              <span>📱 Testar no Simulador Agora</span>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- =======================================================================
-         VIEW 2: SIMULADOR & TEST LAB 9:16
+         VIEW 3: SIMULADOR & TEST LAB 9:16
          ======================================================================= -->
     <section class="app-view" id="view-simulator">
       <div class="simulator-container">
         
-        <!-- Barra Superior do Simulador -->
         <div class="sim-topbar">
           <div class="sim-title-group">
             <span style="font-size: 12px; font-weight:800; color:var(--text-subtle); text-transform:uppercase;">Cartucho:</span>
@@ -1347,212 +1599,252 @@
           <div class="sim-controls-group">
             <button class="sim-btn" onclick="reloadSimulator()">🔄 Reiniciar</button>
             <button class="sim-btn" id="btn-toggle-sz" onclick="toggleSimSafeZones()">📐 Safe Zones (9:16)</button>
-            <button class="sim-btn" onclick="openFullscreenGame()">🖥️ Tela Cheia (OBS)</button>
+            <button class="sim-btn" onclick="openFullscreenGame()">🖥️ Tela Cheia</button>
             <button class="sim-btn" onclick="copyCurrentObsUrl()">📋 Copiar Link OBS</button>
-            </div>
+          </div>
         </div>
 
-        <!-- Bancada Central -->
         <div class="sim-stage-wrap">
-          
-          <!-- Mockup do Smartphone 9:16 -->
+          <!-- Mockup Smartphone 9:16 -->
           <div class="phone-viewport-col">
             <div class="phone-mockup">
               <div class="phone-notch">
                 <div class="phone-camera"></div>
               </div>
 
-              <!-- Iframe do Cartucho -->
               <iframe id="cartridge-iframe" src="catalogo_jogos/01_cabo_de_guerra_neon/index.html"></iframe>
 
-              <!-- Safe Zones Overlay -->
               <div class="safe-zone-overlay" id="sim-safe-overlay">
                 <div class="sz-top">⚠️ Safe Zone Topo (140px) — Placar & Metas</div>
-                <div class="sz-bottom">⚠️ Safe Zone Base (180px) — Chat & Ícones do TikTok</div>
+                <div class="sz-bottom">⚠️ Safe Zone Base (180px) — Feed & Comentários</div>
               </div>
             </div>
           </div>
 
-          <!-- Cockpit de Controle Lateral -->
-          <div class="sim-cockpit-col">
-            
-            <div class="cockpit-tabs">
-              <button class="cockpit-tab-btn active" id="c-tab-injector" onclick="switchCockpitTab('injector')">⚡ Injetor de Live</button>
-              <button class="cockpit-tab-btn" id="c-tab-obs" onclick="switchCockpitTab('obs')">📡 Dados OBS</button>
-              <button class="cockpit-tab-btn" id="c-tab-logs" onclick="switchCockpitTab('logs')">📜 Event Log</button>
+          <!-- Lateral: Injetor de Comandos e Terminal -->
+          <div class="sim-sidebar">
+            <div class="injector-card">
+              <div class="injector-title">
+                <span>⚡ Injetor Manual de Comentários</span>
+              </div>
+              <div class="injector-row">
+                <button class="btn-inj" onclick="injectSimEvent({type:'comment', comment:'1', user:'@live_teste', team:'A'})">Voto "1"</button>
+                <button class="btn-inj" onclick="injectSimEvent({type:'comment', comment:'2', user:'@live_teste', team:'B'})">Voto "2"</button>
+                <button class="btn-inj" onclick="injectSimEvent({type:'comment', comment:'A', user:'@live_teste', team:'A'})">Voto "A"</button>
+                <button class="btn-inj" onclick="injectSimEvent({type:'comment', comment:'B', user:'@live_teste', team:'B'})">Voto "B"</button>
+              </div>
             </div>
 
-            <div class="cockpit-content">
-              
-              <!-- PAINEL 1: INJETOR DE EVENTOS -->
-              <div class="cockpit-pane active" id="pane-injector">
-                
-                <div>
-                  <div class="section-headline">
-                    <span>Comentários Rápidos (Votação)</span>
-                    <span style="color:var(--neon-cyan)">Chat Interativo</span>
-                  </div>
-                  <div class="vote-buttons-grid" style="margin-top: 8px;">
-                    <button class="btn-vote-sim cyan" onclick="injectVote('1', 'A')">🔵 Voto 1 (Azul)</button>
-                    <button class="btn-vote-sim gold" onclick="injectVote('3', 'C')">👑 Voto 3 (Ouro)</button>
-                    <button class="btn-vote-sim rose" onclick="injectVote('2', 'B')">🔴 Voto 2 (Red)</button>
-                  </div>
-                </div>
-
-                <div>
-                  <div class="section-headline">
-                    <span>Comentário Customizado</span>
-                    <span id="user-display" style="color:var(--text-muted)">@espectador</span>
-                  </div>
-                  <div class="custom-comment-box" style="margin-top: 8px;">
-                    <input type="text" id="sim-comment-input" class="sim-text-input" placeholder="Digite uma mensagem ou comando..." onkeydown="if(event.key==='Enter') injectCustomComment()">
-                    <button class="btn-sim-send" onclick="injectCustomComment()">Enviar</button>
-                  </div>
-                </div>
-
-                <div>
-                  <div class="section-headline">
-                    <span>Presentes / Gifts Monetizados</span>
-                    <span style="color:var(--neon-gold)">Multiplicador de Live</span>
-                  </div>
-                  <div class="gift-cards-grid" style="margin-top: 8px;">
-                    <button class="gift-trigger-btn" onclick="injectGift('Rosa', 1, 5)">
-                      <span class="gift-symb">🌸</span>
-                      <div>
-                        <div class="gift-info-name">Rosa (1c)</div>
-                        <div class="gift-info-weight">Peso 5x • Boost</div>
-                      </div>
-                    </button>
-
-                    <button class="gift-trigger-btn" onclick="injectGift('Moeda V5', 5, 15)">
-                      <span class="gift-symb">🪙</span>
-                      <div>
-                        <div class="gift-info-name">Moeda V5 (5c)</div>
-                        <div class="gift-info-weight">Peso 15x • Turbo</div>
-                      </div>
-                    </button>
-
-                    <button class="gift-trigger-btn" onclick="injectGift('Diamante', 20, 35)">
-                      <span class="gift-symb">💎</span>
-                      <div>
-                        <div class="gift-info-name">Diamante (20c)</div>
-                        <div class="gift-info-weight">Peso 35x • Super</div>
-                      </div>
-                    </button>
-
-                    <button class="gift-trigger-btn" onclick="injectGift('Leão', 500, 50)">
-                      <span class="gift-symb">🦁</span>
-                      <div>
-                        <div class="gift-info-name">Leão Real</div>
-                        <div class="gift-info-weight">Peso 50x • MÁXIMO</div>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-
+            <div class="injector-card">
+              <div class="injector-title">
+                <span>🎁 Injetor de Presentes (Gifts)</span>
               </div>
-
-              <!-- PAINEL 2: CONFIGURAÇÃO OBS -->
-              <div class="cockpit-pane" id="pane-obs">
-                <div class="section-headline">
-                  <span>URL da Fonte de Navegador</span>
-                  <span>OBS Studio</span>
-                </div>
-                <div class="code-snippet" style="margin-top: 4px;">
-                  <span id="obs-current-url" style="word-break: break-all;">/catalogo_jogos/01_cabo_de_guerra_neon/</span>
-                  <button class="sim-btn" onclick="copyCurrentObsUrl()" style="padding: 4px 8px; font-size:11px;">Copiar</button>
-                </div>
-
-                <div style="margin-top: 12px;">
-                  <div class="section-headline">Parâmetros Recomendados</div>
-                  <div style="font-size: 13px; color: var(--text-muted); margin-top: 6px; display:flex; flex-direction:column; gap:4px;">
-                    <div>• <strong>Largura:</strong> 1080 px</div>
-                    <div>• <strong>Altura:</strong> 1920 px</div>
-                    <div>• <strong>FPS:</strong> 60 FPS</div>
-                    <div>• <strong>Áudio:</strong> Marcar "Controlar áudio via OBS"</div>
-                    <div>• <strong>Atualização:</strong> Marcar "Atualizar navegador ao ativar cena"</div>
-                  </div>
-                </div>
-
-                <div style="margin-top: 12px;">
-                  <div class="section-headline">Comandos do Jogo Atual</div>
-                  <div id="sim-game-commands" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
-                    <!-- Preenchido via JS -->
-                  </div>
-                </div>
+              <div class="injector-row">
+                <button class="btn-inj btn-inj-gift" onclick="injectSimEvent({type:'gift', giftName:'Rosa', value:1, team:'A', user:'@donator_a'})">🌹 Rosa (Time A)</button>
+                <button class="btn-inj btn-inj-gift" onclick="injectSimEvent({type:'gift', giftName:'Rosa', value:1, team:'B', user:'@donator_b'})">🌹 Rosa (Time B)</button>
+                <button class="btn-inj btn-inj-gift" onclick="injectSimEvent({type:'gift', giftName:'Leão', value:500, team:'A', user:'@whale_a'})">🦁 Leão (Time A)</button>
+                <button class="btn-inj btn-inj-gift" onclick="injectSimEvent({type:'gift', giftName:'Leão', value:500, team:'B', user:'@whale_b'})">🦁 Leão (Time B)</button>
               </div>
+            </div>
 
-              <!-- PAINEL 3: EVENT LOG -->
-              <div class="cockpit-pane" id="pane-logs">
-                <div class="section-headline">
-                  <span>Event Bus Terminal</span>
-                  <button class="sim-btn" onclick="clearEventLogs()" style="padding:2px 8px; font-size:10px;">Limpar</button>
-                </div>
-                <div class="event-log-terminal" id="event-terminal">
-                  <div class="log-line"><span class="timestamp">[00:00:00]</span> Terminal de eventos do BroadcastChannel iniciado.</div>
-                </div>
+            <div class="injector-card">
+              <div class="injector-title" style="justify-content: space-between;">
+                <span>📡 Terminal de Eventos & Telemetria</span>
+                <button style="background:transparent; border:none; color:var(--text-subtle); cursor:pointer; font-size:11px;" onclick="clearEventLogs()">Limpar</button>
               </div>
+              <div class="terminal-box" id="event-terminal">
+                <div class="log-line"><span class="timestamp">[00:00:00]</span> Barramento inicializado. Aguardando eventos...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
+    <!-- =======================================================================
+         VIEW 4: FRANQUIA ROXINHO (GAMES WEB & MOBILE)
+         ======================================================================= -->
+    <section class="app-view" id="view-roxinho">
+      <div class="roxinho-container">
+        
+        <div class="roxinho-hero">
+          <div class="roxinho-avatar-big">👾</div>
+          <div class="roxinho-hero-content">
+            <h2>O Universo de Jogos do <span>Roxinho</span></h2>
+            <p>
+              O mascote oficial da Holding V5 Apollo agora protagoniza sua própria franquia de games autorais. 
+              Projetados para web rápida, celular (PWA) e transmissões interativas, com física responsiva e conexão com o ecossistema digital.
+            </p>
+          </div>
+        </div>
+
+        <div class="roxinho-grid">
+          <!-- Card 1: Roxinho Runner -->
+          <div class="rox-card">
+            <div class="rox-card-banner">🏃‍♂️💨</div>
+            <div class="rox-card-body">
+              <span class="rox-badge-status status-alpha">Alpha Fechado • Web & Mobile</span>
+              <h3 class="rox-card-title">Roxinho Runner</h3>
+              <p class="rox-card-desc">
+                Corrida infinita pelas cidades cibernéticas da Holding. Salte obstáculos, colete moedas douradas V5, pegue power-ups magnéticos e desafie o ranking global.
+              </p>
+              <div class="rox-specs">
+                <span>📱 Touch & Teclado</span>
+                <span>⚡ 60 FPS Canvas</span>
+                <span>🏆 Ranking Online</span>
+              </div>
             </div>
           </div>
 
+          <!-- Card 2: Roxinho Galaxy Defender -->
+          <div class="rox-card">
+            <div class="rox-card-banner">🚀👾</div>
+            <div class="rox-card-body">
+              <span class="rox-badge-status status-concept">Em Forja • Live & Celular</span>
+              <h3 class="rox-card-title">Roxinho Galaxy Defender</h3>
+              <p class="rox-card-desc">
+                Shoot 'em up vertical 9:16. Pode ser jogado com os polegares no celular ou transmitido na live onde o chat pilota os escudos e canhões da nave do Roxinho.
+              </p>
+              <div class="rox-specs">
+                <span>🎮 Híbrido Live/Mobile</span>
+                <span>💥 Boss Fights</span>
+                <span>🔮 Web Audio</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Roxinho Tycoon -->
+          <div class="rox-card">
+            <div class="rox-card-banner">🏰💎</div>
+            <div class="rox-card-body">
+              <span class="rox-badge-status status-planned">Conceito Aprovado • Idle & RMT</span>
+              <h3 class="rox-card-title">Roxinho Idle Tycoon</h3>
+              <p class="rox-card-desc">
+                Simulador de império digital onde o Roxinho administra fazendas de servidores e nós de computação. Base para futuros experimentos de economia digital e RMT da Holding.
+              </p>
+              <div class="rox-specs">
+                <span>🌐 Web3 Ready</span>
+                <span>⏳ Progressão Idle</span>
+                <span>💎 Economia Digital</span>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
     </section>
 
     <!-- =======================================================================
-         VIEW 3: GUIA DO OBS & TRANSMISSÃO
+         VIEW 5: PLANOS & ALUGUEL (STOREFRONT DE LIVES)
+         ======================================================================= -->
+    <section class="app-view" id="view-store">
+      <div class="store-container">
+        
+        <div class="store-header">
+          <div class="hero-tag">💎 MONETIZAÇÃO & LICENCIAMENTO</div>
+          <h2 style="font-size: 32px; font-weight: 900; color: #ffffff;">Alugue ou Adquira Cartuchos para sua Live</h2>
+          <p style="font-size: 15px; color: var(--text-muted); margin-top: 6px;">
+            Trilhos de pagamento soberanos da Holding V5 Apollo: PIX Instantâneo e USDT (Polygon PoS D+0).
+          </p>
+        </div>
+
+        <div class="store-grid">
+          <!-- Plano 1: Passe 24h -->
+          <div class="store-card">
+            <h3 class="plan-name">Passe 24h Live</h3>
+            <p class="plan-desc">Ideal para uma transmissão especial no fim de semana ou evento pontual.</p>
+            <div class="plan-price-wrap">
+              <span class="plan-currency">R$</span>
+              <span class="plan-price">19,90</span>
+              <span class="plan-period">/ 24 horas</span>
+            </div>
+            <div class="plan-crypto-equiv">≈ 4 USDT (Polygon PoS)</div>
+            <ul class="plan-features">
+              <li>✅ 1 Cartucho liberado à sua escolha</li>
+              <li>✅ Link de Browser Source ilimitado por 24h</li>
+              <li>✅ Suporte a presentes e votos do chat</li>
+              <li>✅ Áudio procedural sintetizado</li>
+            </ul>
+            <button class="btn-plan" onclick="simulateCheckout('Passe 24h Live', '19.90', '4 USDT')">Alugar por 24h</button>
+          </div>
+
+          <!-- Plano 2: Streamer Pro (Destaque) -->
+          <div class="store-card featured">
+            <div class="popular-ribbon">MAIS ESCOLHIDO</div>
+            <h3 class="plan-name">Streamer Pro Mensal</h3>
+            <p class="plan-desc">Acesso completo e ilimitado a todos os cartuchos da plataforma.</p>
+            <div class="plan-price-wrap">
+              <span class="plan-currency">R$</span>
+              <span class="plan-price">79,90</span>
+              <span class="plan-period">/ mês</span>
+            </div>
+            <div class="plan-crypto-equiv">≈ 15 USDT (Polygon PoS)</div>
+            <ul class="plan-features">
+              <li>✅ <strong>Todos os 41 Cartuchos Liberados</strong></li>
+              <li>✅ Personalizador total no Cockpit do Streamer</li>
+              <li>✅ Troca de times, cores e multiplicador de gifts</li>
+              <li>✅ Atualizações de novos cartuchos inclusas</li>
+              <li>✅ Suporte nativo ao V5 Broadcaster & OBS</li>
+            </ul>
+            <button class="btn-plan featured" onclick="simulateCheckout('Streamer Pro Mensal', '79.90', '15 USDT')">Assinar Mensalidade</button>
+          </div>
+
+          <!-- Plano 3: Agência / Whitelabel -->
+          <div class="store-card">
+            <h3 class="plan-name">Licença Whitelabel</h3>
+            <p class="plan-desc">Para estúdios e agências que gerenciam múltiplos canais e streamers.</p>
+            <div class="plan-price-wrap">
+              <span class="plan-currency">R$</span>
+              <span class="plan-price">299,00</span>
+              <span class="plan-period">/ vitalício</span>
+            </div>
+            <div class="plan-crypto-equiv">≈ 60 USDT (Polygon PoS)</div>
+            <ul class="plan-features">
+              <li>✅ Acesso vitalício a todo o catálogo</li>
+              <li>✅ Transmissões simultâneas ilimitadas</li>
+              <li>✅ Customização completa de marcas e logotipos</li>
+              <li>✅ Conector API direto para Broadcaster e OBS</li>
+            </ul>
+            <button class="btn-plan" onclick="simulateCheckout('Licença Whitelabel', '299.00', '60 USDT')">Adquirir Licença</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         VIEW 6: GUIA OBS & V5 BROADCASTER
          ======================================================================= -->
     <section class="app-view" id="view-obs">
       <div class="guide-container">
         
         <div style="text-align: center; margin-bottom: 10px;">
-          <h2 style="font-size: 30px; font-weight: 900; color: #ffffff;">Como Transmitir no OBS Studio em 60 Segundos</h2>
+          <h2 style="font-size: 30px; font-weight: 900; color: #ffffff;">Transmitindo no OBS Studio ou V5 Broadcaster</h2>
           <p style="font-size: 15px; color: var(--text-muted); margin-top: 6px;">
-            Qualquer jogo da Capitania V5 Games é uma página web autônoma e leve projetada para o OBS Browser Source.
+            O V5 Games é desacoplado e funciona perfeitamente em ambos os cenários.
           </p>
         </div>
 
         <div class="guide-step-card">
-          <div class="step-number">1</div>
+          <div class="step-number">A</div>
           <div class="step-body">
-            <div class="step-title">Configure a Tela Vertical (9:16) no OBS</div>
+            <div class="step-title">Cenário 1: Se você usa o V5 Broadcaster (Nosso Estúdio Automático)</div>
             <div class="step-desc">
-              Vá em <strong>Configurações > Vídeo</strong> no OBS Studio. Defina a <strong>Resolução de Base (Tela)</strong> e <strong>Resolução de Saída</strong> para <strong>1080x1920</strong>. Se estiver usando o plugin <em>Aitum Vertical</em> ou <em>OBS Vertical Canvas</em>, basta criar uma cena vertical.
+              O V5 Broadcaster cuida da transmissão 24/7 e lê o chat do TikTok automaticamente.
+              Basta entrar na aba <strong>🎮 Cockpit do Streamer</strong> aqui no V5 Games, copiar o <strong>Payload de Vinculação</strong> e inseri-lo no Broadcaster. O Broadcaster carrega o jogo via link sem inflar o repositório com arquivos estáticos.
             </div>
           </div>
         </div>
 
         <div class="guide-step-card">
-          <div class="step-number">2</div>
+          <div class="step-number">B</div>
           <div class="step-body">
-            <div class="step-title">Adicione uma Fonte de Navegador (Browser Source)</div>
+            <div class="step-title">Cenário 2: Se você transmite com OBS Studio, Streamlabs ou TikTok Live Studio</div>
             <div class="step-desc">
-              Clique com o botão direito na lista de Fontes do OBS, escolha <strong>Adicionar > Navegador</strong>. Cole a URL do jogo desejado (ex: <code>/catalogo_jogos/01_cabo_de_guerra_neon/</code>).
-            </div>
-            <div class="code-snippet">
-              <span>/catalogo_jogos/01_cabo_de_guerra_neon/</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="guide-step-card">
-          <div class="step-number">3</div>
-          <div class="step-body">
-            <div class="step-title">Ajuste as Propriedades de Renderização</div>
-            <div class="step-desc">
-              Defina a <strong>Largura: 1080</strong> e a <strong>Altura: 1920</strong>. Marque a opção <strong>"Controlar áudio via OBS"</strong> para que os efeitos sonoros procedurais (Web Audio API) saiam perfeitamente na transmissão.
-            </div>
-          </div>
-        </div>
-
-        <div class="guide-step-card">
-          <div class="step-number">4</div>
-          <div class="step-body">
-            <div class="step-title">Conecte o Leitor de Chat do TikTok / YouTube</div>
-            <div class="step-desc">
-              Inicie o <strong>V5 Apollo Broadcaster</strong> (`V5_Apollo_Broadcaster`), que captura o chat e os presentes em tempo real e os despacha diretamente para o jogo através do barramento <code>BroadcastChannel('v5_broadcaster_games')</code>.
+              1. Crie uma cena com resolução <strong>1080x1920</strong> (Vertical 9:16).<br>
+              2. Adicione uma <strong>Fonte de Navegador (Browser Source)</strong> com Largura: <code>1080</code> e Altura: <code>1920</code>.<br>
+              3. Cole a URL gerada pelo Cockpit do Streamer (ex: <code>http://localhost:3012/catalogo_jogos/01_cabo_de_guerra_neon/index.html?teamA=Brasil&teamB=Argentina</code>).<br>
+              4. Marque a opção <em>"Controlar áudio via OBS"</em> para que os sintetizadores do Web Audio saiam na sua live!
             </div>
           </div>
         </div>
@@ -1561,7 +1853,7 @@
     </section>
 
     <!-- =======================================================================
-         VIEW 4: AS 5 LEIS ABSOLUTAS
+         VIEW 7: AS 5 LEIS ABSOLUTAS
          ======================================================================= -->
     <section class="app-view" id="view-laws">
       <div class="guide-container">
@@ -1569,7 +1861,7 @@
         <div style="text-align: center; margin-bottom: 10px;">
           <h2 style="font-size: 30px; font-weight: 900; color: #ffffff;">As 5 Leis Absolutas do Cartucho V5</h2>
           <p style="font-size: 15px; color: var(--text-muted); margin-top: 6px;">
-            Princípios inegociáveis de engenharia e retenção para transmissões interativas 24/7.
+            Princípios de engenharia e retenção para transmissões interativas contínuas.
           </p>
         </div>
 
@@ -1578,7 +1870,7 @@
           <div class="step-body">
             <div class="step-title">Formato Vertical Estrito 9:16 (1080 x 1920 px)</div>
             <div class="step-desc">
-              Todo jogo nasce vertical com Safe Zones reservadas: topo (140px) para placar e metas; base (180px) livre de elementos críticos para não sobrepor o feed do TikTok e YouTube Shorts.
+              Todo jogo nasce vertical com Safe Zones reservadas: topo (140px) para placar e metas; base (180px) livre para não sobrepor o feed do TikTok e YouTube Shorts.
             </div>
           </div>
         </div>
@@ -1586,9 +1878,9 @@
         <div class="guide-step-card">
           <div class="step-number">2</div>
           <div class="step-body">
-            <div class="step-title">Zero Teclado / Zero Mouse (O Público é o Controle)</div>
+            <div class="step-title">Zero Teclado / Zero Mouse na Live (O Público é o Controle)</div>
             <div class="step-desc">
-              O streamer não precisa jogar nem mexer o mouse. O jogo é 100% pilotado pelo chat (comentários rápidos como 1, 2, azul, laranja) e Presentes (Rosas, Moedas, Leão). Presentes sempre têm peso massivo (5x a 50x) para estimular monetização.
+              O streamer não joga. O jogo é 100% pilotado pelo chat (comentários rápidos como 1, 2, azul, laranja) e Presentes (Rosas, Moedas, Leão). Presentes sempre têm peso massivo (5x a 50x) para estimular monetização imediata.
             </div>
           </div>
         </div>
@@ -1608,7 +1900,7 @@
           <div class="step-body">
             <div class="step-title">Sintetizador de Áudio Procedural (Web Audio API)</div>
             <div class="step-desc">
-              Zero dependência de arquivos .mp3 ou .wav externos que possam sofrer erro de CORS ou demorar no carregamento do OBS. Todo som (apitos, impactos, moedas, aplausos e fanfarras) é sintetizado dinamicamente via Web Audio API.
+              Zero dependência de arquivos .mp3 ou .wav externos que possam sofrer erro de CORS ou atrasar o carregamento do OBS. Todo som é sintetizado matematicamente via Web Audio API.
             </div>
           </div>
         </div>
@@ -1634,16 +1926,14 @@
     <span id="toast-text">Link copiado com sucesso!</span>
   </div>
 
-  <!-- SCRIPT PRINCIPAL DO PORTAL -->
+  <!-- SCRIPT PRINCIPAL DO PORTAL SOBERANO -->
   <script>
-    // Manifesto dos 41 Cartuchos embutido
     const GAMES_CATALOG = [{"slug": "01_cabo_de_guerra_neon", "name": "Cabo de Guerra Neon", "category": "polarizacao", "description": "Cabo de guerra neon 1v1 disputado por votos no chat e presentes aceleradores", "commands": ["1", "2"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "2.0.0", "path": "/games/01_cabo_de_guerra_neon/index.html", "thumbnail": "/games/01_cabo_de_guerra_neon/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:53.499260", "groupName": "Batalhas & Polarização", "groupIcon": "⚔️"}, {"slug": "01b_cabo_de_guerra_elementos", "name": "Cabo de Guerra dos Elementos", "category": "polarizacao", "description": "Fogo Vermelho vs Gelo Azul com termômetro dinâmico (-100°C a +1000°C) e partículas térmicas", "commands": ["1", "2", "fogo", "gelo"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/01b_cabo_de_guerra_elementos/index.html", "thumbnail": "/games/01b_cabo_de_guerra_elementos/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:53.574904", "groupName": "Batalhas & Polarização", "groupIcon": "⚔️"}, {"slug": "02_plinko_pachinko_fortuna", "name": "Plinko da Fortuna", "category": "fisica_pachinko", "description": "Pachinko vertical com física de pinos, canaletas multiplicadoras e 50x Jackpot", "commands": ["1", "2", "3"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "2.0.0", "path": "/games/02_plinko_pachinko_fortuna/index.html", "thumbnail": "/games/02_plinko_pachinko_fortuna/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:53.627373", "groupName": "Pachinko & Física", "groupIcon": "🔮"}, {"slug": "03_corrida_avatares_holding", "name": "Corrida dos Avatares da Holding", "category": "corrida_velocidade", "description": "Roxingo, Baiano e Macaco Driver disputando circuito pseudo-3D com nitros acionados pelo chat", "commands": ["1", "2", "3", "roxingo", "baiano", "macaco"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/03_corrida_avatares_holding/index.html", "thumbnail": "/games/03_corrida_avatares_holding/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:53.680224", "groupName": "Corridas & Velocidade", "groupIcon": "🏎️"}, {"slug": "04_boss_raid_cooperativo", "name": "Boss Raid do Chat", "category": "cooperativo_boss", "description": "Titã Neon com 1.000.000 HP enfrentando o chat inteiro com combos, meteoros de presentes e ranking MVP", "commands": ["1", "atacar", "fogo", "espada"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/04_boss_raid_cooperativo/index.html", "thumbnail": "/games/04_boss_raid_cooperativo/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:53.745390", "groupName": "Boss Raid & Cooperativo", "groupIcon": "👾"}, {"slug": "05_roleta_desafios_live", "name": "Roleta dos Desafios da Live", "category": "sorteios_roletas", "description": "Roleta determinística com palheta mecânica clicante, customizador de fatias e super-giros frenesi acionados por presentes", "commands": ["girar", "1", "spin", "roleta"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/05_roleta_desafios_live/index.html", "thumbnail": "/games/05_roleta_desafios_live/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:53.800472", "groupName": "Roletas & Sorte", "groupIcon": "🎰"}, {"slug": "06_batalha_dos_baloes", "name": "Batalha dos Balões Gigantes", "category": "polarizacao", "description": "Disputa de enchimento pneumático elástico até o estouro com som procedural realista", "commands": ["1", "2", "azul", "laranja"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/06_batalha_dos_baloes/index.html", "thumbnail": "/games/06_batalha_dos_baloes/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:53.871170", "groupName": "Batalhas & Polarização", "groupIcon": "⚔️"}, {"slug": "07_pendulo_destruidor", "name": "Pêndulo Demolidor", "category": "tensao_eliminacao", "description": "Chat ajusta o ângulo do pêndulo para liberar a bola demolidora e esmagar a fortaleza rival com super impacto de gifts", "commands": ["1", "2", "3", "puxar", "soltar", "turbo"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/07_pendulo_destruidor/index.html", "thumbnail": "/games/07_pendulo_destruidor/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:53.914684", "groupName": "Tensão & Eliminação", "groupIcon": "💣"}, {"slug": "08_caca_tesouro_coordenadas", "name": "Caça ao Baú do Tesouro", "category": "tabuleiro_coordenadas", "description": "Grade 4x4 de 16 baús mecânicos; o chat vota em coordenadas A1-D4 para desarmar armadilhas, coletar 3 chaves douradas e achar o grande tesouro", "commands": ["A1", "B2", "C3", "D4", "coordenadas"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/08_caca_tesouro_coordenadas/index.html", "thumbnail": "/games/08_caca_tesouro_coordenadas/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:53.973983", "groupName": "Tabuleiro & Estratégia", "groupIcon": "🎯"}, {"slug": "09_tsunami_de_curtidas", "name": "Tsunami de Curtidas", "category": "polarizacao", "description": "Pressômetro hidráulico com micro-ondas de choque subaquáticas e alarme de inundação", "commands": ["1", "2", "likes"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/09_tsunami_de_curtidas/index.html", "thumbnail": "/games/09_tsunami_de_curtidas/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.026406", "groupName": "Batalhas & Polarização", "groupIcon": "⚔️"}, {"slug": "10_queda_dos_blocos", "name": "Tetris da Discórdia", "category": "tabuleiro_coordenadas", "description": "Matriz 6x11 de blocos pesados onde o chat vota em colunas 1 a 6 e gira peças para fechar linhas com lasers ou sobrecarregar a matriz", "commands": ["1", "2", "3", "4", "5", "6", "r", "girar"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/10_queda_dos_blocos/index.html", "thumbnail": "/games/10_queda_dos_blocos/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.084607", "groupName": "Tabuleiro & Estratégia", "groupIcon": "🎯"}, {"slug": "11_queda_de_braco_titas", "name": "Queda de Braço dos Titãs", "category": "polarizacao", "description": "Braços cibernéticos articulados com medidor de torque em tempo real e impacto mecha", "commands": ["1", "2", "azul", "vermelho"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/11_queda_de_braco_titas/index.html", "thumbnail": "/games/11_queda_de_braco_titas/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.119901", "groupName": "Batalhas & Polarização", "groupIcon": "⚔️"}, {"slug": "12_pachinko_pinball_neon", "name": "Pachinko Pinball Neon", "category": "fisica_pachinko", "description": "Flippers automáticos, canaletas magnéticas e 100x Super Jackpot ativado por moedas do chat", "commands": ["1", "2", "3", "azul", "vermelho", "jackpot"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/12_pachinko_pinball_neon/index.html", "thumbnail": "/games/12_pachinko_pinball_neon/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.157476", "groupName": "Pachinko & Física", "groupIcon": "🔮"}, {"slug": "13_cascata_de_moedas", "name": "Cascata de Moedas Douradas", "category": "fisica_pachinko", "description": "Coin Pusher 2.5D com pá motorizada, atrito de empilhamento, lingotes gigantes e avalanches de prêmios", "commands": ["1", "2", "3", "safira", "rubi", "ouro"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/13_cascata_de_moedas/index.html", "thumbnail": "/games/13_cascata_de_moedas/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.212014", "groupName": "Pachinko & Física", "groupIcon": "🔮"}, {"slug": "14_vortex_gravitacional", "name": "Vortex Gravitacional", "category": "fisica_pachinko", "description": "Buraco negro cósmico com atração gravitacional não-linear, órbitas caóticas, áudio Doppler e pulsos de Quasar", "commands": ["1", "2", "3", "orb", "quasar", "blackhole"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/14_vortex_gravitacional/index.html", "thumbnail": "/games/14_vortex_gravitacional/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.248924", "groupName": "Pachinko & Física", "groupIcon": "🔮"}, {"slug": "15_corrida_maluca_espacial", "name": "Corrida Maluca Espacial", "category": "corrida_velocidade", "description": "Foguetes espaciais rumo à órbita com chuva de meteoros, escudos defletores e hiper-dobra ativada por presentes", "commands": ["1", "2", "3", "apollo", "solaris", "nebula"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/15_corrida_maluca_espacial/index.html", "thumbnail": "/games/15_corrida_maluca_espacial/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.299160", "groupName": "Corridas & Velocidade", "groupIcon": "🏎️"}, {"slug": "16_arrancada_noturna_neon", "name": "Arrancada Noturna Neon", "category": "corrida_velocidade", "description": "Drag Race 402m em linha reta com troca de marchas por votos, fumaça de burnout, nitro e photofinish", "commands": ["1", "2", "cyber", "viper"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/16_arrancada_noturna_neon/index.html", "thumbnail": "/games/16_arrancada_noturna_neon/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.339645", "groupName": "Corridas & Velocidade", "groupIcon": "🏎️"}, {"slug": "17_caca_niquel_neon_777", "name": "Caça-Níquel Neon 777", "category": "sorteios_roletas", "description": "Slot machine clássica de 3 rolos com símbolos neon, paradas escalonadas, modo Frenesi e cascata de moedas", "commands": ["777", "girar", "1", "spin"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/17_caca_niquel_neon_777/index.html", "thumbnail": "/games/17_caca_niquel_neon_777/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.375115", "groupName": "Roletas & Sorte", "groupIcon": "🎰"}, {"slug": "18_roleta_russa_baloes", "name": "Roleta Russa de Balões", "category": "sorteios_roletas", "description": "Roleta russa com balão sob tensão crescente, aproximação milimétrica da agulha em 6 câmaras, estouro explosivo e spotlight de espectador", "commands": ["1", "2", "balao", "agulha", "sorteio"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/18_roleta_russa_baloes/index.html", "thumbnail": "/games/18_roleta_russa_baloes/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.422665", "groupName": "Roletas & Sorte", "groupIcon": "🎰"}, {"slug": "19_defesa_da_torre_chat", "name": "Defesa da Torre do Chat", "category": "cooperativo_boss", "description": "Hordas de inimigos descendo em 3 lanes verticais enquanto o chat ativa e aprimora canhões nos slots com bomba orbital de gifts", "commands": ["1", "2", "3", "esq", "centro", "dir"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/19_defesa_da_torre_chat/index.html", "thumbnail": "/games/19_defesa_da_torre_chat/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.529565", "groupName": "Boss Raid & Cooperativo", "groupIcon": "👾"}, {"slug": "20_subida_da_montanha_sagrada", "name": "Subida da Montanha Sagrada", "category": "cooperativo_boss", "description": "Chat empurra guerreiro montanha acima até 1000m desviando de avalanches e pedregulhos com voo da fênix de gifts", "commands": ["1", "2", "3", "subir", "esq", "dir"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/20_subida_da_montanha_sagrada/index.html", "thumbnail": "/games/20_subida_da_montanha_sagrada/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.607316", "groupName": "Boss Raid & Cooperativo", "groupIcon": "👾"}, {"slug": "21_batata_quente_explosiva", "name": "Batata Quente Explosiva", "category": "tensao_eliminacao", "description": "Bomba com pavio aceso passando entre avatares na tela com tempo aleatório de 20 a 40s, BPM acelerado e eliminação", "commands": ["1", "2", "3", "passar"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/21_batata_quente_explosiva/index.html", "thumbnail": "/games/21_batata_quente_explosiva/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.662221", "groupName": "Tensão & Eliminação", "groupIcon": "💣"}, {"slug": "22_ponte_de_vidro_quebradico", "name": "Ponte de Vidro Quebradiço", "category": "tensao_eliminacao", "description": "Travessia de 8 degraus suspensa no abismo onde o chat escolhe esquerda ou direita, com revelação raio-X de gifts", "commands": ["1", "2", "esq", "dir"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/22_ponte_de_vidro_quebradico/index.html", "thumbnail": "/games/22_ponte_de_vidro_quebradico/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.714884", "groupName": "Tensão & Eliminação", "groupIcon": "💣"}, {"slug": "23_sobrevivencia_na_lava", "name": "Sobrevivência na Lava", "category": "tensao_eliminacao", "description": "Plataformas flutuantes que afundam na lava neon conforme recebem peso e calor, com erupção de partículas e borbulhamento procedural", "commands": ["1", "2", "3", "4", "ciano", "roxo", "ouro", "verde"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/23_sobrevivencia_na_lava/index.html", "thumbnail": "/games/23_sobrevivencia_na_lava/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.822838", "groupName": "Tensão & Eliminação", "groupIcon": "💣"}, {"slug": "24_campo_minado_neon", "name": "Campo Minado Neon", "category": "tabuleiro_coordenadas", "description": "Matriz tática 5x5 de desarme de minas; chat vota coordenadas A1-E5 com flood-fill de vazios, escudos de vida e sensores raio-X", "commands": ["A1", "B3", "C2", "D4", "E5", "coordenadas"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/24_campo_minado_neon/index.html", "thumbnail": "/games/24_campo_minado_neon/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.864893", "groupName": "Tabuleiro & Estratégia", "groupIcon": "🎯"}, {"slug": "25_batalha_naval_live", "name": "Batalha Naval da Live", "category": "tabuleiro_coordenadas", "description": "Disputa naval 4x4 onde o chat dispara salvas de canhões por coordenadas A1-D4, com sonar submarino procedural e torpedos de gifts", "commands": ["A1", "B2", "C3", "D4", "fogo", "sonar"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/25_batalha_naval_live/index.html", "thumbnail": "/games/25_batalha_naval_live/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.914393", "groupName": "Tabuleiro & Estratégia", "groupIcon": "🎯"}, {"slug": "26_guerra_dos_tanques_neon", "name": "Guerra dos Tanques Neon", "category": "artilharia_cinematica", "description": "Disputa de artilharia 2D com parábolas de tiro, vento dinâmico, terreno destrutível, mega mísseis de gifts e escudos EMP", "commands": ["1", "2", "azul", "vermelho", "fogo", "30", "45", "60", "75"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/26_guerra_dos_tanques_neon/index.html", "thumbnail": "/games/26_guerra_dos_tanques_neon/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:54.970202", "groupName": "Ação, Ritmo & Esportes", "groupIcon": "⚡"}, {"slug": "27_meteoro_defensor", "name": "Meteoro Defensor", "category": "defesa_planetaria", "description": "Planeta Terra central protegido por satélites lasers disparados pelo chat por setores 1 a 4, com feixe 360° e escudo total EMP", "commands": ["1", "2", "3", "4", "fogo", "laser", "tiro"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/27_meteoro_defensor/index.html", "thumbnail": "/games/27_meteoro_defensor/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:55.025890", "groupName": "Boss Raid & Cooperativo", "groupIcon": "👾"}, {"slug": "28_labirinto_pacman_neon", "name": "Labirinto do Pacman Neon", "category": "arcade_navegacao", "description": "Chat pilota o Pacman Neon por direções cardeais (1-Cima, 2-Baixo, 3-Esq, 4-Dir) para coletar pastilhas e devorar fantasmas", "commands": ["1", "2", "3", "4", "cima", "baixo", "esquerda", "direita"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/28_labirinto_pacman_neon/index.html", "thumbnail": "/games/28_labirinto_pacman_neon/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:55.089012", "groupName": "Ação, Ritmo & Esportes", "groupIcon": "⚡"}, {"slug": "29_basquete_street_neon", "name": "Basquete Street Neon", "category": "esportes_fisica", "description": "Desafio de arremessos livres com tabela móvel oscilante, rede elástica ondulante, bolas de fogo e ímã slam dunk de gifts", "commands": ["1", "2", "3", "arremesso", "cesta", "bola"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/29_basquete_street_neon/index.html", "thumbnail": "/games/29_basquete_street_neon/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:55.160663", "groupName": "Ação, Ritmo & Esportes", "groupIcon": "⚡"}, {"slug": "30_gol_de_penalti_live", "name": "Gol de Pênalti da Live", "category": "esportes_penaltis", "description": "Série de pênaltis do chat contra Goleiro Mecha com votação dos 5 cantos, curva balística, bomba atômica de gifts e grito de gol", "commands": ["1", "2", "3", "4", "5", "gaveta", "meio", "gol"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/30_gol_de_penalti_live/index.html", "thumbnail": "/games/30_gol_de_penalti_live/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:55.221061", "groupName": "Ação, Ritmo & Esportes", "groupIcon": "⚡"}, {"slug": "31_guitar_hero_neon", "name": "Guitar Hero da Live", "category": "ritmo_musical", "description": "Notas descendo em 4 pistas (1-Verde, 2-Vermelho, 3-Amarelo, 4-Azul) com riffs de guitarra procedural, Rockmeter e Star Power 4x", "commands": ["1", "2", "3", "4", "verde", "vermelho", "amarelo", "azul"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/31_guitar_hero_neon/index.html", "thumbnail": "/games/31_guitar_hero_neon/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:55.270641", "groupName": "Ação, Ritmo & Esportes", "groupIcon": "⚡"}, {"slug": "32_corte_de_frutas_neon", "name": "Corte de Frutas Neon", "category": "habilidade_reflexo", "description": "Frutas e bombas voando em arcos parabólicos fatiadas por lâminas laser disparadas por setores (1, 2, 3), com câmera lenta frenesi e Katana Cósmica", "commands": ["1", "2", "3", "esq", "meio", "dir", "corta", "golpe"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/32_corte_de_frutas_neon/index.html", "thumbnail": "/games/32_corte_de_frutas_neon/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:55.322842", "groupName": "Ação, Ritmo & Esportes", "groupIcon": "⚡"}, {"slug": "33_corrida_de_cavalos_retro", "name": "Corrida de Cavalos Retrô", "category": "apostas_corrida", "description": "Disputa de turfe clássico 9:16 com 4 raias numeradas, narração dinâmica arcade com bipes, galope rítmico procedural, arrancadas e pódio com MVP", "commands": ["1", "2", "3", "4", "relampago", "furia", "cometa", "esmeralda"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/33_corrida_de_cavalos_retro/index.html", "thumbnail": "/games/33_corrida_de_cavalos_retro/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:55.373183", "groupName": "Corridas & Velocidade", "groupIcon": "🏎️"}, {"slug": "34_pinball_galactico", "name": "Pinball Galáctico", "category": "arcade_pinball", "description": "Mesa vertical de pinball completa 9:16 com flippers duplos de plasma, 3 bumpers estelares harmônicos, buraco negro gravitacional e multi-ball", "commands": ["1", "2", "3", "4", "esq", "dir", "ambos", "nudge", "tilt"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/34_pinball_galactico/index.html", "thumbnail": "/games/34_pinball_galactico/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:55.421526", "groupName": "Pachinko & Física", "groupIcon": "🔮"}, {"slug": "35_quiz_frenetico_holding", "name": "Quiz Frenético da Holding", "category": "quiz_trivia", "description": "Perguntas dinâmicas de tecnologia e games com votação de opções (1 a 4 / A a D), barras percentuais em tempo real, dica 50/50 e Oráculo 5x", "commands": ["1", "2", "3", "4", "a", "b", "c", "d"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/35_quiz_frenetico_holding/index.html", "thumbnail": "/games/35_quiz_frenetico_holding/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:55.461235", "groupName": "Ação, Ritmo & Esportes", "groupIcon": "⚡"}, {"slug": "36_pula_corda_extremo", "name": "Pula-Corda Extremo", "category": "ritmo_agilidade", "description": "Física 3D de rotação de corda de plasma com aceleração contínua (RPM), avatares saltadores pilotados por chat, câmera lenta e Jetpack Pégaso", "commands": ["1", "2", "3", "pula", "salto", "duplo", "ritmo"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/36_pula_corda_extremo/index.html", "thumbnail": "/games/36_pula_corda_extremo/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:55.520615", "groupName": "Ação, Ritmo & Esportes", "groupIcon": "⚡"}, {"slug": "37_torre_de_blocos_equilibrada", "name": "Torre de Blocos Equilibrada", "category": "equilibrio_fisica", "description": "Jenga vertical 9:16 com física pendular de oscilação, extração de blocos por chat (1-Esq, 2-Meio, 3-Dir), blocos de aço de titânio e campo Stasis", "commands": ["1", "2", "3", "esq", "meio", "dir", "puxa"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/37_torre_de_blocos_equilibrada/index.html", "thumbnail": "/games/37_torre_de_blocos_equilibrada/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:55.570437", "groupName": "Pachinko & Física", "groupIcon": "🔮"}, {"slug": "38_fuga_da_prisao_espacial", "name": "Fuga da Prisão Espacial", "category": "fuga_reflexo", "description": "Escalada vertical de 1.000m com jetpack em 3 corredores desviando de lasers de contenção, com escudo defletor e hiper-dobra", "commands": ["1", "2", "3", "esq", "meio", "dir", "boost", "turbo"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/38_fuga_da_prisao_espacial/index.html", "thumbnail": "/games/38_fuga_da_prisao_espacial/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:55.606882", "groupName": "Ação, Ritmo & Esportes", "groupIcon": "⚡"}, {"slug": "39_alvo_movel_snipers", "name": "Alvo Móvel dos Snipers", "category": "pontaria_precisao", "description": "Alvos concêntricos em movimento oscilatório (Bullseye 1000 pts) com balística de flechas pelo chat, mira Lock-On guiada e Chuva Nuclear", "commands": ["fogo", "1", "2", "3", "esq", "meio", "dir"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/39_alvo_movel_snipers/index.html", "thumbnail": "/games/39_alvo_movel_snipers/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:55.654741", "groupName": "Ação, Ritmo & Esportes", "groupIcon": "⚡"}, {"slug": "40_duelo_de_magicos_neon", "name": "Duelo de Mágicos Neon", "category": "batalha_polarizacao", "description": "Duelo cósmico vertical 9:16 entre Arquimago do Fogo e Arquimago do Gelo com feixes colidindo no centro, empuxo por chat e Super Gifts", "commands": ["1", "2", "fogo", "gelo", "pyro", "cryo"], "gifts": ["Rosa (Rose)", "Leão (Lion)"], "status": "HOMOLOGADO", "version": "1.0.0", "path": "/games/40_duelo_de_magicos_neon/index.html", "thumbnail": "/games/40_duelo_de_magicos_neon/thumbnail.svg", "aspectRatio": "9:16", "resolution": "1080x1920", "safeZones": {"top": "140px", "bottom": "180px"}, "soundEngine": "Web Audio API (Procedural)", "antiSilence": true, "autoResetSeconds": 5, "updatedAt": "2026-10-27T13:01:55.695094", "groupName": "Batalhas & Polarização", "groupIcon": "⚔️"}];
 
     let activeFilter = 'all';
     let currentSimSlug = '01_cabo_de_guerra_neon';
     let broadcastChannel = null;
 
-    // Inicialização do Barramento
     try {
       broadcastChannel = new BroadcastChannel('v5_broadcaster_games');
     } catch (e) {
@@ -1651,24 +1941,26 @@
     }
 
     // =========================================================================
-    // NAVEGAÇÃO DE VIEWS
+    // NAVEGAÇÃO ENTRE TELAS (VIEWS)
     // =========================================================================
     function switchView(viewName) {
-      // Abas
       document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
       const activeNavBtn = document.getElementById(`tab-${viewName}`);
       if (activeNavBtn) activeNavBtn.classList.add('active');
 
-      // Telas
       document.querySelectorAll('.app-view').forEach(view => view.classList.remove('active'));
       const targetView = document.getElementById(`view-${viewName}`);
       if (targetView) targetView.classList.add('active');
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (viewName === 'cockpit') {
+        updateCockpit();
+      }
     }
 
     // =========================================================================
-    // RENDERIZAÇÃO DO CATÁLOGO
+    // CATÁLOGO DE JOGOS & FILTROS
     // =========================================================================
     function renderPills() {
       const container = document.getElementById('filter-pills-container');
@@ -1679,59 +1971,48 @@
         groupsMap[group] = (groupsMap[group] || 0) + 1;
       });
 
-      let html = `<button class="pill-btn active" onclick="setCategoryFilter('all', this)">✨ Todos (41)</button>`;
-      
-      const categoryOrder = [
-        "Batalhas & Polarização",
-        "Tabuleiro & Estratégia",
-        "Corridas & Velocidade",
-        "Boss Raid & Cooperativo",
-        "Pachinko & Física",
-        "Roletas & Sorte",
-        "Tensão & Eliminação",
-        "Ação, Ritmo & Esportes"
-      ];
-
-      categoryOrder.forEach(cat => {
-        if (groupsMap[cat]) {
-          html += `<button class="pill-btn" onclick="setCategoryFilter('${cat}', this)">${cat} (${groupsMap[cat]})</button>`;
-        }
-      });
-
+      let html = `<button class="filter-pill active" onclick="setFilter('all', this)">✨ Todos (${GAMES_CATALOG.length})</button>`;
+      for (const [groupName, count] of Object.entries(groupsMap)) {
+        html += `<button class="filter-pill" onclick="setFilter('${groupName}', this)">${groupName} (${count})</button>`;
+      }
       container.innerHTML = html;
     }
 
-    function setCategoryFilter(category, btnElement) {
-      activeFilter = category;
-      document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
-      if (btnElement) btnElement.classList.add('active');
+    function setFilter(groupName, btnEl) {
+      activeFilter = groupName;
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
       filterGames();
+    }
+
+    function filterGames() {
+      const query = (document.getElementById('search-input').value || '').toLowerCase().trim();
+      const filtered = GAMES_CATALOG.filter(game => {
+        const matchesFilter = activeFilter === 'all' || game.groupName === activeFilter;
+        if (!matchesFilter) return false;
+
+        if (!query) return true;
+        const inName = (game.name || '').toLowerCase().includes(query);
+        const inDesc = (game.description || '').toLowerCase().includes(query);
+        const inCmds = (game.commands || []).some(c => c.toLowerCase().includes(query));
+        return inName || inDesc || inCmds;
+      });
+
+      renderGamesGrid(filtered);
+      document.getElementById('catalog-counter').innerText = `Exibindo ${filtered.length} de ${GAMES_CATALOG.length} cartuchos`;
     }
 
     function renderGamesGrid(games) {
       const grid = document.getElementById('games-grid');
-      const counter = document.getElementById('catalog-counter');
-      counter.innerText = `Exibindo ${games.length} de ${GAMES_CATALOG.length} cartuchos`;
-
-      if (games.length === 0) {
-        grid.innerHTML = `
-          <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
-            <div style="font-size: 40px; margin-bottom: 12px;">🔍</div>
-            <div style="font-size: 18px; font-weight: 800; color: #fff;">Nenhum cartucho encontrado</div>
-            <div style="font-size: 13px; margin-top: 6px;">Tente pesquisar por outro termo ou selecione "Todos".</div>
-          </div>
-        `;
+      if (!games || games.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">Nenhum cartucho encontrado para sua busca.</div>';
         return;
       }
 
       let html = '';
       games.forEach(game => {
-        const numberMatch = game.slug.match(/^(\d+[a-z]?)/i);
-        const numberStr = numberMatch ? `#${numberMatch[1].toUpperCase()}` : '#V5';
-        const gameUrl = `/catalogo_jogos/${game.slug}/index.html`;
-
-        const commandsHtml = (game.commands || []).map(cmd => `<span class="cmd-tag">${cmd}</span>`).join('');
-        const giftsHtml = (game.gifts || []).map(g => `<span class="gift-tag">🎁 ${g}</span>`).join('');
+        const numberStr = '#' + (game.slug.match(/^(\d+)/) ? game.slug.match(/^(\d+)/)[1] : '00');
+        const commandsHtml = (game.commands || ['1', '2']).map(c => `<span class="cmd-pill">${c}</span>`).join('');
 
         html += `
           <div class="game-card">
@@ -1742,80 +2023,141 @@
                 <span class="badge-category">${game.groupIcon || '🎮'} ${game.groupName || 'Arcade'}</span>
               </div>
             </div>
-
             <div class="card-body">
-              <div class="card-title-row">
-                <div class="card-title">${game.name}</div>
-                <span class="badge-status">HOMOLOGADO</span>
+              <h3 class="card-title">${game.name}</h3>
+              <p class="card-desc">${game.description}</p>
+              <div class="card-commands">
+                <span style="font-size: 10px; color: var(--text-subtle); align-self: center; font-weight: 700;">CHAT:</span>
+                ${commandsHtml}
               </div>
-
-              <div class="card-desc">${game.description}</div>
-
-              <div class="card-interaction-box">
-                <div class="interaction-row">
-                  <span class="interaction-label">Comandos:</span>
-                  <div class="interaction-tags">${commandsHtml || '<span style="color:#64748b">Votos automáticos</span>'}</div>
-                </div>
-                <div class="interaction-row">
-                  <span class="interaction-label">Presentes:</span>
-                  <div class="interaction-tags">${giftsHtml || '<span style="color:#64748b">Pesos 5x a 50x</span>'}</div>
-                </div>
-              </div>
-
               <div class="card-actions">
-                <button class="btn-play-sim" onclick="launchGameSimulator('${game.slug}')">
-                  <span>📱 Testar no Simulador</span>
-                </button>
-                <button class="btn-icon-action" title="Abrir em Tela Cheia / OBS" onclick="openGameInNewTab('${game.slug}')">
-                  <span>🖥️</span>
-                </button>
-                <button class="btn-icon-action" title="Copiar URL para OBS" onclick="copyObsUrl('${gameUrl}')">
-                  <span>📋</span>
-                </button>
+                <button class="btn-card-test" onclick="launchGameSimulator('${game.slug}')">📱 Testar</button>
+                <button class="btn-card-config" onclick="openCockpitForGame('${game.slug}')">⚙️ Configurar</button>
               </div>
             </div>
           </div>
         `;
       });
-
       grid.innerHTML = html;
     }
 
-    function filterGames() {
-      const query = (document.getElementById('search-input').value || '').toLowerCase().trim();
+    // =========================================================================
+    // COCKPIT DO STREAMER (SALA DE CONFIGURAÇÃO & TOKENIZADOR)
+    // =========================================================================
+    function populateCockpitSelect() {
+      const select = document.getElementById('cockpit-game-select');
+      if (!select) return;
 
-      const filtered = GAMES_CATALOG.filter(game => {
-        const matchesCategory = (activeFilter === 'all') || (game.groupName === activeFilter);
-        const matchesQuery = !query || 
-          game.name.toLowerCase().includes(query) ||
-          game.slug.toLowerCase().includes(query) ||
-          game.description.toLowerCase().includes(query) ||
-          (game.commands || []).some(c => c.toLowerCase().includes(query));
-
-        return matchesCategory && matchesQuery;
+      let html = '';
+      GAMES_CATALOG.forEach(g => {
+        html += `<option value="${g.slug}">${g.name} (${g.slug})</option>`;
       });
+      select.innerHTML = html;
+    }
 
-      renderGamesGrid(filtered);
+    function openCockpitForGame(slug) {
+      switchView('cockpit');
+      const select = document.getElementById('cockpit-game-select');
+      if (select) {
+        select.value = slug;
+        updateCockpit();
+      }
+    }
+
+    function updateCockpit() {
+      const select = document.getElementById('cockpit-game-select');
+      const slug = select ? select.value : '01_cabo_de_guerra_neon';
+      const teamA = document.getElementById('cockpit-team-a').value || 'Time A';
+      const cmdA = document.getElementById('cockpit-cmd-a').value || '1';
+      const teamB = document.getElementById('cockpit-team-b').value || 'Time B';
+      const cmdB = document.getElementById('cockpit-cmd-b').value || '2';
+      const goal = document.getElementById('cockpit-goal').value || '100';
+      const giftMul = document.getElementById('cockpit-gift-mul').value || '10';
+      const streamer = document.getElementById('cockpit-streamer').value || 'streamer_v5';
+
+      const origin = window.location.origin || 'http://localhost:3012';
+      const obsUrl = `${origin}/catalogo_jogos/${slug}/index.html?streamer=${encodeURIComponent(streamer)}&teamA=${encodeURIComponent(teamA)}&teamB=${encodeURIComponent(teamB)}&cmdA=${encodeURIComponent(cmdA)}&cmdB=${encodeURIComponent(cmdB)}&goal=${goal}&giftMul=${giftMul}`;
+      
+      const broadcasterPayload = {
+        type: "v5_bind_game",
+        gameSlug: slug,
+        url: obsUrl,
+        streamer: streamer,
+        settings: {
+          teamA: teamA,
+          teamB: teamB,
+          cmdA: cmdA,
+          cmdB: cmdB,
+          goal: parseInt(goal, 10),
+          giftMultiplier: parseFloat(giftMul)
+        }
+      };
+
+      const chatHeadline = `🎮 LIVE INTERATIVA: Digite "${cmdA}" para ${teamA.toUpperCase()} | Digite "${cmdB}" para ${teamB.toUpperCase()} | Envie Rosas para nitro ${giftMul}x!`;
+
+      document.getElementById('cockpit-out-obs').innerText = obsUrl;
+      document.getElementById('cockpit-out-broadcaster').innerText = JSON.stringify(broadcasterPayload, null, 2);
+      document.getElementById('cockpit-out-chat').innerText = chatHeadline;
+    }
+
+    function copyCockpitObsUrl() {
+      const url = document.getElementById('cockpit-out-obs').innerText;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('✅ Link do OBS copiado com sucesso! Largura 1080, Altura 1920.');
+      });
+    }
+
+    function copyBroadcasterConfig() {
+      const json = document.getElementById('cockpit-out-broadcaster').innerText;
+      navigator.clipboard.writeText(json).then(() => {
+        showToast('⚡ JSON de vinculação do Broadcaster copiado!');
+      });
+    }
+
+    function copyChatHeadline() {
+      const text = document.getElementById('cockpit-out-chat').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('💬 Legenda copiada para colocar no chat ou tela!');
+      });
+    }
+
+    function launchFromCockpitToSimulator() {
+      const obsUrl = document.getElementById('cockpit-out-obs').innerText;
+      switchView('simulator');
+      const iframe = document.getElementById('cartridge-iframe');
+      if (iframe) {
+        iframe.src = obsUrl;
+      }
+      showToast('🚀 Carregado no simulador com parâmetros customizados!');
     }
 
     // =========================================================================
-    // SIMULADOR 9:16 INTERATIVO
+    // SIMULADOR 9:16 & TEST LAB
     // =========================================================================
     function populateSimSelect() {
       const select = document.getElementById('sim-select');
+      if (!select) return;
+
       let html = '';
       GAMES_CATALOG.forEach(g => {
-        const numberMatch = g.slug.match(/^(\d+[a-z]?)/i);
-        const numberStr = numberMatch ? `${numberMatch[1].toUpperCase()} — ` : '';
-        html += `<option value="${g.slug}">${numberStr}${g.name}</option>`;
+        html += `<option value="${g.slug}">${g.name}</option>`;
       });
       select.innerHTML = html;
-      select.value = currentSimSlug;
     }
 
     function onSimSelectChange() {
       const select = document.getElementById('sim-select');
-      loadGameInSimulator(select.value);
+      if (select) loadGameInSimulator(select.value);
+    }
+
+    function loadGameInSimulator(slug) {
+      currentSimSlug = slug;
+      const iframe = document.getElementById('cartridge-iframe');
+      if (iframe) {
+        iframe.src = `catalogo_jogos/${slug}/index.html?testlab=1`;
+      }
+      const select = document.getElementById('sim-select');
+      if (select) select.value = slug;
     }
 
     function launchGameSimulator(slug) {
@@ -1823,151 +2165,51 @@
       switchView('simulator');
     }
 
-    function loadGameInSimulator(slug) {
-      currentSimSlug = slug;
-      const select = document.getElementById('sim-select');
-      if (select) select.value = slug;
-
-      const iframe = document.getElementById('cartridge-iframe');
-      if (iframe) {
-        iframe.src = `catalogo_jogos/${slug}/index.html`;
-      }
-
-      // Atualiza URL do OBS no painel
-      const fullUrl = `/catalogo_jogos/${slug}/index.html`;
-      const urlEl = document.getElementById('obs-current-url');
-      if (urlEl) urlEl.innerText = fullUrl;
-
-      // Atualiza comandos do jogo atual
-      const gameObj = GAMES_CATALOG.find(g => g.slug === slug);
-      const cmdsEl = document.getElementById('sim-game-commands');
-      if (cmdsEl && gameObj) {
-        const cmdsHtml = (gameObj.commands || []).map(c => `<span class="cmd-tag" style="font-size:12px;">${c}</span>`).join('');
-        cmdsEl.innerHTML = cmdsHtml || '<span style="color:var(--text-subtle)">Sem comandos textuais</span>';
-      }
-
-      logTerminalEvent({ type: 'SYSTEM', comment: `Cartucho '${slug}' carregado com sucesso no simulador.` });
-    }
-
     function reloadSimulator() {
       const iframe = document.getElementById('cartridge-iframe');
       if (iframe) {
-        iframe.src = `catalogo_jogos/${currentSimSlug}/index.html?t=${Date.now()}`;
-        showToast('Cartucho recarregado no simulador!');
+        const curSrc = iframe.src;
+        iframe.src = '';
+        setTimeout(() => { iframe.src = curSrc; }, 50);
       }
     }
 
     function toggleSimSafeZones() {
       const overlay = document.getElementById('sim-safe-overlay');
       const btn = document.getElementById('btn-toggle-sz');
-      if (overlay) {
-        overlay.classList.toggle('active');
-        if (btn) btn.classList.toggle('active');
+      if (!overlay) return;
+      overlay.classList.toggle('active');
+      if (btn) {
+        btn.style.color = overlay.classList.contains('active') ? 'var(--neon-rose)' : 'var(--text-main)';
       }
     }
 
     function openFullscreenGame() {
-      window.open(`catalogo_jogos/${currentSimSlug}/index.html`, '_blank');
-    }
-
-    function openGameInNewTab(slug) {
-      window.open(`catalogo_jogos/${slug}/index.html`, '_blank');
+      const iframe = document.getElementById('cartridge-iframe');
+      if (iframe && iframe.src) {
+        window.open(iframe.src, '_blank');
+      }
     }
 
     function copyCurrentObsUrl() {
-      const fullUrl = `/catalogo_jogos/${currentSimSlug}/index.html`;
-      copyObsUrl(fullUrl);
-    }
-
-    function copyObsUrl(url) {
-      navigator.clipboard.writeText(url).then(() => {
+      const origin = window.location.origin || 'http://localhost:3012';
+      const obsUrl = `${origin}/catalogo_jogos/${currentSimSlug}/index.html?obs=1`;
+      navigator.clipboard.writeText(obsUrl).then(() => {
         showToast('Link do OBS copiado para a área de transferência!');
-      }).catch(() => {
-        const input = document.createElement('input');
-        input.value = url;
-        document.body.appendChild(input);
-        input.select();
-        document.execCommand('copy');
-        document.body.removeChild(input);
-        showToast('Link do OBS copiado com sucesso!');
       });
     }
 
-    function switchCockpitTab(tabName) {
-      document.querySelectorAll('.cockpit-tab-btn').forEach(btn => btn.classList.remove('active'));
-      const activeBtn = document.getElementById(`c-tab-${tabName}`);
-      if (activeBtn) activeBtn.classList.add('active');
-
-      document.querySelectorAll('.cockpit-pane').forEach(p => p.classList.remove('active'));
-      const activePane = document.getElementById(`pane-${tabName}`);
-      if (activePane) activePane.classList.add('active');
-    }
-
-    // =========================================================================
-    // INJETOR DE EVENTOS DO SIMULADOR
-    // =========================================================================
-    function injectVote(cmd, team) {
-      const payload = {
-        type: 'comment',
-        action: 'vote',
-        team: team,
-        user: '@espectador',
-        comment: cmd,
-        weight: 1,
-        timestamp: Date.now()
-      };
-      dispatchSimEvent(payload);
-      showToast(`Voto '${cmd}' enviado para a live!`);
-    }
-
-    function injectCustomComment() {
-      const input = document.getElementById('sim-comment-input');
-      const val = (input.value || '').trim();
-      if (!val) return;
-
-      const payload = {
-        type: 'comment',
-        action: 'vote',
-        user: '@espectador_vip',
-        comment: val,
-        weight: 1,
-        timestamp: Date.now()
-      };
-      dispatchSimEvent(payload);
-      input.value = '';
-      showToast(`Comentário '${val}' enviado!`);
-    }
-
-    function injectGift(giftName, coins, weight) {
-      const payload = {
-        type: 'gift',
-        action: 'boost',
-        user: '@patrocinador_top',
-        giftName: giftName,
-        coins: coins,
-        weight: weight,
-        timestamp: Date.now()
-      };
-      dispatchSimEvent(payload);
-      showToast(`Presente '${giftName}' (${weight}x) disparado!`);
-    }
-
-    function dispatchSimEvent(payload) {
+    function injectSimEvent(payload) {
+      payload.timestamp = Date.now();
       logTerminalEvent(payload);
 
-      // 1. BroadcastChannel global da holding
       if (broadcastChannel) {
-        try {
-          broadcastChannel.postMessage(payload);
-        } catch (e) {}
+        try { broadcastChannel.postMessage(payload); } catch (e) {}
       }
 
-      // 2. Iframe postMessage direto
       const iframe = document.getElementById('cartridge-iframe');
       if (iframe && iframe.contentWindow) {
-        try {
-          iframe.contentWindow.postMessage(payload, '*');
-        } catch (e) {}
+        try { iframe.contentWindow.postMessage(payload, '*'); } catch (e) {}
       }
     }
 
@@ -1993,6 +2235,16 @@
     }
 
     // =========================================================================
+    // STOREFRONT & CHECKOUT SIMULADO
+    // =========================================================================
+    function simulateCheckout(planName, priceBrl, priceCrypto) {
+      showToast(`🛒 Pedido de "${planName}" criado! Redirecionando para o Gateway Soberano...`);
+      setTimeout(() => {
+        alert(`🏛️ CHECKOUT SOBERANO HOLDING V5 APOLLO\n\nPlano Selecionado: ${planName}\nValor em Real: R$ ${priceBrl} (PIX Imediato)\nValor em Cripto: ${priceCrypto} (Polygon PoS D+0)\n\nTrilho de pagamento 100% autônomo sem intermediários bancários!`);
+      }, 500);
+    }
+
+    // =========================================================================
     // TOAST NOTIFICATION
     // =========================================================================
     let toastTimer = null;
@@ -2007,17 +2259,19 @@
       if (toastTimer) clearTimeout(toastTimer);
       toastTimer = setTimeout(() => {
         toast.classList.remove('show');
-      }, 2600);
+      }, 2800);
     }
 
     // =========================================================================
-    // INICIALIZAÇÃO GERAL AO CARREGAR
+    // INICIALIZAÇÃO GERAL
     // =========================================================================
     window.addEventListener('DOMContentLoaded', () => {
       renderPills();
       renderGamesGrid(GAMES_CATALOG);
       populateSimSelect();
+      populateCockpitSelect();
       loadGameInSimulator('01_cabo_de_guerra_neon');
+      updateCockpit();
     });
   </script>
 </body>
