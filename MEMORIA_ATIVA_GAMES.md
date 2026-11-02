@@ -165,3 +165,19 @@ O objetivo financeiro e técnico foi alcançado com um acervo proprietário de a
 - `scripts/update_hive_bus_109.py`: Registrador de conclusão e homologação oficial da Capitania V5 Games no barramento central `antigravity_hive_bus.md`.
 - `scripts/test_round_8_hardening.py`: Suíte de hardening cirúrgico (7/7 checks) validando beforeunload sem vazamento em 21 jogos, try/catch em BroadcastChannel nos jogos 26-32, radix 10 em parseInt, resets de entidades nos jogos 28 e 39 e desduplicação LRU no V5LiveGameSDK.
 - `scripts/test_etapa_110.py`: Suíte de homologação mestre da Etapa 110 certificando 110/110 etapas concluídas (100% de sucesso) e consagração da tag v1.0.0-soberano.
+
+
+---
+## 👑 [2026-11-02 07:56:00] DIRETRIZ ESTRATÉGICA SUPREMA: A "STEAM DA V5" & STOREFRONT SOBERANA
+- **Consagração da Separação com o V5 Broadcaster:**
+  - O V5 Games é a Publisher e Loja Oficial da Holding V5 Apollo (`games.v5apollo.com`, porta `:3012`).
+  - O Broadcaster é estritamente a Usina de Transmissão Contínua (VPS Oracle 2). O Broadcaster não armazena código de jogos nem regras de licenciamento; apenas ingere a URL do jogo gerada pelo V5 Games.
+- **Estrutura dos 4 Pilares de Produto do V5 Games:**
+  1. **Cartuchos de Live Interativa 9:16:** 41 jogos homologados com Safe Zones, isolamento 100% offline, Web Audio API procedural, mecânica de gifts e atalho de depuração (tecla D).
+  2. **Franquia Roxingo:** *Roxingo Run*, jogos mobile (.apk para Android) e WebGL para navegador, fortalecendo a PI (propriedade intelectual) da Holding.
+  3. **Jogos Casuais & Mobile HTML5/Canvas:** Retenção e tráfego orgânico com monetização via anúncios ou passes.
+  4. **Jogos RMT & Marketplace Aberto (Futuro):** Economia real integrada ao ecossistema da holding e storefront aberta para desenvolvedores independentes publicarem jogos com split de 30% para a Holding V5 Apollo.
+- **Modelos de Venda no Storefront:**
+  - Licença Semanal/Mensal (Aluguel para Streamers)
+  - Licença Vitalícia
+  - Combo Live 24h na Nuvem (V5 Games + VPS V5 Broadcaster)
