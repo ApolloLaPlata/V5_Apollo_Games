@@ -4,7 +4,7 @@
 **Status do Projeto:** Transição para Plataforma Soberana e Storefront Independente ("A Steam das Lives Interativas & Games da Holding V5 Apollo")  
 **Hospedagem & Runtime:** Porta local `:3012` (servidor independente com suporte a Browser Source para OBS/Streamlabs/Broadcaster)  
 **Resolução Padrão (Cartuchos Live):** 1080 x 1920 (Vertical 9:16)  
-**Linhas de Produto:** 1) Cartuchos de Live Interativa (41 PoCs Homologadas), 2) Franquia Roxinho (Web/Mobile), 3) Futuro Marketplace & RMT  
+**Linhas de Produto:** 1) Cartuchos de Live Interativa (41 PoCs Homologadas), 2) Franquia Roxingo (Web/Mobile), 3) Futuro Marketplace & RMT  
 
 ---
 
@@ -16,7 +16,7 @@
   - **Quem aluga/compra um jogo no V5 Games:** Pode configurá-lo (times, comandos, peso de gifts) e obter uma URL tokenizada pronta para ser inserida em qualquer software de transmissão.
 - **As Três Frentes Estratégicas do Catálogo:**
   1. **Jogos Interativos de Live 9:16:** Mecânicas matemáticas de alta retenção onde o público é o controle e gifts geram superpoderes.
-  2. **Franquia Roxinho (Web & Mobile):** Jogos com a marca e o mascote oficial da Holding V5 Apollo (ex: *Roxinho Runner*, *RoxinhoQuest*).
+  2. **Franquia Roxingo (Web & Mobile):** Jogos com a marca e o mascote oficial da Holding V5 Apollo (ex: *Roxingo Runner*, *RoxingoQuest*).
   3. **Marketplace & RMT (Visão Futura):** Plataforma aberta para desenvolvedores parceiros distribuírem jogos interativos com divisão de receita.
 - **Diretriz de Qualidade Visual:**
   - As 41 bases atuais são PoCs matemáticas e lógicas funcionais.

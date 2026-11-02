@@ -900,7 +900,7 @@
         triggerGift(team, gift, user);
       } else if (payload.type === 'comment' || payload.type === 'vote') {
         const text = String(payload.comment || payload.action || '').trim().toLowerCase();
-        if (text === '1' || text.includes('rox') || text.includes('roxinho')) vote('roxingo', user);
+        if (text === '1' || text.includes('rox') || text.includes('roxingo')) vote('roxingo', user);
         else if (text === '2' || text.includes('bai') || text.includes('bahia')) vote('baiano', user);
         else if (text === '3' || text.includes('mac') || text.includes('macaco')) vote('macaco', user);
       }

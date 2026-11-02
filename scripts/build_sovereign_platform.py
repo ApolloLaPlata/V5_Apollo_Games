@@ -1034,16 +1034,16 @@ def build():
     .log-line .ev-val { color: var(--neon-gold); }
 
     /* ==========================================================================
-       VIEW 4: FRANQUIA ROXINHO (GAMES WEB & MOBILE)
+       VIEW 4: FRANQUIA ROXINGO (GAMES WEB & MOBILE)
        ========================================================================== */
-    .roxinho-container {
+    .roxingo-container {
       max-width: 1200px;
       width: 100%;
       margin: 0 auto;
       padding: 40px 24px;
     }
 
-    .roxinho-hero {
+    .roxingo-hero {
       background: linear-gradient(135deg, rgba(168, 85, 247, 0.18) 0%, rgba(56, 189, 248, 0.08) 100%);
       border: 1px solid rgba(168, 85, 247, 0.35);
       border-radius: var(--radius-xl);
@@ -1056,10 +1056,10 @@ def build():
     }
 
     @media (max-width: 800px) {
-      .roxinho-hero { flex-direction: column; text-align: center; }
+      .roxingo-hero { flex-direction: column; text-align: center; }
     }
 
-    .roxinho-avatar-big {
+    .roxingo-avatar-big {
       width: 120px;
       height: 120px;
       background: radial-gradient(circle at 35% 35%, #c084fc 0%, #7e22ce 100%);
@@ -1072,24 +1072,24 @@ def build():
       flex-shrink: 0;
     }
 
-    .roxinho-hero-content h2 {
+    .roxingo-hero-content h2 {
       font-size: 28px;
       font-weight: 900;
       color: #ffffff;
       margin-bottom: 8px;
     }
 
-    .roxinho-hero-content h2 span {
+    .roxingo-hero-content h2 span {
       color: #d8b4fe;
     }
 
-    .roxinho-hero-content p {
+    .roxingo-hero-content p {
       font-size: 14.5px;
       color: var(--text-muted);
       line-height: 1.6;
     }
 
-    .roxinho-grid {
+    .roxingo-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 24px;
@@ -1421,8 +1421,8 @@ def build():
       <button class="nav-btn" id="tab-simulator" onclick="switchView('simulator')">
         <span>📱 Simulador 9:16</span>
       </button>
-      <button class="nav-btn" id="tab-roxinho" onclick="switchView('roxinho')">
-        <span>🟣 Franquia Roxinho</span>
+      <button class="nav-btn" id="tab-roxingo" onclick="switchView('roxingo')">
+        <span>🟣 Franquia Roxingo</span>
       </button>
       <button class="nav-btn" id="tab-store" onclick="switchView('store')">
         <span>💎 Planos & Aluguel</span>
@@ -1540,7 +1540,7 @@ def build():
             <div class="cockpit-row-2">
               <div class="cockpit-form-group">
                 <label class="cockpit-label">Nome do Time A (Azul)</label>
-                <input type="text" id="cockpit-team-a" class="cockpit-input" value="Time Roxinho" oninput="updateCockpit()">
+                <input type="text" id="cockpit-team-a" class="cockpit-input" value="Time Roxingo" oninput="updateCockpit()">
               </div>
               <div class="cockpit-form-group">
                 <label class="cockpit-label">Comando Chat Time A</label>
@@ -1706,15 +1706,15 @@ def build():
     </section>
 
     <!-- =======================================================================
-         VIEW 4: FRANQUIA ROXINHO (GAMES WEB & MOBILE)
+         VIEW 4: FRANQUIA ROXINGO (GAMES WEB & MOBILE)
          ======================================================================= -->
-    <section class="app-view" id="view-roxinho">
-      <div class="roxinho-container">
+    <section class="app-view" id="view-roxingo">
+      <div class="roxingo-container">
         
-        <div class="roxinho-hero">
-          <div class="roxinho-avatar-big">👾</div>
-          <div class="roxinho-hero-content">
-            <h2>O Universo de Jogos do <span>Roxinho</span></h2>
+        <div class="roxingo-hero">
+          <div class="roxingo-avatar-big">👾</div>
+          <div class="roxingo-hero-content">
+            <h2>O Universo de Jogos do <span>Roxingo</span></h2>
             <p>
               O mascote oficial da Holding V5 Apollo agora protagoniza sua própria franquia de games autorais. 
               Projetados para web rápida, celular (PWA) e transmissões interativas, com física responsiva e conexão com o ecossistema digital.
@@ -1722,13 +1722,13 @@ def build():
           </div>
         </div>
 
-        <div class="roxinho-grid">
-          <!-- Card 1: Roxinho Runner -->
+        <div class="roxingo-grid">
+          <!-- Card 1: Roxingo Runner -->
           <div class="rox-card">
             <div class="rox-card-banner">🏃‍♂️💨</div>
             <div class="rox-card-body">
               <span class="rox-badge-status status-alpha">Alpha Fechado • Web & Mobile</span>
-              <h3 class="rox-card-title">Roxinho Runner</h3>
+              <h3 class="rox-card-title">Roxingo Runner</h3>
               <p class="rox-card-desc">
                 Corrida infinita pelas cidades cibernéticas da Holding. Salte obstáculos, colete moedas douradas V5, pegue power-ups magnéticos e desafie o ranking global.
               </p>
@@ -1740,14 +1740,14 @@ def build():
             </div>
           </div>
 
-          <!-- Card 2: Roxinho Galaxy Defender -->
+          <!-- Card 2: Roxingo Galaxy Defender -->
           <div class="rox-card">
             <div class="rox-card-banner">🚀👾</div>
             <div class="rox-card-body">
               <span class="rox-badge-status status-concept">Em Forja • Live & Celular</span>
-              <h3 class="rox-card-title">Roxinho Galaxy Defender</h3>
+              <h3 class="rox-card-title">Roxingo Galaxy Defender</h3>
               <p class="rox-card-desc">
-                Shoot 'em up vertical 9:16. Pode ser jogado com os polegares no celular ou transmitido na live onde o chat pilota os escudos e canhões da nave do Roxinho.
+                Shoot 'em up vertical 9:16. Pode ser jogado com os polegares no celular ou transmitido na live onde o chat pilota os escudos e canhões da nave do Roxingo.
               </p>
               <div class="rox-specs">
                 <span>🎮 Híbrido Live/Mobile</span>
@@ -1757,14 +1757,14 @@ def build():
             </div>
           </div>
 
-          <!-- Card 3: Roxinho Tycoon -->
+          <!-- Card 3: Roxingo Tycoon -->
           <div class="rox-card">
             <div class="rox-card-banner">🏰💎</div>
             <div class="rox-card-body">
               <span class="rox-badge-status status-planned">Conceito Aprovado • Idle & RMT</span>
-              <h3 class="rox-card-title">Roxinho Idle Tycoon</h3>
+              <h3 class="rox-card-title">Roxingo Idle Tycoon</h3>
               <p class="rox-card-desc">
-                Simulador de império digital onde o Roxinho administra fazendas de servidores e nós de computação. Base para futuros experimentos de economia digital e RMT da Holding.
+                Simulador de império digital onde o Roxingo administra fazendas de servidores e nós de computação. Base para futuros experimentos de economia digital e RMT da Holding.
               </p>
               <div class="rox-specs">
                 <span>🌐 Web3 Ready</span>

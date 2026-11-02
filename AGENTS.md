@@ -9,7 +9,7 @@ Sua missão é desenvolver e manter o **V5 Games** como uma **Plataforma e Store
    - O **V5 Games** é o ecossistema independente de jogos. O streamer entra no V5 Games, escolhe/aluga o jogo, customiza sua partida e gera uma URL segura. Ele pode plugar essa URL no V5 Broadcaster OU usar seu próprio software de transmissão (OBS Studio, Streamlabs, TikTok Live Studio).
 3. **Catálogo Multidivisional Expandido:**
    - **Cartuchos de Live Interativa (9:16 Vertical):** Jogos frenéticos para TikTok Live, YouTube Shorts e Twitch, pilotados 100% pelo chat e presentes.
-   - **Jogos da Franquia Roxinho & Mobile:** Títulos autorais com o mascote oficial da Holding (ex: *Roxinho Runner*, *RoxinhoQuest*).
+   - **Jogos da Franquia Roxingo & Mobile:** Títulos autorais com o mascote oficial da Holding (ex: *Roxingo Runner*, *RoxingoQuest*).
    - **Jogos Idle / Web3 / RMT & Marketplace (Futuro):** Abertura para criadores terceiros publicarem cartuchos e monetizarem via revenue share.
 
 ---
@@ -66,4 +66,4 @@ Todo jogo de live deve importar e utilizar o `sdk/v5_live_game_sdk.js`, que escu
 1. **Ambiente Próprio:** Reside em `V5_Apollo_Games`, servido autonomamente na porta `:3012` (ou domínio próprio em nuvem).
 2. **Conexão com Broadcaster / OBS:** Todo cartucho é acessível via URL de Browser Source com parâmetros de customização:
    `http://localhost:3012/catalogo_jogos/<slug_do_jogo>/index.html?token=<streamer_token>`
-3. **Vitrine & Cockpit:** O portal principal (`index.html`) provê o Catálogo Comercial, Simulador de Testes, Painel de Configuração do Streamer e Área da Franquia Roxinho.
+3. **Vitrine & Cockpit:** O portal principal (`index.html`) provê o Catálogo Comercial, Simulador de Testes, Painel de Configuração do Streamer e Área da Franquia Roxingo.
