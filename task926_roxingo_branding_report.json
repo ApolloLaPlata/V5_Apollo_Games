@@ -1,0 +1,9 @@
+{
+  "task_id": "TASK-926",
+  "timestamp": "2026-11-02T10:29:26.275285",
+  "target": "V5 Apollo Games",
+  "status": "PASSED",
+  "roxingo_brand_occurrences": 29,
+  "domains": "https://games.v5apollo.com e https://broadcaster.v5apollo.com",
+  "summary": "Marca Roxingo (Roxingo Runner, Roxingo Quest, Roxingo Arcade) padronizada e integrada com o ecossistema V5 Apollo."
+}

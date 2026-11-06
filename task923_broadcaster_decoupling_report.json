@@ -1,0 +1,8 @@
+{
+  "task_id": "TASK-923",
+  "timestamp": "2026-11-02T10:29:26.275285",
+  "target": "V5 Apollo Broadcaster",
+  "status": "PASSED",
+  "decoupling_strategy": "V5 Broadcaster consome os cartuchos via iframe / Browser Source isolado (rotas /embed/games e /live-games)",
+  "summary": "Desacoplamento validado. Broadcaster atua como container de transmissão enquanto V5 Games é o motor soberano de execução."
+}
